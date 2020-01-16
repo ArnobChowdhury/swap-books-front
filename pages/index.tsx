@@ -1,13 +1,5 @@
 import React from 'react';
-import { NextPage } from 'next';
 
-const Home: NextPage<{ userAgent: string }> = ({ userAgent }) => (
-  <h1>Hello World - user agent : {userAgent}</h1>
-);
-
-Home.getInitialProps = async ({ req }) => {
-  const userAgent = req ? req.headers['user-agent'] || '' : navigator.userAgent;
-  return { userAgent };
-};
+const Home = (): JSX.Element => <h1>Hello World - user agent </h1>;
 
 export default Home;
