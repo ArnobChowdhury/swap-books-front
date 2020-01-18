@@ -5,7 +5,7 @@ import GridColumn from './GridColumn';
 import { GridInnerDiv } from './Grid.styles';
 
 export default {
-  title: './Grid',
+  title: 'Grid',
   component: Grid,
   subcomponents: [GridColumn],
   decorators: [withKnobs],
@@ -13,7 +13,7 @@ export default {
 };
 
 export const Default = (): JSX.Element => {
-  const alignContentArray = select(
+  const alignContent = select(
     'alignContent',
     [
       'flex-start',
@@ -53,7 +53,7 @@ export const Default = (): JSX.Element => {
   return (
     <Grid
       spacing={spacing}
-      alignContent={alignContentArray}
+      alignContent={alignContent}
       alignItems={alignItems}
       justify={justify}
       direction={direction}
