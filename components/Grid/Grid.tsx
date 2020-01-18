@@ -2,24 +2,28 @@ import { GridDiv } from './Grid.styles';
 import GridColumn from './GridColumn';
 import React from 'react';
 
+type commonFlexProps = 'flex-end' | 'flex-start' | 'center';
+
+type alignContentProps =
+  | commonFlexProps
+  | 'stretch'
+  | 'space-between'
+  | 'space-around';
+
+type alignItemsProps = commonFlexProps | 'stretch' | 'baseline';
+
+type justifyProps =
+  | commonFlexProps
+  | 'space-between'
+  | 'space-evenly'
+  | 'space-around';
+
 export interface GridProps {
-  alignContent?:
-    | 'stretch'
-    | 'center'
-    | 'flex-start'
-    | 'flex-end'
-    | 'space-between'
-    | 'space-around';
-  alignItems?: 'stretch' | 'center' | 'flex-start' | 'flex-end' | 'baseline';
+  alignContent?: alignContentProps;
+  alignItems?: alignItemsProps;
   children?: React.ReactNode;
   direction?: 'row' | 'column' | 'row-reverse' | 'column-reverse';
-  justify?:
-    | 'flex-start'
-    | 'center'
-    | 'flex-end'
-    | 'space-between'
-    | 'space-around'
-    | 'space-evenly';
+  justify?: justifyProps;
   spacing?: number;
   wrap?: 'nowrap' | 'wrap' | 'wrap-reverse';
 }
