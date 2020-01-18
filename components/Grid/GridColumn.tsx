@@ -3,12 +3,12 @@ import { ColumnDiv } from './Grid.styles';
 
 export interface GridColumnProps {
   children?: React.ReactNode;
-  lg?: number | string | boolean;
-  md?: number | string | boolean;
+  lg?: number | 'auto' | boolean;
+  md?: number | 'auto' | boolean;
   padding?: number;
-  sm?: number | string | boolean;
-  xl?: number | string | boolean;
-  xs?: number | string | boolean;
+  sm?: number | 'auto' | boolean;
+  xl?: number | 'auto' | boolean;
+  xs?: number | 'auto' | boolean;
 }
 
 const GridColumn = ({
@@ -47,16 +47,20 @@ const GridColumn = ({
     let cssString = '';
 
     cssString += xs ? generateGrid(xs) : '';
-    cssString += sm ? `@media (min-width: 600px) ${generateGrid(sm)}` : '';
-    cssString += md ? `@media (min-width: 960px) ${generateGrid(md)}` : '';
-    cssString += lg ? `@media (min-width: 1280px) ${generateGrid(lg)}` : '';
-    cssString += xl ? `@media (min-width: 1800px) ${generateGrid(xl)}` : '';
+    cssString += sm ? `@media (min-width: 600px) {${generateGrid(sm)}}` : '';
+    cssString += md ? `@media (min-width: 960px) {${generateGrid(md)}}` : '';
+    cssString += lg ? `@media (min-width: 1280px) {${generateGrid(lg)}}` : '';
+    cssString += xl ? `@media (min-width: 1920px) {${generateGrid(xl)}}` : '';
 
     return cssString;
   };
 
   return (
-    <ColumnDiv {...{ padding }} {...{ gridCss: generateCSS() }}>
+    <ColumnDiv
+      {...{ padding }}
+      {...{ gridCss: generateCSS() }}
+      data-testid="gridColumnTestId"
+    >
       {children ? children : null}
     </ColumnDiv>
   );

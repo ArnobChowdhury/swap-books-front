@@ -3,13 +3,25 @@ import GridColumn from './GridColumn';
 import React from 'react';
 
 export interface GridProps {
-  alignContent?: string;
-  alignItems?: string;
+  alignContent?:
+    | 'stretch'
+    | 'center'
+    | 'flex-start'
+    | 'flex-end'
+    | 'space-between'
+    | 'space-around';
+  alignItems?: 'stretch' | 'center' | 'flex-start' | 'flex-end' | 'baseline';
   children?: React.ReactNode;
-  direction?: string;
-  justify?: string;
+  direction?: 'row' | 'column' | 'row-reverse' | 'column-reverse';
+  justify?:
+    | 'flex-start'
+    | 'center'
+    | 'flex-end'
+    | 'space-between'
+    | 'space-around'
+    | 'space-evenly';
   spacing?: number;
-  wrap?: string;
+  wrap?: 'nowrap' | 'wrap' | 'wrap-reverse';
 }
 
 const Grid = ({
@@ -43,7 +55,7 @@ const Grid = ({
     <GridDiv
       {...{ alignContent, alignItems, direction, justify, wrap, spacing }}
     >
-      {childrenArray ? childrenArray : children ? children : null}
+      {childrenArray ? childrenArray : null}
     </GridDiv>
   );
 };
