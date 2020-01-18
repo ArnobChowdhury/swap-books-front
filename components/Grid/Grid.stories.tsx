@@ -1,13 +1,15 @@
 import React from 'react';
 import { withKnobs, number, select } from '@storybook/addon-knobs';
 import Grid from './Grid';
+import GridColumn from './GridColumn';
 import { GridInnerDiv } from './Grid.styles';
 
 export default {
   title: 'Grid',
   component: Grid,
+  subcomponents: [GridColumn],
   decorators: [withKnobs],
-  excludeStories: /.*Data$/,
+  excludeStories: ['alignContent'],
 };
 
 export const Default = (): JSX.Element => {
