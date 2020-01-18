@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { ColumnDiv } from './Grid.styles';
 
 export interface GridColumnProps {
-  children?: React.ReactNode;
+  children?: ReactNode;
   lg?: number | 'auto' | boolean;
   md?: number | 'auto' | boolean;
   padding?: number;

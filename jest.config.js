@@ -7,7 +7,7 @@ module.exports = {
     "js"
   ],
   transform: {
-    "^.+\\.tsx?$": "ts-jest"
+    "^.+\\.tsx?$": "babel-jest"
   },
   testMatch: [
     "**/*.(test|spec).(ts|tsx)"

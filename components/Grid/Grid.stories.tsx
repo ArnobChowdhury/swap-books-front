@@ -1,17 +1,19 @@
 import React from 'react';
 import { withKnobs, number, select } from '@storybook/addon-knobs';
 import Grid from './Grid';
+import GridColumn from './GridColumn';
 import { GridInnerDiv } from './Grid.styles';
 
 export default {
-  title: 'Grid',
+  title: './Grid',
   component: Grid,
+  subcomponents: [GridColumn],
   decorators: [withKnobs],
-  excludeStories: /.*Data$/,
+  excludeStories: ['alignContent'],
 };
 
 export const Default = (): JSX.Element => {
-  const alignContent = select(
+  const alignContentArray = select(
     'alignContent',
     [
       'flex-start',
@@ -51,7 +53,7 @@ export const Default = (): JSX.Element => {
   return (
     <Grid
       spacing={spacing}
-      alignContent={alignContent}
+      alignContent={alignContentArray}
       alignItems={alignItems}
       justify={justify}
       direction={direction}
