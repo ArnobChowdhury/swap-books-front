@@ -11,7 +11,7 @@ export default {
   subcomponents: { FlexItem },
   decorators: [withKnobs, withA11y],
   parameters: {
-    componentSubtitle: 'Layout pages with css flex boxes',
+    componentSubtitle: 'Layout pages or use this for flex boxes',
   },
 };
 

@@ -23,7 +23,7 @@ export interface ContainerProps {
   wrap?: 'nowrap' | 'wrap' | 'wrap-reverse';
 }
 /**
- * Use `FlexContainer` to layout pages in combination with `FlexItem` component
+ * Create flex boxes with `FlexContainer` & `FlexItem` components with css breakpoints
  */
 const FlexContainer = ({
   alignContent = 'stretch',
