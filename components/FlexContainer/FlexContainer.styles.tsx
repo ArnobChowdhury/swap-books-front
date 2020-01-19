@@ -1,17 +1,7 @@
 import styled from 'styled-components';
-import { GridProps } from './Grid';
-import { GridColumnProps } from './GridColumn';
+import { ContainerProps } from './FlexContainer';
 
-interface GridDivProps {
-  direction: string;
-  alignContent: string;
-}
-
-interface ColumnDivProps extends GridColumnProps {
-  gridCss: string;
-}
-
-export const GridDiv = styled.div<GridProps>`
+export const ContainerDiv = styled.div<ContainerProps>`
   display: flex;
   flex-wrap: ${(props): string | null => (props.wrap ? props.wrap : null)};
   flex-direction: ${(props): string | null =>
@@ -29,18 +19,14 @@ export const GridDiv = styled.div<GridProps>`
   box-sizing: border-box;
 `;
 
-export const ColumnDiv = styled.div<ColumnDivProps>`
-  box-sizing: border-box;
-  padding: ${(props): string | null =>
-    props.padding ? `${props.padding}px` : null};
-  ${(props): string => props.gridCss}
-`;
+// Just for story purpose
 
-export const GridInnerDiv = styled.div`
+export const InnerDiv = styled.div`
   box-sizing: border-box;
-  background: #ff8398;
-  color: white;
-  font-size: 14px;
+  border-radius: 2px;
+  background: #ffc426;
+  color: rgb(42, 42, 42);
+  font-size: 20px;
   padding: 10px;
   text-align: center;
   font-family: 'ubuntu';

@@ -1,8 +1,7 @@
-import { GridDiv } from './Grid.styles';
-import GridColumn from './GridColumn';
+import { ContainerDiv } from './FlexContainer.styles';
 import React, { ReactNode } from 'react';
 
-export interface GridProps {
+export interface ContainerProps {
   alignContent?:
     | 'flex-end'
     | 'flex-start'
@@ -23,8 +22,10 @@ export interface GridProps {
   spacing?: number;
   wrap?: 'nowrap' | 'wrap' | 'wrap-reverse';
 }
-
-const Grid = ({
+/**
+ * Use `FlexContainer` to layout pages in combination with `FlexItem` component
+ */
+const FlexContainer = ({
   alignContent = 'stretch',
   alignItems = 'stretch',
   children,
@@ -32,14 +33,14 @@ const Grid = ({
   justify = 'flex-start',
   spacing,
   wrap = 'wrap',
-}: GridProps): JSX.Element => {
+}: ContainerProps): JSX.Element => {
   let childrenArray;
   if (children) {
     childrenArray = React.Children.map(children, child => {
       if (React.isValidElement(child)) {
         if (
           typeof child.type === 'function' &&
-          child.type.name === 'GridColumn'
+          child.type.name === 'FlexItem'
         ) {
           return React.cloneElement(child, { padding: spacing });
         } else {
@@ -52,34 +53,12 @@ const Grid = ({
   }
 
   return (
-    <GridDiv
+    <ContainerDiv
       {...{ alignContent, alignItems, direction, justify, wrap, spacing }}
     >
       {childrenArray ? childrenArray : null}
-    </GridDiv>
+    </ContainerDiv>
   );
 };
 
-export default Grid;
-
-Grid.column = GridColumn;
-// config.js
-// import { configure } from '@storybook/react';
-// // automatically import all files ending in *.stories.tsx
-// configure(require.context('../components', true, /\.stories\.tsx?$/), module)
-
-// webpack.config.js
-// module.exports = ({ config }) => {
-//   config.module.rules.push({
-//     test: /\.(ts|tsx)$/,
-//     loader: require.resolve('babel-loader'),
-//     options: {
-//       presets: [require.resolve('babel-preset-react-app')],
-//     },
-//   });
-// addons.js
-//   config.resolve.extensions.push('.ts', '.tsx');
-//   return config;
-// };
-// import '@storybook/addon-knobs/register';
-// import '@storybook/addon-docs/register';
+export default FlexContainer;

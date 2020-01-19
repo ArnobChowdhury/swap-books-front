@@ -1,10 +1,11 @@
 import React from 'react';
 import { cleanup, render } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
-import Grid, { GridProps } from './Grid';
+import FlexContainer, { ContainerProps } from './FlexContainer';
+import FlexItem from '../FlexItem';
 
-describe('<Grid>', () => {
-  let props: GridProps;
+describe('<FlexContainer>', () => {
+  let props: ContainerProps;
   beforeEach(() => {
     props = {
       direction: 'row',
@@ -13,13 +14,13 @@ describe('<Grid>', () => {
 
   afterEach(cleanup);
 
-  test('Grid component should be in the dom', () => {
-    const { container } = render(<Grid></Grid>);
+  test('FlexContainer component should be in the dom', () => {
+    const { container } = render(<FlexContainer></FlexContainer>);
     expect(container).toBeInTheDocument();
   });
 
-  test('Grid component should render with default styling when no prop is passed', () => {
-    const { container } = render(<Grid />);
+  test('FlexContainer should render with default styling when no prop is passed', () => {
+    const { container } = render(<FlexContainer />);
     expect(container.firstChild).toHaveStyle('display: flex');
     expect(container.firstChild).toHaveStyle('flex-direction: row');
     expect(container.firstChild).toHaveStyle('flex-wrap: wrap');
@@ -28,7 +29,7 @@ describe('<Grid>', () => {
     expect(container.firstChild).toHaveStyle('align-content: stretch');
   });
 
-  test('Grid component should render with styling according to props passed', () => {
+  test('FlexContainer should render with styling according to props passed', () => {
     props = {
       ...props,
       alignItems: 'center',
@@ -37,7 +38,7 @@ describe('<Grid>', () => {
       direction: 'column',
       wrap: 'nowrap',
     };
-    const { container } = render(<Grid {...props} />);
+    const { container } = render(<FlexContainer {...props} />);
     expect(container.firstChild).toHaveStyle('flex-direction: column');
     expect(container.firstChild).toHaveStyle('flex-wrap: nowrap');
     expect(container.firstChild).toHaveStyle('justify-content: flex-end');
@@ -45,62 +46,62 @@ describe('<Grid>', () => {
     expect(container.firstChild).toHaveStyle('align-content: center');
   });
 
-  test('Grid component render with appropriate width and margin styling according to spacing prop', () => {
+  test('FlexContainer render with appropriate width and margin styling according to spacing prop', () => {
     props = {
       ...props,
       spacing: 5,
     };
-    const { container } = render(<Grid {...props} />);
+    const { container } = render(<FlexContainer {...props} />);
     expect(container.firstChild).toHaveStyle('width: calc(100% + 10px)');
     expect(container.firstChild).toHaveStyle('margin: -5px');
   });
 
-  test('Grid component should pass padding to Grid.column components', () => {
+  test('FlexContainer should pass padding to Column components', () => {
     props = {
       ...props,
       spacing: 5,
     };
     const component = (
-      <Grid {...props}>
-        <Grid.column></Grid.column>
-      </Grid>
+      <FlexContainer {...props}>
+        <FlexItem></FlexItem>
+      </FlexContainer>
     );
     const { getByTestId } = render(component);
-    expect(getByTestId('gridColumnTestId')).toBeInTheDocument();
-    expect(getByTestId('gridColumnTestId')).toHaveStyle('padding: 5px');
+    expect(getByTestId('FlexItemTestId')).toBeInTheDocument();
+    expect(getByTestId('FlexItemTestId')).toHaveStyle('padding: 5px');
   });
 
-  test('Grid components should render child that is valid React element but is not Grid.column', () => {
+  test('FlexContainer should render child that is valid React element but is not FlexItem', () => {
     const component = (
-      <Grid {...props}>
-        <Grid.column></Grid.column>
-        <div>Child but not a Grid column</div>
-      </Grid>
+      <FlexContainer {...props}>
+        <FlexItem></FlexItem>
+        <div>Child but not a FlexItem</div>
+      </FlexContainer>
     );
     const { getByTestId, getByText } = render(component);
-    expect(getByTestId('gridColumnTestId')).toBeInTheDocument();
-    expect(getByText('Child but not a Grid column')).toBeInTheDocument();
+    expect(getByTestId('FlexItemTestId')).toBeInTheDocument();
+    expect(getByText('Child but not a FlexItem')).toBeInTheDocument();
   });
 
-  test('Grid components should not render child that is not a valid React element', () => {
+  test('FlexContainer should not render child that is not a valid React element', () => {
     const component = (
-      <Grid>
-        <Grid.column></Grid.column>
-        <div>Child but not a Grid column</div>I should not be in the dom
-      </Grid>
+      <FlexContainer>
+        <FlexItem></FlexItem>
+        <div>Child but not a FlexItem</div>I should not be in the dom
+      </FlexContainer>
     );
     const { queryByText } = render(component);
     expect(queryByText('I should not be in the dom')).not.toBeInTheDocument();
   });
 
-  test('Grid.column components should render with its children', () => {
+  test('FlexItem components should render with its children', () => {
     const component = (
-      <Grid>
-        <Grid.column>
+      <FlexContainer>
+        <FlexItem>
           <div>First child </div>
           <div>Second child</div>
-        </Grid.column>
-      </Grid>
+        </FlexItem>
+      </FlexContainer>
     );
     const { getByText } = render(component);
     expect(getByText('First child')).toBeInTheDocument();

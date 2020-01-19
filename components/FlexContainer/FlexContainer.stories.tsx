@@ -1,15 +1,18 @@
 import React from 'react';
 import { withKnobs, number, select } from '@storybook/addon-knobs';
-import Grid from './Grid';
-import GridColumn from './GridColumn';
-import { GridInnerDiv } from './Grid.styles';
+import { withA11y } from '@storybook/addon-a11y';
+import FlexItem from '../FlexItem';
+import { InnerDiv } from './FlexContainer.styles';
+import FlexContainer from '.';
 
 export default {
-  title: 'Grid',
-  component: Grid,
-  subcomponents: [GridColumn],
-  decorators: [withKnobs],
-  excludeStories: ['alignContent'],
+  title: 'FlexContainer',
+  component: FlexContainer,
+  subcomponents: { FlexItem },
+  decorators: [withKnobs, withA11y],
+  parameters: {
+    componentSubtitle: 'Layout pages with css flex boxes',
+  },
 };
 
 export const Default = (): JSX.Element => {
@@ -47,11 +50,11 @@ export const Default = (): JSX.Element => {
     ],
     'flex-start',
   );
-  const spacing = number('spacing', 2);
+  const spacing = number('spacing', 8);
   const wrap = select('wrap', ['wrap', 'nowrap', 'wrap-reverse'], 'wrap');
 
   return (
-    <Grid
+    <FlexContainer
       spacing={spacing}
       alignContent={alignContent}
       alignItems={alignItems}
@@ -59,18 +62,18 @@ export const Default = (): JSX.Element => {
       direction={direction}
       wrap={wrap}
     >
-      <Grid.column xs={100} sm={50} md={75} lg={25} xl={20}>
-        <GridInnerDiv>I am a grid</GridInnerDiv>
-      </Grid.column>
-      <Grid.column xs={100} sm={50} md={25} lg={25} xl={20}>
-        <GridInnerDiv>I am a grid</GridInnerDiv>
-      </Grid.column>
-      <Grid.column xs={100} sm={50} md={25} lg={25} xl={20}>
-        <GridInnerDiv>I am a grid</GridInnerDiv>
-      </Grid.column>
-      <Grid.column xs={100} sm={50} md={75} lg={25} xl={20}>
-        <GridInnerDiv>I am a grid</GridInnerDiv>
-      </Grid.column>
-    </Grid>
+      <FlexItem defaultSize={100} sm={50} md={75} lg={25} xl={20}>
+        <InnerDiv>I am a flex item</InnerDiv>
+      </FlexItem>
+      <FlexItem defaultSize={100} sm={50} md={25} lg={25} xl={20}>
+        <InnerDiv>I am a flex item</InnerDiv>
+      </FlexItem>
+      <FlexItem defaultSize={100} sm={50} md={25} lg={25} xl={20}>
+        <InnerDiv>I am a flex item</InnerDiv>
+      </FlexItem>
+      <FlexItem defaultSize={100} sm={50} md={75} lg={25} xl={20}>
+        <InnerDiv>I am a flex item</InnerDiv>
+      </FlexItem>
+    </FlexContainer>
   );
 };
