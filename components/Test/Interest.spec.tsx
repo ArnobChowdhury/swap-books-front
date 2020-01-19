@@ -5,10 +5,7 @@ import { render } from '@testing-library/react';
 
 describe('Should render something', () => {
   test('Should do something', () => {
-    const { container, debug } = render(
-      <Interest text="Very much interested" />,
-    );
-    debug();
-    expect(container).toBeInTheDocument();
+    const { container } = render(<Interest text="Very much interested" />);
+    expect(container.firstChild).toBeInTheDocument();
   });
 });
