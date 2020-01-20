@@ -1,33 +1,31 @@
 import React from 'react';
-import { InputHTML } from './Input.styles';
+import InputBox from '../InputBox';
 
 export interface InputProps {
-  value?: string | number;
-  placeholder?: string;
-  type?: 'text' | 'email' | 'password';
-  onChange?: React.FormEventHandler<HTMLInputElement>;
-  isFullWidth?: boolean;
+  labelText: string;
+  type: 'text' | 'email' | 'password';
+  value: string;
+  onChangeFunc?: React.FormEventHandler<HTMLInputElement>;
+  inputFieldFullWidth?: boolean;
 }
 
-/**
- *
- * Use this `Input` component for Email, Password or Text but not for Text Area or search
- */
 const Input: React.FC<InputProps> = ({
-  value = '',
   type = 'text',
-  placeholder,
-  onChange,
-  isFullWidth = false,
-}: InputProps): JSX.Element => {
+  labelText,
+  value = '',
+  onChangeFunc,
+  inputFieldFullWidth = true,
+}: InputProps) => {
   return (
-    <InputHTML
-      value={value}
-      type={type}
-      onChange={onChange}
-      placeholder={placeholder}
-      {...{ isFullWidth }}
-    />
+    <div>
+      <label>{labelText}</label>
+      <InputBox
+        type={type}
+        value={value}
+        onChange={onChangeFunc}
+        isFullWidth={inputFieldFullWidth}
+      />
+    </div>
   );
 };
 
