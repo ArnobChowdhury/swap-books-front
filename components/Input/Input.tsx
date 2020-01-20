@@ -5,8 +5,8 @@ export interface InputProps {
   value?: string | number;
   placeholder?: string;
   type?: 'text' | 'email' | 'password';
-  /** Pass the onChange function to get value */
   onChange?: React.FormEventHandler<HTMLInputElement>;
+  isFullWidth?: boolean;
 }
 
 /**
@@ -18,6 +18,7 @@ const Input: React.FC<InputProps> = ({
   type = 'text',
   placeholder,
   onChange,
+  isFullWidth = false,
 }: InputProps): JSX.Element => {
   return (
     <InputHTML
@@ -25,6 +26,7 @@ const Input: React.FC<InputProps> = ({
       type={type}
       onChange={onChange}
       placeholder={placeholder}
+      {...{ isFullWidth }}
     />
   );
 };

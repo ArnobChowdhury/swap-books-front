@@ -14,53 +14,41 @@ export default {
     componentSubtitle: 'Layout pages or use this for flex boxes',
   },
 };
+const alignContent = [
+  'flex-start',
+  'flex-end',
+  'center',
+  'space-between',
+  'space-around',
+  'stretch',
+];
+
+const alignItems = ['flex-start', 'flex-end', 'center', 'baseline', 'stretch'];
+
+const justify = [
+  'flex-start',
+  'flex-end',
+  'center',
+  'space-evenly',
+  'space-around',
+  'space-between',
+];
+
+const direction = ['row', 'column', 'row-reverse', 'column-reverse'];
+
+const wrap = ['wrap', 'nowrap', 'wrap-reverse'];
 
 export const Default = (): JSX.Element => {
-  const alignContent = select(
-    'alignContent',
-    [
-      'flex-start',
-      'flex-end',
-      'center',
-      'space-between',
-      'space-around',
-      'stretch',
-    ],
-    'stretch',
-  );
-  const alignItems = select(
-    'alignItems',
-    ['flex-start', 'flex-end', 'center', 'baseline', 'stretch'],
-    'stretch',
-  );
-  const direction = select(
-    'direction',
-    ['row', 'column', 'row-reverse', 'column-reverse'],
-    'row',
-  );
-  const justify = select(
-    'justify',
-    [
-      'flex-start',
-      'flex-end',
-      'center',
-      'space-evenly',
-      'space-around',
-      'space-between',
-    ],
-    'flex-start',
-  );
-  const spacing = number('spacing', 8);
-  const wrap = select('wrap', ['wrap', 'nowrap', 'wrap-reverse'], 'wrap');
-
   return (
     <FlexContainer
-      spacing={spacing}
-      alignContent={alignContent}
-      alignItems={alignItems}
-      justify={justify}
-      direction={direction}
-      wrap={wrap}
+      spacing={number('spacing', 8)}
+      alignContent={
+        select('alignContent', [...alignContent], 'stretch') as 'stretch'
+      }
+      alignItems={select('alignItems', [...alignItems], 'stretch') as 'stretch'}
+      justify={select('justify', [...justify], 'center') as 'center'}
+      direction={select('direction', [...direction], 'row') as 'row'}
+      wrap={select('wrap', [...wrap], 'wrap') as 'wrap'}
     >
       <FlexItem defaultSize={100} sm={50} md={75} lg={25} xl={20}>
         <InnerDiv>I am a flex item</InnerDiv>

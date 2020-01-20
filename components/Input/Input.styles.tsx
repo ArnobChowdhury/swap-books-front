@@ -13,4 +13,5 @@ export const InputHTML = styled.input.attrs(props => {
   border: 1px solid #424242;
   box-sizing: border-box;
   font-size: 1rem;
+  width: ${(props): string | null => (props.isFullWidth ? '100%' : null)};
 `;
