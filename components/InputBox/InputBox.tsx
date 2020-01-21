@@ -7,6 +7,7 @@ export interface InputBoxProps {
   type?: 'text' | 'email' | 'password';
   onChange?: React.FormEventHandler<HTMLInputElement>;
   isFullWidth?: boolean;
+  labelAtTop?: boolean;
 }
 
 /**
@@ -19,6 +20,7 @@ const InputBox: React.FC<InputBoxProps> = ({
   placeholder,
   onChange,
   isFullWidth = false,
+  labelAtTop = false,
 }: InputBoxProps): JSX.Element => {
   return (
     <InputHTML
@@ -27,6 +29,7 @@ const InputBox: React.FC<InputBoxProps> = ({
       onChange={onChange}
       placeholder={placeholder}
       {...{ isFullWidth }}
+      {...{ labelAtTop }}
     />
   );
 };

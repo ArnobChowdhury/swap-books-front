@@ -1,31 +1,48 @@
 import React from 'react';
 import InputBox from '../InputBox';
+import { Label, RequiredSpan, LabelSpan } from './Input.styles';
 
 export interface InputProps {
-  labelText: string;
+  labelText: string | undefined;
   type: 'text' | 'email' | 'password';
   value: string;
+  placeholder?: string;
   onChangeFunc?: React.FormEventHandler<HTMLInputElement>;
   inputFieldFullWidth?: boolean;
+  isRequired?: boolean;
+  labelAtTop?: boolean;
 }
 
 const Input: React.FC<InputProps> = ({
   type = 'text',
-  labelText,
+  labelText = '',
   value = '',
   onChangeFunc,
-  inputFieldFullWidth = true,
+  inputFieldFullWidth,
+  placeholder,
+  isRequired = false,
+  labelAtTop = false,
 }: InputProps) => {
   return (
-    <div>
-      <label>{labelText}</label>
+    <Label {...{ labelAtTop }}>
+      <LabelSpan {...{ labelAtTop }}>
+        {isRequired && !labelAtTop ? (
+          <RequiredSpan {...{ labelAtTop }}>*</RequiredSpan>
+        ) : null}
+        {labelText}
+        {isRequired && labelAtTop ? (
+          <RequiredSpan {...{ labelAtTop }}> (Required)</RequiredSpan>
+        ) : null}
+      </LabelSpan>
       <InputBox
         type={type}
         value={value}
         onChange={onChangeFunc}
+        placeholder={placeholder ? placeholder : undefined}
         isFullWidth={inputFieldFullWidth}
+        labelAtTop={labelAtTop}
       />
-    </div>
+    </Label>
   );
 };
 

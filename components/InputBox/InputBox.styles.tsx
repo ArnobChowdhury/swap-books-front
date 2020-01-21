@@ -8,10 +8,15 @@ export const InputHTML = styled.input.attrs(props => {
     placeholder: props.placeholder,
   };
 })<InputBoxProps>`
-  padding: 8px 10px;
-  border-radius: 2px;
+  display: ${(props): string | null => (props.labelAtTop ? 'block' : null)};
+  padding: 0.4rem 0.8rem;
+  border-radius: 0.2rem;
   border: 1px solid #424242;
   box-sizing: border-box;
   font-size: 1rem;
-  width: ${(props): string | null => (props.isFullWidth ? '100%' : null)};
+  font-family: inherit;
+  width: ${(props): string | null =>
+    props.isFullWidth && props.labelAtTop ? '100%' : null};
+  flex-grow: ${(props): string | null =>
+    props.isFullWidth && !props.labelAtTop ? '1' : null};
 `;
