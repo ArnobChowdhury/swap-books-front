@@ -1,5 +1,4 @@
 module.exports = {
-  preset: "ts-jest",
   testEnvironment: "jsdom",
   moduleFileExtensions: [
     "ts",
@@ -12,11 +11,6 @@ module.exports = {
   testMatch: [
     "**/*.(test|spec).(ts|tsx)"
   ],
-  globals: {
-    "ts-jest": {
-      babelConfig: require('./babel.config.js'),
-    }
-  },
   setupFilesAfterEnv: [
     "@testing-library/jest-dom/extend-expect"
   ],
