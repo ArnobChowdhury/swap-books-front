@@ -1,4 +1,3 @@
-import React from 'react';
 import InputBox from '../InputBox';
 import { Label, RequiredSpan, LabelSpan } from './Input.styles';
 
@@ -14,7 +13,7 @@ export interface InputProps {
 }
 
 /**
- * Use `Input` component for text, email or Password but not for Text area or search 
+ * Use `Input` component for text, email or Password but not for Text area or search
  */
 const Input: React.FC<InputProps> = ({
   type = 'text',
@@ -27,7 +26,7 @@ const Input: React.FC<InputProps> = ({
   labelAtTop = false,
 }: InputProps) => {
   return (
-    <Label {...{ labelAtTop }}>
+    <Label {...{ labelAtTop }} data-testid="inputLabelTestid">
       <LabelSpan {...{ labelAtTop }}>
         {isRequired && !labelAtTop ? (
           <RequiredSpan {...{ labelAtTop }}>*</RequiredSpan>

@@ -1,4 +1,3 @@
-import React from 'react';
 import { InputHTML } from './InputBox.styles';
 
 export interface InputBoxProps {
@@ -30,6 +29,7 @@ const InputBox: React.FC<InputBoxProps> = ({
       placeholder={placeholder}
       {...{ isFullWidth }}
       {...{ labelAtTop }}
+      data-testid="inputFieldTestid"
     />
   );
 };

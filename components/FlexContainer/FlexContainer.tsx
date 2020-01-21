@@ -38,10 +38,7 @@ const FlexContainer = ({
   if (children) {
     childrenArray = React.Children.map(children, child => {
       if (React.isValidElement(child)) {
-        if (
-          typeof child.type === 'function' &&
-          child.type.name === 'FlexItem'
-        ) {
+        if (typeof child.type === 'function' && child.type.name === 'FlexItem') {
           return React.cloneElement(child, { padding: spacing });
         } else {
           return child;

@@ -1,4 +1,3 @@
-import React from 'react';
 import { cleanup, render } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import FlexContainer, { ContainerProps } from './FlexContainer';
@@ -16,7 +15,7 @@ describe('<FlexContainer>', () => {
 
   test('FlexContainer component should be in the dom', () => {
     const { container } = render(<FlexContainer></FlexContainer>);
-    expect(container).toBeInTheDocument();
+    expect(container.firstChild).toBeInTheDocument();
   });
 
   test('FlexContainer should render with default styling when no prop is passed', () => {

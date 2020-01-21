@@ -20,4 +20,11 @@ export const InputHTML = styled.input.attrs(props => {
     props.isFullWidth && props.labelAtTop ? '100%' : null};
   flex-grow: ${(props): string | null =>
     props.isFullWidth && !props.labelAtTop ? '1' : null};
+  background: ${(props): string | null =>
+    props.labelAtTop ? null : props.theme.colorYellowLight};
+  border: ${(props): string | null =>
+    props.labelAtTop ? `1px solid ${props.theme.colorGreyLight}` : 'none'};
+  min-width: 22rem;
+  min-height: 4.2rem;
+  color: ${(props): string | null => props.theme.colorBlackDark};
 `;
