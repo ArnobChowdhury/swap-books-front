@@ -23,11 +23,11 @@ export const ContainerDiv = styled.div<ContainerProps>`
 
 export const InnerDiv = styled.div`
   box-sizing: border-box;
-  border-radius: 2px;
+  border-radius: 0.2rem;
   background: #ffc426;
   color: rgb(42, 42, 42);
-  font-size: 20px;
-  padding: 10px;
+  font-size: 2rem;
+  padding: 1rem;
   text-align: center;
-  font-family: 'ubuntu';
+  font-family: inherit;
 `;

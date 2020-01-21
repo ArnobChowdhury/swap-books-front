@@ -4,6 +4,7 @@ import { withA11y } from '@storybook/addon-a11y';
 import FlexItem from '../FlexItem';
 import { InnerDiv } from './FlexContainer.styles';
 import FlexContainer from '.';
+import GlobalStyles from '../GlobalStyles';
 
 export default {
   title: 'FlexContainer',
@@ -40,28 +41,31 @@ const wrap = ['wrap', 'nowrap', 'wrap-reverse'];
 
 export const Default = (): JSX.Element => {
   return (
-    <FlexContainer
-      spacing={number('spacing', 8)}
-      alignContent={
-        select('alignContent', [...alignContent], 'stretch') as 'stretch'
-      }
-      alignItems={select('alignItems', [...alignItems], 'stretch') as 'stretch'}
-      justify={select('justify', [...justify], 'center') as 'center'}
-      direction={select('direction', [...direction], 'row') as 'row'}
-      wrap={select('wrap', [...wrap], 'wrap') as 'wrap'}
-    >
-      <FlexItem defaultSize={100} sm={50} md={75} lg={25} xl={20}>
-        <InnerDiv>I am a flex item</InnerDiv>
-      </FlexItem>
-      <FlexItem defaultSize={100} sm={50} md={25} lg={25} xl={20}>
-        <InnerDiv>I am a flex item</InnerDiv>
-      </FlexItem>
-      <FlexItem defaultSize={100} sm={50} md={25} lg={25} xl={20}>
-        <InnerDiv>I am a flex item</InnerDiv>
-      </FlexItem>
-      <FlexItem defaultSize={100} sm={50} md={75} lg={25} xl={20}>
-        <InnerDiv>I am a flex item</InnerDiv>
-      </FlexItem>
-    </FlexContainer>
+    <>
+      <GlobalStyles storybook />
+      <FlexContainer
+        spacing={number('spacing', 8)}
+        alignContent={
+          select('alignContent', [...alignContent], 'stretch') as 'stretch'
+        }
+        alignItems={select('alignItems', [...alignItems], 'stretch') as 'stretch'}
+        justify={select('justify', [...justify], 'center') as 'center'}
+        direction={select('direction', [...direction], 'row') as 'row'}
+        wrap={select('wrap', [...wrap], 'wrap') as 'wrap'}
+      >
+        <FlexItem defaultSize={100} sm={50} md={75} lg={25} xl={20}>
+          <InnerDiv>I am a flex item</InnerDiv>
+        </FlexItem>
+        <FlexItem defaultSize={100} sm={50} md={25} lg={25} xl={20}>
+          <InnerDiv>I am a flex item</InnerDiv>
+        </FlexItem>
+        <FlexItem defaultSize={100} sm={50} md={25} lg={25} xl={20}>
+          <InnerDiv>I am a flex item</InnerDiv>
+        </FlexItem>
+        <FlexItem defaultSize={100} sm={50} md={75} lg={25} xl={20}>
+          <InnerDiv>I am a flex item</InnerDiv>
+        </FlexItem>
+      </FlexContainer>
+    </>
   );
 };

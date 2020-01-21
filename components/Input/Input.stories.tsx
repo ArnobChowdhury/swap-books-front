@@ -1,15 +1,20 @@
 import React from 'react';
 import { withKnobs, text, select, boolean } from '@storybook/addon-knobs';
 import Input from './Input';
+import InputBox from '../InputBox';
 import { withA11y } from '@storybook/addon-a11y';
 import { decorate } from '@storybook/addon-actions';
+import GlobalStyles from '../GlobalStyles';
+import { ThemeProvider } from 'styled-components';
+import theme from '../../theme';
 
 export default {
   title: 'Input',
   component: Input,
+  subcomponents: { InputBox },
   decorators: [withKnobs, withA11y],
   parameters: {
-    componentSubtitle: 'Controlled text input component with label',
+    componentSubtitle: 'Text, Email, Password Inputs',
   },
 };
 
@@ -26,15 +31,20 @@ export const Default = (): JSX.Element => {
   const decorateActions = decorate([updateValueState]);
 
   return (
-    <Input
-      labelText={text('labelText', 'Email:')}
-      type={select('type', ['text', 'email', 'password'], 'email')}
-      value={value}
-      placeholder={text('placeholder', 'example@domain.com')}
-      onChangeFunc={decorateActions.action('onChange')}
-      inputFieldFullWidth={boolean('inputFieldFullWidth', false)}
-      isRequired={boolean('isRequired', false)}
-      labelAtTop={boolean('labelAtTop', false)}
-    />
+    <>
+      <ThemeProvider theme={theme}>
+        <GlobalStyles storybook />
+        <Input
+          labelText={text('labelText', 'Email')}
+          type={select('type', ['text', 'email', 'password'], 'email')}
+          value={value}
+          placeholder={text('placeholder', 'example@domain.com')}
+          onChangeFunc={decorateActions.action('onChange')}
+          inputFieldFullWidth={boolean('inputFieldFullWidth', false)}
+          isRequired={boolean('isRequired', false)}
+          labelAtTop={boolean('labelAtTop', false)}
+        />
+      </ThemeProvider>
+    </>
   );
 };

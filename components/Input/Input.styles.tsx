@@ -9,13 +9,14 @@ interface InputStyleProps {
 }
 
 const labelAtSideMixin = css<InputStyleProps>`
-  flex-basis: 20%;
+  flex-basis: 10%;
   text-align: right;
-  padding-right: 1rem;
+  padding-right: ${(props): string | null => props.theme.spaceFive};
 `;
 
 export const Label = styled.label<InputStyleProps>`
-  font-size: 1rem;
+  font-size: 1.5rem;
+  letter-spacing: 0.1rem;
   display: ${(props): string | null => (!props.labelAtTop ? 'flex' : null)};
   align-items: ${(props): string | null => (!props.labelAtTop ? 'center' : null)};
 `;
@@ -30,7 +31,7 @@ export const LabelSpan = styled.span<InputStyleProps>`
 `;
 
 export const RequiredSpan = styled.span<InputStyleProps>`
-  font-size: ${(props): string | null => (props.labelAtTop ? '.8rem' : '1rem')};
+  font-size: ${(props): string | null => (props.labelAtTop ? '1.2rem' : '1.6rem')};
   vertical-align: ${(props): string | null => (!props.labelAtTop ? 'top' : null)};
   color: ${(props): string | null => (!props.labelAtTop ? '#ff0000' : null)};
 `;

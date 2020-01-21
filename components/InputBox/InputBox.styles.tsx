@@ -13,8 +13,9 @@ export const InputHTML = styled.input.attrs(props => {
   border-radius: 0.2rem;
   border: 1px solid #424242;
   box-sizing: border-box;
-  font-size: 1rem;
+  font-size: inherit;
   font-family: inherit;
+  letter-spacing: 0.1rem;
   width: ${(props): string | null =>
     props.isFullWidth && props.labelAtTop ? '100%' : null};
   flex-grow: ${(props): string | null =>

@@ -13,6 +13,9 @@ export interface InputProps {
   labelAtTop?: boolean;
 }
 
+/**
+ * Use `Input` component for text, email or Password but not for Text area or search 
+ */
 const Input: React.FC<InputProps> = ({
   type = 'text',
   labelText = '',
