@@ -1,7 +1,7 @@
 import { ButtonStyled } from './Button.styles';
 interface ButtonProps {
   title: string;
-  isYellow: boolean;
+  isYellow?: boolean;
   onClick: () => void;
 }
 
@@ -11,7 +11,7 @@ const Button: React.FC<ButtonProps> = ({
   onClick,
 }: ButtonProps): JSX.Element => {
   return (
-    <ButtonStyled onClick={onClick} {...{ isYellow }}>
+    <ButtonStyled onClick={onClick} {...(isYellow ? { isYellow } : {})}>
       {title}
     </ButtonStyled>
   );

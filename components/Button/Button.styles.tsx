@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 interface ButtonStyledProps {
-  isYellow: boolean;
+  isYellow?: boolean;
 }
 
 export const ButtonStyled = styled.a<ButtonStyledProps>`
@@ -15,4 +15,10 @@ export const ButtonStyled = styled.a<ButtonStyledProps>`
   font-size: ${(props): string | null => props.theme.fontSizeOne};
   color: ${(props): string | null =>
     props.isYellow ? props.theme.colorBlackDark : 'white'}; };
+  cursor: pointer;
+  transition: all .2s;
+
+  &:hover {
+    transform: translateY(-.2rem);
+  }
 `;
