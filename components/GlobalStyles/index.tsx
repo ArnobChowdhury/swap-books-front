@@ -1,7 +1,9 @@
 import { createGlobalStyle } from 'styled-components';
+import theme from '../../theme';
 
 interface GlobalStylesProps {
   storybook?: boolean;
+  overFlowHidden?: boolean;
 }
 
 const GlobalStyles = createGlobalStyle<GlobalStylesProps>`
@@ -23,6 +25,9 @@ const GlobalStyles = createGlobalStyle<GlobalStylesProps>`
     font-family: 'Quicksand', sans-serif;
     box-sizing: border-box;
     font-weight: 400;
+    color: ${theme.colorBlackPrimary};
+    overflow: ${(props): string | null => (props.overFlowHidden ? 'hidden' : null)};
+    margin: 0;
   }
 `;
 

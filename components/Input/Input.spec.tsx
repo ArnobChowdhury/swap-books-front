@@ -1,7 +1,6 @@
 import { cleanup, render, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import Input, { InputProps } from './Input';
-import theme from '../../theme';
 
 describe('<Input />,', () => {
   let props: InputProps;

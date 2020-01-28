@@ -9,7 +9,7 @@ interface InputStyleProps {
 }
 
 const labelAtSideMixin = css<InputStyleProps>`
-  flex-basis: 10%;
+  flex-basis: 18%;
   text-align: right;
   padding-right: ${(props): string | null => props.theme.spaceFive};
 `;

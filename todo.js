@@ -5,7 +5,8 @@
  * Server side rendering for Styled-components
  *
  * ? Next todos related to components
- * Tests Inputs
+ * //Tests Inputs
  * //Define base colors with theme
- * Button with different colors
+ * //Log in & Sign up Buttons with different colors
+ * Make the modal following Material UI
  */

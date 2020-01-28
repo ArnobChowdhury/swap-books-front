@@ -1,5 +1,5 @@
 import { ButtonStyled } from './Button.styles';
-export interface ButtonProps {
+interface ButtonProps {
   title: string;
   isYellow: boolean;
   onClick: () => void;

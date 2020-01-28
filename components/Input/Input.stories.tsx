@@ -15,6 +15,7 @@ export default {
   decorators: [withKnobs, withA11y],
   parameters: {
     componentSubtitle: 'Text, Email, Password Inputs',
+    backgrounds: [{ name: 'Yellow', value: theme.colorYellowDeep, default: true }],
   },
 };
 
