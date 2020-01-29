@@ -9,4 +9,5 @@
  * //Define base colors with theme
  * //Log in & Sign up Buttons with different colors
  * Make the modal following Material UI
+ * Make the landing page responsive - When mobile tilts the design becomes weird
  */

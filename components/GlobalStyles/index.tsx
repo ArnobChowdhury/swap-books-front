@@ -26,7 +26,8 @@ const GlobalStyles = createGlobalStyle<GlobalStylesProps>`
     box-sizing: border-box;
     font-weight: 400;
     color: ${theme.colorBlackPrimary};
-    overflow: ${(props): string | null => (props.overFlowHidden ? 'hidden' : null)};
+    overflow-x: ${(props): string | null =>
+      props.overFlowHidden ? 'hidden' : null};
     margin: 0;
   }
 `;

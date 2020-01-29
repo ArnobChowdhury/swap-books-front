@@ -9,6 +9,8 @@ export interface FlexItemProps {
   sm?: number | 'auto' | boolean;
   xl?: number | 'auto' | boolean;
   defaultSize?: number | 'auto' | boolean;
+  width?: string;
+  height?: string;
 }
 
 const FlexItem = ({
@@ -19,6 +21,8 @@ const FlexItem = ({
   sm,
   xl,
   defaultSize,
+  width,
+  height,
 }: FlexItemProps): JSX.Element => {
   const generateFlexItem = (size: number | boolean | string): string => {
     let styles = '';
@@ -47,18 +51,10 @@ const FlexItem = ({
     let cssString = '';
 
     cssString += defaultSize ? generateFlexItem(defaultSize) : '';
-    cssString += sm
-      ? `@media (min-width: 600px) {${generateFlexItem(sm)}}`
-      : '';
-    cssString += md
-      ? `@media (min-width: 960px) {${generateFlexItem(md)}}`
-      : '';
-    cssString += lg
-      ? `@media (min-width: 1280px) {${generateFlexItem(lg)}}`
-      : '';
-    cssString += xl
-      ? `@media (min-width: 1920px) {${generateFlexItem(xl)}}`
-      : '';
+    cssString += sm ? `@media (min-width: 600px) {${generateFlexItem(sm)}}` : '';
+    cssString += md ? `@media (min-width: 960px) {${generateFlexItem(md)}}` : '';
+    cssString += lg ? `@media (min-width: 1280px) {${generateFlexItem(lg)}}` : '';
+    cssString += xl ? `@media (min-width: 1920px) {${generateFlexItem(xl)}}` : '';
 
     return cssString;
   };
@@ -67,6 +63,8 @@ const FlexItem = ({
     <FlexItemDiv
       {...{ padding }}
       {...{ flexCss: generateCSS() }}
+      {...(width ? { width } : {})}
+      {...(height ? { height } : {})}
       data-testid="FlexItemTestId"
     >
       {children ? children : null}

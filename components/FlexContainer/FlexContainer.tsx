@@ -18,9 +18,11 @@ export interface ContainerProps {
     | 'center'
     | 'space-between'
     | 'space-evenly'
-    | 'space-around';
+    | 'space-around'
+    | 'stretch';
   spacing?: number;
   wrap?: 'nowrap' | 'wrap' | 'wrap-reverse';
+  height?: string;
 }
 /**
  * Create flex boxes with `FlexContainer` & `FlexItem` components with css breakpoints
@@ -33,6 +35,7 @@ const FlexContainer = ({
   justify = 'flex-start',
   spacing,
   wrap = 'wrap',
+  height,
 }: ContainerProps): JSX.Element => {
   let childrenArray;
   if (children) {
@@ -52,6 +55,7 @@ const FlexContainer = ({
   return (
     <ContainerDiv
       {...{ alignContent, alignItems, direction, justify, wrap, spacing }}
+      {...(height ? { height } : {})}
     >
       {childrenArray ? childrenArray : null}
     </ContainerDiv>

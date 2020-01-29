@@ -1,35 +1,53 @@
 import styled from 'styled-components';
 
-export const LogoDiv = styled.div`
-  text-align: center;
-  padding-top: 4rem;
-`;
-export const BookDiv = styled.div`
-  padding: 7rem;
-  text-align: center;
-`;
 export const ContainerMain = styled.main`
-  width: 100vw;
-  height: 100vh;
-  background: black;
+  background: rgb(0, 0, 0);
 `;
 
 export const CopyDiv = styled.div`
+  flex-basis: 100%;
+  max-width: 100%;
   text-align: center;
-  padding: 6rem 45rem 3rem 45rem;
 
   & header {
     color: ${(props): string => props.theme.colorYellowLight};
-    font-size: 4rem;
+    font-size: 3rem;
     font-weight: 600;
-
-    & span {
-      color: ${(props): string => props.theme.colorYellowLight};
-    }
   }
 
   & p {
     color: ${(props): string => props.theme.colorGreyPrimary};
-    font-size: ${(props): string => props.theme.fontSizeThree};
+    font-size: ${(props): string => props.theme.fontSizeOne};
+  }
+`;
+export const LogoDiv = styled.div`
+  flex-basis: 100%;
+  flex-grow: 0;
+  max-width: 100%;
+  text-align: center;
+  height: 20vh;
+`;
+
+export const ButtonDiv = styled.div`
+  flex-basis: 50%;
+  display: flex;
+  justify-content: space-around;
+  @media (min-width: 960px) {
+    width: 30%;
+  }
+  @media (min-width: 1920px) {
+    width: 8%;
+  }
+`;
+
+export const BookDiv = styled.div`
+  flex-basis: 100%;
+  width: 100%;
+
+  @media (min-width: 960px) {
+    width: 50%;
+  }
+  @media (min-width: 1920px) {
+    width: 40%;
   }
 `;

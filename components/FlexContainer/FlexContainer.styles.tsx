@@ -17,6 +17,7 @@ export const ContainerDiv = styled.div<ContainerProps>`
   margin: ${(props): string | null =>
     props.spacing ? `-${props.spacing}px` : null};
   box-sizing: border-box;
+  height: ${(props): string | null => (props.height ? props.height : null)};
 `;
 
 // Just for story purpose
