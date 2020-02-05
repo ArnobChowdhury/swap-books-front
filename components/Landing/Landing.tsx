@@ -71,7 +71,7 @@ const Landing: React.FC<LandingProps> = ({
   return (
     <ContainerMain>
       <FlexContainer justify="center">
-        <FlexItem defaultSize={40}>
+        <FlexItem defaultSize={80} sm={60} lg={40}>
           <FlexContainer justify="center">
             <LogoDiv>
               <Logo width={450} />
@@ -81,7 +81,7 @@ const Landing: React.FC<LandingProps> = ({
               <p>
                 We can never buy enough books. So just share it with the people that
                 happen to live close to you. Or, maybe you would like to swap the
-                book that you do not need anymore, swap it with a academic peer.
+                book that you do not need anymore.
               </p>
             </CopyDiv>
             <ButtonDiv>
