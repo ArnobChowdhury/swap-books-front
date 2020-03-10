@@ -1,3 +1,1 @@
-import FlexContainer from './FlexContainer';
-
-export default FlexContainer;
+export { FlexContainer } from './FlexContainer';

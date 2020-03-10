@@ -13,7 +13,7 @@ export interface FlexItemProps {
   height?: string;
 }
 
-const FlexItem = ({
+export const FlexItem = ({
   children,
   lg,
   md,
@@ -71,5 +71,3 @@ const FlexItem = ({
     </FlexItemDiv>
   );
 };
-
-export default FlexItem;

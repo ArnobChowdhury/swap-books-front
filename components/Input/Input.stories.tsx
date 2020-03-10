@@ -1,6 +1,6 @@
 import React from 'react';
 import { withKnobs, text, select, boolean } from '@storybook/addon-knobs';
-import Input from './Input';
+import { Input } from './Input';
 import InputBox from '../InputBox';
 import { withA11y } from '@storybook/addon-a11y';
 import { decorate } from '@storybook/addon-actions';

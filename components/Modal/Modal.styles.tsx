@@ -5,9 +5,9 @@ export const ModalDiv = styled.div`
   min-width: 65rem;
   position: fixed;
   left: 50%;
-  top: 15%;
+  top: 40%;
   padding: 5rem;
-  transform: translate(-50%, 0%);
+  transform: translate(-50%, -50%);
   background: ${(props): string | null => props.theme.colorYellowDeep};
   border-radius: ${(props): string | null => props.theme.spaceOne};
   z-index: 1200;
@@ -22,6 +22,6 @@ export const BackgroundDiv = styled.div`
   top: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.35);
+  background: rgba(0, 0, 0, 0.8);
   z-index: 1100;
 `;

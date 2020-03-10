@@ -27,7 +27,7 @@ export interface ContainerProps {
 /**
  * Create flex boxes with `FlexContainer` & `FlexItem` components with css breakpoints
  */
-const FlexContainer = ({
+export const FlexContainer = ({
   alignContent = 'stretch',
   alignItems = 'stretch',
   children,
@@ -61,5 +61,3 @@ const FlexContainer = ({
     </ContainerDiv>
   );
 };
-
-export default FlexContainer;

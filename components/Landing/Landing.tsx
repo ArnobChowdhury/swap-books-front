@@ -8,8 +8,8 @@ import {
 import Book from './BookSVG';
 import Logo from '../../assets/Logo';
 import Button from '../Button';
-import FlexContainer from '../FlexContainer';
-import FlexItem from '../FlexItem';
+import { FlexContainer } from '../FlexContainer';
+import { FlexItem } from '../FlexItem';
 
 interface LandingProps {
   loginOnClick: () => void;
@@ -64,7 +64,7 @@ interface LandingProps {
 //     </ContainerMain>
 //   );
 // };
-const Landing: React.FC<LandingProps> = ({
+export const Landing: React.FC<LandingProps> = ({
   loginOnClick,
   signupOnClick,
 }: LandingProps): JSX.Element => {
@@ -97,4 +97,3 @@ const Landing: React.FC<LandingProps> = ({
     </ContainerMain>
   );
 };
-export default Landing;

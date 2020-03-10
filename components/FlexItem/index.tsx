@@ -1,3 +1,1 @@
-import FlexItem from './FlexItem';
-
-export default FlexItem;
+export { FlexItem } from './FlexItem';

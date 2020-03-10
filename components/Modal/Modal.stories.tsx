@@ -1,5 +1,5 @@
 import { withKnobs } from '@storybook/addon-knobs';
-import Modal from './Modal';
+import { Modal } from './Modal';
 import FlexContainer from '../FlexContainer';
 import FlexItem from '../FlexItem';
 import Input from '../Input';

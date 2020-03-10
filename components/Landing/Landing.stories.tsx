@@ -1,4 +1,4 @@
-import Landing from './Landing';
+import { Landing } from './Landing';
 import GlobalStyles from '../GlobalStyles';
 import { ThemeProvider } from 'styled-components';
 import theme from '../../theme';

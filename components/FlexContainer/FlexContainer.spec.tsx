@@ -1,7 +1,7 @@
 import { cleanup, render } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
-import FlexContainer, { ContainerProps } from './FlexContainer';
-import FlexItem from '../FlexItem';
+import { FlexContainer, ContainerProps } from './FlexContainer';
+import { FlexItem } from '../FlexItem';
 
 describe('<FlexContainer>', () => {
   let props: ContainerProps;

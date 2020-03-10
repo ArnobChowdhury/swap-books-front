@@ -4,7 +4,7 @@ export interface ModalProps {
   children: React.ReactNode;
   onClick: (e: React.SyntheticEvent) => void;
 }
-const Modal: React.FC<ModalProps> = ({
+export const Modal: React.FC<ModalProps> = ({
   children,
   onClick,
 }: ModalProps): JSX.Element => {
@@ -15,5 +15,3 @@ const Modal: React.FC<ModalProps> = ({
     </>
   );
 };
-
-export default Modal;
