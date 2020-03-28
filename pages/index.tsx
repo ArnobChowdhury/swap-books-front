@@ -23,8 +23,6 @@ const Home = (): JSX.Element => {
     showLoginForm && setShowLoginForm(false);
   };
 
-  //
-
   return (
     <ThemeProvider theme={theme}>
       <GlobalStyles />

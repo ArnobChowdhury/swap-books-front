@@ -31,6 +31,7 @@ export const Default = (): JSX.Element => {
                 type="email"
                 labelText="Email:"
                 value=""
+                name="email"
                 placeholder="Please type your email address"
                 inputFieldFullWidth={true}
                 isRequired={true}
@@ -41,6 +42,7 @@ export const Default = (): JSX.Element => {
                 type="password"
                 labelText="Password"
                 value=""
+                name="password"
                 placeholder="Choose a strong password"
                 inputFieldFullWidth={true}
                 isRequired={true}
