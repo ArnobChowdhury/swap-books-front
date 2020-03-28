@@ -1,6 +1,7 @@
 import { InputHTML } from './InputBox.styles';
 
 export interface InputBoxProps {
+  name: string;
   value?: string;
   placeholder?: string;
   type?: 'text' | 'email' | 'password';
@@ -20,9 +21,11 @@ const InputBox: React.FC<InputBoxProps> = ({
   onChange,
   isFullWidth = false,
   labelAtTop = false,
+  name,
 }: InputBoxProps): JSX.Element => {
   return (
     <InputHTML
+      name={name}
       value={value}
       type={type}
       onChange={onChange}

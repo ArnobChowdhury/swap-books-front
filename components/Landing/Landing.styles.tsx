@@ -70,7 +70,7 @@ export const ButtonDiv = styled.div`
   }
   @media (min-width: 960px) {
     flex-basis: 50%;
-    align-items: start;
+    align-items: center;
   }
   @media (min-width: 1920px) {
     flex-basis: 40%;

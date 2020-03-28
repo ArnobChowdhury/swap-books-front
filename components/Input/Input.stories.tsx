@@ -36,6 +36,7 @@ export const Default = (): JSX.Element => {
       <ThemeProvider theme={theme}>
         <GlobalStyles storybook />
         <Input
+          name={select('type', ['text', 'email', 'password'], 'email')}
           labelText={text('labelText', 'Email')}
           type={select('type', ['text', 'email', 'password'], 'email')}
           value={value}

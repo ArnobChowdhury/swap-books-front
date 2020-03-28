@@ -1,4 +1,4 @@
-import Button from './Button';
+import { Button } from './Button';
 import { withKnobs, text, boolean } from '@storybook/addon-knobs';
 import { withA11y } from '@storybook/addon-a11y';
 import { action } from '@storybook/addon-actions';

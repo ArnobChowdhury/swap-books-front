@@ -1,10 +1,10 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 interface ButtonStyledProps {
   isYellow?: boolean;
 }
 
-export const ButtonStyled = styled.a<ButtonStyledProps>`
+const ButtonCSS = css<ButtonStyledProps>`
   background: ${(props): string | null =>
     props.isYellow ? props.theme.colorYellowDeep : 'transparent'};
   border: ${(props): string | null => (!props.isYellow ? '1px solid white' : null)};
@@ -21,4 +21,12 @@ export const ButtonStyled = styled.a<ButtonStyledProps>`
   &:hover {
     transform: translateY(-.2rem);
   }
+`;
+
+export const ButtonBTag = styled.button<ButtonStyledProps>`
+  ${ButtonCSS}
+`;
+
+export const ButtonATag = styled.a<ButtonStyledProps>`
+  ${ButtonCSS}
 `;
