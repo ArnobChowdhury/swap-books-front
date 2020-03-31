@@ -4,8 +4,8 @@ import { ThemeProvider } from 'styled-components';
 import theme from '../theme';
 import { Landing } from '../components/Landing';
 import { FlexContainer } from '../components/FlexContainer';
-import { FlexItem } from '../components/FlexItem';
 import { Input } from '../components/Input';
+import { Button } from '../components/Button';
 import { Modal } from '../components/Modal';
 import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
@@ -55,28 +55,27 @@ const Home = (): JSX.Element => {
               }}
             >
               <Form>
-                <FlexItem>
-                  <Input
-                    type="email"
-                    labelText="Email:"
-                    name="email"
-                    value=""
-                    placeholder="Please type your email address"
-                    isRequired={true}
-                    onChangeFunc={() => {}}
-                  />
-                </FlexItem>
-                <FlexItem>
-                  <Input
-                    type="password"
-                    labelText="Password"
-                    name="password"
-                    value=""
-                    placeholder="Choose a strong password"
-                    isRequired={true}
-                    onChangeFunc={() => {}}
-                  />
-                </FlexItem>
+                <Input
+                  type="email"
+                  labelText="Email:"
+                  name="email"
+                  value=""
+                  placeholder="Please type your email address"
+                  isRequired={true}
+                  onChangeFunc={() => {}}
+                />
+                <Input
+                  type="password"
+                  labelText="Password"
+                  name="password"
+                  value=""
+                  placeholder="Choose a strong password"
+                  isRequired={true}
+                  onChangeFunc={() => {}}
+                />
+                <Button color="dark" type="submit">
+                  Sign up
+                </Button>
               </Form>
             </Formik>
           </FlexContainer>

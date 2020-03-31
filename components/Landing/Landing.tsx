@@ -37,8 +37,12 @@ export const Landing: React.FC<LandingProps> = ({
               </p>
             </CopyDiv>
             <ButtonDiv>
-              <Button title="Sign up" isYellow onClick={signupOnClick} />
-              <Button title="Log in" onClick={loginOnClick} />
+              <Button color="yellow" onClick={signupOnClick}>
+                Sign up
+              </Button>
+              <Button color="transparent" onClick={loginOnClick}>
+                Log in
+              </Button>
             </ButtonDiv>
             <BookDiv>
               <Book />
