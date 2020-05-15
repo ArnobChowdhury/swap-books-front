@@ -11,7 +11,6 @@ export const InputHTML = styled.input.attrs(props => {
   display: ${(props): string | null => (props.labelAtTop ? 'block' : null)};
   padding: 0.4rem 0.8rem;
   border-radius: 0.2rem;
-  border: 1px solid #424242;
   box-sizing: border-box;
   font-size: inherit;
   font-family: inherit;
@@ -25,6 +24,7 @@ export const InputHTML = styled.input.attrs(props => {
   border: ${(props): string | null =>
     props.labelAtTop ? `1px solid ${props.theme.colorGreyLight}` : 'none'};
   min-width: 22rem;
-  min-height: 4.2rem;
+  min-height: 3.8rem;
+  height: 3.8rem;
   color: ${(props): string | null => props.theme.colorBlackDark};
 `;

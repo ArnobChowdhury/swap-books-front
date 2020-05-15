@@ -7,6 +7,7 @@ export interface ButtonProps {
   onClick?: () => void;
   asButtonTag?: boolean;
   type?: 'submit' | 'reset' | 'button';
+  fontMedium?: boolean;
 }
 
 export const Button: React.FC<ButtonProps> = ({
@@ -15,15 +16,21 @@ export const Button: React.FC<ButtonProps> = ({
   asButtonTag = false,
   children,
   type,
+  fontMedium = false,
 }: ButtonProps): JSX.Element => {
   return (
     <>
       {asButtonTag ? (
-        <ButtonBTag type={type} onClick={onClick} color={color}>
+        <ButtonBTag
+          type={type}
+          onClick={onClick}
+          color={color}
+          fontMedium={fontMedium}
+        >
           {children}
         </ButtonBTag>
       ) : (
-        <ButtonATag onClick={onClick} color={color}>
+        <ButtonATag onClick={onClick} color={color} fontMedium={fontMedium}>
           {children}
         </ButtonATag>
       )}

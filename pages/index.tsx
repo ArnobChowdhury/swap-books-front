@@ -31,8 +31,8 @@ const Home = (): JSX.Element => {
         signupOnClick={(): void => setShowSignUpForm(!showSignUpForm)}
       />
       {showSignUpForm && (
-        <Modal onClick={closeModal}>
-          <FlexContainer direction="column" spacing={15}>
+        <Modal onClick={closeModal} modalContentPadding="4rem 5rem 4rem 3rem">
+          <div>
             <Formik
               initialValues={{
                 email: '',
@@ -63,6 +63,9 @@ const Home = (): JSX.Element => {
                   placeholder="Please type your email address"
                   isRequired={true}
                   onChangeFunc={() => {}}
+                  inputFieldFullWidth={true}
+                  labelMinWidth="10rem"
+                  marginBottom="2rem"
                 />
                 <Input
                   type="password"
@@ -72,13 +75,19 @@ const Home = (): JSX.Element => {
                   placeholder="Choose a strong password"
                   isRequired={true}
                   onChangeFunc={() => {}}
+                  inputFieldFullWidth={true}
+                  labelMinWidth="10rem"
+                  marginBottom="2rem"
                 />
-                <Button color="dark" type="submit">
-                  Sign up
-                </Button>
+                <div style={{ minWidth: '10rem', display: 'inline-block' }} />
+                <div style={{ display: 'inline-block' }}>
+                  <Button color="dark" type="submit" fontMedium asButtonTag>
+                    Sign up
+                  </Button>
+                </div>
               </Form>
             </Formik>
-          </FlexContainer>
+          </div>
         </Modal>
       )}
     </ThemeProvider>

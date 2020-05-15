@@ -3,6 +3,7 @@ import { ButtonProps } from './Button';
 
 interface ButtonStyledProps {
   color: ButtonProps['color'];
+  fontMedium: boolean;
 }
 
 const ButtonCSS = css<ButtonStyledProps>`
@@ -22,6 +23,7 @@ const ButtonCSS = css<ButtonStyledProps>`
   padding: ${({ theme }): string | null => `${theme.spaceFour} ${theme.spaceTen}`};
   font-family: inherit;
   font-size: ${(props): string | null => props.theme.fontSizeOne};
+  font-weight:${({ fontMedium }): string | null => (fontMedium ? '500' : null)};
   color: ${({ color, theme }): string | null =>
     color === 'yellow' ? theme.colorBlackDark : 'white'}; };
   cursor: pointer;

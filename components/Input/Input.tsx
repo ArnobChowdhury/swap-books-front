@@ -12,6 +12,8 @@ export interface InputProps {
   inputFieldFullWidth?: boolean;
   isRequired?: boolean;
   labelAtTop?: boolean;
+  labelMinWidth?: string;
+  marginBottom?: string;
 }
 
 /**
@@ -28,13 +30,19 @@ export const Input: React.FC<InputProps> = (props: InputProps) => {
     placeholder,
     isRequired = false,
     labelAtTop = false,
+    labelMinWidth,
+    marginBottom,
   } = props;
 
   const [field, meta] = useField(props);
 
   return (
-    <Label {...{ labelAtTop }} data-testid="inputLabelTestid">
-      <LabelSpan {...{ labelAtTop }}>
+    <Label
+      {...{ labelAtTop }}
+      data-testid="inputLabelTestid"
+      marginBottom={marginBottom}
+    >
+      <LabelSpan {...{ labelAtTop }} labelMinWidth={labelMinWidth}>
         {isRequired && !labelAtTop ? (
           <RequiredSpan {...{ labelAtTop }}>*</RequiredSpan>
         ) : null}
