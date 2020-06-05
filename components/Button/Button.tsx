@@ -16,5 +16,5 @@ const Button: React.FC<ButtonProps> = ({
     </ButtonStyled>
   );
 };
-
+// a simple comment
 export default Button;
