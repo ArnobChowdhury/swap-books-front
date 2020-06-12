@@ -1,8 +1,8 @@
 import { withKnobs } from '@storybook/addon-knobs';
 import { Modal } from './Modal';
-import FlexContainer from '../FlexContainer';
-import FlexItem from '../FlexItem';
-import Input from '../Input';
+import { FlexContainer } from '../FlexContainer';
+import { FlexItem } from '../FlexItem';
+import { Input } from '../Input';
 import { withA11y } from '@storybook/addon-a11y';
 import { action } from '@storybook/addon-actions';
 import GlobalStyles from '../GlobalStyles';
@@ -31,6 +31,7 @@ export const Default = (): JSX.Element => {
                 type="email"
                 labelText="Email:"
                 value=""
+                name="email"
                 placeholder="Please type your email address"
                 inputFieldFullWidth={true}
                 isRequired={true}
@@ -41,6 +42,7 @@ export const Default = (): JSX.Element => {
                 type="password"
                 labelText="Password"
                 value=""
+                name="password"
                 placeholder="Choose a strong password"
                 inputFieldFullWidth={true}
                 isRequired={true}

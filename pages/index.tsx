@@ -4,13 +4,15 @@ import { ThemeProvider } from 'styled-components';
 import theme from '../theme';
 import { Landing } from '../components/Landing';
 import { FlexContainer } from '../components/FlexContainer';
-import { FlexItem } from '../components/FlexItem';
 import { Input } from '../components/Input';
+import { Button } from '../components/Button';
 import { Modal } from '../components/Modal';
+import { Formik, Form } from 'formik';
+import * as Yup from 'yup';
 
 // TODO
 /**
- * Make the input boxes smaller in width (Maybe follow instagram's form login page)
+ * 1. Make the input boxes smaller in width (Maybe follow instagram's form login page). Plnr: on hold: 1
  */
 const Home = (): JSX.Element => {
   const [showSignUpForm, setShowSignUpForm] = useState<boolean>(false);
@@ -29,31 +31,63 @@ const Home = (): JSX.Element => {
         signupOnClick={(): void => setShowSignUpForm(!showSignUpForm)}
       />
       {showSignUpForm && (
-        <Modal onClick={closeModal}>
-          <FlexContainer direction="column" spacing={15}>
-            <FlexItem>
-              <Input
-                type="email"
-                labelText="Email:"
-                value=""
-                placeholder="Please type your email address"
-                inputFieldFullWidth={true}
-                isRequired={true}
-                onChangeFunc={() => {}}
-              />
-            </FlexItem>
-            <FlexItem>
-              <Input
-                type="password"
-                labelText="Password"
-                value=""
-                placeholder="Choose a strong password"
-                inputFieldFullWidth={true}
-                isRequired={true}
-                onChangeFunc={() => {}}
-              />
-            </FlexItem>
-          </FlexContainer>
+        <Modal onClick={closeModal} modalContentPadding="4rem 5rem 4rem 3rem">
+          <div>
+            <Formik
+              initialValues={{
+                email: '',
+                password: '',
+              }}
+              validationSchema={Yup.object({
+                email: Yup.string()
+                  .email('Invalid email address')
+                  .required('Required'),
+                password: Yup.string()
+                  .required('Password needed')
+                  .min(8, 'Too short. Needs to have min. 8 characters')
+                  .matches(/[a-zA-Z]/, 'Password can only contain latin letters'),
+              })}
+              onSubmit={(values, { setSubmitting }) => {
+                setTimeout(() => {
+                  alert(JSON.stringify(values, null, 2));
+                  setSubmitting(false);
+                }, 400);
+              }}
+            >
+              <Form>
+                <Input
+                  type="email"
+                  labelText="Email:"
+                  name="email"
+                  value=""
+                  placeholder="Please type your email address"
+                  isRequired={true}
+                  onChangeFunc={() => {}}
+                  inputFieldFullWidth={true}
+                  labelMinWidth="10rem"
+                  marginBottom="2rem"
+                />
+                <Input
+                  type="password"
+                  labelText="Password"
+                  name="password"
+                  value=""
+                  placeholder="Choose a strong password"
+                  isRequired={true}
+                  onChangeFunc={() => {}}
+                  inputFieldFullWidth={true}
+                  labelMinWidth="10rem"
+                  marginBottom="2rem"
+                />
+                <div style={{ minWidth: '10rem', display: 'inline-block' }} />
+                <div style={{ display: 'inline-block' }}>
+                  <Button color="dark" type="submit" fontMedium asButtonTag>
+                    Sign up
+                  </Button>
+                </div>
+              </Form>
+            </Formik>
+          </div>
         </Modal>
       )}
     </ThemeProvider>

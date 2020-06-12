@@ -1,9 +1,9 @@
 import React from 'react';
 import { withKnobs, number, select } from '@storybook/addon-knobs';
 import { withA11y } from '@storybook/addon-a11y';
-import FlexItem from '../FlexItem';
+import { FlexItem } from '../FlexItem';
 import { InnerDiv } from './FlexContainer.styles';
-import FlexContainer from '.';
+import { FlexContainer } from '.';
 import GlobalStyles from '../GlobalStyles';
 
 export default {

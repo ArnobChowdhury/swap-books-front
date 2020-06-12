@@ -1,20 +1,39 @@
-import { ButtonStyled } from './Button.styles';
-interface ButtonProps {
-  title: string;
-  isYellow?: boolean;
-  onClick: () => void;
+import { ButtonATag, ButtonBTag } from './Button.styles';
+import { ReactNode } from 'react';
+
+export interface ButtonProps {
+  children: ReactNode;
+  color?: 'yellow' | 'dark' | 'transparent';
+  onClick?: () => void;
+  asButtonTag?: boolean;
+  type?: 'submit' | 'reset' | 'button';
+  fontMedium?: boolean;
 }
 
-const Button: React.FC<ButtonProps> = ({
-  title,
-  isYellow = false,
+export const Button: React.FC<ButtonProps> = ({
+  color = 'transparent',
   onClick,
+  asButtonTag = false,
+  children,
+  type,
+  fontMedium = false,
 }: ButtonProps): JSX.Element => {
   return (
-    <ButtonStyled onClick={onClick} {...(isYellow ? { isYellow } : {})}>
-      {title}
-    </ButtonStyled>
+    <>
+      {asButtonTag ? (
+        <ButtonBTag
+          type={type}
+          onClick={onClick}
+          color={color}
+          fontMedium={fontMedium}
+        >
+          {children}
+        </ButtonBTag>
+      ) : (
+        <ButtonATag onClick={onClick} color={color} fontMedium={fontMedium}>
+          {children}
+        </ButtonATag>
+      )}
+    </>
   );
 };
-// a simple comment
-export default Button;

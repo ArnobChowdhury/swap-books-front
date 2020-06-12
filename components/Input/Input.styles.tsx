@@ -6,6 +6,8 @@ import styled, {
 
 interface InputStyleProps {
   labelAtTop: boolean;
+  labelMinWidth?: string;
+  marginBottom?: string;
 }
 
 const labelAtSideMixin = css<InputStyleProps>`
@@ -19,6 +21,8 @@ export const Label = styled.label<InputStyleProps>`
   letter-spacing: 0.1rem;
   display: ${(props): string | null => (!props.labelAtTop ? 'flex' : null)};
   align-items: ${(props): string | null => (!props.labelAtTop ? 'center' : null)};
+  margin-bottom: ${({ marginBottom }): string | null =>
+    marginBottom ? marginBottom : null};
 `;
 
 export const LabelSpan = styled.span<InputStyleProps>`
@@ -28,6 +32,8 @@ export const LabelSpan = styled.span<InputStyleProps>`
     ThemedStyledProps<InputStyleProps, HTMLSpanElement>
   > | null => (!props.labelAtTop ? labelAtSideMixin : null)};
   box-sizing: border-box;
+  min-width: ${({ labelMinWidth }): string | null =>
+    labelMinWidth ? labelMinWidth : null};
 `;
 
 export const RequiredSpan = styled.span<InputStyleProps>`

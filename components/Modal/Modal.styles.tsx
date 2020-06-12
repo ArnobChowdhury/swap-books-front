@@ -1,12 +1,12 @@
 import styled from 'styled-components';
 
-export const ModalDiv = styled.div`
-  width: 40vw;
-  min-width: 65rem;
+export const ModalDiv = styled.div<{ modalPadding?: string }>`
+  width: 30vw;
+  min-width: 55rem;
   position: fixed;
   left: 50%;
   top: 40%;
-  padding: 5rem;
+  padding: ${({ modalPadding }) => (modalPadding ? modalPadding : null)};
   transform: translate(-50%, -50%);
   background: ${(props): string | null => props.theme.colorYellowDeep};
   border-radius: ${(props): string | null => props.theme.spaceOne};

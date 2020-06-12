@@ -1,4 +1,4 @@
-import Button from './Button';
+import { Button } from './Button';
 import { withKnobs, text, boolean } from '@storybook/addon-knobs';
 import { withA11y } from '@storybook/addon-a11y';
 import { action } from '@storybook/addon-actions';
@@ -21,11 +21,9 @@ export const Default = (): JSX.Element => {
     <>
       <ThemeProvider theme={theme}>
         <GlobalStyles storybook />
-        <Button
-          title={text('title', 'Sign Up')}
-          onClick={action('onClick')}
-          isYellow={boolean('isYellow', true)}
-        />
+        <Button onClick={action('onClick')} isYellow={boolean('isYellow', true)}>
+          Sign up
+        </Button>
       </ThemeProvider>
     </>
   );
