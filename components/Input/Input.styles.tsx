@@ -5,7 +5,7 @@ import styled, {
 } from 'styled-components';
 
 interface InputStyleProps {
-  labelAtTop: boolean;
+  labelAtTop?: boolean;
   labelMinWidth?: string;
   marginBottom?: string;
 }
@@ -23,6 +23,7 @@ export const Label = styled.label<InputStyleProps>`
   align-items: ${(props): string | null => (!props.labelAtTop ? 'center' : null)};
   margin-bottom: ${({ marginBottom }): string | null =>
     marginBottom ? marginBottom : null};
+  flex-wrap: wrap;
 `;
 
 export const LabelSpan = styled.span<InputStyleProps>`
@@ -39,5 +40,26 @@ export const LabelSpan = styled.span<InputStyleProps>`
 export const RequiredSpan = styled.span<InputStyleProps>`
   font-size: ${(props): string | null => (props.labelAtTop ? '1.2rem' : '1.6rem')};
   vertical-align: ${(props): string | null => (!props.labelAtTop ? 'top' : null)};
-  color: ${(props): string | null => (!props.labelAtTop ? '#ff0000' : null)};
+  color: ${({ labelAtTop, theme }): string | null =>
+    !labelAtTop ? theme.colorRed : null};
+`;
+
+export const ErrorWrapper = styled.div`
+  flex-basis: 100%;
+  display: flex;
+  height: 2rem;
+`;
+
+export const ErrorText = styled.div`
+  font-size: ${({ theme }): string => theme.fontSizeSmall};
+  font-weight: 600;
+  line-height: ${({ theme }): string => theme.spaceTen};
+  color: ${({ theme }): string => theme.colorRed};
+  flex-grow: 1;
+  margin-left: ${({ theme }): string => theme.spaceFour};
+`;
+
+export const ErrorGutter = styled.div`
+  ${labelAtSideMixin}
+  min-width: 10rem;
 `;

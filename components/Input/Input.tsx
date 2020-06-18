@@ -1,5 +1,12 @@
 import InputBox from '../InputBox';
-import { Label, RequiredSpan, LabelSpan } from './Input.styles';
+import {
+  Label,
+  RequiredSpan,
+  LabelSpan,
+  ErrorWrapper,
+  ErrorText,
+  ErrorGutter,
+} from './Input.styles';
 import { useField } from 'formik';
 
 export interface InputProps {
@@ -56,12 +63,16 @@ export const Input: React.FC<InputProps> = (props: InputProps) => {
         type={type}
         value={value}
         onChange={onChangeFunc}
-        placeholder={placeholder ? placeholder : undefined}
+        placeholder={placeholder}
         isFullWidth={inputFieldFullWidth}
         labelAtTop={labelAtTop}
         {...field}
       />
-      {meta.touched && meta.error ? <div>{meta.error}</div> : null}
+      <ErrorWrapper>
+        <ErrorGutter />
+        {/* <ErrorText>Too short. Needs minimum 8 characters</ErrorText> */}
+        {meta.touched && meta.error ? <ErrorText>{meta.error}</ErrorText> : null}
+      </ErrorWrapper>
     </Label>
   );
 };

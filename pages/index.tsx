@@ -9,6 +9,29 @@ import { Button } from '../components/Button';
 import { Modal } from '../components/Modal';
 import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
+import ApolloClient from 'apollo-boost';
+import { gql } from 'apollo-boost';
+// import fetch from 'node-fetch';
+
+let client;
+if (process.browser) {
+  client = new ApolloClient({
+    uri: 'https://48p1r2roz4.sse.codesandbox.io',
+    fetch: fetch,
+  });
+}
+
+client
+  ?.query({
+    query: gql`
+      {
+        rates(currency: "USD") {
+          currency
+        }
+      }
+    `,
+  })
+  .then(result => console.log(result));
 
 // TODO
 /**
@@ -49,6 +72,7 @@ const Home = (): JSX.Element => {
               })}
               onSubmit={(values, { setSubmitting }) => {
                 setTimeout(() => {
+                  console.log('submit happened');
                   alert(JSON.stringify(values, null, 2));
                   setSubmitting(false);
                 }, 400);
@@ -65,7 +89,7 @@ const Home = (): JSX.Element => {
                   onChangeFunc={() => {}}
                   inputFieldFullWidth={true}
                   labelMinWidth="10rem"
-                  marginBottom="2rem"
+                  marginBottom="1rem"
                 />
                 <Input
                   type="password"
@@ -77,7 +101,7 @@ const Home = (): JSX.Element => {
                   onChangeFunc={() => {}}
                   inputFieldFullWidth={true}
                   labelMinWidth="10rem"
-                  marginBottom="2rem"
+                  marginBottom="1rem"
                 />
                 <div style={{ minWidth: '10rem', display: 'inline-block' }} />
                 <div style={{ display: 'inline-block' }}>
