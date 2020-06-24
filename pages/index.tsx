@@ -3,35 +3,11 @@ import GlobalStyles from '../components/GlobalStyles';
 import { ThemeProvider } from 'styled-components';
 import theme from '../theme';
 import { Landing } from '../components/Landing';
-import { FlexContainer } from '../components/FlexContainer';
 import { Input } from '../components/Input';
 import { Button } from '../components/Button';
 import { Modal } from '../components/Modal';
 import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
-import ApolloClient from 'apollo-boost';
-import { gql } from 'apollo-boost';
-// import fetch from 'node-fetch';
-
-let client;
-if (process.browser) {
-  client = new ApolloClient({
-    uri: 'https://48p1r2roz4.sse.codesandbox.io',
-    fetch: fetch,
-  });
-}
-
-client
-  ?.query({
-    query: gql`
-      {
-        rates(currency: "USD") {
-          currency
-        }
-      }
-    `,
-  })
-  .then(result => console.log(result));
 
 // TODO
 /**
