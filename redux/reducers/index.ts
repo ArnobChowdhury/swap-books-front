@@ -5,6 +5,8 @@ export type RootState = {
   auth: AuthState;
 };
 
-export default combineReducers({
+const rootReducer = combineReducers({
   auth,
 });
+
+export default rootReducer;

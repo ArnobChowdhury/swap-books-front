@@ -21,9 +21,7 @@ export const Default = (): JSX.Element => {
     <>
       <ThemeProvider theme={theme}>
         <GlobalStyles storybook />
-        <Button onClick={action('onClick')} isYellow={boolean('isYellow', true)}>
-          Sign up
-        </Button>
+        <Button onClick={action('onClick')}>Sign up</Button>
       </ThemeProvider>
     </>
   );

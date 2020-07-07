@@ -13,7 +13,7 @@ export interface InputProps {
   labelText: string | undefined;
   name: string;
   type: 'text' | 'email' | 'password';
-  value: string;
+  value?: string;
   placeholder?: string;
   onChangeFunc?: React.FormEventHandler<HTMLInputElement>;
   inputFieldFullWidth?: boolean;

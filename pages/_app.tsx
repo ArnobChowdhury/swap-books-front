@@ -45,6 +45,7 @@ import React, { FC } from 'react';
 import { AppProps } from 'next/app';
 import { wrapper } from 'redux/store';
 // @ts-ignore
+// eslint-disable-next-line react/prop-types
 const WrappedApp: FC<AppProps> = ({ Component, pageProps }) => (
   <Component {...pageProps} />
 );

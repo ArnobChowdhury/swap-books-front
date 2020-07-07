@@ -7,8 +7,10 @@ describe('<Input />,', () => {
   beforeEach(() => {
     props = {
       labelText: 'First Name',
+      name: 'First name',
       type: 'text',
       value: 'First Name',
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
       onChangeFunc: (): void => {},
     };
   });
