@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from 'axiosInstance';
 
 import { AUTH_SUCCESS, AUTH_FAIL, AUTH_START, AUTH_LOGOUT } from './actionTypes';
 
@@ -57,7 +57,8 @@ export const authRequest = (
       // todo do I really need returnSecureToken just to copy google??? BTW, I am not doing anything in the backend with this
       returnSecureToken: true,
     };
-    const url = `http://localhost:4000/auth/${isSignup ? 'signup' : 'login'}`;
+    // const url = `http://localhost:4000/auth/${isSignup ? 'signup' : 'login'}`;
+    const url = isSignup ? 'signup' : 'login';
     const requestMethod = isSignup ? 'put' : 'post';
     axios[requestMethod](url, authData)
       .then(response => {

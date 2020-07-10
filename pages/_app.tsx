@@ -1,53 +1,17 @@
-// @ts-nocheck
-// import React from 'react';
-// import App, { AppInitialProps } from 'next/app';
-// import Head from 'next/head';
-
-// import withRedux from 'next-redux-wrapper';
-// import { makeStore } from 'redux/store';
-// import { Provider } from 'react-redux';
-// import { LOGIN } from 'redux/reducers/auth';
-
-// type MyAppProps = AppInitialProps;
-
-// export default withRedux(makeStore)(
-//   class MyApp extends App<MyAppProps> {
-//     static async getInitialProps({ Component, ctx }) {
-//       const token = 'TODO';
-//       ctx.store.dispatch({ type: LOGIN, token });
-
-//       const pageProps = Component.getInitialProps
-//         ? await Component.getInitialProps(ctx)
-//         : {};
-
-//       return { pageProps };
-//     }
-
-//     render() {
-//       const { Component, pageProps, store } = this.props;
-
-//       return (
-//         <>
-//           <Head>
-//             <title>Hello</title>
-//             <link rel="icon" href="/favicon.ico" />
-//           </Head>
-//           <Provider store={store}>
-//             <Component {...pageProps} />
-//           </Provider>
-//         </>
-//       );
-//     }
-//   },
-// );
-
 import React, { FC } from 'react';
 import { AppProps } from 'next/app';
 import { wrapper } from 'redux/store';
-// @ts-ignore
+import { ThemeProvider } from 'styled-components';
+import GlobalStyles from '../components/GlobalStyles';
+import theme from '../theme';
+
+// todo
 // eslint-disable-next-line react/prop-types
 const WrappedApp: FC<AppProps> = ({ Component, pageProps }) => (
-  <Component {...pageProps} />
+  <ThemeProvider theme={theme}>
+    <GlobalStyles />
+    <Component {...pageProps} />
+  </ThemeProvider>
 );
 
 export default wrapper.withRedux(WrappedApp);

@@ -1,9 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { NextPage } from 'next';
-import GlobalStyles from '../components/GlobalStyles';
-import { ThemeProvider } from 'styled-components';
-import theme from '../theme';
 import { Landing } from '../components/Landing';
 import { Input } from '../components/Input';
 import { Button } from '../components/Button';
@@ -42,8 +39,7 @@ const Home: NextPage = (): JSX.Element => {
   };
 
   return (
-    <ThemeProvider theme={theme}>
-      <GlobalStyles />
+    <>
       <Landing
         loginOnClick={(): void => setShowLoginForm(!showLoginForm)}
         signupOnClick={(): void => setShowSignUpForm(!showSignUpForm)}
@@ -115,7 +111,7 @@ const Home: NextPage = (): JSX.Element => {
           </div>
         </Modal>
       )}
-    </ThemeProvider>
+    </>
   );
 };
 

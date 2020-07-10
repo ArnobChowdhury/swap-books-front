@@ -7,6 +7,8 @@ import { decorate } from '@storybook/addon-actions';
 import GlobalStyles from '../GlobalStyles';
 import { ThemeProvider } from 'styled-components';
 import theme from '../../theme';
+import * as Yup from 'yup';
+import { Formik, Form } from 'formik';
 
 export default {
   title: 'Input',
@@ -35,17 +37,38 @@ export const Default = (): JSX.Element => {
     <>
       <ThemeProvider theme={theme}>
         <GlobalStyles storybook />
-        <Input
-          name={select('type', ['text', 'email', 'password'], 'email')}
-          labelText={text('labelText', 'Email')}
-          type={select('type', ['text', 'email', 'password'], 'email')}
-          value={value}
-          placeholder={text('placeholder', 'example@domain.com')}
-          onChangeFunc={decorateActions.action('onChange')}
-          inputFieldFullWidth={boolean('inputFieldFullWidth', false)}
-          isRequired={boolean('isRequired', false)}
-          labelAtTop={boolean('labelAtTop', false)}
-        />
+        <Formik
+          initialValues={{
+            email: '',
+            password: '',
+          }}
+          validationSchema={Yup.object({
+            email: Yup.string()
+              .email('Invalid email address')
+              .required('Required'),
+            password: Yup.string()
+              .required('Password needed')
+              .min(8, 'Too short. Needs to have min. 8 characters')
+              .matches(/[a-zA-Z]/, 'Password can only contain latin letters'),
+          })}
+          onSubmit={({ email, password }, { setSubmitting }) => {
+            console.log(email, password, setSubmitting);
+          }}
+        >
+          <Form>
+            <Input
+              name={select('type', ['text', 'email', 'password'], 'email')}
+              labelText={text('labelText', 'Email')}
+              type={select('type', ['text', 'email', 'password'], 'email')}
+              value={value}
+              placeholder={text('placeholder', 'example@domain.com')}
+              onChangeFunc={decorateActions.action('onChange')}
+              inputFieldFullWidth={boolean('inputFieldFullWidth', false)}
+              isRequired={boolean('isRequired', false)}
+              labelAtTop={boolean('labelAtTop', false)}
+            />
+          </Form>
+        </Formik>
       </ThemeProvider>
     </>
   );

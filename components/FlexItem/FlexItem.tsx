@@ -47,6 +47,7 @@ export const FlexItem = ({
     return styles;
   };
 
+  // todo should we move the sizes to theme???
   const generateCSS = (): string => {
     let cssString = '';
 

@@ -8,7 +8,7 @@ const theme = {
   colorGreyPrimary: 'rgb(193,193,193)',
   colorGreyLight: 'rgb(229,229,229)',
   colorRed: 'rgb(175,15,15)',
-  fontSizeOne: '1.6rem',
+  fontSizeOne: '1.4rem',
   fontSizeTwo: '2rem',
   fontSizeThree: '2.3rem',
   fontSizeSmall: '1rem',
