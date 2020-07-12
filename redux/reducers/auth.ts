@@ -29,10 +29,8 @@ const authStart = (state: AuthState) => {
 };
 
 const authSuccess = (state: AuthState, acton: any) => {
-  console.log(action);
   // @ts-ignore
   const { token, userId } = action;
-  // console.log(token, userId, action);
   return {
     ...state,
     token,
@@ -61,12 +59,11 @@ const authLogout = (state: AuthState, acton: AnyAction) => {
 
 // todo do we really need to separate the functions from the reducer? Can't we just return the objects from here
 const reducer = (state = initialState, action: AnyAction) => {
-  console.log(action);
   const { token, userId } = action;
   switch (action.type) {
     case HYDRATE:
       // our action do not return a property named payload
-      return { ...state, ...action.payload };
+      return { ...state };
     case AUTH_START:
       return authStart(state);
     case AUTH_SUCCESS:

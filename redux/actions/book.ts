@@ -4,6 +4,9 @@ import {
   ADD_A_BOOK_START,
   ADD_A_BOOK_SUCCESS,
   ADD_A_BOOK_FAIL,
+  FETCH_BOOKS_FAIL,
+  FETCH_BOOKS_START,
+  FETCH_BOOKS_SUCCESS,
 } from './actionTypes';
 
 export const addABookStart = () => {
@@ -26,6 +29,7 @@ export const addABookFail = (error: any) => {
   };
 };
 
+// todo store needs to update after request success and failure
 export const addABookRequest = (
   bookName: string,
   bookAuthor: string,
@@ -51,13 +55,44 @@ export const addABookRequest = (
         formikSetSubmitting(false);
         // todo how should we handle the message???
         const { message, bookId } = response.data;
-        console.log(message, bookId);
         dispatch(addABookSuccess());
       })
       .catch(err => {
         formikSetSubmitting(false);
         // todo need to check what kind of possible errors we can get???
         dispatch(addABookFail(err));
+      });
+  };
+};
+
+export const fetchBooksStart = () => {
+  return { type: FETCH_BOOKS_START };
+};
+
+export const fetchBooksSuccess = (books: any) => {
+  return { type: FETCH_BOOKS_SUCCESS, books: books };
+};
+
+export const fetchBooksFail = (error: any) => {
+  return { type: FETCH_BOOKS_FAIL, error: error };
+};
+
+export const fetchBooksRequest = () => {
+  // @ts-ignore
+  return dispatch => {
+    // todo need to have state that the request has started. skipped for now
+    dispatch(fetchBooksStart());
+
+    const path = '/books';
+    axios
+      .get(path)
+      .then(response => {
+        const { message, books } = response.data;
+        dispatch(fetchBooksSuccess(books));
+      })
+      .catch(err => {
+        // todo need to check what kind of possible errors we can get???
+        dispatch(fetchBooksFail(err));
       });
   };
 };

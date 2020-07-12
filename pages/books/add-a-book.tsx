@@ -18,7 +18,7 @@ const AddABook: NextPage = (): JSX.Element => {
   const dispatch = useDispatch();
   const [files, setFiles] = useState();
   const handleFileClick = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(e.target.files);
+    // todo check for the file size, we do not want to upload any image larger than 5mb
     setFiles(e.target.files?.[0]);
   };
 
@@ -69,7 +69,6 @@ const AddABook: NextPage = (): JSX.Element => {
                   labelAtTop
                 />
                 <FileInput
-                  name="bookpicture"
                   labelText="Pick a picture"
                   onChange={e => handleFileClick(e)}
                 />

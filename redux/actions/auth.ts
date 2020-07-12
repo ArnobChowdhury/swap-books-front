@@ -47,7 +47,6 @@ export const authRequest = (
   isSignup: boolean,
   formikSetSubmitting: (submissionResolved: boolean) => void,
 ) => {
-  console.log('called this');
   // @ts-ignore
   return dispatch => {
     dispatch(authStart());

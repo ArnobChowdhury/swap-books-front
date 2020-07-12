@@ -3,6 +3,10 @@ export const AUTH_SUCCESS = 'AUTH_SUCCESS';
 export const AUTH_FAIL = 'AUTH_FAIL';
 export const AUTH_LOGOUT = 'AUTH_LOGOUT';
 
+export const FETCH_BOOKS_START = 'FETCH_BOOKS_START';
+export const FETCH_BOOKS_SUCCESS = 'FETCH_BOOKS_SUCCESS';
+export const FETCH_BOOKS_FAIL = 'FETCH_BOOKS_FAIL';
+
 export const ADD_A_BOOK_START = 'ADD_A_BOOK_START';
 export const ADD_A_BOOK_SUCCESS = 'ADD_A_BOOK_SUCCESS';
 export const ADD_A_BOOK_FAIL = 'ADD_A_BOOK_FAIL';
