@@ -1,4 +1,7 @@
 import { NextPage } from 'next';
+import { Post } from 'components/Post';
+import { NavBar } from 'components/NavBar';
+import { PageLayout } from 'hoc/PageLayout';
 import axios from 'axiosInstance';
 
 export async function getServerSideProps() {
@@ -18,25 +21,25 @@ const Books: NextPage = (props: any): JSX.Element => {
   const posts = books.map((el: any, ind: number) => {
     const { bookName, bookAuthor, bookPicturePath } = el;
     return (
-      <div
-        style={{
-          display: 'flex',
-          boxSizing: 'border-box',
-          border: '1px solid green',
-        }}
+      <Post
+        bookName={bookName}
+        bookAuthor={bookAuthor}
+        genre="Novel"
+        imgUrl={`http://localhost:4000/${bookPicturePath}`}
+        interestButtonClick={() => {}}
+        isInterested={true}
         key={ind}
-      >
-        <div style={{ width: '120px', height: '100%' }}>
-          <img src={`http://localhost:4000/${bookPicturePath}`} />
-        </div>
-        <div style={{ flexGrow: 1 }}>
-          <h3>Book: {bookName}</h3>
-          <p>Author: {bookAuthor} </p>
-        </div>
-      </div>
+        availableIn="Dhanmondi"
+        bottomMargin
+      />
     );
   });
-  return <>{posts}</>;
+  return (
+    <>
+      <NavBar currentSelected="Books" userName="Arnob" />
+      <PageLayout>{posts}</PageLayout>
+    </>
+  );
 };
 
 export default Books;
