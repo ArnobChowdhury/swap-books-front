@@ -1,4 +1,5 @@
 import axios from 'axiosInstance';
+import { Dispatch } from 'redux';
 
 import { AUTH_SUCCESS, AUTH_FAIL, AUTH_START, AUTH_LOGOUT } from './actionTypes';
 
@@ -26,17 +27,18 @@ export const authFail = (error: any) => {
 };
 
 export const authLogout = () => {
-  // things I want to do with logout like remove token from localStorage
+  localStorage.removeItem('token');
+  localStorage.removeItem('userId');
+  localStorage.removeItem('expirationDate');
   return {
     type: AUTH_LOGOUT,
   };
 };
 
 export const checkAuthTimeout = (expirationTime: number) => {
-  // @ts-ignore
-  return dispatch => {
+  return (dispatch: Dispatch) => {
     setTimeout(() => {
-      dispatch(authLogout);
+      dispatch(authLogout());
     }, expirationTime * 1000);
   };
 };
@@ -47,8 +49,7 @@ export const authRequest = (
   isSignup: boolean,
   formikSetSubmitting: (submissionResolved: boolean) => void,
 ) => {
-  // @ts-ignore
-  return dispatch => {
+  return (dispatch: Dispatch) => {
     dispatch(authStart());
     const authData = {
       email,
@@ -56,26 +57,46 @@ export const authRequest = (
       // todo do I really need returnSecureToken just to copy google??? BTW, I am not doing anything in the backend with this
       returnSecureToken: true,
     };
-    // const url = `http://localhost:4000/auth/${isSignup ? 'signup' : 'login'}`;
-    const url = isSignup ? 'signup' : 'login';
-    const requestMethod = isSignup ? 'put' : 'post';
-    axios[requestMethod](url, authData)
+    const url = `/auth/${isSignup ? 'signup' : 'login'}`;
+    axios
+      .post(url, authData)
       .then(response => {
         formikSetSubmitting(false);
         // todo how should we handle the message???
-        const { message, userId, token, expiresIn } = response.data;
+        const { userId, token, expiresIn } = response.data;
         const expirationDate = new Date().getTime() + expiresIn * 1000;
         // todo I am certain that I do not want to save token in localStorage
         localStorage.setItem('token', token);
         localStorage.setItem('userId', userId);
         localStorage.setItem('expirationDate', `${expirationDate}`);
         dispatch(authSuccess(token, userId));
-        // dispatch(checkAuthTimeout) // todo what is this and why should we implement this???
+        // @ts-ignore
+        dispatch(checkAuthTimeout(expiresIn)); // todo what is this and why should we implement this???
       })
       .catch(err => {
         formikSetSubmitting(false);
         // todo need to check what kind of possible errors we can get???
         dispatch(authFail(err));
       });
+  };
+};
+
+export const authCheckState = () => {
+  return (dispatch: Dispatch) => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      dispatch(authLogout());
+    } else {
+      const expirationDate = new Date(
+        Number(localStorage.getItem('expirationDate')),
+      );
+      if (expirationDate <= new Date()) {
+        dispatch(authLogout());
+      } else {
+        //                                     below "|| ''" code is just for type assertion
+        const userId = localStorage.getItem('userId') || '';
+        dispatch(authSuccess(token, userId));
+      }
+    }
   };
 };

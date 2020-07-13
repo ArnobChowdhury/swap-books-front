@@ -1,9 +1,11 @@
 import { NavWrapper, NavUL, NavLinkWrapper, NavLinks } from './NavBar.styles';
 import Logo from 'assets/Logo';
+import { useDispatch } from 'react-redux';
+import { authLogout } from 'redux/actions/auth';
 
 interface NavBarProps {
   userName: string;
-  currentSelected?: 'Books' | 'Messages' | 'Notifications' | 'User';
+  currentSelected?: 'Books' | 'Messages' | 'Notifications' | 'User' | 'Logout';
 }
 
 // todo there should be not be any default arguments
@@ -11,6 +13,7 @@ export const NavBar = ({
   userName = 'User',
   currentSelected,
 }: NavBarProps): JSX.Element => {
+  const dispatch = useDispatch();
   return (
     <NavWrapper>
       <div>
@@ -35,6 +38,14 @@ export const NavBar = ({
         <NavLinkWrapper isSelected={currentSelected === 'User'}>
           <NavLinks href="#" isSelected={currentSelected === 'User'}>
             {userName}
+          </NavLinks>
+        </NavLinkWrapper>
+        <NavLinkWrapper
+          isSelected={currentSelected === 'Logout'}
+          onClick={() => dispatch(authLogout())}
+        >
+          <NavLinks href="#" isSelected={currentSelected === 'Logout'}>
+            Logout
           </NavLinks>
         </NavLinkWrapper>
       </NavUL>

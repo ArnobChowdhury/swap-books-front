@@ -4,7 +4,7 @@ export const PostWrapper = styled.div<{ bottomMargin?: boolean }>`
   border: ${({ theme }) => `1px solid ${theme.colorGreyPrimary}`};
   display: flex;
   padding: ${({ theme }) =>
-    `${theme.spaceTen} ${theme.spaceTen} ${theme.spaceFive} ${theme.spaceTen}`};
+    `${theme.spaceTen} ${theme.spaceTen} ${theme.spaceTwo} ${theme.spaceTen}`};
   border-radius: 5px;
   font-size: ${({ theme }) => theme.fontSizeOne};
   flex-wrap: wrap;
@@ -48,7 +48,7 @@ export const InterestIconWrapper = styled.div`
   margin-top: ${({ theme }) => theme.spaceTen};
   border-top: ${({ theme }) => `1px solid ${theme.colorGreyPrimary}`};
   flex-basis: 100%;
-  padding: ${({ theme }) => `${theme.spaceFive} 0 0 0`};
+  padding: ${({ theme }) => `${theme.spaceTwo} 0 0 0`};
   display: flex;
   justify-content: center;
 `;
