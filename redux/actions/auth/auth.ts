@@ -1,7 +1,9 @@
-import axios from 'axiosInstance';
-import { Dispatch } from 'redux';
+import axios from '../../../axiosInstance';
+import { Dispatch, Action } from 'redux';
+import { ThunkAction } from 'redux-thunk';
+import { RootState } from 'redux/reducers';
 
-import { AUTH_SUCCESS, AUTH_FAIL, AUTH_START, AUTH_LOGOUT } from './actionTypes';
+import { AUTH_SUCCESS, AUTH_FAIL, AUTH_START, AUTH_LOGOUT } from './../actionTypes';
 
 export const authStart = () => {
   return {
@@ -48,7 +50,7 @@ export const authRequest = (
   password: string,
   isSignup: boolean,
   formikSetSubmitting: (submissionResolved: boolean) => void,
-) => {
+): ThunkAction<void, RootState, unknown, Action<string>> => {
   return (dispatch: Dispatch) => {
     dispatch(authStart());
     const authData = {
@@ -58,7 +60,7 @@ export const authRequest = (
       returnSecureToken: true,
     };
     const url = `/auth/${isSignup ? 'signup' : 'login'}`;
-    axios
+    return axios
       .post(url, authData)
       .then(response => {
         formikSetSubmitting(false);

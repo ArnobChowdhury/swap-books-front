@@ -1,6 +1,5 @@
 import { HYDRATE } from 'next-redux-wrapper';
 import { AnyAction } from 'redux';
-import { action } from '@storybook/addon-actions';
 import {
   AUTH_SUCCESS,
   AUTH_LOGOUT,
@@ -24,48 +23,13 @@ export const initialState: AuthState = {
   authRedirectPath: '/',
 };
 
-const authStart = (state: AuthState) => {
-  return { ...state, error: null, loading: true };
-};
-
-const authSuccess = (state: AuthState, acton: any) => {
-  // @ts-ignore
-  const { token, userId } = action;
-  return {
-    ...state,
-    token,
-    userId,
-    loading: false,
-    error: null,
-  };
-};
-
-const authFail = (state: AuthState, acton: AnyAction) => {
-  return {
-    ...state,
-    // @ts-ignore
-    error: action.error,
-    loading: false,
-  };
-};
-
-const authLogout = (state: AuthState, acton: AnyAction) => {
-  return {
-    ...state,
-    token: null,
-    userId: null,
-  };
-};
-
-// todo do we really need to separate the functions from the reducer? Can't we just return the objects from here
 const reducer = (state = initialState, action: AnyAction) => {
   const { token, userId, error } = action;
   switch (action.type) {
     case HYDRATE:
-      // our action do not return a property named payload
       return { ...state };
     case AUTH_START:
-      return authStart(state);
+      return { ...state, loading: true };
     case AUTH_SUCCESS:
       return {
         ...state,
