@@ -1,10 +1,14 @@
 import styled from 'styled-components';
 
-export const NavWrapper = styled.nav`
-  width: 100%;
+export const NavContainer = styled.div`
   background: ${({ theme }) => theme.colorBlackLight};
+  display: flex;
+  justify-content: center;
+`;
+
+export const NavWrapper = styled.nav`
+  width: 1400px;
   height: 55px;
-  padding: 0 200px;
   display: flex;
   justify-content: space-between;
   align-items: center;

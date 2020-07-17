@@ -1,4 +1,10 @@
-import { NavWrapper, NavUL, NavLinkWrapper, NavLinks } from './NavBar.styles';
+import {
+  NavContainer,
+  NavWrapper,
+  NavUL,
+  NavLinkWrapper,
+  NavLinks,
+} from './NavBar.styles';
 import Logo from 'assets/Logo';
 import { useDispatch } from 'react-redux';
 import { authLogout } from 'redux/actions/auth';
@@ -15,40 +21,42 @@ export const NavBar = ({
 }: NavBarProps): JSX.Element => {
   const dispatch = useDispatch();
   return (
-    <NavWrapper>
-      <div>
-        <Logo width={185} />
-      </div>
-      <NavUL>
-        <NavLinkWrapper isSelected={currentSelected === 'Books'}>
-          <NavLinks href="#" isSelected={currentSelected === 'Books'}>
-            Books
-          </NavLinks>
-        </NavLinkWrapper>
-        <NavLinkWrapper isSelected={currentSelected === 'Messages'}>
-          <NavLinks href="#" isSelected={currentSelected === 'Messages'}>
-            Messages
-          </NavLinks>
-        </NavLinkWrapper>
-        <NavLinkWrapper isSelected={currentSelected === 'Notifications'}>
-          <NavLinks href="#" isSelected={currentSelected === 'Notifications'}>
-            Notifications
-          </NavLinks>
-        </NavLinkWrapper>
-        <NavLinkWrapper isSelected={currentSelected === 'User'}>
-          <NavLinks href="#" isSelected={currentSelected === 'User'}>
-            {userName}
-          </NavLinks>
-        </NavLinkWrapper>
-        <NavLinkWrapper
-          isSelected={currentSelected === 'Logout'}
-          onClick={() => dispatch(authLogout())}
-        >
-          <NavLinks href="#" isSelected={currentSelected === 'Logout'}>
-            Logout
-          </NavLinks>
-        </NavLinkWrapper>
-      </NavUL>
-    </NavWrapper>
+    <NavContainer>
+      <NavWrapper>
+        <div>
+          <Logo width={185} />
+        </div>
+        <NavUL>
+          <NavLinkWrapper isSelected={currentSelected === 'Books'}>
+            <NavLinks href="#" isSelected={currentSelected === 'Books'}>
+              Books
+            </NavLinks>
+          </NavLinkWrapper>
+          <NavLinkWrapper isSelected={currentSelected === 'Messages'}>
+            <NavLinks href="#" isSelected={currentSelected === 'Messages'}>
+              Messages
+            </NavLinks>
+          </NavLinkWrapper>
+          <NavLinkWrapper isSelected={currentSelected === 'Notifications'}>
+            <NavLinks href="#" isSelected={currentSelected === 'Notifications'}>
+              Notifications
+            </NavLinks>
+          </NavLinkWrapper>
+          <NavLinkWrapper isSelected={currentSelected === 'User'}>
+            <NavLinks href="#" isSelected={currentSelected === 'User'}>
+              {userName}
+            </NavLinks>
+          </NavLinkWrapper>
+          <NavLinkWrapper
+            isSelected={currentSelected === 'Logout'}
+            onClick={() => dispatch(authLogout())}
+          >
+            <NavLinks href="#" isSelected={currentSelected === 'Logout'}>
+              Logout
+            </NavLinks>
+          </NavLinkWrapper>
+        </NavUL>
+      </NavWrapper>
+    </NavContainer>
   );
 };

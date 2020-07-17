@@ -1,5 +1,6 @@
 const theme = {
   colorYellowDeep: 'rgb(255,195,40)',
+  colorYellowSpinner: 'rgb(255,184,40)',
   colorYellowLight: 'rgb(250,235,195)',
   colorBlackDark: 'rgb(0,0,0)',
   colorBlackPrimary: 'rgb(65,65,65)',

@@ -5,6 +5,7 @@ import { Landing } from '../components/Landing';
 import { Input } from '../components/Input';
 import { Button } from '../components/Button';
 import { Modal } from '../components/Modal';
+import { Spinner } from '../components/Spinner';
 import { Formik, Form } from 'formik';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from 'redux/reducers';
@@ -25,6 +26,9 @@ const Home: NextPage = (): JSX.Element => {
   const token = useSelector<RootState, string | null>(
     (s: RootState) => s.auth.token,
   );
+  const isLoading = useSelector<RootState, boolean | null>(
+    (s: RootState) => s.auth.loading,
+  );
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -34,8 +38,10 @@ const Home: NextPage = (): JSX.Element => {
   }, [token]);
 
   const closeModal = (): void => {
-    showSignUpForm && setShowSignUpForm(false);
-    showLoginForm && setShowLoginForm(false);
+    if (!isLoading) {
+      showSignUpForm && setShowSignUpForm(false);
+      showLoginForm && setShowLoginForm(false);
+    }
   };
 
   return (
@@ -46,6 +52,7 @@ const Home: NextPage = (): JSX.Element => {
       />
       {(showSignUpForm || showLoginForm) && (
         <Modal onClick={closeModal} modalContentPadding="4rem 5rem 4rem 3rem">
+          {isLoading && <Spinner />}
           <div>
             <Formik
               initialValues={{
