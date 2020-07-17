@@ -6,17 +6,17 @@ import {
   AUTH_LOGOUT,
   AUTH_START,
   AUTH_FAIL,
-} from '../actions/actionTypes';
+} from '../../actions/actionTypes';
 
 export interface AuthState {
   token: string | null;
   userId: string | null;
-  error: string | null;
+  error: string | null | Error;
   loading: boolean;
   authRedirectPath: string;
 }
 
-const initialState: AuthState = {
+export const initialState: AuthState = {
   token: null,
   userId: null,
   error: null,
@@ -59,7 +59,7 @@ const authLogout = (state: AuthState, acton: AnyAction) => {
 
 // todo do we really need to separate the functions from the reducer? Can't we just return the objects from here
 const reducer = (state = initialState, action: AnyAction) => {
-  const { token, userId } = action;
+  const { token, userId, error } = action;
   switch (action.type) {
     case HYDRATE:
       // our action do not return a property named payload
@@ -75,9 +75,9 @@ const reducer = (state = initialState, action: AnyAction) => {
         error: null,
       };
     case AUTH_FAIL:
-      return authFail(state, action);
+      return { ...state, error };
     case AUTH_LOGOUT:
-      return authLogout(state, action);
+      return { ...state, userId: null, token: null };
     // todo not all actions of the original implementation of maximilan is handled here
     default:
       return state;
