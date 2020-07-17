@@ -21,7 +21,7 @@ export const Default = (): JSX.Element => {
     <>
       <ThemeProvider theme={theme}>
         <GlobalStyles storybook />
-        <NavBar />
+        <NavBar userName="Arnob" />
       </ThemeProvider>
     </>
   );

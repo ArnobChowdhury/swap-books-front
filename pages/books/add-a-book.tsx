@@ -16,7 +16,7 @@ import { addABookRequest } from 'redux/actions/book';
 const AddABook: NextPage = (): JSX.Element => {
   // todo we will need to change the userName when we are able to add user data
   const dispatch = useDispatch();
-  const [files, setFiles] = useState();
+  const [files, setFiles] = useState<File>();
   const handleFileClick = (e: React.ChangeEvent<HTMLInputElement>) => {
     // todo check for the file size, we do not want to upload any image larger than 5mb
     setFiles(e.target.files?.[0]);

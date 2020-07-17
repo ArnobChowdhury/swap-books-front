@@ -26,7 +26,9 @@ const Books: NextPage = (props: any): JSX.Element => {
         bookAuthor={bookAuthor}
         genre="Novel"
         imgUrl={`http://localhost:4000/${bookPicturePath}`}
-        interestButtonClick={() => {}}
+        interestButtonClick={() => {
+          '';
+        }}
         isInterested={true}
         key={ind}
         availableIn="Dhanmondi"

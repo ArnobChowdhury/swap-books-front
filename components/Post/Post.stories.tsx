@@ -24,6 +24,7 @@ export const Default = (): JSX.Element => {
       <ThemeProvider theme={theme}>
         <GlobalStyles storybook />
         <Post
+          key={1}
           bookName="Badshah Namdar"
           bookAuthor="Humayun Ahmed"
           imgUrl="http://localhost:4000/images/2020-07-11T22-24-34.542Z-badshah_namdar.jpg"

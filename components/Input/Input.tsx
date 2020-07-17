@@ -29,10 +29,10 @@ export interface InputProps {
 export const Input: React.FC<InputProps> = (props: InputProps) => {
   const {
     type = 'text',
-    name,
+    // name,
     labelText = '',
-    value = '',
-    onChangeFunc,
+    // value = '',
+    // onChangeFunc,
     inputFieldFullWidth,
     placeholder,
     isRequired = false,
@@ -59,10 +59,10 @@ export const Input: React.FC<InputProps> = (props: InputProps) => {
         ) : null}
       </LabelSpan>
       <InputBox
-        name={name}
+        // name={name}
         type={type}
-        value={value}
-        onChange={onChangeFunc}
+        // value={value}
+        // onChange={onChangeFunc}
         placeholder={placeholder}
         isFullWidth={inputFieldFullWidth}
         labelAtTop={labelAtTop}
