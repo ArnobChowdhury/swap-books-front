@@ -27,7 +27,7 @@ describe('Auth Action tests', () => {
     moxios.uninstall(axiosInstance);
   });
 
-  test('Dispatching authRequest creates correct actions', () => {
+  test('Dispatching authRequest creates correct actions on success', () => {
     const mockedResponse = {
       token: 'testToken',
       userId: 'testId',
@@ -49,6 +49,31 @@ describe('Auth Action tests', () => {
       { type: AUTH_START },
       { type: AUTH_SUCCESS, token: 'testToken', userId: 'testId' },
     ];
+    return store
+      .dispatch(
+        // @ts-ignore
+        authRequest('testemail@gmail.com', 'testpassword', false, mockFunc),
+      )
+      .then(() => {
+        expect(store.getActions()).toEqual(expectedActions);
+        expect(mockFunc).toBeCalledWith(false);
+      });
+  });
+
+  test('Dispatching authRequest creates correct actions on failure', () => {
+    const store = mockStore();
+
+    moxios.wait(() => {
+      const request = moxios.requests.mostRecent();
+      request.respondWith({
+        status: 401,
+      });
+    });
+
+    const error = new Error('Request failed with status code 401');
+
+    const mockFunc = jest.fn();
+    const expectedActions = [{ type: AUTH_START }, { type: AUTH_FAIL, error }];
     return store
       .dispatch(
         // @ts-ignore

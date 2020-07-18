@@ -1,4 +1,4 @@
-import axios from 'axiosInstance';
+import axios from '../../../axiosInstance';
 
 import {
   ADD_A_BOOK_START,
@@ -7,7 +7,7 @@ import {
   FETCH_BOOKS_FAIL,
   FETCH_BOOKS_START,
   FETCH_BOOKS_SUCCESS,
-} from './actionTypes';
+} from './../actionTypes';
 
 export const addABookStart = () => {
   return {
@@ -45,7 +45,7 @@ export const addABookRequest = (
     fd.append('bookPicture', bookPicture);
     // const path = 'http://localhost:4000/books/add-a-book';
     const path = '/books/add-a-book';
-    axios
+    return axios
       .put(path, fd, {
         headers: {
           'Content-Type': 'multipart/form-data',
@@ -84,7 +84,7 @@ export const fetchBooksRequest = () => {
     dispatch(fetchBooksStart());
 
     const path = '/books';
-    axios
+    return axios
       .get(path)
       .then(response => {
         const { message, books } = response.data;
