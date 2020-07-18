@@ -87,17 +87,17 @@ export const authCheckState = () => {
   return (dispatch: Dispatch) => {
     const token = localStorage.getItem('token');
     if (!token) {
-      dispatch(authLogout());
+      return dispatch(authLogout());
     } else {
       const expirationDate = new Date(
         Number(localStorage.getItem('expirationDate')),
       );
       if (expirationDate <= new Date()) {
-        dispatch(authLogout());
+        return dispatch(authLogout());
       } else {
         //                                     below "|| ''" code is just for type assertion
         const userId = localStorage.getItem('userId') || '';
-        dispatch(authSuccess(token, userId));
+        return dispatch(authSuccess(token, userId));
       }
     }
   };
