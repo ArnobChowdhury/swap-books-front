@@ -6,6 +6,7 @@ import {
   authSuccess,
   authLogout,
   authCheckState,
+  checkAuthTimeout,
 } from './auth';
 import axiosInstance from '../../../axiosInstance';
 import { AUTH_START, AUTH_SUCCESS, AUTH_FAIL, AUTH_LOGOUT } from '../actionTypes';
@@ -164,9 +165,9 @@ describe('Auth Action tests', () => {
     const mockFunc = jest.fn();
 
     const expectedActions = [
-      { type: 'AUTH_START' },
-      { type: 'AUTH_SUCCESS', token: 'testToken', userId: 'testId' },
-      { type: 'AUTH_LOGOUT' },
+      { type: AUTH_START },
+      { type: AUTH_SUCCESS, token: 'testToken', userId: 'testId' },
+      { type: AUTH_LOGOUT },
     ];
 
     return store
@@ -183,5 +184,18 @@ describe('Auth Action tests', () => {
         expect(localStorage.getItem('userId')).toBeNull();
         expect(localStorage.getItem('token')).toBeNull();
       });
+  });
+
+  test('authTimeout should dispatch authLogout after specified time', () => {
+    const store = mockStore();
+    const expectedAction = [{ type: AUTH_LOGOUT }];
+    // @ts-ignore
+    store.dispatch(checkAuthTimeout(1));
+    return new Promise(resolve => {
+      setTimeout(() => {
+        expect(store.getActions()).toEqual(expectedAction);
+        resolve();
+      }, 2000);
+    });
   });
 });
