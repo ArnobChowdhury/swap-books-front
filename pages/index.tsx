@@ -76,7 +76,7 @@ const Home: NextPage = (): JSX.Element => {
               <Form>
                 <Input
                   type="email"
-                  labelText="Email:"
+                  labelText="Email"
                   name="email"
                   placeholder="Please type your email address"
                   isRequired={true}

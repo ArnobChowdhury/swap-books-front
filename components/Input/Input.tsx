@@ -1,12 +1,6 @@
+import { Label } from 'components/Label';
 import InputBox from '../InputBox';
-import {
-  Label,
-  RequiredSpan,
-  LabelSpan,
-  ErrorWrapper,
-  ErrorText,
-  ErrorGutter,
-} from './Input.styles';
+import { ErrorWrapper, ErrorText, ErrorGutter } from './Input.styles';
 import { useField } from 'formik';
 
 export interface InputProps {
@@ -29,10 +23,7 @@ export interface InputProps {
 export const Input: React.FC<InputProps> = (props: InputProps) => {
   const {
     type = 'text',
-    // name,
     labelText = '',
-    // value = '',
-    // onChangeFunc,
     inputFieldFullWidth,
     placeholder,
     isRequired = false,
@@ -45,24 +36,14 @@ export const Input: React.FC<InputProps> = (props: InputProps) => {
 
   return (
     <Label
-      {...{ labelAtTop }}
-      data-testid="inputLabelTestid"
+      labelAtTop={labelAtTop}
+      isRequired={isRequired}
+      labelText={labelText}
+      labelMinWidth={labelMinWidth}
       marginBottom={marginBottom}
     >
-      <LabelSpan {...{ labelAtTop }} labelMinWidth={labelMinWidth}>
-        {isRequired && !labelAtTop ? (
-          <RequiredSpan {...{ labelAtTop }}>*</RequiredSpan>
-        ) : null}
-        {labelText}
-        {isRequired && labelAtTop ? (
-          <RequiredSpan {...{ labelAtTop }}> (Required)</RequiredSpan>
-        ) : null}
-      </LabelSpan>
       <InputBox
-        // name={name}
         type={type}
-        // value={value}
-        // onChange={onChangeFunc}
         placeholder={placeholder}
         isFullWidth={inputFieldFullWidth}
         labelAtTop={labelAtTop}
