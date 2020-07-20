@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { NextPage } from 'next';
 import { Input } from 'components/Input';
 import { DateInput } from 'components/DateInput';
@@ -9,6 +10,14 @@ import Logo from 'assets/Logo';
 import * as Yup from 'yup';
 
 const UserDetails: NextPage = (): JSX.Element => {
+  const [locationObj, setLocationObj] = useState<Position>();
+
+  const handleGeoLocation = () => {
+    if (process.browser) {
+      navigator.geolocation.getCurrentPosition(setLocationObj, console.log);
+    }
+  };
+
   return (
     <CenterContainer withPageContainer containerWidth={400}>
       <div style={{ display: 'flex', justifyContent: 'center' }}>
@@ -26,7 +35,7 @@ const UserDetails: NextPage = (): JSX.Element => {
           sex: Yup.string().required('Required'),
         })}
         onSubmit={({ username, dob, sex }, { setSubmitting }) => {
-          console.log(username, dob, sex);
+          console.log(username, dob, sex, locationObj);
           // username;
           setSubmitting;
         }}
@@ -41,12 +50,6 @@ const UserDetails: NextPage = (): JSX.Element => {
             inputFieldFullWidth
           />
           <DateInput name="dob" labelText="Date of Birth" isRequired />
-          {/* <FormHeading labelText="Sex" labelAtTop isRequired as="div">
-            <div style={{ marginTop: '1rem' }}>
-              <RadioInput name="sex" labelText="Female" />
-              <RadioInput name="sex" labelText="Male" />
-            </div>
-          </FormHeading> */}
           <RadioSelect
             name="sex"
             options={[
@@ -54,6 +57,12 @@ const UserDetails: NextPage = (): JSX.Element => {
               { value: 'female', labelText: 'Female' },
             ]}
           />
+          <div>
+            <button onClick={handleGeoLocation}>
+              Book swap needs your location info and without it we cannot show you
+              swappable books in you area.
+            </button>
+          </div>
           <Button color="dark" type="submit" fontMedium asButtonTag>
             Submit
           </Button>
