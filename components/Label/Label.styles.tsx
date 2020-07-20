@@ -22,6 +22,18 @@ export const Label = styled.label<InputStyleProps>`
   flex-wrap: wrap;
 `;
 
+export const DIV = styled.div<InputStyleProps>`
+  font-size: 1.5rem;
+  ${({ labelAtTop }): string | false | undefined =>
+    labelAtTop && 'font-weight: 600'};
+  letter-spacing: 0.1rem;
+  display: ${({ labelAtTop }): string | null => (!labelAtTop ? 'flex' : null)};
+  align-items: ${({ labelAtTop }): string | null => (!labelAtTop ? 'center' : null)};
+  margin-bottom: ${({ marginBottom }): string | null =>
+    marginBottom ? marginBottom : null};
+  flex-wrap: wrap;
+`;
+
 const labelAtSideMixin = css<InputStyleProps>`
   flex-basis: 18%;
   text-align: right;

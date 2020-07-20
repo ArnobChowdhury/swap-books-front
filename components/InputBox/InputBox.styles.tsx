@@ -27,4 +27,5 @@ export const InputHTML = styled.input.attrs(props => {
   min-height: 3.8rem;
   height: 3.8rem;
   color: ${(props): string | null => props.theme.colorBlackDark};
+  margin-top: ${({ labelAtTop, theme }) => labelAtTop && theme.spaceFive};
 `;

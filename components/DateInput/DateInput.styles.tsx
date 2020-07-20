@@ -3,6 +3,7 @@ import styled from 'styled-components';
 export const DateInputWrapper = styled.div`
   display: flex;
   width: 300px;
+  margin-top: ${({ theme }) => theme.spaceFive};
 `;
 
 export const Input = styled.input<{ doubleWidth?: boolean }>`

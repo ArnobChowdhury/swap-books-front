@@ -1,6 +1,8 @@
 import { useState, ChangeEvent, useEffect, useRef } from 'react';
 import { DateInputWrapper, Input } from './DateInput.styles';
 import { Label } from 'components/Label';
+import { FormikError } from 'components/FormikError';
+import { useField } from 'formik';
 
 function daysInAMonth(month: number, year?: number) {
   return new Date(year || 2019, month, 0).getDate();
@@ -10,24 +12,24 @@ const currentYear = new Date().getFullYear();
 
 interface DateInputProps {
   name: string;
+  value?: string;
   labelText?: string;
-  onChange?: (event: HTMLInputElement) => void;
   marginBottom?: string;
   isRequired?: boolean;
 }
 
-export const DateInput = ({
-  name,
-  labelText,
-  onChange,
-  marginBottom,
-  isRequired,
-}: DateInputProps): JSX.Element => {
+export const DateInput = (props: DateInputProps): JSX.Element => {
+  const { labelText, marginBottom, isRequired } = props;
+
   const [maxDate, setMaxDate] = useState(31);
   const [selectedYear, setSelectedYear] = useState<string>('');
   const [selectedMonth, setSelectedMonth] = useState<string>('');
   const [selectedDays, setSelectedDays] = useState<string>('');
   const [dateVal, setDateVal] = useState('');
+
+  const [field, meta, helpers] = useField(props);
+
+  const { name: formikName, value: formikValue } = field;
 
   const handleDateChange = (
     monthevent: ChangeEvent<HTMLInputElement> | undefined,
@@ -46,6 +48,15 @@ export const DateInput = ({
   };
 
   useEffect(() => {
+    if (formikValue) {
+      const dateArr = formikValue.split('-');
+      dateArr[0] !== '0' && setSelectedYear(dateArr[0]);
+      dateArr[1] !== '0' && setSelectedMonth(dateArr[1]);
+      dateArr[2] !== '0' && setSelectedDays(dateArr[2]);
+    }
+  }, [formikValue]);
+
+  useEffect(() => {
     if (selectedMonth) {
       setMaxDate(daysInAMonth(Number(selectedMonth), Number(selectedYear)));
     }
@@ -56,12 +67,8 @@ export const DateInput = ({
     }
   }, [selectedMonth, selectedYear, selectedDays]);
 
-  const hiddenInput = useRef<HTMLInputElement | null>(null);
-
   useEffect(() => {
-    if (onChange && hiddenInput.current) {
-      onChange(hiddenInput.current);
-    }
+    helpers.setValue(dateVal);
   }, [dateVal]);
 
   return (
@@ -74,12 +81,10 @@ export const DateInput = ({
       >
         <DateInputWrapper>
           <input
-            style={{ display: 'none' }}
             type="hidden"
-            name={name}
+            name={formikName}
             id="dateinput"
-            value={dateVal}
-            ref={hiddenInput}
+            value={formikValue}
             required
           />
           <Input
@@ -114,6 +119,7 @@ export const DateInput = ({
             required
           />
         </DateInputWrapper>
+        <FormikError hasGutter={false} isTouched={meta.touched} error={meta.error} />
       </Label>
     </>
   );

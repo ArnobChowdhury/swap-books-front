@@ -1,6 +1,6 @@
 import { Label } from 'components/Label';
+import { FormikError } from 'components/FormikError';
 import InputBox from '../InputBox';
-import { ErrorWrapper, ErrorText, ErrorGutter } from './Input.styles';
 import { useField } from 'formik';
 
 export interface InputProps {
@@ -49,11 +49,11 @@ export const Input: React.FC<InputProps> = (props: InputProps) => {
         labelAtTop={labelAtTop}
         {...field}
       />
-      <ErrorWrapper>
-        <ErrorGutter />
-        {/* <ErrorText>Too short. Needs minimum 8 characters</ErrorText> */}
-        {meta.touched && meta.error ? <ErrorText>{meta.error}</ErrorText> : null}
-      </ErrorWrapper>
+      <FormikError
+        hasGutter={!labelAtTop}
+        isTouched={meta.touched}
+        error={meta.error}
+      />
     </Label>
   );
 };
