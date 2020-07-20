@@ -1,4 +1,4 @@
-import { useState, ChangeEvent, useEffect, useRef } from 'react';
+import { useState, ChangeEvent, useEffect } from 'react';
 import { DateInputWrapper, Input } from './DateInput.styles';
 import { Label } from 'components/Label';
 import { FormikError } from 'components/FormikError';

@@ -1,7 +1,7 @@
 import { DateInput } from './DateInput';
 import { withKnobs } from '@storybook/addon-knobs';
 import { withA11y } from '@storybook/addon-a11y';
-import { action } from '@storybook/addon-actions';
+// import { action } from '@storybook/addon-actions';
 import theme from '../../theme';
 import { ThemeProvider } from 'styled-components';
 import GlobalStyles from '../GlobalStyles';
@@ -21,7 +21,7 @@ export const Default = (): JSX.Element => {
     <>
       <ThemeProvider theme={theme}>
         <GlobalStyles storybook />
-        <DateInput name="dob" onChange={action('onChange')} />
+        <DateInput name="dob" />
       </ThemeProvider>
     </>
   );

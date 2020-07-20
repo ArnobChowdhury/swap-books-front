@@ -1,8 +1,6 @@
 import { NextPage } from 'next';
 import { Input } from 'components/Input';
 import { DateInput } from 'components/DateInput';
-import { RadioInput } from 'components/RadioInput';
-import { Label as FormHeading } from 'components/Label';
 import { RadioSelect } from 'components/RadioSelect';
 import { CenterContainer } from 'components/CenterContainer';
 import { Button } from '../components/Button';
