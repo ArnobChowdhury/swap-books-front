@@ -9,7 +9,13 @@ import {
   checkAuthTimeout,
 } from './auth';
 import axiosInstance from '../../../axiosInstance';
-import { AUTH_START, AUTH_SUCCESS, AUTH_FAIL, AUTH_LOGOUT } from '../actionTypes';
+import {
+  AUTH_START,
+  AUTH_SUCCESS,
+  AUTH_FAIL,
+  AUTH_LOGOUT,
+  UPDATE_USER_INFO,
+} from '../actionTypes';
 import { mockStore } from '../../_testutils';
 
 /**
@@ -32,6 +38,9 @@ describe('Auth Action tests', () => {
       token: 'testToken',
       userId: 'testId',
       expiresIn: 3600,
+      name: 'testname',
+      sex: 'mail',
+      dob: '2010-12-12',
     };
 
     const store = mockStore();
@@ -48,11 +57,12 @@ describe('Auth Action tests', () => {
     const expectedActions = [
       { type: AUTH_START },
       { type: AUTH_SUCCESS, token: 'testToken', userId: 'testId' },
+      { type: UPDATE_USER_INFO, name: 'testname', sex: 'mail', dob: '2010-12-12' },
     ];
     return store
       .dispatch(
         // @ts-ignore
-        authRequest('testemail@gmail.com', 'testpassword', false, mockFunc),
+        authRequest('testemail@gmail.com', 'testpassword', mockFunc),
       )
       .then(() => {
         expect(store.getActions()).toEqual(expectedActions);
@@ -77,7 +87,7 @@ describe('Auth Action tests', () => {
     return store
       .dispatch(
         // @ts-ignore
-        authRequest('testemail@gmail.com', 'testpassword', false, mockFunc),
+        authRequest('testemail@gmail.com', 'testpassword', mockFunc),
       )
       .then(() => {
         expect(store.getActions()).toEqual(expectedActions);
@@ -104,6 +114,9 @@ describe('Auth Action tests', () => {
       token: 'testToken',
       userId: 'testId',
       expiresIn: -3600,
+      name: 'testname',
+      dob: '2010-12-12',
+      sex: 'male',
     };
 
     moxios.wait(() => {
@@ -116,15 +129,17 @@ describe('Auth Action tests', () => {
 
     const mockFunc = jest.fn();
     const expectedActions = [
-      { type: 'AUTH_START' },
-      { type: 'AUTH_SUCCESS', token: 'testToken', userId: 'testId' },
-      { type: 'AUTH_LOGOUT' },
+      { type: AUTH_START },
+      { type: AUTH_SUCCESS, token: 'testToken', userId: 'testId' },
+      { type: UPDATE_USER_INFO, name: 'testname', dob: '2010-12-12', sex: 'male' },
+      { type: UPDATE_USER_INFO, name: null, dob: null, sex: null },
+      { type: AUTH_LOGOUT },
     ];
 
     return store
       .dispatch(
         // @ts-ignore
-        authRequest('testemail@gmail.com', 'testpassword', false, mockFunc),
+        authRequest('testemail@gmail.com', 'testpassword', mockFunc),
       )
       .then(() => {
         // @ts-ignore
@@ -136,7 +151,10 @@ describe('Auth Action tests', () => {
   test('authCheckState action creator should dispatch authLogout when expirationDate is not found', () => {
     expect(localStorage.getItem('expirationDate')).toBeNull();
     const store = mockStore();
-    const expectedActions = [{ type: 'AUTH_LOGOUT' }];
+    const expectedActions = [
+      { type: UPDATE_USER_INFO, name: null, dob: null, sex: null },
+      { type: 'AUTH_LOGOUT' },
+    ];
     // @ts-ignore
     store.dispatch(authCheckState());
     expect(store.getActions()).toEqual(expectedActions);
@@ -177,6 +195,9 @@ describe('Auth Action tests', () => {
       token: 'testToken',
       userId: 'testId',
       expiresIn: 3600,
+      name: 'testname',
+      dob: '2010-12-12',
+      sex: 'male',
     };
 
     moxios.wait(() => {
@@ -191,19 +212,36 @@ describe('Auth Action tests', () => {
 
     const expectedActions = [
       { type: AUTH_START },
-      { type: AUTH_SUCCESS, token: 'testToken', userId: 'testId' },
+      {
+        type: AUTH_SUCCESS,
+        token: 'testToken',
+        userId: 'testId',
+      },
+      {
+        type: UPDATE_USER_INFO,
+        name: 'testname',
+        dob: '2010-12-12',
+        sex: 'male',
+      },
+      {
+        type: UPDATE_USER_INFO,
+        name: null,
+        dob: null,
+        sex: null,
+      },
       { type: AUTH_LOGOUT },
     ];
 
     return store
       .dispatch(
         // @ts-ignore
-        authRequest('testemail@gmail.com', 'testpassword', false, mockFunc),
+        authRequest('testemail@gmail.com', 'testpassword', mockFunc),
       )
       .then(() => {
         expect(localStorage.getItem('token')).toBeTruthy();
         expect(localStorage.getItem('userId')).toBeTruthy();
         expect(localStorage.getItem('expirationDate')).toBeTruthy();
+        //@ts-ignore
         store.dispatch(authLogout());
         expect(store.getActions()).toEqual(expectedActions);
         expect(localStorage.getItem('userId')).toBeNull();
@@ -213,7 +251,10 @@ describe('Auth Action tests', () => {
 
   test('authTimeout should dispatch authLogout after specified time', () => {
     const store = mockStore();
-    const expectedAction = [{ type: AUTH_LOGOUT }];
+    const expectedAction = [
+      { type: UPDATE_USER_INFO, name: null, sex: null, dob: null },
+      { type: AUTH_LOGOUT },
+    ];
     // @ts-ignore
     store.dispatch(checkAuthTimeout(1));
     return new Promise(resolve => {

@@ -70,7 +70,7 @@ const Home: NextPage = (): JSX.Element => {
               })}
               onSubmit={({ email, password }, { setSubmitting }) => {
                 const isSignup = showSignUpForm;
-                dispatch(authRequest(email, password, isSignup, setSubmitting));
+                dispatch(authRequest(email, password, setSubmitting));
               }}
             >
               <Form>

@@ -17,21 +17,14 @@ describe('User Actions', () => {
     moxios.uninstall(axios);
   });
 
-  test('createUserReq should create correction actions on success', () => {
+  test('createUserReq should create correct actions on success', () => {
     const mockedResponse = {
-      userName: 'testusername',
-      userDOB: '2005-5-5',
-      userSex: 'Male',
+      message: 'User has been created successfully',
     };
 
     const expectedActions = [
       { type: CREATE_USER_START },
-      {
-        type: CREATE_USER_SUCCESS,
-        name: 'testusername',
-        dob: '2005-5-5',
-        sex: 'Male',
-      },
+      { type: CREATE_USER_SUCCESS },
     ];
 
     const store = mockStore();
@@ -50,9 +43,11 @@ describe('User Actions', () => {
       .dispatch(
         //@ts-ignore
         createUserReq(
-          mockedResponse.userName,
-          mockedResponse.userDOB,
-          mockedResponse.userSex,
+          'testname',
+          'testmail@test.com',
+          'testpassword',
+          '2010-12-12',
+          'mail',
           // @ts-ignore
           {},
           mockFunc,

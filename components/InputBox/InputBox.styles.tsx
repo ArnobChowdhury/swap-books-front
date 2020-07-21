@@ -10,7 +10,7 @@ export const InputHTML = styled.input.attrs(props => {
 })<InputBoxProps>`
   display: ${(props): string | null => (props.labelAtTop ? 'block' : null)};
   padding: 0.4rem 0.8rem;
-  border-radius: 0.2rem;
+  border-radius: 0.3rem;
   box-sizing: border-box;
   font-size: inherit;
   font-family: inherit;
@@ -22,7 +22,7 @@ export const InputHTML = styled.input.attrs(props => {
   background: ${(props): string | null =>
     props.labelAtTop ? null : props.theme.colorYellowLight};
   border: ${(props): string | null =>
-    props.labelAtTop ? `1px solid ${props.theme.colorGreyLight}` : 'none'};
+    props.labelAtTop ? `1px solid ${props.theme.colorGreyPrimary}` : 'none'};
   min-width: 22rem;
   min-height: 3.8rem;
   height: 3.8rem;

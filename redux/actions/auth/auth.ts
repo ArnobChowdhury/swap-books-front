@@ -3,7 +3,13 @@ import { Dispatch, Action } from 'redux';
 import { ThunkAction } from 'redux-thunk';
 import { RootState } from 'redux/reducers';
 
-import { AUTH_SUCCESS, AUTH_FAIL, AUTH_START, AUTH_LOGOUT } from './../actionTypes';
+import {
+  AUTH_SUCCESS,
+  AUTH_FAIL,
+  AUTH_START,
+  AUTH_LOGOUT,
+  UPDATE_USER_INFO,
+} from './../actionTypes';
 
 export const authStart = () => {
   return {
@@ -11,7 +17,6 @@ export const authStart = () => {
   };
 };
 
-// todo take care of the types
 export const authSuccess = (token: string, userId: string) => {
   return {
     type: AUTH_SUCCESS,
@@ -20,7 +25,19 @@ export const authSuccess = (token: string, userId: string) => {
   };
 };
 
-// todo take care of the parameter type later
+export const updateUserInfo = (
+  name: string | null,
+  dob: string | null,
+  sex: string | null,
+) => {
+  return {
+    type: UPDATE_USER_INFO,
+    name,
+    dob,
+    sex,
+  };
+};
+
 export const authFail = (error: any) => {
   return {
     type: AUTH_FAIL,
@@ -28,18 +45,29 @@ export const authFail = (error: any) => {
   };
 };
 
+// export const authLogout = () => {
+//   localStorage.removeItem('token');
+//   localStorage.removeItem('userId');
+//   localStorage.removeItem('expirationDate');
+//   return {
+//     type: AUTH_LOGOUT,
+//   };
+// };
+
 export const authLogout = () => {
-  localStorage.removeItem('token');
-  localStorage.removeItem('userId');
-  localStorage.removeItem('expirationDate');
-  return {
-    type: AUTH_LOGOUT,
+  return (dispatch: Dispatch) => {
+    dispatch(updateUserInfo(null, null, null));
+    localStorage.removeItem('token');
+    localStorage.removeItem('userId');
+    localStorage.removeItem('expirationDate');
+    return dispatch({ type: AUTH_LOGOUT });
   };
 };
 
 export const checkAuthTimeout = (expirationTime: number) => {
   return (dispatch: Dispatch) => {
     setTimeout(() => {
+      // @ts-ignore
       dispatch(authLogout());
     }, expirationTime * 1000);
   };
@@ -48,7 +76,6 @@ export const checkAuthTimeout = (expirationTime: number) => {
 export const authRequest = (
   email: string,
   password: string,
-  isSignup: boolean,
   formikSetSubmitting: (submissionResolved: boolean) => void,
 ): ThunkAction<void, RootState, unknown, Action<string>> => {
   return (dispatch: Dispatch) => {
@@ -56,22 +83,23 @@ export const authRequest = (
     const authData = {
       email,
       password,
-      // todo do I really need returnSecureToken just to copy google??? BTW, I am not doing anything in the backend with this
-      returnSecureToken: true,
     };
-    const url = `/auth/${isSignup ? 'signup' : 'login'}`;
+    const url = '/auth/login';
     return axios
       .post(url, authData)
       .then(response => {
         formikSetSubmitting(false);
         // todo how should we handle the message???
-        const { userId, token, expiresIn } = response.data;
+        const { name, dob, sex, userId, token, expiresIn } = response.data;
+
         const expirationDate = new Date().getTime() + expiresIn * 1000;
-        // todo I am certain that I do not want to save token in localStorage
+
         localStorage.setItem('token', token);
         localStorage.setItem('userId', userId);
         localStorage.setItem('expirationDate', `${expirationDate}`);
         dispatch(authSuccess(token, userId));
+        dispatch(updateUserInfo(name, dob, sex));
+
         // @ts-ignore
         dispatch(checkAuthTimeout(expiresIn)); // todo what is this and why should we implement this???
       })
@@ -87,12 +115,14 @@ export const authCheckState = () => {
   return (dispatch: Dispatch) => {
     const token = localStorage.getItem('token');
     if (!token) {
+      // @ts-ignore
       return dispatch(authLogout());
     } else {
       const expirationDate = new Date(
         Number(localStorage.getItem('expirationDate')),
       );
       if (expirationDate <= new Date()) {
+        // @ts-ignore
         return dispatch(authLogout());
       } else {
         //                                     below "|| ''" code is just for type assertion

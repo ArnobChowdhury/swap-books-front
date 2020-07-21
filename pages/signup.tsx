@@ -26,6 +26,9 @@ const UserDetails: NextPage = (): JSX.Element => {
       <Formik
         initialValues={{
           username: '',
+          email: '',
+          password: '',
+          confirmPassword: '',
           dob: '',
           sex: '',
         }}
@@ -33,9 +36,16 @@ const UserDetails: NextPage = (): JSX.Element => {
           username: Yup.string().required('Required'),
           dob: Yup.string().required('Required'),
           sex: Yup.string().required('Required'),
+          email: Yup.string()
+            .email('Invalid email address')
+            .required('Required'),
+          password: Yup.string()
+            .required('Password needed')
+            .min(8, 'Too short. Needs to have min. 8 characters')
+            .matches(/[a-zA-Z]/, 'Password can only contain latin letters'),
         })}
-        onSubmit={({ username, dob, sex }, { setSubmitting }) => {
-          console.log(username, dob, sex, locationObj);
+        onSubmit={({ username, dob, sex, email, password }, { setSubmitting }) => {
+          console.log(username, dob, sex, email, password, locationObj);
           // username;
           setSubmitting;
         }}
@@ -49,6 +59,30 @@ const UserDetails: NextPage = (): JSX.Element => {
             isRequired
             inputFieldFullWidth
           />
+          <Input
+            name="email"
+            labelText="Email"
+            type="email"
+            labelAtTop
+            isRequired
+            inputFieldFullWidth
+          />
+          <Input
+            name="password"
+            labelText="Password"
+            type="password"
+            labelAtTop
+            isRequired
+            inputFieldFullWidth
+          />
+          <Input
+            name="confirmPassword"
+            labelText="Confirm Password"
+            type="password"
+            labelAtTop
+            isRequired
+            inputFieldFullWidth
+          />
           <DateInput name="dob" labelText="Date of Birth" isRequired />
           <RadioSelect
             name="sex"
@@ -58,9 +92,19 @@ const UserDetails: NextPage = (): JSX.Element => {
             ]}
           />
           <div>
-            <button onClick={handleGeoLocation}>
-              Book swap needs your location info and without it we cannot show you
-              swappable books in you area.
+            <button
+              onClick={handleGeoLocation}
+              style={{
+                marginBottom: '20px',
+                fontFamily: 'inherit',
+                padding: '10px',
+                cursor: 'pointer',
+                borderRadius: '5px',
+                border: '1px solid rgb(150,150,150)',
+              }}
+            >
+              Click this to allow access to location info. Why? We cannot show you
+              swappable books in you area without your location information.
             </button>
           </div>
           <Button color="dark" type="submit" fontMedium asButtonTag>

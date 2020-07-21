@@ -12,12 +12,9 @@ export const createUserStart = () => {
   };
 };
 
-export const createUserSuccess = (name: string, dob: string, sex: string) => {
+export const createUserSuccess = () => {
   return {
     type: CREATE_USER_SUCCESS,
-    name,
-    dob,
-    sex,
   };
 };
 
@@ -30,6 +27,8 @@ export const createUserFail = (error: unknown) => {
 
 export const createUserReq = (
   userName: string,
+  email: string,
+  password: string,
   userDOB: string,
   userSex: string,
   locationObj: Position,
@@ -39,17 +38,19 @@ export const createUserReq = (
     dispatch(createUserStart());
     const userData = {
       userName,
+      email,
+      password,
       userDOB,
       userSex,
       locationObj,
     };
 
     return axios
-      .post('/user-details', userData)
+      .post('/auth/signup', userData)
       .then(response => {
         formikSetSubmitting(false);
-        const { userName: name, userDOB: dob, userSex: sex } = response.data;
-        dispatch(createUserSuccess(name, dob, sex));
+        const { message } = response.data;
+        dispatch(createUserSuccess());
       })
       .catch(error => {
         dispatch(createUserFail(error));

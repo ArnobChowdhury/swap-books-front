@@ -5,21 +5,24 @@ import {
   CREATE_USER_START,
   CREATE_USER_SUCCESS,
   CREATE_USER_FAIL,
+  UPDATE_USER_INFO,
 } from '../../actions/actionTypes';
 
 export interface UserState {
-  name: string;
-  dob: string;
-  sex: string;
-  loading: boolean;
+  name: string | null;
+  dob: string | null;
+  sex: string | null;
+  userCreationOnGoing: boolean;
+  userCreationSuccessful: boolean;
   error: any;
 }
 
 export const initialState: UserState = {
-  name: '',
-  dob: '',
-  sex: '',
-  loading: false,
+  name: null,
+  dob: null,
+  sex: null,
+  userCreationOnGoing: false,
+  userCreationSuccessful: false,
   error: null,
 };
 
@@ -29,11 +32,20 @@ const reducer = (state = initialState, action: AnyAction) => {
     case HYDRATE:
       return { ...state };
     case CREATE_USER_START:
-      return { ...state, loading: true };
+      return { ...state, userCreationOnGoing: true };
     case CREATE_USER_SUCCESS:
-      return { ...state, loading: false, name, dob, sex };
+      return { ...state, userCreationOnGoing: false, userCreationSuccessful: true };
     case CREATE_USER_FAIL:
-      return { ...state, loading: false, error };
+      return { ...state, userCreationOnGoing: false, error };
+    case UPDATE_USER_INFO:
+      return {
+        ...state,
+        userCreationOnGoing: false,
+        userCreationSuccessful: true,
+        name,
+        dob,
+        sex,
+      };
     default:
       return state;
   }
