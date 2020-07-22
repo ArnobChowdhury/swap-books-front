@@ -13,12 +13,10 @@ import { FlexItem } from '../FlexItem';
 
 interface LandingProps {
   loginOnClick: () => void;
-  signupOnClick: () => void;
 }
 
 export const Landing: React.FC<LandingProps> = ({
   loginOnClick,
-  signupOnClick,
 }: LandingProps): JSX.Element => {
   return (
     <ContainerMain>
@@ -37,7 +35,7 @@ export const Landing: React.FC<LandingProps> = ({
               </p>
             </CopyDiv>
             <ButtonDiv>
-              <Button color="yellow" onClick={signupOnClick}>
+              <Button color="yellow" href="/signup">
                 Sign up
               </Button>
               <Button color="transparent" onClick={loginOnClick}>

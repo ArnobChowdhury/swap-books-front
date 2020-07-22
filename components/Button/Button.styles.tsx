@@ -28,6 +28,7 @@ const ButtonCSS = css<ButtonStyledProps>`
     color === 'yellow' ? theme.colorBlackDark : 'white'}; };
   cursor: pointer;
   transition: all .2s;
+  text-decoration: none;
 
   &:hover {
     transform: translateY(-.2rem);

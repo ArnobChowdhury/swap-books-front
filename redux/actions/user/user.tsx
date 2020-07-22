@@ -26,30 +26,34 @@ export const createUserFail = (error: unknown) => {
 };
 
 export const createUserReq = (
-  userName: string,
+  name: string,
   email: string,
   password: string,
-  userDOB: string,
-  userSex: string,
+  dob: string,
+  sex: string,
   locationObj: Position,
   formikSetSubmitting: (submissionResolved: boolean) => void,
 ) => {
+  console.log(locationObj);
   return (dispatch: Dispatch) => {
     dispatch(createUserStart());
     const userData = {
-      userName,
+      name,
       email,
       password,
-      userDOB,
-      userSex,
-      locationObj,
+      dob,
+      sex,
+      locationObj: {
+        latitude: locationObj.coords.latitude,
+        longitude: locationObj.coords.longitude,
+      },
     };
 
     return axios
       .post('/auth/signup', userData)
       .then(response => {
         formikSetSubmitting(false);
-        const { message } = response.data;
+        const { message, userId } = response.data;
         dispatch(createUserSuccess());
       })
       .catch(error => {

@@ -17,7 +17,6 @@ import { authRequest } from 'redux/actions/auth';
  * 1. Make the input boxes smaller in width (Maybe follow instagram's form login page). Plnr: on hold: 1
  */
 const Home: NextPage = (): JSX.Element => {
-  const [showSignUpForm, setShowSignUpForm] = useState<boolean>(false);
   const [showLoginForm, setShowLoginForm] = useState<boolean>(false);
 
   const router = useRouter();
@@ -39,18 +38,14 @@ const Home: NextPage = (): JSX.Element => {
 
   const closeModal = (): void => {
     if (!isLoading) {
-      showSignUpForm && setShowSignUpForm(false);
       showLoginForm && setShowLoginForm(false);
     }
   };
 
   return (
     <>
-      <Landing
-        loginOnClick={(): void => setShowLoginForm(!showLoginForm)}
-        signupOnClick={(): void => setShowSignUpForm(!showSignUpForm)}
-      />
-      {(showSignUpForm || showLoginForm) && (
+      <Landing loginOnClick={(): void => setShowLoginForm(!showLoginForm)} />
+      {showLoginForm && (
         <Modal onClick={closeModal} modalContentPadding="4rem 5rem 4rem 3rem">
           {isLoading && <Spinner />}
           <div>
@@ -69,7 +64,6 @@ const Home: NextPage = (): JSX.Element => {
                   .matches(/[a-zA-Z]/, 'Password can only contain latin letters'),
               })}
               onSubmit={({ email, password }, { setSubmitting }) => {
-                const isSignup = showSignUpForm;
                 dispatch(authRequest(email, password, setSubmitting));
               }}
             >
@@ -94,23 +88,10 @@ const Home: NextPage = (): JSX.Element => {
                   labelMinWidth="10rem"
                   marginBottom="1rem"
                 />
-                {/* todo I need to make sure that password and confirmPassword matches */}
-                {showSignUpForm && (
-                  <Input
-                    type="password"
-                    labelText="Confirm Password"
-                    name="confirmPassword"
-                    placeholder="Please type your chosen password again"
-                    isRequired={true}
-                    inputFieldFullWidth={true}
-                    labelMinWidth="10rem"
-                    marginBottom="1rem"
-                  />
-                )}
                 <div style={{ minWidth: '10rem', display: 'inline-block' }} />
                 <div style={{ display: 'inline-block' }}>
                   <Button color="dark" type="submit" fontMedium asButtonTag>
-                    {showSignUpForm ? 'Sign up' : 'Log in'}
+                    Log in
                   </Button>
                 </div>
               </Form>

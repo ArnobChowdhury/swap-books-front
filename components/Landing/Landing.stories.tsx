@@ -13,14 +13,13 @@ export default {
 };
 
 const loginAction = action('loginOnClick');
-const signupAction = action('signupOnClick');
 
 export const LandingPage = (): JSX.Element => {
   return (
     <>
       <ThemeProvider theme={theme}>
         <GlobalStyles storybook overFlowHidden />
-        <Landing loginOnClick={loginAction} signupOnClick={signupAction} />
+        <Landing loginOnClick={loginAction} />
       </ThemeProvider>
     </>
   );
