@@ -17,8 +17,10 @@ import { RootState } from 'redux/reducers';
 const UserDetails: NextPage = (): JSX.Element => {
   const [locationObj, setLocationObj] = useState<Position>();
 
+  // todo: if the call to  getCurrentPosition fails we need to handle it. For now, we are just console.loggin it.
   const handleGeoLocation = () => {
     if (process.browser) {
+      // eslint-disable-next-line no-console
       navigator.geolocation.getCurrentPosition(setLocationObj, console.log);
     }
   };

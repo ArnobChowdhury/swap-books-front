@@ -34,7 +34,6 @@ export const createUserReq = (
   locationObj: Position,
   formikSetSubmitting: (submissionResolved: boolean) => void,
 ) => {
-  console.log(locationObj);
   return (dispatch: Dispatch) => {
     dispatch(createUserStart());
     const userData = {
@@ -44,8 +43,8 @@ export const createUserReq = (
       dob,
       sex,
       locationObj: {
-        latitude: locationObj.coords.latitude,
-        longitude: locationObj.coords.longitude,
+        latitude: locationObj?.coords?.latitude,
+        longitude: locationObj?.coords?.longitude,
       },
     };
 

@@ -52,7 +52,9 @@ export const Default = (): JSX.Element => {
               .matches(/[a-zA-Z]/, 'Password can only contain latin letters'),
           })}
           onSubmit={({ email, password }, { setSubmitting }) => {
-            console.log(email, password, setSubmitting);
+            email;
+            password;
+            setSubmitting;
           }}
         >
           <Form>
