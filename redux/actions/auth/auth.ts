@@ -45,15 +45,6 @@ export const authFail = (error: any) => {
   };
 };
 
-// export const authLogout = () => {
-//   localStorage.removeItem('token');
-//   localStorage.removeItem('userId');
-//   localStorage.removeItem('expirationDate');
-//   return {
-//     type: AUTH_LOGOUT,
-//   };
-// };
-
 export const authLogout = () => {
   return (dispatch: Dispatch) => {
     dispatch(updateUserInfo(null, null, null));

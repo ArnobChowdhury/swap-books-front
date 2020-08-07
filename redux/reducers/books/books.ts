@@ -7,8 +7,15 @@ import {
   FETCH_BOOKS_FAIL,
 } from '../../actions/actionTypes';
 
+export interface BookShape {
+  bookId: string;
+  bookName: string;
+  bookAuthor: string;
+  bookPicturePath: string;
+  bookOwnerId: string;
+}
 export interface BooksState {
-  books: any;
+  books: BookShape[];
   error: string | null | Error;
   loading: boolean;
 }

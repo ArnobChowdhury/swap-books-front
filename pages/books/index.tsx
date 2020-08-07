@@ -1,45 +1,55 @@
+import { useEffect } from 'react';
 import { NextPage } from 'next';
 import { Post } from 'components/Post';
 import { NavBar } from 'components/NavBar';
 import { PageLayout } from 'hoc/PageLayout';
-import axios from 'axiosInstance';
+// import axios from 'axiosInstance';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchBooksRequest } from 'redux/actions/book';
+import { RootState } from 'redux/reducers';
+import { Spinner } from 'components/Spinner';
 
-export async function getServerSideProps() {
-  const res = await axios.get('/books');
-  const { books } = res.data;
+const Books: NextPage = (): JSX.Element => {
+  // const { books } = props;
 
-  return {
-    props: {
-      books,
-    },
-  };
-}
+  const dispatch = useDispatch();
 
-const Books: NextPage = (props: any): JSX.Element => {
-  const { books } = props;
+  useEffect(() => {
+    if (process.browser) {
+      dispatch(fetchBooksRequest());
+    }
+  }, []);
 
-  const posts = books.map((el: any, ind: number) => {
-    const { bookName, bookAuthor, bookPicturePath } = el;
-    return (
-      <Post
-        bookName={bookName}
-        bookAuthor={bookAuthor}
-        genre="Novel"
-        imgUrl={`http://localhost:4000/${bookPicturePath}`}
-        interestButtonClick={() => {
-          '';
-        }}
-        isInterested={true}
-        key={ind}
-        availableIn="Dhanmondi"
-        bottomMargin
-      />
-    );
-  });
+  const booksState = useSelector((store: RootState) => store.books);
+  const { books, loading } = booksState;
+
+  let posts;
+  if (books) {
+    posts = books.map((el: any) => {
+      const { bookId, bookName, bookAuthor, bookPicturePath } = el;
+
+      return (
+        <Post
+          bookName={bookName}
+          bookAuthor={bookAuthor}
+          genre="Novel"
+          imgUrl={`${process.env.NEXT_PUBLIC_IMAGE_URL}${bookPicturePath}`}
+          interestButtonClick={() => {
+            '';
+          }}
+          isInterested={true}
+          key={bookId}
+          availableIn="Dhanmondi"
+          bottomMargin
+        />
+      );
+    });
+  }
+
   return (
     <>
       <NavBar currentSelected="Books" userName="Arnob" />
-      <PageLayout>{posts}</PageLayout>
+      <PageLayout>{!loading ? posts : <Spinner />}</PageLayout>
     </>
   );
 };

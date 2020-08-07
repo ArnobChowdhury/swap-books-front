@@ -1,4 +1,5 @@
 import axios from '../../../axiosInstance';
+import { BookShape } from '../../reducers/books';
 
 import {
   ADD_A_BOOK_START,
@@ -39,10 +40,15 @@ export const addABookRequest = (
   // @ts-ignore
   return dispatch => {
     dispatch(addABookStart());
+    const userId = localStorage.getItem('userId');
     const fd = new FormData();
     fd.append('bookName', bookName);
     fd.append('bookAuthor', bookAuthor);
     fd.append('bookPicture', bookPicture);
+    // what if the user is not signed in???
+    if (userId) {
+      fd.append('userId', userId);
+    }
     // const path = 'http://localhost:4000/books/add-a-book';
     const path = '/books/add-a-book';
     return axios
@@ -83,12 +89,23 @@ export const fetchBooksRequest = () => {
     // todo need to have state that the request has started. skipped for now
     dispatch(fetchBooksStart());
 
+    const userId = localStorage.getItem('userId');
+
     const path = '/books';
     return axios
-      .get(path)
+      .get(path, { params: { userId } })
       .then(response => {
         const { message, books } = response.data;
-        dispatch(fetchBooksSuccess(books));
+        const booksStructured: BookShape[] = books.map((book: any) => {
+          return {
+            bookId: book._id,
+            bookName: book.bookName,
+            bookAuthor: book.bookAuthor,
+            bookPicturePath: book.bookPicturePath,
+            bookOwnerId: book.userId,
+          };
+        });
+        dispatch(fetchBooksSuccess(booksStructured));
       })
       .catch(err => {
         // todo need to check what kind of possible errors we can get???

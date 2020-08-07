@@ -142,12 +142,16 @@ describe('Book Action tests', () => {
       {
         bookName: 'Badshah Namdar',
         bookAuthor: 'Humayun Ahmed',
-        bookPicture: 'someurl/images/badshahnamdar.jpg',
+        bookPicturePath: 'someurl/images/badshahnamdar.jpg',
+        _id: '1',
+        userId: '1',
       },
       {
         bookName: 'Alchemist',
         bookAuthor: 'Paulo Coelho',
-        bookPicture: 'someurl/images/alchemist.jpg',
+        bookPicturePath: 'someurl/images/alchemist.jpg',
+        _id: '2',
+        userId: '2',
       },
     ];
 
@@ -166,7 +170,25 @@ describe('Book Action tests', () => {
 
     const expectedActions = [
       { type: FETCH_BOOKS_START },
-      { type: FETCH_BOOKS_SUCCESS, books },
+      {
+        type: FETCH_BOOKS_SUCCESS,
+        books: [
+          {
+            bookName: 'Badshah Namdar',
+            bookAuthor: 'Humayun Ahmed',
+            bookPicturePath: 'someurl/images/badshahnamdar.jpg',
+            bookId: '1',
+            bookOwnerId: '1',
+          },
+          {
+            bookName: 'Alchemist',
+            bookAuthor: 'Paulo Coelho',
+            bookPicturePath: 'someurl/images/alchemist.jpg',
+            bookId: '2',
+            bookOwnerId: '2',
+          },
+        ],
+      },
     ];
 
     // @ts-ignore

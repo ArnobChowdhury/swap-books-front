@@ -1,5 +1,5 @@
 import bookReducer from '.';
-import { BooksState, initialState } from './books';
+import { BooksState, BookShape, initialState } from './books';
 import {
   FETCH_BOOKS_START,
   FETCH_BOOKS_SUCCESS,
@@ -20,10 +20,28 @@ describe('Book reducer', () => {
   });
 
   it('Should have books state updated when books are passed with action and action type is FETCH_BOOKS_SUCCESS', () => {
-    const books = [
-      { bookName: 'Books One', bookAuthor: 'Book Author One' },
-      { bookName: 'Books Two', bookAuthor: 'Book Author Two' },
-      { bookName: 'Books Three', bookAuthor: 'Book Author Three' },
+    const books: BookShape[] = [
+      {
+        bookName: 'Books One',
+        bookAuthor: 'Book Author One',
+        bookPicturePath: '/',
+        bookId: '1',
+        bookOwnerId: '1',
+      },
+      {
+        bookName: 'Books Two',
+        bookAuthor: 'Book Author Two',
+        bookPicturePath: '/',
+        bookId: '2',
+        bookOwnerId: '2',
+      },
+      {
+        bookName: 'Books Three',
+        bookAuthor: 'Book Author Three',
+        bookPicturePath: '/',
+        bookId: '3',
+        bookOwnerId: '3',
+      },
     ];
     const expectedState: BooksState = { ...initialState, books };
     const newState = bookReducer(initialState, { type: FETCH_BOOKS_SUCCESS, books });
@@ -31,10 +49,28 @@ describe('Book reducer', () => {
   });
 
   it('Should have books state updated when books are passed with action and action type is FETCH_BOOKS_SUCCESS', () => {
-    const books = [
-      { bookName: 'Books One', bookAuthor: 'Book Author One' },
-      { bookName: 'Books Two', bookAuthor: 'Book Author Two' },
-      { bookName: 'Books Three', bookAuthor: 'Book Author Three' },
+    const books: BookShape[] = [
+      {
+        bookName: 'Books One',
+        bookAuthor: 'Book Author One',
+        bookPicturePath: '/',
+        bookOwnerId: '1',
+        bookId: '1',
+      },
+      {
+        bookName: 'Books Two',
+        bookAuthor: 'Book Author Two',
+        bookPicturePath: '/',
+        bookId: '2',
+        bookOwnerId: '2',
+      },
+      {
+        bookName: 'Books Three',
+        bookAuthor: 'Book Author Three',
+        bookId: '3',
+        bookPicturePath: '3',
+        bookOwnerId: '3',
+      },
     ];
     const expectedState: BooksState = { ...initialState, books };
     const newState = bookReducer(initialState, { type: FETCH_BOOKS_SUCCESS, books });

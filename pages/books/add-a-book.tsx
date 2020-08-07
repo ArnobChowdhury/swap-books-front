@@ -13,6 +13,7 @@ import { useDispatch } from 'react-redux';
 // todo all actions should be in an index.tsx
 import { addABookRequest } from 'redux/actions/book';
 
+// todo this page needs to be protected
 const AddABook: NextPage = (): JSX.Element => {
   // todo we will need to change the userName when we are able to add user data
   const dispatch = useDispatch();
