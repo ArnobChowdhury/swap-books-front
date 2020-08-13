@@ -38,8 +38,15 @@ const Books: NextPage = (): JSX.Element => {
 
   let posts;
   if (books) {
-    posts = books.map((el: any) => {
-      const { bookId, bookName, bookAuthor, bookPicturePath, userIsInterested } = el;
+    posts = books.map(el => {
+      const {
+        bookId,
+        bookName,
+        bookAuthor,
+        bookPicturePath,
+        userIsInterested,
+        interestOnGoing,
+      } = el;
 
       // todo if the expressing interest network activity goes wrong what do we do???
       return (
@@ -56,9 +63,11 @@ const Books: NextPage = (): JSX.Element => {
             }
           }}
           isInterested={userIsInterested}
-          key={bookId}
+          key={Number(bookId)}
+          // todo availableIn ??? really? Let's remove this soon
           availableIn="Dhanmondi"
           bottomMargin
+          interestReqOnGoing={interestOnGoing}
         />
       );
     });

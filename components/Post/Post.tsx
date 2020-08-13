@@ -21,6 +21,7 @@ interface PostProps {
   availableIn?: string;
   isInterested: boolean;
   bottomMargin?: boolean;
+  interestReqOnGoing: boolean;
   interestButtonClick: (e: MouseEvent<HTMLButtonElement>) => void;
   key: number;
 }
@@ -33,6 +34,7 @@ export const Post = ({
   genre,
   availableIn,
   bottomMargin,
+  interestReqOnGoing,
   isInterested = false,
   interestButtonClick,
 }: PostProps): JSX.Element => {
@@ -60,7 +62,11 @@ export const Post = ({
         </ContentWrapper>
       </ContentContainer>
       <InterestIconWrapper>
-        <InterestButton onClick={interestButtonClick}>
+        <InterestButton
+          onClick={interestButtonClick}
+          interestReqOnGoing={interestReqOnGoing}
+          disabled={interestReqOnGoing}
+        >
           <InterestIcon hasBodyColor={isInterested} />
           I&apos;m Interested
         </InterestButton>

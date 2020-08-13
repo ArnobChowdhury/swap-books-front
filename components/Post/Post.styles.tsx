@@ -53,7 +53,7 @@ export const InterestIconWrapper = styled.div`
   justify-content: center;
 `;
 
-export const InterestButton = styled.button`
+export const InterestButton = styled.button<{ interestReqOnGoing: boolean }>`
   border: none;
   outline: none;
   display: flex;
@@ -61,7 +61,7 @@ export const InterestButton = styled.button`
   background: none;
   width: 125px;
   justify-content: space-between;
-  cursor: pointer;
+  cursor: ${({ interestReqOnGoing }) => (interestReqOnGoing ? 'wait' : 'pointer')};
   padding: ${({ theme }) => `${theme.spaceFive} ${theme.spaceFour}`};
   border-radius: 5px;
   transition: width 0.3s;
@@ -74,6 +74,6 @@ export const InterestButton = styled.button`
   }
 
   &:active {
-    transform: scale(0.97);
+    transform: ${({ interestReqOnGoing }) => !interestReqOnGoing && 'scale(0.97)'};
   }
 `;

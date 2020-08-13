@@ -32,6 +32,7 @@ export const Default = (): JSX.Element => {
           genre="Novel"
           isInterested={isInterested}
           interestButtonClick={() => setIsInterested(!isInterested)}
+          interestReqOnGoing={false}
         />
       </ThemeProvider>
     </>
