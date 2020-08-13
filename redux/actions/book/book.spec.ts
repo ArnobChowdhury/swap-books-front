@@ -183,7 +183,7 @@ describe('Book Action tests', () => {
             bookOwnerId: '1',
             userIsInterested: false,
             interestOnGoing: false,
-            interestFailed: null,
+            interestReqError: null,
           },
           {
             bookName: 'Alchemist',
@@ -193,7 +193,7 @@ describe('Book Action tests', () => {
             bookOwnerId: '2',
             userIsInterested: false,
             interestOnGoing: false,
-            interestFailed: null,
+            interestReqError: null,
           },
         ],
       },

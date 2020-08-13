@@ -110,7 +110,7 @@ export const fetchBooksRequest = () => {
             bookOwnerId: book.userId,
             userIsInterested: book.isInterested,
             interestOnGoing: false,
-            interestFailed: null,
+            interestReqError: null,
           };
         });
         dispatch(fetchBooksSuccess(booksStructured));
@@ -121,6 +121,8 @@ export const fetchBooksRequest = () => {
       });
   };
 };
+
+// todo write tests for expressInterest related functions
 
 export const expressInterestStart = (bookId: string) => {
   return { type: EXPRESS_INTEREST_START, interestActivity: { bookId } };

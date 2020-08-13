@@ -18,7 +18,7 @@ export interface BookShape {
   bookOwnerId: string;
   userIsInterested: boolean;
   interestOnGoing: boolean;
-  interestFailed: string | null | Error;
+  interestReqError: string | null | Error;
 }
 
 export interface BooksState {
@@ -34,7 +34,7 @@ export const initialState: BooksState = {
   loading: false,
 };
 
-// todo do we really need to separate the functions from the reducer? Can't we just return the objects from here
+// todo write tests for expressInterest related functions
 const reducer = (state = initialState, action: AnyAction) => {
   const { books, error, interestActivity } = action;
   switch (action.type) {
@@ -73,7 +73,7 @@ const reducer = (state = initialState, action: AnyAction) => {
       );
       if (interestFailedOn !== undefined) {
         interestFailedOn.interestOnGoing = false;
-        interestFailedOn.interestFailed = interestActivity.err;
+        interestFailedOn.interestReqError = interestActivity.err;
       }
       return { ...state, books: currentBooks };
     default:

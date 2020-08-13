@@ -29,7 +29,7 @@ describe('Book reducer', () => {
         bookOwnerId: '1',
         userIsInterested: false,
         interestOnGoing: false,
-        interestFailed: null,
+        interestReqError: null,
       },
       {
         bookName: 'Books Two',
@@ -39,7 +39,7 @@ describe('Book reducer', () => {
         bookOwnerId: '2',
         userIsInterested: false,
         interestOnGoing: false,
-        interestFailed: null,
+        interestReqError: null,
       },
       {
         bookName: 'Books Three',
@@ -49,7 +49,7 @@ describe('Book reducer', () => {
         bookOwnerId: '3',
         userIsInterested: false,
         interestOnGoing: false,
-        interestFailed: null,
+        interestReqError: null,
       },
     ];
     const expectedState: BooksState = { ...initialState, books };
@@ -67,7 +67,7 @@ describe('Book reducer', () => {
         bookId: '1',
         userIsInterested: false,
         interestOnGoing: false,
-        interestFailed: null,
+        interestReqError: null,
       },
       {
         bookName: 'Books Two',
@@ -77,7 +77,7 @@ describe('Book reducer', () => {
         bookOwnerId: '2',
         userIsInterested: false,
         interestOnGoing: false,
-        interestFailed: null,
+        interestReqError: null,
       },
       {
         bookName: 'Books Three',
@@ -87,7 +87,7 @@ describe('Book reducer', () => {
         bookOwnerId: '3',
         userIsInterested: false,
         interestOnGoing: false,
-        interestFailed: null,
+        interestReqError: null,
       },
     ];
     const expectedState: BooksState = { ...initialState, books };
