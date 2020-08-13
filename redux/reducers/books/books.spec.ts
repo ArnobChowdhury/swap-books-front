@@ -27,6 +27,9 @@ describe('Book reducer', () => {
         bookPicturePath: '/',
         bookId: '1',
         bookOwnerId: '1',
+        userIsInterested: false,
+        interestOnGoing: false,
+        interestFailed: null,
       },
       {
         bookName: 'Books Two',
@@ -34,6 +37,9 @@ describe('Book reducer', () => {
         bookPicturePath: '/',
         bookId: '2',
         bookOwnerId: '2',
+        userIsInterested: false,
+        interestOnGoing: false,
+        interestFailed: null,
       },
       {
         bookName: 'Books Three',
@@ -41,6 +47,9 @@ describe('Book reducer', () => {
         bookPicturePath: '/',
         bookId: '3',
         bookOwnerId: '3',
+        userIsInterested: false,
+        interestOnGoing: false,
+        interestFailed: null,
       },
     ];
     const expectedState: BooksState = { ...initialState, books };
@@ -56,6 +65,9 @@ describe('Book reducer', () => {
         bookPicturePath: '/',
         bookOwnerId: '1',
         bookId: '1',
+        userIsInterested: false,
+        interestOnGoing: false,
+        interestFailed: null,
       },
       {
         bookName: 'Books Two',
@@ -63,6 +75,9 @@ describe('Book reducer', () => {
         bookPicturePath: '/',
         bookId: '2',
         bookOwnerId: '2',
+        userIsInterested: false,
+        interestOnGoing: false,
+        interestFailed: null,
       },
       {
         bookName: 'Books Three',
@@ -70,6 +85,9 @@ describe('Book reducer', () => {
         bookId: '3',
         bookPicturePath: '3',
         bookOwnerId: '3',
+        userIsInterested: false,
+        interestOnGoing: false,
+        interestFailed: null,
       },
     ];
     const expectedState: BooksState = { ...initialState, books };

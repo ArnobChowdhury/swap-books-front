@@ -5,6 +5,9 @@ import {
   FETCH_BOOKS_START,
   FETCH_BOOKS_SUCCESS,
   FETCH_BOOKS_FAIL,
+  EXPRESS_INTEREST_START,
+  EXPRESS_INTEREST_SUCCESS,
+  EXPRESS_INTEREST_FAIL,
 } from '../../actions/actionTypes';
 
 export interface BookShape {
@@ -13,7 +16,11 @@ export interface BookShape {
   bookAuthor: string;
   bookPicturePath: string;
   bookOwnerId: string;
+  userIsInterested: boolean;
+  interestOnGoing: boolean;
+  interestFailed: string | null | Error;
 }
+
 export interface BooksState {
   books: BookShape[];
   error: string | null | Error;
@@ -29,7 +36,7 @@ export const initialState: BooksState = {
 
 // todo do we really need to separate the functions from the reducer? Can't we just return the objects from here
 const reducer = (state = initialState, action: AnyAction) => {
-  const { books, error } = action;
+  const { books, error, interestActivity } = action;
   switch (action.type) {
     case HYDRATE:
       // our action do not return a property named payload
@@ -40,6 +47,35 @@ const reducer = (state = initialState, action: AnyAction) => {
       return { ...state, loading: false, books };
     case FETCH_BOOKS_FAIL:
       return { ...state, loading: false, error };
+    case EXPRESS_INTEREST_START:
+      const allBooks = [...state.books];
+      const interestStartedOn = allBooks.find(
+        el => el.bookId === interestActivity.bookId,
+      );
+      if (interestStartedOn !== undefined) {
+        interestStartedOn.interestOnGoing = true;
+      }
+      return { ...state, books: allBooks };
+    case EXPRESS_INTEREST_SUCCESS:
+      const existingBooks = [...state.books];
+      const interestSucceedOn = existingBooks.find(
+        el => el.bookId === interestActivity.bookId,
+      );
+      if (interestSucceedOn !== undefined) {
+        interestSucceedOn.userIsInterested = interestActivity.isInterested;
+        interestSucceedOn.interestOnGoing = false;
+      }
+      return { ...state, books: existingBooks };
+    case EXPRESS_INTEREST_FAIL:
+      const currentBooks = [...state.books];
+      const interestFailedOn = currentBooks.find(
+        el => el.bookId === interestActivity.bookId,
+      );
+      if (interestFailedOn !== undefined) {
+        interestFailedOn.interestOnGoing = false;
+        interestFailedOn.interestFailed = interestActivity.err;
+      }
+      return { ...state, books: currentBooks };
     default:
       return state;
   }

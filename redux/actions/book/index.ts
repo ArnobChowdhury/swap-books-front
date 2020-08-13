@@ -7,4 +7,5 @@ export {
   fetchBooksStart,
   fetchBooksSuccess,
   fetchBooksFail,
+  expressInterestReq,
 } from './book';

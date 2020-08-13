@@ -145,6 +145,7 @@ describe('Book Action tests', () => {
         bookPicturePath: 'someurl/images/badshahnamdar.jpg',
         _id: '1',
         userId: '1',
+        isInterested: false,
       },
       {
         bookName: 'Alchemist',
@@ -152,6 +153,7 @@ describe('Book Action tests', () => {
         bookPicturePath: 'someurl/images/alchemist.jpg',
         _id: '2',
         userId: '2',
+        isInterested: false,
       },
     ];
 
@@ -179,6 +181,9 @@ describe('Book Action tests', () => {
             bookPicturePath: 'someurl/images/badshahnamdar.jpg',
             bookId: '1',
             bookOwnerId: '1',
+            userIsInterested: false,
+            interestOnGoing: false,
+            interestFailed: null,
           },
           {
             bookName: 'Alchemist',
@@ -186,6 +191,9 @@ describe('Book Action tests', () => {
             bookPicturePath: 'someurl/images/alchemist.jpg',
             bookId: '2',
             bookOwnerId: '2',
+            userIsInterested: false,
+            interestOnGoing: false,
+            interestFailed: null,
           },
         ],
       },

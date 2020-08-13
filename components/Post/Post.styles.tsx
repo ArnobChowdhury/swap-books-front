@@ -67,7 +67,13 @@ export const InterestButton = styled.button`
   transition: width 0.3s;
   font-family: inherit;
   font-size: ${({ theme }) => theme.fontSizeMedium};
+  transition: all 0.2s;
+
   &:hover {
     background: ${({ theme }) => theme.colorGreyLight};
+  }
+
+  &:active {
+    transform: scale(0.97);
   }
 `;

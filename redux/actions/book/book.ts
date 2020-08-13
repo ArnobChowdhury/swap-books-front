@@ -8,6 +8,9 @@ import {
   FETCH_BOOKS_FAIL,
   FETCH_BOOKS_START,
   FETCH_BOOKS_SUCCESS,
+  EXPRESS_INTEREST_START,
+  EXPRESS_INTEREST_SUCCESS,
+  EXPRESS_INTEREST_FAIL,
 } from './../actionTypes';
 
 export const addABookStart = () => {
@@ -51,8 +54,9 @@ export const addABookRequest = (
     }
     // const path = 'http://localhost:4000/books/add-a-book';
     const path = '/books/add-a-book';
+    // todo below put method should be changed to post method.
     return axios
-      .put(path, fd, {
+      .post(path, fd, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -97,12 +101,16 @@ export const fetchBooksRequest = () => {
       .then(response => {
         const { message, books } = response.data;
         const booksStructured: BookShape[] = books.map((book: any) => {
+          // todo - missing properties in below object
           return {
             bookId: book._id,
             bookName: book.bookName,
             bookAuthor: book.bookAuthor,
             bookPicturePath: book.bookPicturePath,
             bookOwnerId: book.userId,
+            userIsInterested: book.isInterested,
+            interestOnGoing: false,
+            interestFailed: null,
           };
         });
         dispatch(fetchBooksSuccess(booksStructured));
@@ -110,6 +118,46 @@ export const fetchBooksRequest = () => {
       .catch(err => {
         // todo need to check what kind of possible errors we can get???
         dispatch(fetchBooksFail(err));
+      });
+  };
+};
+
+export const expressInterestStart = (bookId: string) => {
+  return { type: EXPRESS_INTEREST_START, interestActivity: { bookId } };
+};
+
+export const expressInterestFail = (bookId: string, err: any) => {
+  return { type: EXPRESS_INTEREST_FAIL, interestActivity: { bookId, err } };
+};
+
+export const expressInterestSuccess = (bookId: string, isInterested: boolean) => {
+  return {
+    type: EXPRESS_INTEREST_SUCCESS,
+    interestActivity: { bookId, isInterested },
+  };
+};
+
+export const expressInterestReq = (bookId: string) => {
+  // @ts-ignore
+  return dispatch => {
+    dispatch(expressInterestStart(bookId));
+
+    const userId = localStorage.getItem('userId');
+
+    const interestData = {
+      userId,
+      bookId,
+    };
+
+    const path = '/books';
+    return axios
+      .put(path, interestData)
+      .then(response => {
+        const { isInterested } = response.data;
+        dispatch(expressInterestSuccess(bookId, isInterested));
+      })
+      .catch(err => {
+        dispatch(expressInterestFail(bookId, err));
       });
   };
 };
