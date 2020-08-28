@@ -2,6 +2,8 @@ import { combineReducers } from 'redux';
 import auth, { AuthState } from './auth';
 import books, { BooksState } from './books';
 import user, { UserState } from './user';
+import { persistReducer } from 'redux-persist';
+import { authPersisConfig } from '../config';
 
 export type RootState = {
   auth: AuthState;
@@ -10,7 +12,7 @@ export type RootState = {
 };
 
 const rootReducer = combineReducers({
-  auth,
+  auth: persistReducer(authPersisConfig, auth),
   books,
   user,
 });

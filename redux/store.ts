@@ -4,14 +4,9 @@ import { MakeStore, createWrapper } from 'next-redux-wrapper';
 import rootReducer, { RootState } from './reducers';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import { persistStore, persistReducer } from 'redux-persist';
-import storage from 'redux-persist/lib/storage';
+import { rootPersistConfig } from './config';
 
-const persistConfig = {
-  key: 'bookswap',
-  storage,
-};
-
-const persistedReducer = persistReducer(persistConfig, rootReducer);
+const persistedReducer = persistReducer(rootPersistConfig, rootReducer);
 
 const bindMiddlewares = (middleware: Middleware[]) => {
   if (process.env.NODE_ENV === 'development') {
