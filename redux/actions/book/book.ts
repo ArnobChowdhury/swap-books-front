@@ -124,7 +124,13 @@ export const fetchBooksRequest = () => {
 
 // todo write tests for expressInterest related functions
 
-export const expressInterestStart = (bookId: string) => {
+export const expressInterestStart = (
+  socket: SocketIOClient.Socket,
+  bookId: string,
+) => {
+  const userId = localStorage.getItem('userId');
+  socket.emit('express interest', { userId, bookId });
+
   return { type: EXPRESS_INTEREST_START, interestActivity: { bookId } };
 };
 
@@ -136,30 +142,5 @@ export const expressInterestSuccess = (bookId: string, isInterested: boolean) =>
   return {
     type: EXPRESS_INTEREST_SUCCESS,
     interestActivity: { bookId, isInterested },
-  };
-};
-
-export const expressInterestReq = (bookId: string) => {
-  // @ts-ignore
-  return dispatch => {
-    dispatch(expressInterestStart(bookId));
-
-    const userId = localStorage.getItem('userId');
-
-    const interestData = {
-      userId,
-      bookId,
-    };
-
-    const path = '/books';
-    return axios
-      .put(path, interestData)
-      .then(response => {
-        const { isInterested } = response.data;
-        dispatch(expressInterestSuccess(bookId, isInterested));
-      })
-      .catch(err => {
-        dispatch(expressInterestFail(bookId, err));
-      });
   };
 };

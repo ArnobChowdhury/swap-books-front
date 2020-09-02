@@ -1,18 +1,19 @@
-import { useEffect } from 'react';
+import { useEffect, useContext } from 'react';
 import { NextPage } from 'next';
 import { Post } from 'components/Post';
 import { NavBar } from 'components/NavBar';
 import { PageLayout } from 'hoc/PageLayout';
+import { SocketIoInterestContext } from 'hoc/Sockets';
 // import axios from 'axiosInstance';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchBooksRequest, expressInterestReq } from 'redux/actions/book';
+// import { fetchBooksRequest, expressInterestReq } from 'redux/actions/book';
+import { fetchBooksRequest, expressInterestStart } from 'redux/actions/book';
 import { RootState } from 'redux/reducers';
 import { Spinner } from 'components/Spinner';
 
 const Books: NextPage = (): JSX.Element => {
-  // const { books } = props;
-
   const dispatch = useDispatch();
+  const { socket } = useContext(SocketIoInterestContext);
 
   useEffect(() => {
     if (process.browser) {
@@ -24,13 +25,8 @@ const Books: NextPage = (): JSX.Element => {
   const isSignedIn = useSelector<RootState, string | null>(
     (s: RootState) => s.auth.token,
   );
-  const { books, loading } = booksState;
 
-  /**
-   * Todo, when interestButton is clicked
-   * The id of the post is saved
-   * In the server we save the userId of the person who liked it
-   */
+  const { books, loading } = booksState;
 
   const handleUnsignedInterest = () => {
     alert('You need to sign in to express interest');
@@ -56,8 +52,8 @@ const Books: NextPage = (): JSX.Element => {
           genre="Novel"
           imgUrl={`${process.env.NEXT_PUBLIC_IMAGE_URL}${bookPicturePath}`}
           interestButtonClick={() => {
-            if (isSignedIn) {
-              dispatch(expressInterestReq(bookId));
+            if (isSignedIn && socket !== undefined) {
+              dispatch(expressInterestStart(socket, bookId));
             } else {
               handleUnsignedInterest();
             }
