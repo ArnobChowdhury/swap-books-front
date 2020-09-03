@@ -16,6 +16,7 @@ export interface BookShape {
   bookAuthor: string;
   bookPicturePath: string;
   bookOwnerId: string;
+  bookOwnerName: string;
   userIsInterested: boolean;
   interestOnGoing: boolean;
   interestReqError: string | null | Error;

@@ -21,12 +21,13 @@ const Books: NextPage = (): JSX.Element => {
     }
   }, []);
 
-  const booksState = useSelector((store: RootState) => store.books);
-  const isSignedIn = useSelector<RootState, string | null>(
-    (s: RootState) => s.auth.token,
-  );
+  const { books, loading } = useSelector((store: RootState) => store.books);
+  const { name: userName } = useSelector((store: RootState) => store.user);
+  const { token, userId } = useSelector((s: RootState) => s.auth);
 
-  const { books, loading } = booksState;
+  const isSignedIn = Boolean(token);
+
+  //const { books, loading } = booksState;
 
   const handleUnsignedInterest = () => {
     alert('You need to sign in to express interest');
@@ -40,6 +41,8 @@ const Books: NextPage = (): JSX.Element => {
         bookName,
         bookAuthor,
         bookPicturePath,
+        bookOwnerName,
+        bookOwnerId,
         userIsInterested,
         interestOnGoing,
       } = el;
@@ -49,11 +52,12 @@ const Books: NextPage = (): JSX.Element => {
         <Post
           bookName={bookName}
           bookAuthor={bookAuthor}
+          bookOwnerName={bookOwnerName}
           genre="Novel"
           imgUrl={`${process.env.NEXT_PUBLIC_IMAGE_URL}${bookPicturePath}`}
           interestButtonClick={() => {
-            if (isSignedIn && socket !== undefined) {
-              dispatch(expressInterestStart(socket, bookId));
+            if (isSignedIn && socket !== undefined && userName) {
+              dispatch(expressInterestStart(socket, userName, bookId));
             } else {
               handleUnsignedInterest();
             }
@@ -64,6 +68,7 @@ const Books: NextPage = (): JSX.Element => {
           availableIn="Dhanmondi"
           bottomMargin
           interestReqOnGoing={interestOnGoing}
+          isOwners={bookOwnerId === userId}
         />
       );
     });
@@ -71,7 +76,7 @@ const Books: NextPage = (): JSX.Element => {
 
   return (
     <>
-      <NavBar currentSelected="Books" userName="Arnob" />
+      <NavBar isSignedIn={isSignedIn} currentSelected="Books" userName={userName} />
       <PageLayout>{!loading ? posts : <Spinner />}</PageLayout>
     </>
   );

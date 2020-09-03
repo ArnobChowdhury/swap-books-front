@@ -9,9 +9,9 @@ import { FlexItem } from 'components/FlexItem';
 import { Input } from 'components/Input';
 import { FileInput } from 'components/FileInput';
 import { Button } from 'components/Button';
-import { useDispatch } from 'react-redux';
-// todo all actions should be in an index.tsx
+import { useDispatch, useSelector } from 'react-redux';
 import { addABookRequest } from 'redux/actions/book';
+import { RootState } from 'redux/reducers';
 
 // todo this page needs to be protected
 const AddABook: NextPage = (): JSX.Element => {
@@ -23,9 +23,16 @@ const AddABook: NextPage = (): JSX.Element => {
     setFiles(e.target.files?.[0]);
   };
 
+  const { name: userName } = useSelector((store: RootState) => store.user);
+  const token = useSelector<RootState, string | null>(
+    (s: RootState) => s.auth.token,
+  );
+
+  const isSignedIn = Boolean(token);
+
   return (
     <>
-      <NavBar userName="arnob" />
+      <NavBar userName={userName} isSignedIn={isSignedIn} />
       <PageLayout>
         <FlexContainer>
           <FlexItem defaultSize={35}>
@@ -51,9 +58,17 @@ const AddABook: NextPage = (): JSX.Element => {
                 bookauthor: Yup.string().required('Required'),
               })}
               onSubmit={({ bookname, bookauthor }, { setSubmitting }) => {
-                dispatch(
-                  addABookRequest(bookname, bookauthor, files, setSubmitting),
-                );
+                if (isSignedIn && userName) {
+                  dispatch(
+                    addABookRequest(
+                      bookname,
+                      bookauthor,
+                      files,
+                      userName,
+                      setSubmitting,
+                    ),
+                  );
+                }
               }}
             >
               <Form>

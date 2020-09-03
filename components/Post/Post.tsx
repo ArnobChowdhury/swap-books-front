@@ -16,6 +16,7 @@ interface PostProps {
   imgUrl: string;
   bookName: string;
   bookAuthor: string;
+  bookOwnerName: string;
   edition?: string;
   genre?: string;
   availableIn?: string;
@@ -24,12 +25,14 @@ interface PostProps {
   interestReqOnGoing: boolean;
   interestButtonClick: (e: MouseEvent<HTMLButtonElement>) => void;
   key: number;
+  isOwners: boolean;
 }
 
 export const Post = ({
   imgUrl,
   bookName,
   bookAuthor,
+  bookOwnerName,
   edition,
   genre,
   availableIn,
@@ -37,6 +40,7 @@ export const Post = ({
   interestReqOnGoing,
   isInterested = false,
   interestButtonClick,
+  isOwners,
 }: PostProps): JSX.Element => {
   return (
     <PostWrapper bottomMargin={bottomMargin}>
@@ -60,17 +64,23 @@ export const Post = ({
           <ContentLeft>Available in:</ContentLeft>
           <ContentRight>{availableIn}</ContentRight>
         </ContentWrapper>
+        <ContentWrapper>
+          <ContentLeft>Posted by:</ContentLeft>
+          <ContentRight>{isOwners ? 'You' : bookOwnerName}</ContentRight>
+        </ContentWrapper>
       </ContentContainer>
-      <InterestIconWrapper>
-        <InterestButton
-          onClick={interestButtonClick}
-          interestReqOnGoing={interestReqOnGoing}
-          disabled={interestReqOnGoing}
-        >
-          <InterestIcon hasBodyColor={isInterested} />
-          I&apos;m Interested
-        </InterestButton>
-      </InterestIconWrapper>
+      {!isOwners && (
+        <InterestIconWrapper>
+          <InterestButton
+            onClick={interestButtonClick}
+            interestReqOnGoing={interestReqOnGoing}
+            disabled={interestReqOnGoing}
+          >
+            <InterestIcon hasBodyColor={isInterested} />
+            I&apos;m Interested
+          </InterestButton>
+        </InterestIconWrapper>
+      )}
     </PostWrapper>
   );
 };

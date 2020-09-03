@@ -27,12 +27,14 @@ export const Default = (): JSX.Element => {
           key={1}
           bookName="Badshah Namdar"
           bookAuthor="Humayun Ahmed"
+          bookOwnerName="Tom"
           imgUrl="http://localhost:4000/images/2020-07-11T22-24-34.542Z-badshah_namdar.jpg"
           availableIn="Dhanmondi"
           genre="Novel"
           isInterested={isInterested}
           interestButtonClick={() => setIsInterested(!isInterested)}
           interestReqOnGoing={false}
+          isOwners={false}
         />
       </ThemeProvider>
     </>

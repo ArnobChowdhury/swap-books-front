@@ -5,10 +5,10 @@ import { useSelector } from 'react-redux';
 import { expressInterestSuccess } from 'redux/actions/book';
 import { useDispatch } from 'react-redux';
 import {
-  RECEIVE_INTEREST,
-  DISCONNECT,
-  GET_NOTIFICATION,
-  RECEIVE_NOTIFICATION,
+  SOCKET_RECEIVE_INTEREST,
+  SOCKET_DISCONNECT,
+  SOCKET_GET_NOTIFICATION,
+  SOCKET_RECEIVE_NOTIFICATION,
 } from 'socketTypes';
 
 interface SocketIoInterestContextProps {
@@ -38,10 +38,10 @@ export const SocketIOInterest = ({ children }: SocketIOInterestInterface) => {
   if (isSignedIn) {
     socket = io(`${process.env.NEXT_PUBLIC_SOCKET_URL}/interest`);
 
-    socket.emit(GET_NOTIFICATION, userId);
+    socket.emit(SOCKET_GET_NOTIFICATION, userId);
 
     //todo any should be changed
-    socket.on(RECEIVE_NOTIFICATION, (notification: any) => {
+    socket.on(SOCKET_RECEIVE_NOTIFICATION, (notification: any) => {
       // eslint-disable-next-line
       console.log(notification);
       // something like below code will be implemented for notification
@@ -49,12 +49,12 @@ export const SocketIOInterest = ({ children }: SocketIOInterestInterface) => {
     });
 
     // @ts-ignore
-    socket.on(RECEIVE_INTEREST, ({ bookId, interestState }) => {
+    socket.on(SOCKET_RECEIVE_INTEREST, ({ bookId, interestState }) => {
       // todo hardcoded bookId needs to change
       dispatch(expressInterestSuccess(bookId, interestState === 'INTERESTED'));
     });
 
-    socket.on(DISCONNECT, () => {
+    socket.on(SOCKET_DISCONNECT, () => {
       // eslint-disable-next-line
       console.log('disconnecting, do something');
     });

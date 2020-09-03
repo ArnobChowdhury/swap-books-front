@@ -1,4 +1,5 @@
 import axios from '../../../axiosInstance';
+import { SOCKET_EXPRESS_INTEREST } from '../../../socketTypes';
 import { BookShape } from '../../reducers/books';
 
 import {
@@ -38,6 +39,7 @@ export const addABookRequest = (
   bookName: string,
   bookAuthor: string,
   bookPicture: any,
+  bookOwnerName: string,
   formikSetSubmitting: (submissionResolved: boolean) => void,
 ) => {
   // @ts-ignore
@@ -48,6 +50,7 @@ export const addABookRequest = (
     fd.append('bookName', bookName);
     fd.append('bookAuthor', bookAuthor);
     fd.append('bookPicture', bookPicture);
+    fd.append('bookOwnerName', bookOwnerName);
     // what if the user is not signed in???
     if (userId) {
       fd.append('userId', userId);
@@ -108,6 +111,7 @@ export const fetchBooksRequest = () => {
             bookAuthor: book.bookAuthor,
             bookPicturePath: book.bookPicturePath,
             bookOwnerId: book.userId,
+            bookOwnerName: book.bookOwnerName,
             userIsInterested: book.isInterested,
             interestOnGoing: false,
             interestReqError: null,
@@ -126,10 +130,11 @@ export const fetchBooksRequest = () => {
 
 export const expressInterestStart = (
   socket: SocketIOClient.Socket,
+  userName: string,
   bookId: string,
 ) => {
   const userId = localStorage.getItem('userId');
-  socket.emit('express interest', { userId, bookId });
+  socket.emit(SOCKET_EXPRESS_INTEREST, { userId, userName, bookId });
 
   return { type: EXPRESS_INTEREST_START, interestActivity: { bookId } };
 };

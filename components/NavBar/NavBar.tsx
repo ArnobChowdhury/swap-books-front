@@ -10,13 +10,15 @@ import { useDispatch } from 'react-redux';
 import { authLogout } from 'redux/actions/auth';
 
 interface NavBarProps {
-  userName: string;
-  currentSelected?: 'Books' | 'Messages' | 'Notifications' | 'User' | 'Logout';
+  userName: string | null;
+  isSignedIn: boolean;
+  currentSelected?: 'Books' | 'Messages' | 'Notifications' | 'User' | 'Auth';
 }
 
 // todo there should be not be any default arguments
 export const NavBar = ({
-  userName = 'User',
+  isSignedIn,
+  userName,
   currentSelected,
 }: NavBarProps): JSX.Element => {
   const dispatch = useDispatch();
@@ -32,27 +34,37 @@ export const NavBar = ({
               Books
             </NavLinks>
           </NavLinkWrapper>
-          <NavLinkWrapper isSelected={currentSelected === 'Messages'}>
-            <NavLinks href="#" isSelected={currentSelected === 'Messages'}>
-              Messages
-            </NavLinks>
-          </NavLinkWrapper>
-          <NavLinkWrapper isSelected={currentSelected === 'Notifications'}>
-            <NavLinks href="#" isSelected={currentSelected === 'Notifications'}>
-              Notifications
-            </NavLinks>
-          </NavLinkWrapper>
-          <NavLinkWrapper isSelected={currentSelected === 'User'}>
-            <NavLinks href="#" isSelected={currentSelected === 'User'}>
-              {userName}
-            </NavLinks>
-          </NavLinkWrapper>
+          {isSignedIn && (
+            <>
+              <NavLinkWrapper isSelected={currentSelected === 'Messages'}>
+                <NavLinks href="#" isSelected={currentSelected === 'Messages'}>
+                  Messages
+                </NavLinks>
+              </NavLinkWrapper>
+              <NavLinkWrapper isSelected={currentSelected === 'Notifications'}>
+                <NavLinks href="#" isSelected={currentSelected === 'Notifications'}>
+                  Notifications
+                </NavLinks>
+              </NavLinkWrapper>
+              <NavLinkWrapper isSelected={currentSelected === 'User'}>
+                <NavLinks href="#" isSelected={currentSelected === 'User'}>
+                  {userName}
+                </NavLinks>
+              </NavLinkWrapper>
+            </>
+          )}
           <NavLinkWrapper
-            isSelected={currentSelected === 'Logout'}
-            onClick={() => dispatch(authLogout())}
+            isSelected={currentSelected === 'Auth'}
+            onClick={() => {
+              isSignedIn
+                ? dispatch(authLogout())
+                : () => {
+                    /**Login modal will appear */
+                  };
+            }}
           >
-            <NavLinks href="#" isSelected={currentSelected === 'Logout'}>
-              Logout
+            <NavLinks href="#" isSelected={currentSelected === 'Auth'}>
+              {isSignedIn ? 'Logout' : 'Login'}
             </NavLinks>
           </NavLinkWrapper>
         </NavUL>
