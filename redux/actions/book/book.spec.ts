@@ -66,6 +66,7 @@ describe('Book Action tests', () => {
           'Badshah Namdar',
           'Humayun Ahmed',
           'someurl/images/badshah.jpg',
+          'Ownername',
           mockFunc,
         ),
       )
@@ -100,6 +101,7 @@ describe('Book Action tests', () => {
           'Badshah Namdar',
           'Humayun Ahmed',
           'someurl/images/badshah.jpg',
+          'OwnerName',
           mockFunc,
         ),
       )
