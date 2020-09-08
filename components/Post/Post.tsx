@@ -76,7 +76,7 @@ export const Post = ({
             interestReqOnGoing={interestReqOnGoing}
             disabled={interestReqOnGoing}
           >
-            <InterestIcon hasBodyColor={isInterested} />
+            <InterestIcon hasBodyColor={isInterested} width="20px" height="20px" />
             I&apos;m Interested
           </InterestButton>
         </InterestIconWrapper>

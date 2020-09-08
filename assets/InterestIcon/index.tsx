@@ -1,7 +1,11 @@
 export const InterestIcon = ({
   hasBodyColor = false,
+  width = '20px',
+  height = '20px',
 }: {
   hasBodyColor?: boolean;
+  width: string;
+  height: string;
 }) => {
   return (
     <svg
@@ -13,8 +17,8 @@ export const InterestIcon = ({
       y="0px"
       viewBox="0 0 512 512"
       xmlSpace="preserve"
-      width="20px"
-      height="20px"
+      width={width}
+      height={height}
     >
       <path
         d="M44.8,86c-49.1,49.1-49.1,128.6,0,177.7l190.5,190.5c11.4,11.5,30,11.5,41.5,0l190.5-190.5

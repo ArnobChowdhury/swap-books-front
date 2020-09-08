@@ -1,18 +1,17 @@
-import { withKnobs } from '@storybook/addon-knobs';
+import { NotificationDropDown } from './NotificationDropDown';
+import { withKnobs, text, boolean } from '@storybook/addon-knobs';
 import { withA11y } from '@storybook/addon-a11y';
-import { action } from '@storybook/addon-actions';
-import GlobalStyles from '../GlobalStyles';
-import { ThemeProvider } from 'styled-components';
 import theme from '../../theme';
-import { NavBar } from './NavBar';
+import { ThemeProvider } from 'styled-components';
+import GlobalStyles from '../GlobalStyles';
 
 export default {
-  title: 'Navbar',
-  component: NavBar,
+  title: 'NotificationDropDown',
+  component: NotificationDropDown,
   decorators: [withKnobs, withA11y],
   parameters: {
-    componentSubtitle: 'NavBar for everypage of app',
-    // backgrounds: [{ name: 'Black', value: 'rgb(65, 65, 65)', default: true }],
+    componentSubtitle: 'NotificationDropDown',
+    backgrounds: [{ name: 'Light', value: 'rgb(250,255,255)', default: true }],
   },
 };
 
@@ -69,14 +68,14 @@ export const Default = (): JSX.Element => {
       seen: false,
     },
   ];
-  // @ts-ignore
+
   return (
     <>
       <ThemeProvider theme={theme}>
         <GlobalStyles storybook />
-        {/*
+        {/** 
           @ts-ignore */}
-        <NavBar isSignedIn={true} userName="Arnob" notifications={notifications} />
+        <NotificationDropDown notifications={notifications} />
       </ThemeProvider>
     </>
   );

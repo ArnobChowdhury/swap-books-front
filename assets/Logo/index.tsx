@@ -1,7 +1,9 @@
 interface LogoProps {
   width: number;
 }
-const Logo: React.FC<LogoProps> = ({ width = 400 }: LogoProps): JSX.Element => {
+export const Logo: React.FC<LogoProps> = ({
+  width = 400,
+}: LogoProps): JSX.Element => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -55,5 +57,3 @@ const Logo: React.FC<LogoProps> = ({ width = 400 }: LogoProps): JSX.Element => {
     </svg>
   );
 };
-
-export default Logo;

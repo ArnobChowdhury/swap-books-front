@@ -4,6 +4,7 @@ export const NavContainer = styled.div`
   background: ${({ theme }) => theme.colorBlackLight};
   display: flex;
   justify-content: center;
+  position: relative;
 `;
 
 export const NavWrapper = styled.nav`
@@ -39,4 +40,15 @@ export const NavLinks = styled.a<{ isSelected: boolean }>`
   padding: 0 ${({ theme }) => theme.spaceEight};
   color: ${({ isSelected, theme }) =>
     isSelected ? theme.colorYellowDeep : 'white'};
+`;
+
+export const DropDown = styled.div<{ isSelected: boolean }>`
+  position: absolute;
+  top: 65px;
+  right: 10px;
+  display: ${({ isSelected }) => (isSelected ? 'block' : 'none')};
+  width: 400px;
+  background: white;
+  border: ${({ theme }) => `1px solid ${theme.colorGreyPrimary}`};
+  border-radius: 5px;
 `;

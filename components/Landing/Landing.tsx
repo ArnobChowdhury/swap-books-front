@@ -6,7 +6,7 @@ import {
   BookDiv,
 } from './Landing.styles';
 import Book from './BookSVG';
-import Logo from '../../assets/Logo';
+import { Logo } from '../../assets/Logo';
 import { Button } from '../Button';
 import { FlexContainer } from '../FlexContainer';
 import { FlexItem } from '../FlexItem';

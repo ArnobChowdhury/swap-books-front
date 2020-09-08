@@ -1,0 +1,1 @@
+export { NotificationChild } from './NotificationChild';

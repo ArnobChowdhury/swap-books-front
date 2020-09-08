@@ -4,10 +4,9 @@ import { Post } from 'components/Post';
 import { NavBar } from 'components/NavBar';
 import { PageLayout } from 'hoc/PageLayout';
 import { SocketIoInterestContext } from 'hoc/Sockets';
-// import axios from 'axiosInstance';
 import { useDispatch, useSelector } from 'react-redux';
-// import { fetchBooksRequest, expressInterestReq } from 'redux/actions/book';
 import { fetchBooksRequest, expressInterestStart } from 'redux/actions/book';
+import { authLogout } from 'redux/actions/auth';
 import { RootState } from 'redux/reducers';
 import { Spinner } from 'components/Spinner';
 
@@ -24,6 +23,7 @@ const Books: NextPage = (): JSX.Element => {
   const { books, loading } = useSelector((store: RootState) => store.books);
   const { name: userName } = useSelector((store: RootState) => store.user);
   const { token, userId } = useSelector((s: RootState) => s.auth);
+  const { notifications } = useSelector((store: RootState) => store.notifications);
 
   const isSignedIn = Boolean(token);
 
@@ -57,7 +57,15 @@ const Books: NextPage = (): JSX.Element => {
           imgUrl={`${process.env.NEXT_PUBLIC_IMAGE_URL}${bookPicturePath}`}
           interestButtonClick={() => {
             if (isSignedIn && socket !== undefined && userName) {
-              dispatch(expressInterestStart(socket, userName, bookId));
+              dispatch(
+                expressInterestStart(
+                  socket,
+                  userName,
+                  bookId,
+                  bookName,
+                  bookOwnerId,
+                ),
+              );
             } else {
               handleUnsignedInterest();
             }
@@ -76,7 +84,13 @@ const Books: NextPage = (): JSX.Element => {
 
   return (
     <>
-      <NavBar isSignedIn={isSignedIn} currentSelected="Books" userName={userName} />
+      <NavBar
+        isSignedIn={isSignedIn}
+        currentSelected="Books"
+        userName={userName}
+        notifications={notifications}
+        logoutFunc={() => dispatch(authLogout())}
+      />
       <PageLayout>{!loading ? posts : <Spinner />}</PageLayout>
     </>
   );

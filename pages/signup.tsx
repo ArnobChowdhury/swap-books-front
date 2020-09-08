@@ -8,7 +8,7 @@ import { CenterContainer } from 'components/CenterContainer';
 import { Button } from '../components/Button';
 import { Spinner } from 'components/Spinner';
 import { Formik, Form } from 'formik';
-import Logo from 'assets/Logo';
+import { Logo } from 'assets/Logo';
 import * as Yup from 'yup';
 import { useDispatch, useSelector } from 'react-redux';
 import { createUserReq } from 'redux/actions/user';

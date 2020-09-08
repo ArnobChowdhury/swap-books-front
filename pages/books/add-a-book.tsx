@@ -12,6 +12,7 @@ import { Button } from 'components/Button';
 import { useDispatch, useSelector } from 'react-redux';
 import { addABookRequest } from 'redux/actions/book';
 import { RootState } from 'redux/reducers';
+import { authLogout } from 'redux/actions/auth';
 
 // todo this page needs to be protected
 const AddABook: NextPage = (): JSX.Element => {
@@ -27,12 +28,18 @@ const AddABook: NextPage = (): JSX.Element => {
   const token = useSelector<RootState, string | null>(
     (s: RootState) => s.auth.token,
   );
+  const { notifications } = useSelector((store: RootState) => store.notifications);
 
   const isSignedIn = Boolean(token);
 
   return (
     <>
-      <NavBar userName={userName} isSignedIn={isSignedIn} />
+      <NavBar
+        userName={userName}
+        isSignedIn={isSignedIn}
+        notifications={notifications}
+        logoutFunc={() => dispatch(authLogout())}
+      />
       <PageLayout>
         <FlexContainer>
           <FlexItem defaultSize={35}>
