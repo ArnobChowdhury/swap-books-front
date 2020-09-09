@@ -1,5 +1,5 @@
 import { NotificationResponseShape } from 'redux/reducers/notifications';
-import { SOCKET_GET_NOTIFICATION } from 'socketTypes';
+import { SOCKET_GET_NOTIFICATION } from '../../../socketTypes';
 import { Dispatch } from 'redux';
 
 import {
@@ -35,7 +35,7 @@ export const getNotificationsRequest = (
   userId: string,
 ) => (dispatch: Dispatch) => {
   dispatch(getNotificationStart());
-  socket.emit(
+  return socket.emit(
     SOCKET_GET_NOTIFICATION,
     userId,
     (notifications: NotificationResponseShape[]) => {

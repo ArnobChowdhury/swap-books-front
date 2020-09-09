@@ -29,6 +29,7 @@ export interface NotificationShape {
   seen: boolean;
   noticeText?: string;
   matchLink?: string;
+  timestamp: number;
 }
 
 export interface NotificationState {
