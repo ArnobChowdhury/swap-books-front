@@ -1,6 +1,7 @@
 import axios from '../../../axiosInstance';
 import { SOCKET_EXPRESS_INTEREST } from '../../../socketTypes';
 import { BookShape } from '../../reducers/books';
+import { Dispatch } from 'redux';
 
 import {
   ADD_A_BOOK_START,
@@ -42,8 +43,7 @@ export const addABookRequest = (
   bookOwnerName: string,
   formikSetSubmitting: (submissionResolved: boolean) => void,
 ) => {
-  // @ts-ignore
-  return dispatch => {
+  return async (dispatch: Dispatch) => {
     dispatch(addABookStart());
     const userId = localStorage.getItem('userId');
     const fd = new FormData();
@@ -55,7 +55,6 @@ export const addABookRequest = (
     if (userId) {
       fd.append('userId', userId);
     }
-    // const path = 'http://localhost:4000/books/add-a-book';
     const path = '/books/add-a-book';
     // todo below put method should be changed to post method.
     return axios
@@ -91,8 +90,7 @@ export const fetchBooksFail = (error: any) => {
 };
 
 export const fetchBooksRequest = () => {
-  // @ts-ignore
-  return dispatch => {
+  return async (dispatch: Dispatch) => {
     // todo need to have state that the request has started. skipped for now
     dispatch(fetchBooksStart());
 

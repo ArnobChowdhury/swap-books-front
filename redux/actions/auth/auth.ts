@@ -69,7 +69,7 @@ export const authRequest = (
   password: string,
   formikSetSubmitting: (submissionResolved: boolean) => void,
 ): ThunkAction<void, RootState, unknown, Action<string>> => {
-  return (dispatch: Dispatch) => {
+  return async (dispatch: Dispatch) => {
     dispatch(authStart());
     const authData = {
       email,
