@@ -6,7 +6,6 @@ import {
   GET_NOTIFICATIONS_SUCCESS,
   GET_NOTIFICATIONS_FAIL,
 } from '../../actions/actionTypes';
-import { timeStamp } from 'console';
 
 export interface NotificationResponseShape {
   _id: string;
