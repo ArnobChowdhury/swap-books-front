@@ -55,7 +55,7 @@ export const addABookRequest = (
     if (userId) {
       fd.append('userId', userId);
     }
-    const path = '/books/add-a-book';
+    const path = '/books/add';
     // todo below put method should be changed to post method.
     return axios
       .post(path, fd, {
