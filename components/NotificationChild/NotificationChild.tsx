@@ -42,9 +42,7 @@ export const NotificationChild: React.FC<NotificationChildProps> = ({
           <strong>Expressed Interest: </strong>
           {interestedUserName} is interested in your book {bookName}. Check books you
           can swap with
-          <InterestedUserLink
-            href={`${process.env.NEXT_PUBLIC_BASE_URL}${interestedUserId}`}
-          >
+          <InterestedUserLink href={`/user/${interestedUserId}`}>
             {` ${interestedUserName}.`}
           </InterestedUserLink>
         </span>

@@ -1,6 +1,7 @@
 import axios from '../../../axiosInstance';
 import { SOCKET_EXPRESS_INTEREST } from '../../../socketTypes';
 import { BookShape } from '../../reducers/books';
+import { Dispatch } from 'redux';
 
 import {
   ADD_A_BOOK_START,
@@ -42,8 +43,7 @@ export const addABookRequest = (
   bookOwnerName: string,
   formikSetSubmitting: (submissionResolved: boolean) => void,
 ) => {
-  // @ts-ignore
-  return dispatch => {
+  return async (dispatch: Dispatch) => {
     dispatch(addABookStart());
     const userId = localStorage.getItem('userId');
     const fd = new FormData();
@@ -55,7 +55,6 @@ export const addABookRequest = (
     if (userId) {
       fd.append('userId', userId);
     }
-    // const path = 'http://localhost:4000/books/add-a-book';
     const path = '/books/add-a-book';
     // todo below put method should be changed to post method.
     return axios
@@ -91,8 +90,7 @@ export const fetchBooksFail = (error: any) => {
 };
 
 export const fetchBooksRequest = () => {
-  // @ts-ignore
-  return dispatch => {
+  return async (dispatch: Dispatch) => {
     // todo need to have state that the request has started. skipped for now
     dispatch(fetchBooksStart());
 
@@ -105,6 +103,42 @@ export const fetchBooksRequest = () => {
         const { message, books } = response.data;
         const booksStructured: BookShape[] = books.map((book: any) => {
           // todo - missing properties in below object
+          return {
+            bookId: book._id,
+            bookName: book.bookName,
+            bookAuthor: book.bookAuthor,
+            bookPicturePath: book.bookPicturePath,
+            bookOwnerId: book.userId,
+            bookOwnerName: book.bookOwnerName,
+            userIsInterested: book.isInterested,
+            interestOnGoing: false,
+            interestReqError: null,
+          };
+        });
+        dispatch(fetchBooksSuccess(booksStructured));
+      })
+      .catch(err => {
+        // todo need to check what kind of possible errors we can get???
+        dispatch(fetchBooksFail(err));
+      });
+  };
+};
+
+export const fetchProfileBooksRequest = (profileId: string) => {
+  return async (dispatch: Dispatch) => {
+    // todo need to have state that the request has started. skipped for now
+    dispatch(fetchBooksStart());
+
+    const userId = localStorage.getItem('userId');
+
+    const path = `/books/${profileId}`;
+    return axios
+      .get(path, { params: { userId } })
+      .then(response => {
+        const { books } = response.data;
+        const booksStructured: BookShape[] = books.map((book: any) => {
+          // todo - missing properties in below object
+          // todo make an utility function for below code since this is getting re-used
           return {
             bookId: book._id,
             bookName: book.bookName,

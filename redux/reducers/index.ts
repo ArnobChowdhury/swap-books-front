@@ -2,6 +2,7 @@ import { combineReducers } from 'redux';
 import auth, { AuthState } from './auth';
 import books, { BooksState } from './books';
 import user, { UserState } from './user';
+import profile, { ProfileState } from './profile';
 import notifications, { NotificationState } from './notifications';
 import { persistReducer } from 'redux-persist';
 import { authPersisConfig } from '../config';
@@ -11,6 +12,7 @@ export type RootState = {
   books: BooksState;
   user: UserState;
   notifications: NotificationState;
+  profile: ProfileState;
 };
 
 const rootReducer = combineReducers({
@@ -18,6 +20,7 @@ const rootReducer = combineReducers({
   books,
   user,
   notifications,
+  profile,
 });
 
 export default rootReducer;

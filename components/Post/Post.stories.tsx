@@ -24,7 +24,7 @@ export const Default = (): JSX.Element => {
       <ThemeProvider theme={theme}>
         <GlobalStyles storybook />
         <Post
-          key={1}
+          key="1"
           bookName="Badshah Namdar"
           bookAuthor="Humayun Ahmed"
           bookOwnerName="Tom"

@@ -23,8 +23,8 @@ interface PostProps {
   isInterested: boolean;
   bottomMargin?: boolean;
   interestReqOnGoing: boolean;
-  interestButtonClick: (e: MouseEvent<HTMLButtonElement>) => void;
-  key: number;
+  interestButtonClick?: (e: MouseEvent<HTMLButtonElement>) => void;
+  key: string;
   isOwners: boolean;
 }
 

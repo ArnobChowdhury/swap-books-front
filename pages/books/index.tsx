@@ -71,7 +71,7 @@ const Books: NextPage = (): JSX.Element => {
             }
           }}
           isInterested={userIsInterested}
-          key={Number(bookId)}
+          key={bookId}
           // todo availableIn ??? really? Let's remove this soon
           availableIn="Dhanmondi"
           bottomMargin

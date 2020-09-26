@@ -6,6 +6,7 @@ import {
   GET_NOTIFICATIONS_SUCCESS,
   GET_NOTIFICATIONS_FAIL,
 } from '../../actions/actionTypes';
+import { timeStamp } from 'console';
 
 export interface NotificationResponseShape {
   _id: string;
@@ -56,7 +57,7 @@ const reducer = (state = initialState, action: AnyAction) => {
       const notificationsReshaped = notifications
         .sort(
           (a: NotificationResponseShape, b: NotificationResponseShape) =>
-            a.timestamp < b.timestamp,
+            b.timestamp - a.timestamp,
         )
         .map((notification: NotificationResponseShape) => {
           const notificationId = notification._id;

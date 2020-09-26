@@ -9,6 +9,7 @@ import {
 } from '../../actions/actionTypes';
 
 export interface UserState {
+  _id?: string | null;
   name: string | null;
   dob: string | null;
   sex: string | null;
