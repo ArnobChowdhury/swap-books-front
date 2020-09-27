@@ -6,7 +6,7 @@ import {
   CREATE_USER_FAIL,
 } from '../../actions/actionTypes';
 
-describe('Book reducer', () => {
+describe('User reducer', () => {
   it('Should return a default state when empty string is passed as default string', () => {
     const expectedState: UserState = { ...initialState };
     const newState = userReducer(initialState, { type: '' });
