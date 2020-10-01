@@ -18,7 +18,7 @@ export const NotificationDropDown: React.FC<NotificationDropDownProps> = ({
       fromName,
       noticeText,
       type,
-      matchLink,
+      roomLink,
     }: NotificationShape) => (
       <NotificationChild
         key={notificationId}
@@ -28,7 +28,7 @@ export const NotificationDropDown: React.FC<NotificationDropDownProps> = ({
         fromName={fromName}
         type={type}
         noticeText={noticeText}
-        matchLink={matchLink}
+        roomLink={roomLink}
       />
     ),
   );

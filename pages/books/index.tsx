@@ -3,7 +3,7 @@ import { NextPage } from 'next';
 import { Post } from 'components/Post';
 import { NavBar } from 'components/NavBar';
 import { PageLayout } from 'hoc/PageLayout';
-import { SocketIoInterestContext } from 'hoc/Sockets';
+import { SocketIoContext } from 'hoc/Sockets';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchBooksRequest, expressInterestStart } from 'redux/actions/book';
 import { authLogout } from 'redux/actions/auth';
@@ -12,7 +12,7 @@ import { Spinner } from 'components/Spinner';
 
 const Books: NextPage = (): JSX.Element => {
   const dispatch = useDispatch();
-  const { socket } = useContext(SocketIoInterestContext);
+  const { socketInterest } = useContext(SocketIoContext);
 
   useEffect(() => {
     if (process.browser) {
@@ -56,14 +56,15 @@ const Books: NextPage = (): JSX.Element => {
           genre="Novel"
           imgUrl={`${process.env.NEXT_PUBLIC_IMAGE_URL}${bookPicturePath}`}
           interestButtonClick={() => {
-            if (isSignedIn && socket !== undefined && userName) {
+            if (isSignedIn && socketInterest !== undefined && userName) {
               dispatch(
                 expressInterestStart(
-                  socket,
+                  socketInterest,
                   userName,
                   bookId,
                   bookName,
                   bookOwnerId,
+                  bookOwnerName,
                 ),
               );
             } else {

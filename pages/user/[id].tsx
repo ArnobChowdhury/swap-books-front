@@ -6,12 +6,12 @@ import { authLogout } from 'redux/actions/auth';
 import { User } from 'components/User';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from 'redux/reducers';
-import { SocketIoInterestContext } from 'hoc/Sockets';
+import { SocketIoContext } from 'hoc/Sockets';
 import { fetchProfileBooksRequest, expressInterestStart } from 'redux/actions/book';
 
 const UserPage: NextPage = (): JSX.Element => {
   const dispatch = useDispatch();
-  const { socket } = useContext(SocketIoInterestContext);
+  const { socketInterest } = useContext(SocketIoContext);
 
   const { profileName, profileLoading } = useSelector(
     (store: RootState) => store.profile,
@@ -48,10 +48,22 @@ const UserPage: NextPage = (): JSX.Element => {
       userId={userId as string}
       profileUserName={profileName || ''}
       userName={userName}
-      interestButtonClick={(bookId, bookName, bookOwnerId) => {
-        if (socket != undefined && userName) {
+      interestButtonClick={(
+        bookId: string,
+        bookName: string,
+        bookOwnerId: string,
+        bookOwnerName: string,
+      ) => {
+        if (socketInterest != undefined && userName) {
           dispatch(
-            expressInterestStart(socket, userName, bookId, bookName, bookOwnerId),
+            expressInterestStart(
+              socketInterest,
+              userName,
+              bookId,
+              bookName,
+              bookOwnerId,
+              bookOwnerName,
+            ),
           );
         }
       }}

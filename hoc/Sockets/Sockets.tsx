@@ -9,6 +9,7 @@ import {
   getNotificationsRequest,
   getNotificationSuccess,
 } from 'redux/actions/notifications';
+import { fetchActiveRoomsReq } from 'redux/actions/message';
 import { useDispatch } from 'react-redux';
 import {
   SOCKET_RECEIVE_INTEREST,
@@ -17,33 +18,40 @@ import {
 } from 'socketTypes';
 
 interface SocketIoInterestContextProps {
-  socket: SocketIOClient.Socket | undefined;
+  socketInterest: SocketIOClient.Socket | undefined;
+  socketMsg: SocketIOClient.Socket | undefined;
 }
 
-const SocketInitialValue: SocketIoInterestContextProps = { socket: undefined };
+const SocketInitialValue: SocketIoInterestContextProps = {
+  socketInterest: undefined,
+  socketMsg: undefined,
+};
 
-export const SocketIoInterestContext = createContext(SocketInitialValue);
+export const SocketIoContext = createContext(SocketInitialValue);
 
 interface SocketIOInterestInterface {
   children: React.ReactNode;
 }
 
-export const SocketIOInterest = ({ children }: SocketIOInterestInterface) => {
-  const isSignedIn = useSelector<RootState, string | null>(
+export const SocketIO = ({ children }: SocketIOInterestInterface) => {
+  const token = useSelector<RootState, string | null>(
     (s: RootState) => s.auth.token,
   );
+  const isSignedIn = Boolean(token);
   const userId = useSelector<RootState, string | null>(
     (s: RootState) => s.auth.userId,
   );
 
   const dispatch = useDispatch();
 
-  let socket: SocketIOClient.Socket | undefined = undefined;
+  let socketInterest: SocketIOClient.Socket | undefined = undefined;
+  let socketMsg: SocketIOClient.Socket | undefined = undefined;
 
   if (isSignedIn) {
-    socket = io(`${process.env.NEXT_PUBLIC_SOCKET_URL}/interest`);
+    // interest socket
+    socketInterest = io(`${process.env.NEXT_PUBLIC_SOCKET_URL}/interest`);
 
-    socket.on(
+    socketInterest.on(
       SOCKET_RECEIVE_NOTIFICATION,
       (notification: NotificationResponseShape[]) => {
         // something like below code will be implemented for notification
@@ -53,28 +61,34 @@ export const SocketIOInterest = ({ children }: SocketIOInterestInterface) => {
     );
 
     // @ts-ignore
-    socket.on(SOCKET_RECEIVE_INTEREST, ({ bookId, interestState }) => {
+    socketInterest.on(SOCKET_RECEIVE_INTEREST, ({ bookId, interestState }) => {
       // todo hardcoded bookId needs to change
       dispatch(expressInterestSuccess(bookId, interestState === 'INTERESTED'));
     });
 
-    socket.on(SOCKET_DISCONNECT, () => {
+    socketInterest.on(SOCKET_DISCONNECT, () => {
       // eslint-disable-next-line
       console.log('disconnecting, do something');
     });
+
+    // message socket
+    socketMsg = io(`${process.env.NEXT_PUBLIC_SOCKET_URL}/messages`);
   }
 
   useEffect(() => {
-    if (isSignedIn && socket && userId) {
-      dispatch(getNotificationsRequest(socket, userId));
+    if (isSignedIn && socketInterest && userId) {
+      dispatch(getNotificationsRequest(socketInterest, userId));
+    }
+    if (isSignedIn && socketMsg && userId) {
+      dispatch(fetchActiveRoomsReq(socketMsg, userId));
     }
   });
 
-  const { Provider: SocketIoInterestProvider } = SocketIoInterestContext;
+  const { Provider: SocketIoProvider } = SocketIoContext;
 
   return (
-    <SocketIoInterestProvider value={{ socket }}>
+    <SocketIoProvider value={{ socketInterest, socketMsg }}>
       {children}
-    </SocketIoInterestProvider>
+    </SocketIoProvider>
   );
 };

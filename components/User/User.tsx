@@ -19,6 +19,7 @@ interface UserProps {
     bookId: string,
     bookName: string,
     bookOwnerId: string,
+    bookOwnerName: string,
   ) => void;
 }
 
@@ -65,7 +66,7 @@ export const User = ({
           isOwners={bookOwnerId === userId}
           interestButtonClick={() => {
             if (interestButtonClick != undefined) {
-              interestButtonClick(bookId, bookName, bookOwnerId);
+              interestButtonClick(bookId, bookName, bookOwnerId, bookOwnerName);
             }
           }}
         />

@@ -28,7 +28,7 @@ export interface NotificationShape {
   bookName?: string;
   seen: boolean;
   noticeText?: string;
-  matchLink?: string;
+  roomLink?: string;
   timestamp: number;
 }
 

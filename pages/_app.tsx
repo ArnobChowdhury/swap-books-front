@@ -4,7 +4,7 @@ import { wrapper } from 'redux/store';
 import { ThemeProvider } from 'styled-components';
 import { PersistGate } from 'redux-persist/integration/react';
 import { useStore } from 'react-redux';
-import { SocketIOInterest } from 'hoc/Sockets';
+import { SocketIO } from 'hoc/Sockets';
 import GlobalStyles from '../components/GlobalStyles';
 import theme from '../theme';
 
@@ -18,9 +18,9 @@ const WrappedApp: FC<AppProps> = ({ Component, pageProps }) => {
       {/**
        @ts-ignore*/}
       <PersistGate persistor={store.__persistor} loading={null}>
-        <SocketIOInterest>
+        <SocketIO>
           <Component {...pageProps} />
-        </SocketIOInterest>
+        </SocketIO>
       </PersistGate>
     </ThemeProvider>
   );

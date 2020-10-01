@@ -14,7 +14,7 @@ export interface NotificationChildProps {
   bookName?: string;
   type: 'interest' | 'match' | 'notice';
   noticeText?: string;
-  matchLink?: string;
+  roomLink?: string;
   otherProps?: HTMLAttributes<HTMLDivElement>;
 }
 
@@ -24,7 +24,7 @@ export const NotificationChild: React.FC<NotificationChildProps> = ({
   fromName: interestedUserName,
   bookName,
   type,
-  matchLink,
+  roomLink,
   noticeText,
   otherProps,
 }: NotificationChildProps): JSX.Element => {
@@ -48,13 +48,13 @@ export const NotificationChild: React.FC<NotificationChildProps> = ({
         </span>
       )}
 
-      {type === 'match' && matchLink && (
+      {type === 'match' && roomLink && (
         <span>
           <strong>Time to Swap: </strong>
           {interestedUserName} is interested in your book {bookName}. Check books you
           can swap with
           <InterestedUserLink
-            href={`${process.env.NEXT_PUBLIC_BASE_URL}${interestedUserId}`}
+            href={`${process.env.NEXT_PUBLIC_BASE_URL}${roomLink}`}
           >
             {` ${interestedUserName}.`}
           </InterestedUserLink>

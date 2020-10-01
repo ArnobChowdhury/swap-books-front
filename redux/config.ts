@@ -11,5 +11,5 @@ export const authPersisConfig: PersistConfig<AuthState> = {
 export const rootPersistConfig = {
   key: 'bookswap',
   storage,
-  blacklist: ['auth', 'notifications', 'profile'],
+  blacklist: ['auth', 'notifications', 'profile', 'message'],
 };

@@ -168,6 +168,7 @@ export const expressInterestStart = (
   bookId: string,
   bookName: string,
   bookOwnerId: string,
+  bookOwnerName: string,
 ) => {
   const userId = localStorage.getItem('userId');
   socket.emit(SOCKET_EXPRESS_INTEREST, {
@@ -176,6 +177,7 @@ export const expressInterestStart = (
     bookId,
     bookName,
     bookOwnerId,
+    bookOwnerName,
   });
 
   return { type: EXPRESS_INTEREST_START, interestActivity: { bookId } };

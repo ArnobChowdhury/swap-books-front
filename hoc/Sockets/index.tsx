@@ -1,3 +1,3 @@
-import { SocketIoInterestContext, SocketIOInterest } from './SocketIOInterest';
+import { SocketIoContext, SocketIO } from './Sockets';
 
-export { SocketIOInterest, SocketIoInterestContext };
+export { SocketIO, SocketIoContext };
