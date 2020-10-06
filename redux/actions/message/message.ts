@@ -1,8 +1,11 @@
 import { ActiveRoomsResponse } from 'redux/reducers/message';
-import { SOCKET_JOIN_ALL_ROOMS } from '../../../socketTypes';
+import {
+  SOCKET_JOIN_ALL_ROOMS,
+  SOCKET_SEND_MSG,
+  SOCKET_INIT_MSGS,
+} from '../../../socketTypes';
 import { Dispatch } from 'redux';
 import { MessageResponseProps } from '../../reducers/message';
-import axios from 'axiosInstance';
 
 import {
   FETCH_ROOM_MESSAGE_START,
@@ -36,6 +39,19 @@ export const fetchActiveRoomsFail = (activeRoomsError: Error) => {
   };
 };
 
+export const setCurrentRoom = (
+  roomId: string,
+  roomMateName: string,
+  roomMateId: string,
+) => {
+  return {
+    type: SET_MESSAGE_BOX,
+    roomId,
+    roomMateName,
+    roomMateId,
+  };
+};
+
 export const fetchActiveRoomsReq = (
   socket: SocketIOClient.Socket,
   userId: string,
@@ -46,6 +62,18 @@ export const fetchActiveRoomsReq = (
     userId,
     (activeRooms: ActiveRoomsResponse[]) => {
       dispatch(fetchActiveRoomsSuccess(activeRooms));
+      const {
+        roomId: mostCurrentRoomId,
+        roomMateName: mostCurrentRoomMateName,
+        roomMateId: mostCurrentRoomMateId,
+      } = activeRooms[0];
+      dispatch(
+        setCurrentRoom(
+          mostCurrentRoomId,
+          mostCurrentRoomMateName,
+          mostCurrentRoomMateId,
+        ),
+      );
     },
   );
 };
@@ -59,19 +87,6 @@ export const openMessageBox = () => {
 export const closeMessageBox = () => {
   return {
     type: CLOSE_MESSAGE_BOX,
-  };
-};
-
-export const setCurrentRoom = (
-  roomId: string,
-  roomMateName: string,
-  roomMateId: string,
-) => {
-  return {
-    type: SET_MESSAGE_BOX,
-    roomId,
-    roomMateName,
-    roomMateId,
   };
 };
 
@@ -96,21 +111,33 @@ export const fetchCurrentRoomMsgsSuccess = (messages: MessageResponseProps[]) =>
 };
 
 export const fetchCurrentRoomMsgsReq = (
+  socket: SocketIOClient.Socket,
   roomId: string,
-  roomMateName: string,
+) => {
+  return (dispatch: Dispatch) => {
+    socket.emit(SOCKET_INIT_MSGS, roomId, (messages: MessageResponseProps[]) => {
+      dispatch(fetchCurrentRoomMsgsSuccess(messages));
+    });
+  };
+};
+
+// sendMsg Start, success, failure this are not here
+
+export const sendMsgToRoom = (
+  socket: SocketIOClient.Socket,
+  room: string,
+  msg: string,
+  userId: string,
   roomMateId: string,
 ) => {
-  return async (dispatch: Dispatch) => {
-    dispatch(setCurrentRoom(roomId, roomMateName, roomMateId));
-    const path = '/message/roomId';
-    return axios
-      .get(path)
-      .then(response => {
-        const { messages } = response.data;
+  return (dispatch: Dispatch) => {
+    // TODO how to use dispatch we can do loading state that a msg is being sent
+    socket.emit(
+      SOCKET_SEND_MSG,
+      { room, msg, userId, roomMateId },
+      (messages: MessageResponseProps[]) => {
         dispatch(fetchCurrentRoomMsgsSuccess(messages));
-      })
-      .catch(err => {
-        dispatch(fetchCurrentRoomMsgsFail(err));
-      });
+      },
+    );
   };
 };

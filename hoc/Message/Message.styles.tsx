@@ -6,7 +6,7 @@ export const MessageBoxContainer = styled.div<{ show: boolean }>`
   bottom: ${({ theme }) => theme.spaceTen};
   right: ${({ theme }) => theme.spaceTen};
   height: 400px;
-  width: 600px;
+  width: 500px;
   border-radius: 5px;
   box-shadow: 0px 5px 40px rgba(0, 0, 0, 0.36);
   background: rgb(245, 245, 245);
@@ -41,7 +41,7 @@ export const CrossIconContainer = styled.div`
 
 export const MessageListContainer = styled.div`
   height: 100%;
-  flex-basis: 25%;
+  flex-basis: 40%;
   margin-right: ${({ theme }) => theme.spaceFive};
   border-radius: 3px;
   background: rgb(255, 255, 255);
@@ -94,6 +94,10 @@ export const MessageContentTop = styled.div`
 export const MessageContentMain = styled.div`
   width: 100%;
   padding: ${({ theme }) => theme.spaceFive};
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  height: 280px;
 `;
 
 export const MessageInputWrapper = styled.div`
@@ -107,11 +111,12 @@ export const MessageInputWrapper = styled.div`
 
 export const MessageInput = styled.input`
   height: 100%;
-  width: 420px;
+  width: 280px;
   border: ${({ theme }) => `1px solid ${theme.colorYellowDeep}`};
   padding: ${({ theme }) => theme.spaceFive};
   margin-right: ${({ theme }) => theme.spaceFour};
   border-radius: 3px;
+  font-family: inherit;
 `;
 
 export const SendIconWrapper = styled.button`
@@ -127,4 +132,16 @@ export const SendIconWrapper = styled.button`
   &:active {
     transform: translateY(5%);
   }
+`;
+
+export const SingleChat = styled.div<{ own: boolean }>`
+  padding: ${({ theme }) => theme.spaceFour};
+  background: ${({ theme, own }) =>
+    own ? theme.colorGreyLight : theme.colorYellowDeep};
+  font-size: 1.2rem;
+  color: ${({ theme }) => theme.colorBlackDark};
+  margin-bottom: ${({ theme }) => theme.spaceTwo};
+  align-self: ${({ own }) => (own ? 'end' : 'start')};
+  border-radius: 3px;
+  max-width: 240px;
 `;

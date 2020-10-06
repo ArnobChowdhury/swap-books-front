@@ -9,4 +9,6 @@ export {
   fetchCurrentRoomMsgsStart,
   fetchCurrentRoomMsgsSuccess,
   fetchCurrentRoomMsgsFail,
+  sendMsgToRoom,
+  setCurrentRoom,
 } from './message';

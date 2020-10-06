@@ -14,10 +14,12 @@ import {
 } from '../../actions/actionTypes';
 
 export interface MessageResponseProps {
+  _id: string;
   msg: string;
   fromId: string;
   toId: string;
   timestamp: string;
+  seen: boolean;
 }
 
 export interface ActiveRoomsResponse {

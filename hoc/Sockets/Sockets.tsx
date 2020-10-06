@@ -3,18 +3,21 @@ import { createContext } from 'react';
 import io from 'socket.io-client';
 import { RootState } from 'redux/reducers';
 import { NotificationResponseShape } from 'redux/reducers/notifications';
+import { MessageResponseProps } from 'redux/reducers/message';
 import { useSelector } from 'react-redux';
 import { expressInterestSuccess } from 'redux/actions/book';
 import {
   getNotificationsRequest,
   getNotificationSuccess,
 } from 'redux/actions/notifications';
+import { fetchCurrentRoomMsgsSuccess } from 'redux/actions/message';
 import { fetchActiveRoomsReq } from 'redux/actions/message';
 import { useDispatch } from 'react-redux';
 import {
   SOCKET_RECEIVE_INTEREST,
   SOCKET_DISCONNECT,
   SOCKET_RECEIVE_NOTIFICATION,
+  SOCKET_RECEIVE_MSG,
 } from 'socketTypes';
 
 interface SocketIoInterestContextProps {
@@ -73,6 +76,9 @@ export const SocketIO = ({ children }: SocketIOInterestInterface) => {
 
     // message socket
     socketMsg = io(`${process.env.NEXT_PUBLIC_SOCKET_URL}/messages`);
+    socketMsg.on(SOCKET_RECEIVE_MSG, (messages: MessageResponseProps[]) => {
+      dispatch(fetchCurrentRoomMsgsSuccess(messages));
+    });
   }
 
   useEffect(() => {
