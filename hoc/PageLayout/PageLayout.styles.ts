@@ -6,5 +6,5 @@ export const LayoutWrapper = styled.div`
 `;
 
 export const PageContainer = styled.div`
-  width: 1200px;
+  width: 700px;
 `;

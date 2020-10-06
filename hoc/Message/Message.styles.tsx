@@ -9,7 +9,7 @@ export const MessageBoxContainer = styled.div<{ show: boolean }>`
   width: 500px;
   border-radius: 5px;
   box-shadow: 0px 5px 40px rgba(0, 0, 0, 0.36);
-  background: rgb(245, 245, 245);
+  background: ${({ theme }) => theme.colorGlobalBackground};
 
   display: flex;
   justify-content: space-between;

@@ -35,3 +35,15 @@ export const IconWrapper = styled.div`
   justify-content: center;
   border-radius: 100%;
 `;
+
+export const ChatButton = styled.button`
+  background: ${({ theme }) => theme.colorYellowDeep};
+  border: none;
+  border-radius: 3px;
+  padding: ${({ theme }) => `0 ${theme.spaceFour}`};
+  cursor: pointer;
+  box-shadow: ${({ theme }) => theme.boxShadowOne};
+  &:active {
+    transform: translateY(1px);
+  }
+`;

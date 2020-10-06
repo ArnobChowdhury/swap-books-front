@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 
 export const PostWrapper = styled.div<{ bottomMargin?: boolean }>`
-  border: ${({ theme }) => `1px solid ${theme.colorGreyPrimary}`};
   display: flex;
   padding: ${({ theme }) =>
     `${theme.spaceTen} ${theme.spaceTen} ${theme.spaceTwo} ${theme.spaceTen}`};
@@ -9,6 +8,8 @@ export const PostWrapper = styled.div<{ bottomMargin?: boolean }>`
   font-size: ${({ theme }) => theme.fontSizeOne};
   flex-wrap: wrap;
   margin-bottom: ${({ bottomMargin, theme }) => bottomMargin && theme.spaceEight};
+  background: rgb(255, 255, 255);
+  box-shadow: 2px 2px 2px rgb(0, 0, 0, 0.1);
 `;
 
 export const ImageWrapper = styled.div`

@@ -2,6 +2,7 @@ import {
   Wrapper,
   InterestedUserLink,
   IconWrapper,
+  ChatButton,
 } from './NotificationChild.styles';
 import { InterestIcon } from 'assets/InterestIcon';
 import { AgreementIcon } from 'assets/AgreementIcon';
@@ -51,13 +52,12 @@ export const NotificationChild: React.FC<NotificationChildProps> = ({
       {type === 'match' && roomLink && (
         <span>
           <strong>Time to Swap: </strong>
-          {interestedUserName} is interested in your book {bookName}. Check books you
-          can swap with
-          <InterestedUserLink
-            href={`${process.env.NEXT_PUBLIC_BASE_URL}${roomLink}`}
-          >
+          {interestedUserName} is interested in your book {bookName}. Check other
+          books you can swap with
+          <InterestedUserLink href={`/user/${interestedUserId}`}>
             {` ${interestedUserName}.`}
-          </InterestedUserLink>
+          </InterestedUserLink>{' '}
+          Or <ChatButton>chat</ChatButton> with him to make a deal.
         </span>
       )}
 

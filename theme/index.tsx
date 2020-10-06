@@ -8,6 +8,7 @@ const theme = {
   colorGreyDark: 'rgb(112,112,112)',
   colorGreyPrimary: 'rgb(193,193,193)',
   colorGreyLight: 'rgb(229,229,229)',
+  colorGlobalBackground: 'rgb(240, 240, 240)',
   colorRed: 'rgb(175,15,15)',
   fontSizeOne: '1.6rem',
   fontSizeTwo: '2rem',
@@ -24,6 +25,7 @@ const theme = {
   spaceEight: '1.6rem',
   spaceNine: '1.8rem',
   spaceTen: '2rem',
+  boxShadowOne: '1px 1px rgb(0, 0, 0, .15)',
 };
 
 export default theme;
