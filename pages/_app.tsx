@@ -3,7 +3,8 @@ import { AppProps } from 'next/app';
 import { wrapper } from 'redux/store';
 import { ThemeProvider } from 'styled-components';
 import { PersistGate } from 'redux-persist/integration/react';
-import { useStore } from 'react-redux';
+import { useStore, useSelector } from 'react-redux';
+import { RootState } from 'redux/reducers';
 import { SocketIO } from 'hoc/Sockets';
 import { Message } from 'hoc/Message';
 import GlobalStyles from '../components/GlobalStyles';
@@ -13,6 +14,8 @@ import theme from '../theme';
 // eslint-disable-next-line react/prop-types
 const WrappedApp: FC<AppProps> = ({ Component, pageProps }) => {
   const store = useStore();
+  const { token: userAuthenticated } = useSelector((store: RootState) => store.auth);
+
   return (
     <ThemeProvider theme={theme}>
       <GlobalStyles />
@@ -20,7 +23,7 @@ const WrappedApp: FC<AppProps> = ({ Component, pageProps }) => {
        @ts-ignore*/}
       <PersistGate persistor={store.__persistor} loading={null}>
         <SocketIO>
-          <Message />
+          {userAuthenticated && <Message />}
           <Component {...pageProps} />
         </SocketIO>
       </PersistGate>
