@@ -41,6 +41,8 @@ describe('Auth Action tests', () => {
       name: 'testname',
       sex: 'mail',
       dob: '2010-12-12',
+      userLat: 23.13,
+      userLon: 90.23,
     };
 
     const store = mockStore();
@@ -57,7 +59,15 @@ describe('Auth Action tests', () => {
     const expectedActions = [
       { type: AUTH_START },
       { type: AUTH_SUCCESS, token: 'testToken', userId: 'testId' },
-      { type: UPDATE_USER_INFO, name: 'testname', sex: 'mail', dob: '2010-12-12' },
+      {
+        type: UPDATE_USER_INFO,
+        name: 'testname',
+        sex: 'mail',
+        dob: '2010-12-12',
+        userCreationSuccessful: true,
+        userLat: 23.13,
+        userLon: 90.23,
+      },
     ];
     return store
       .dispatch(
@@ -117,6 +127,8 @@ describe('Auth Action tests', () => {
       name: 'testname',
       dob: '2010-12-12',
       sex: 'male',
+      userLon: 23.34,
+      userLat: 90.24,
     };
 
     moxios.wait(() => {
@@ -131,8 +143,24 @@ describe('Auth Action tests', () => {
     const expectedActions = [
       { type: AUTH_START },
       { type: AUTH_SUCCESS, token: 'testToken', userId: 'testId' },
-      { type: UPDATE_USER_INFO, name: 'testname', dob: '2010-12-12', sex: 'male' },
-      { type: UPDATE_USER_INFO, name: null, dob: null, sex: null },
+      {
+        type: UPDATE_USER_INFO,
+        name: 'testname',
+        dob: '2010-12-12',
+        sex: 'male',
+        userCreationSuccessful: true,
+        userLon: 23.34,
+        userLat: 90.24,
+      },
+      {
+        type: UPDATE_USER_INFO,
+        name: null,
+        dob: null,
+        sex: null,
+        userCreationSuccessful: false,
+        userLon: null,
+        userLat: null,
+      },
       { type: AUTH_LOGOUT },
     ];
 
@@ -152,7 +180,15 @@ describe('Auth Action tests', () => {
     expect(localStorage.getItem('expirationDate')).toBeNull();
     const store = mockStore();
     const expectedActions = [
-      { type: UPDATE_USER_INFO, name: null, dob: null, sex: null },
+      {
+        type: UPDATE_USER_INFO,
+        name: null,
+        dob: null,
+        sex: null,
+        userCreationSuccessful: false,
+        userLat: null,
+        userLon: null,
+      },
       { type: 'AUTH_LOGOUT' },
     ];
     // @ts-ignore
@@ -198,6 +234,8 @@ describe('Auth Action tests', () => {
       name: 'testname',
       dob: '2010-12-12',
       sex: 'male',
+      userLon: 23.32,
+      userLat: 90.14,
     };
 
     moxios.wait(() => {
@@ -222,12 +260,18 @@ describe('Auth Action tests', () => {
         name: 'testname',
         dob: '2010-12-12',
         sex: 'male',
+        userCreationSuccessful: true,
+        userLon: 23.32,
+        userLat: 90.14,
       },
       {
         type: UPDATE_USER_INFO,
         name: null,
         dob: null,
         sex: null,
+        userCreationSuccessful: false,
+        userLat: null,
+        userLon: null,
       },
       { type: AUTH_LOGOUT },
     ];
@@ -252,7 +296,15 @@ describe('Auth Action tests', () => {
   test('authTimeout should dispatch authLogout after specified time', () => {
     const store = mockStore();
     const expectedAction = [
-      { type: UPDATE_USER_INFO, name: null, sex: null, dob: null },
+      {
+        type: UPDATE_USER_INFO,
+        name: null,
+        sex: null,
+        dob: null,
+        userCreationSuccessful: false,
+        userLat: null,
+        userLon: null,
+      },
       { type: AUTH_LOGOUT },
     ];
     // @ts-ignore

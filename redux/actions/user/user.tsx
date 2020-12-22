@@ -3,6 +3,9 @@ import {
   CREATE_USER_START,
   CREATE_USER_SUCCESS,
   CREATE_USER_FAIL,
+  UPDATE_USER_LOC_START,
+  UPDATE_USER_LOC_SUCCESS,
+  UPDATE_USER_LOC_FAIL,
 } from '../actionTypes';
 import { Dispatch } from 'redux';
 
@@ -31,7 +34,6 @@ export const createUserReq = (
   password: string,
   dob: string,
   sex: string,
-  locationObj: Position,
   formikSetSubmitting: (submissionResolved: boolean) => void,
 ) => {
   return (dispatch: Dispatch) => {
@@ -42,10 +44,6 @@ export const createUserReq = (
       password,
       dob,
       sex,
-      locationObj: {
-        latitude: locationObj?.coords?.latitude,
-        longitude: locationObj?.coords?.longitude,
-      },
     };
 
     return axios
@@ -57,6 +55,45 @@ export const createUserReq = (
       })
       .catch(error => {
         dispatch(createUserFail(error));
+      });
+  };
+};
+
+const updateUserLocationStart = () => {
+  return {
+    type: UPDATE_USER_LOC_START,
+  };
+};
+
+const updateUserLocationSuccess = (userLon: number, userLat: number) => {
+  return {
+    type: UPDATE_USER_LOC_SUCCESS,
+    userLon,
+    userLat,
+  };
+};
+
+const updateUserLocationFail = (err: Error) => {
+  return {
+    type: UPDATE_USER_LOC_FAIL,
+    error: err,
+  };
+};
+
+export const updateUserLocationReq = (userLon: number, userLat: number) => {
+  return (dispatch: Dispatch) => {
+    dispatch(updateUserLocationStart());
+    const path = '/user/loc';
+    const userId = localStorage.getItem('userId');
+    const locData = { userId, userLon, userLat };
+    return axios
+      .put(path, locData)
+      .then(res => {
+        const { userLon, userLat } = res.data;
+        dispatch(updateUserLocationSuccess(userLon, userLat));
+      })
+      .catch(err => {
+        dispatch(updateUserLocationFail(err));
       });
   };
 };

@@ -29,12 +29,18 @@ export const updateUserInfo = (
   name: string | null,
   dob: string | null,
   sex: string | null,
+  userCreationSuccessful: boolean,
+  userLon: number | null,
+  userLat: number | null,
 ) => {
   return {
     type: UPDATE_USER_INFO,
     name,
     dob,
     sex,
+    userCreationSuccessful,
+    userLon,
+    userLat,
   };
 };
 
@@ -47,7 +53,7 @@ export const authFail = (error: any) => {
 
 export const authLogout = () => {
   return (dispatch: Dispatch) => {
-    dispatch(updateUserInfo(null, null, null));
+    dispatch(updateUserInfo(null, null, null, false, null, null));
     localStorage.removeItem('token');
     localStorage.removeItem('userId');
     localStorage.removeItem('expirationDate');
@@ -81,7 +87,16 @@ export const authRequest = (
       .then(response => {
         formikSetSubmitting(false);
         // todo how should we handle the message???
-        const { name, dob, sex, userId, token, expiresIn } = response.data;
+        const {
+          name,
+          dob,
+          sex,
+          userId,
+          token,
+          expiresIn,
+          userLon,
+          userLat,
+        } = response.data;
 
         const expirationDate = new Date().getTime() + expiresIn * 1000;
 
@@ -89,7 +104,7 @@ export const authRequest = (
         localStorage.setItem('userId', userId);
         localStorage.setItem('expirationDate', `${expirationDate}`);
         dispatch(authSuccess(token, userId));
-        dispatch(updateUserInfo(name, dob, sex));
+        dispatch(updateUserInfo(name, dob, sex, true, userLon, userLat));
 
         // @ts-ignore
         dispatch(checkAuthTimeout(expiresIn)); // todo what is this and why should we implement this???

@@ -6,6 +6,9 @@ import {
   CREATE_USER_SUCCESS,
   CREATE_USER_FAIL,
   UPDATE_USER_INFO,
+  UPDATE_USER_LOC_START,
+  UPDATE_USER_LOC_SUCCESS,
+  UPDATE_USER_LOC_FAIL,
 } from '../../actions/actionTypes';
 
 export interface UserState {
@@ -15,7 +18,10 @@ export interface UserState {
   sex: string | null;
   userCreationOnGoing: boolean;
   userCreationSuccessful: boolean;
-  error: any;
+  locationUpdatetOnGoing: boolean;
+  userLon: number | null;
+  userLat: number | null;
+  error: Error | null;
 }
 
 export const initialState: UserState = {
@@ -24,11 +30,14 @@ export const initialState: UserState = {
   sex: null,
   userCreationOnGoing: false,
   userCreationSuccessful: false,
+  locationUpdatetOnGoing: false,
+  userLon: null,
+  userLat: null,
   error: null,
 };
 
 const reducer = (state = initialState, action: AnyAction) => {
-  const { name, dob, sex, error } = action;
+  const { name, dob, sex, error, userCreationSuccessful, userLat, userLon } = action;
   switch (action.type) {
     case HYDRATE:
       return { ...state };
@@ -42,10 +51,30 @@ const reducer = (state = initialState, action: AnyAction) => {
       return {
         ...state,
         userCreationOnGoing: false,
-        userCreationSuccessful: true,
+        userCreationSuccessful,
         name,
         dob,
         sex,
+        userLon,
+        userLat,
+      };
+    case UPDATE_USER_LOC_START:
+      return {
+        ...state,
+        locationUpdatetOnGoing: true,
+      };
+    case UPDATE_USER_LOC_SUCCESS:
+      return {
+        ...state,
+        userLat,
+        userLon,
+        locationUpdatetOnGoing: false,
+      };
+    case UPDATE_USER_LOC_FAIL:
+      return {
+        ...state,
+        error,
+        locationUpdatetOnGoing: false,
       };
     default:
       return state;

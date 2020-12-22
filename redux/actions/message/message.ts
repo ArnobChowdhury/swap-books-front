@@ -62,18 +62,20 @@ export const fetchActiveRoomsReq = (
     userId,
     (activeRooms: ActiveRoomsResponse[]) => {
       dispatch(fetchActiveRoomsSuccess(activeRooms));
-      const {
-        roomId: mostCurrentRoomId,
-        roomMateName: mostCurrentRoomMateName,
-        roomMateId: mostCurrentRoomMateId,
-      } = activeRooms[0];
-      dispatch(
-        setCurrentRoom(
-          mostCurrentRoomId,
-          mostCurrentRoomMateName,
-          mostCurrentRoomMateId,
-        ),
-      );
+      if (activeRooms.length) {
+        const {
+          roomId: mostCurrentRoomId,
+          roomMateName: mostCurrentRoomMateName,
+          roomMateId: mostCurrentRoomMateId,
+        } = activeRooms[0];
+        dispatch(
+          setCurrentRoom(
+            mostCurrentRoomId,
+            mostCurrentRoomMateName,
+            mostCurrentRoomMateId,
+          ),
+        );
+      }
     },
   );
 };

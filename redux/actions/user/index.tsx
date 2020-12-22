@@ -3,4 +3,5 @@ export {
   createUserStart,
   createUserSuccess,
   createUserFail,
+  updateUserLocationReq,
 } from './user';

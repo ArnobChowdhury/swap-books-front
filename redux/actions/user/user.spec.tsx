@@ -47,9 +47,7 @@ describe('User Actions', () => {
           'testmail@test.com',
           'testpassword',
           '2010-12-12',
-          'mail',
-          // @ts-ignore
-          {},
+          'male',
           mockFunc,
         ),
       )

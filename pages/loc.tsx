@@ -1,6 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import Head from 'next/head';
 import { initiateMap } from '../public/loc';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from 'redux/reducers';
+import { updateUserLocationReq } from 'redux/actions/user';
 
 function createScriptTag(source: string, cb?: () => void): void {
   const script = document.createElement('script');
@@ -18,24 +21,24 @@ const scriptSources = [
 ];
 
 const Geo = () => {
-  const [locationAccessGranted, setLocationAccessGranted] = useState(false);
-  const [lat, setLat] = useState<number | undefined>();
-  const [lon, setLon] = useState<number | undefined>();
-
   const getDeviceLocErr: PositionErrorCallback = (err: PositionError): void => {
     // TODO: if an error occurs we say, Sorry! we need a to access device location to work.
     // eslint-disable-next-line
     console.log(err);
   };
 
+  const userLon = useSelector((state: RootState) => state.user.userLon);
+  const userLat = useSelector((state: RootState) => state.user.userLat);
+  const dispatch = useDispatch();
+
   const getDeviceLoc = (position: Position): void => {
-    setLat(position.coords.latitude);
-    setLon(position.coords.longitude);
-    setLocationAccessGranted(true);
+    dispatch(
+      updateUserLocationReq(position.coords.longitude, position.coords.latitude),
+    );
   };
 
   useEffect(() => {
-    if (process.browser) {
+    if (process.browser && !userLon && !userLat) {
       // eslint-disable-next-line no-console
       navigator.geolocation.getCurrentPosition(getDeviceLoc, getDeviceLocErr);
     }
@@ -47,7 +50,7 @@ const Geo = () => {
   for (let i = numOfScripts; i >= 0; i--) {
     if (i == numOfScripts) {
       scriptCBs[i] = () =>
-        createScriptTag(scriptSources[i], () => initiateMap(lat, lon));
+        createScriptTag(scriptSources[i], () => initiateMap(userLat, userLon));
     } else {
       scriptCBs[i] = () => createScriptTag(scriptSources[i], scriptCBs[i + 1]);
     }
@@ -55,10 +58,10 @@ const Geo = () => {
 
   const activateScripts = scriptCBs[0];
   useEffect(() => {
-    if (locationAccessGranted) {
+    if (userLon && userLat) {
       activateScripts();
     }
-  }, [locationAccessGranted]);
+  }, [userLon, userLat]);
 
   return (
     <>
@@ -90,7 +93,14 @@ const Geo = () => {
           paddingLeft: '250px',
         }}
       >
-        <div id="map" style={{ width: '100%', height: '100%' }}></div>
+        <div
+          id="map"
+          style={{
+            width: '100%',
+            height: '100%',
+            boxShadow: '2px 2px 2px rgba(0,0,0,.2)',
+          }}
+        ></div>
       </div>
     </>
   );

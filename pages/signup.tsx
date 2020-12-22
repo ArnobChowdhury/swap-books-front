@@ -15,16 +15,6 @@ import { createUserReq } from 'redux/actions/user';
 import { RootState } from 'redux/reducers';
 
 const UserDetails: NextPage = (): JSX.Element => {
-  const [locationObj, setLocationObj] = useState<Position>();
-
-  // todo: if the call to  getCurrentPosition fails we need to handle it. For now, we are just console.loggin it.
-  const handleGeoLocation = () => {
-    if (process.browser) {
-      // eslint-disable-next-line no-console
-      navigator.geolocation.getCurrentPosition(setLocationObj, console.log);
-    }
-  };
-
   const userCreationOnGoing = useSelector(
     (s: RootState) => s.user.userCreationOnGoing,
   );
@@ -70,21 +60,9 @@ const UserDetails: NextPage = (): JSX.Element => {
             .matches(/[a-zA-Z]/, 'Password can only contain latin letters'),
         })}
         onSubmit={({ username, email, password, dob, sex }, { setSubmitting }) => {
-          if (locationObj !== undefined) {
-            dispatch(
-              createUserReq(
-                username,
-                email,
-                password,
-                dob,
-                sex,
-                locationObj,
-                setSubmitting,
-              ),
-            );
-          } else {
-            // todo we have to let the user know that we cannot sign up without knowing their location.
-          }
+          dispatch(
+            createUserReq(username, email, password, dob, sex, setSubmitting),
+          );
         }}
       >
         <Form>
@@ -128,22 +106,6 @@ const UserDetails: NextPage = (): JSX.Element => {
               { value: 'female', labelText: 'Female' },
             ]}
           />
-          <div>
-            <button
-              onClick={handleGeoLocation}
-              style={{
-                marginBottom: '20px',
-                fontFamily: 'inherit',
-                padding: '10px',
-                cursor: 'pointer',
-                borderRadius: '5px',
-                border: '1px solid rgb(150,150,150)',
-              }}
-            >
-              Click this to allow access to location info. Why? We cannot show you
-              swappable books in you area without your location information.
-            </button>
-          </div>
           <Button color="dark" type="submit" fontMedium asButtonTag>
             Submit
           </Button>
