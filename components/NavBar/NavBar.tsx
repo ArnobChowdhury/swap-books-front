@@ -86,11 +86,6 @@ export const NavBar = ({
           </NavLinkWrapper>
           {isSignedIn && (
             <>
-              <NavLinkWrapper isSelected={currentSelected === 'Messages'}>
-                <NavLinks href="#" isSelected={currentSelected === 'Messages'}>
-                  Messages
-                </NavLinks>
-              </NavLinkWrapper>
               <NavLinkWrapper
                 isSelected={currentSelected === 'Notifications'}
                 onClick={handleNotificationDropDown}
