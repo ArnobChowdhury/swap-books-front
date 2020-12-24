@@ -80,7 +80,7 @@ export const NavBar = ({
         </div>
         <NavUL>
           <NavLinkWrapper isSelected={currentSelected === 'Books'}>
-            <NavLinks href="#" isSelected={currentSelected === 'Books'}>
+            <NavLinks href="/books" isSelected={currentSelected === 'Books'}>
               Books
             </NavLinks>
           </NavLinkWrapper>
@@ -96,7 +96,7 @@ export const NavBar = ({
                 </NavLinks>
               </NavLinkWrapper>
               <NavLinkWrapper isSelected={currentSelected === 'User'}>
-                <NavLinks href="#" isSelected={currentSelected === 'User'}>
+                <NavLinks href="/user" isSelected={currentSelected === 'User'}>
                   {userName}
                 </NavLinks>
               </NavLinkWrapper>
