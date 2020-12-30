@@ -84,8 +84,7 @@ export const updateUserLocationReq = (userLon: number, userLat: number) => {
   return (dispatch: Dispatch) => {
     dispatch(updateUserLocationStart());
     const path = '/user/loc';
-    const userId = localStorage.getItem('userId');
-    const locData = { userId, userLon, userLat };
+    const locData = { userLon, userLat };
     return axios
       .put(path, locData)
       .then(res => {
