@@ -35,7 +35,8 @@ describe('Auth Action tests', () => {
 
   test('Dispatching authRequest creates correct actions on success', () => {
     const mockedResponse = {
-      token: 'testToken',
+      accessToken: 'testToken',
+      refreshToken: 'refreshToken',
       userId: 'testId',
       expiresIn: 3600,
       name: 'testname',
@@ -58,7 +59,7 @@ describe('Auth Action tests', () => {
     const mockFunc = jest.fn();
     const expectedActions = [
       { type: AUTH_START },
-      { type: AUTH_SUCCESS, token: 'testToken', userId: 'testId' },
+      { type: AUTH_SUCCESS, accessToken: 'testToken', userId: 'testId' },
       {
         type: UPDATE_USER_INFO,
         name: 'testname',
@@ -110,7 +111,7 @@ describe('Auth Action tests', () => {
     const testToken = 'testToken';
     const testUserId = 'testId';
     const expectedAction = [
-      { type: AUTH_SUCCESS, token: testToken, userId: testUserId },
+      { type: AUTH_SUCCESS, accessToken: testToken, userId: testUserId },
     ];
     // @ts-ignore
     store.dispatch(authCheckState());
@@ -121,7 +122,7 @@ describe('Auth Action tests', () => {
     const store = mockStore();
 
     const mockedResponse = {
-      token: 'testToken',
+      accessToken: 'testToken',
       userId: 'testId',
       expiresIn: -3600,
       name: 'testname',
@@ -142,7 +143,7 @@ describe('Auth Action tests', () => {
     const mockFunc = jest.fn();
     const expectedActions = [
       { type: AUTH_START },
-      { type: AUTH_SUCCESS, token: 'testToken', userId: 'testId' },
+      { type: AUTH_SUCCESS, accessToken: 'testToken', userId: 'testId' },
       {
         type: UPDATE_USER_INFO,
         name: 'testname',
@@ -218,7 +219,7 @@ describe('Auth Action tests', () => {
 
     const expectedAction = {
       type: AUTH_SUCCESS,
-      token: testToken,
+      accessToken: testToken,
       userId: testUserId,
     };
     expect(authSuccess(testToken, testUserId)).toEqual(expectedAction);
@@ -228,7 +229,7 @@ describe('Auth Action tests', () => {
     const store = mockStore();
 
     const mockedResponse = {
-      token: 'testToken',
+      accessToken: 'testToken',
       userId: 'testId',
       expiresIn: 3600,
       name: 'testname',
@@ -252,7 +253,7 @@ describe('Auth Action tests', () => {
       { type: AUTH_START },
       {
         type: AUTH_SUCCESS,
-        token: 'testToken',
+        accessToken: 'testToken',
         userId: 'testId',
       },
       {
@@ -282,14 +283,14 @@ describe('Auth Action tests', () => {
         authRequest('testemail@gmail.com', 'testpassword', mockFunc),
       )
       .then(() => {
-        expect(localStorage.getItem('token')).toBeTruthy();
+        expect(localStorage.getItem('accessToken')).toBeTruthy();
         expect(localStorage.getItem('userId')).toBeTruthy();
         expect(localStorage.getItem('expirationDate')).toBeTruthy();
         //@ts-ignore
         store.dispatch(authLogout());
         expect(store.getActions()).toEqual(expectedActions);
         expect(localStorage.getItem('userId')).toBeNull();
-        expect(localStorage.getItem('token')).toBeNull();
+        expect(localStorage.getItem('accessToken')).toBeNull();
       });
   });
 

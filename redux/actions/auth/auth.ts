@@ -17,10 +17,10 @@ export const authStart = () => {
   };
 };
 
-export const authSuccess = (token: string, userId: string) => {
+export const authSuccess = (accessToken: string, userId: string) => {
   return {
     type: AUTH_SUCCESS,
-    token,
+    accessToken,
     userId,
   };
 };
@@ -54,7 +54,8 @@ export const authFail = (error: any) => {
 export const authLogout = () => {
   return (dispatch: Dispatch) => {
     dispatch(updateUserInfo(null, null, null, false, null, null));
-    localStorage.removeItem('token');
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
     localStorage.removeItem('userId');
     localStorage.removeItem('expirationDate');
     return dispatch({ type: AUTH_LOGOUT });
@@ -92,7 +93,8 @@ export const authRequest = (
           dob,
           sex,
           userId,
-          token,
+          accessToken,
+          refreshToken,
           expiresIn,
           userLon,
           userLat,
@@ -100,10 +102,11 @@ export const authRequest = (
 
         const expirationDate = new Date().getTime() + expiresIn * 1000;
 
-        localStorage.setItem('token', token);
+        localStorage.setItem('accessToken', accessToken);
+        localStorage.setItem('refreshToken', refreshToken);
         localStorage.setItem('userId', userId);
         localStorage.setItem('expirationDate', `${expirationDate}`);
-        dispatch(authSuccess(token, userId));
+        dispatch(authSuccess(accessToken, userId));
         dispatch(updateUserInfo(name, dob, sex, true, userLon, userLat));
 
         // @ts-ignore
@@ -119,8 +122,8 @@ export const authRequest = (
 
 export const authCheckState = () => {
   return (dispatch: Dispatch) => {
-    const token = localStorage.getItem('token');
-    if (!token) {
+    const accessToken = localStorage.getItem('accessToken');
+    if (!accessToken) {
       // @ts-ignore
       return dispatch(authLogout());
     } else {
@@ -133,7 +136,7 @@ export const authCheckState = () => {
       } else {
         //                                     below "|| ''" code is just for type assertion
         const userId = localStorage.getItem('userId') || '';
-        return dispatch(authSuccess(token, userId));
+        return dispatch(authSuccess(accessToken, userId));
       }
     }
   };

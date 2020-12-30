@@ -7,13 +7,13 @@ import { fetchProfileBooksRequest } from 'redux/actions/book';
 import { authLogout } from 'redux/actions/auth';
 
 const UserPage: NextPage = (): JSX.Element => {
-  const { userId, token } = useSelector((store: RootState) => store.auth);
+  const { userId, accessToken } = useSelector((store: RootState) => store.auth);
   const { name: userName } = useSelector((store: RootState) => store.user);
 
   const { books, loading } = useSelector((store: RootState) => store.books);
   const { notifications } = useSelector((store: RootState) => store.notifications);
 
-  const isSignedIn = Boolean(token);
+  const isSignedIn = Boolean(accessToken);
   const dispatch = useDispatch();
 
   useEffect(() => {

@@ -14,7 +14,9 @@ import theme from '../theme';
 // eslint-disable-next-line react/prop-types
 const WrappedApp: FC<AppProps> = ({ Component, pageProps }) => {
   const store = useStore();
-  const { token: userAuthenticated } = useSelector((store: RootState) => store.auth);
+  const { accessToken: userAuthenticated } = useSelector(
+    (store: RootState) => store.auth,
+  );
 
   return (
     <ThemeProvider theme={theme}>

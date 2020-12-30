@@ -18,16 +18,16 @@ describe('Auth reducer', () => {
     expect(newState).toStrictEqual(expectedState);
   });
 
-  it('Should have correct state when dispatched with type - AUTH_SUCCESS and userId and token', () => {
+  it('Should have correct state when dispatched with type - AUTH_SUCCESS and userId and accessToken', () => {
     const expectedState: AuthState = {
       ...initialState,
       loading: false,
-      token: 'testtoken',
+      accessToken: 'testtoken',
       userId: 'textuserid',
     };
     const newState = authReducer(initialState, {
       type: AUTH_SUCCESS,
-      token: 'testtoken',
+      accessToken: 'testtoken',
       userId: 'textuserid',
     });
     expect(newState).toStrictEqual(expectedState);
@@ -45,7 +45,7 @@ describe('Auth reducer', () => {
     expect(newState).toStrictEqual(expectedState);
   });
 
-  it('Should update token and userId fields when dispatched with type - AUTH_LOGOUT', () => {
+  it('Should update accessToken and userId fields when dispatched with type - AUTH_LOGOUT', () => {
     const expectedState: AuthState = {
       ...initialState,
     };

@@ -22,10 +22,10 @@ const Books: NextPage = (): JSX.Element => {
 
   const { books, loading } = useSelector((store: RootState) => store.books);
   const { name: userName } = useSelector((store: RootState) => store.user);
-  const { token, userId } = useSelector((s: RootState) => s.auth);
+  const { accessToken, userId } = useSelector((s: RootState) => s.auth);
   const { notifications } = useSelector((store: RootState) => store.notifications);
 
-  const isSignedIn = Boolean(token);
+  const isSignedIn = Boolean(accessToken);
 
   //const { books, loading } = booksState;
 

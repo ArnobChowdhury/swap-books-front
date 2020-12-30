@@ -22,8 +22,8 @@ const Home: NextPage = (): JSX.Element => {
   const router = useRouter();
 
   // todo learn more about useSelector for Redux
-  const token = useSelector<RootState, string | null>(
-    (s: RootState) => s.auth.token,
+  const accessToken = useSelector<RootState, string | null>(
+    (s: RootState) => s.auth.accessToken,
   );
   const isLoading = useSelector<RootState, boolean | null>(
     (s: RootState) => s.auth.loading,
@@ -31,10 +31,10 @@ const Home: NextPage = (): JSX.Element => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (token) {
+    if (accessToken) {
       router.push('/books');
     }
-  }, [token]);
+  }, [accessToken]);
 
   const closeModal = (): void => {
     if (!isLoading) {

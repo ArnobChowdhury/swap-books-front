@@ -37,10 +37,10 @@ interface SocketIOInterestInterface {
 }
 
 export const SocketIO = ({ children }: SocketIOInterestInterface) => {
-  const token = useSelector<RootState, string | null>(
-    (s: RootState) => s.auth.token,
+  const accessToken = useSelector<RootState, string | null>(
+    (s: RootState) => s.auth.accessToken,
   );
-  const isSignedIn = Boolean(token);
+  const isSignedIn = Boolean(accessToken);
   const userId = useSelector<RootState, string | null>(
     (s: RootState) => s.auth.userId,
   );

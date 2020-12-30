@@ -25,12 +25,12 @@ const AddABook: NextPage = (): JSX.Element => {
   };
 
   const { name: userName } = useSelector((store: RootState) => store.user);
-  const token = useSelector<RootState, string | null>(
-    (s: RootState) => s.auth.token,
+  const accessToken = useSelector<RootState, string | null>(
+    (s: RootState) => s.auth.accessToken,
   );
   const { notifications } = useSelector((store: RootState) => store.notifications);
 
-  const isSignedIn = Boolean(token);
+  const isSignedIn = Boolean(accessToken);
 
   return (
     <>

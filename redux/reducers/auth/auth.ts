@@ -8,7 +8,7 @@ import {
 } from '../../actions/actionTypes';
 
 export interface AuthState {
-  token: string | null;
+  accessToken: string | null;
   userId: string | null;
   error: string | null | Error;
   loading: boolean;
@@ -16,7 +16,7 @@ export interface AuthState {
 }
 
 export const initialState: AuthState = {
-  token: null,
+  accessToken: null,
   userId: null,
   error: null,
   loading: false,
@@ -24,7 +24,7 @@ export const initialState: AuthState = {
 };
 
 const reducer = (state = initialState, action: AnyAction) => {
-  const { token, userId, error } = action;
+  const { accessToken, userId, error } = action;
   switch (action.type) {
     case HYDRATE:
       return { ...state };
@@ -33,7 +33,7 @@ const reducer = (state = initialState, action: AnyAction) => {
     case AUTH_SUCCESS:
       return {
         ...state,
-        token,
+        accessToken,
         userId,
         loading: false,
         error: null,
@@ -41,7 +41,7 @@ const reducer = (state = initialState, action: AnyAction) => {
     case AUTH_FAIL:
       return { ...state, error };
     case AUTH_LOGOUT:
-      return { ...state, userId: null, token: null };
+      return { ...state, userId: null, accessToken: null };
     // todo not all actions of the original implementation of maximilan is handled here
     default:
       return state;

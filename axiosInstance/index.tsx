@@ -6,8 +6,11 @@ const instance = axios.create({
 });
 
 instance.interceptors.request.use(config => {
-  const token = localStorage.getItem('token');
-  config.headers.Authorization = token ? `Bearer ${token}` : '';
+  const route = config.url?.split('/')[1];
+  const accessToken = localStorage.getItem('accessToken');
+  if (accessToken !== 'undefined' && route != 'auth') {
+    config.headers.Authorization = accessToken ? `Bearer ${accessToken}` : '';
+  }
   return config;
 });
 

@@ -22,9 +22,9 @@ const UserPage: NextPage = (): JSX.Element => {
 
   const { name: userName } = useSelector((store: RootState) => store.user);
   const { notifications } = useSelector((store: RootState) => store.notifications);
-  const { token, userId } = useSelector((store: RootState) => store.auth);
+  const { accessToken, userId } = useSelector((store: RootState) => store.auth);
 
-  const isSignedIn = Boolean(token);
+  const isSignedIn = Boolean(accessToken);
 
   const router = useRouter();
   const { id: profileId } = router.query;
