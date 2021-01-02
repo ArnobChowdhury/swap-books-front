@@ -53,13 +53,22 @@ export const authFail = (error: Error) => {
 
 export const authLogout = () => {
   // TODO need to send a request to back end in order to blacklist the refreshToken
-  return (dispatch: Dispatch) => {
-    dispatch(updateUserInfo(null, null, null, false, null, null));
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');
-    localStorage.removeItem('userId');
-    localStorage.removeItem('expirationDate');
-    return dispatch({ type: AUTH_LOGOUT });
+  return async (dispatch: Dispatch) => {
+    const userId = localStorage.getItem('userId');
+    return axios
+      .post('/auth/logout', { userId })
+      .then(res => {
+        dispatch(updateUserInfo(null, null, null, false, null, null));
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+        localStorage.removeItem('userId');
+        localStorage.removeItem('expirationDate');
+        return dispatch({ type: AUTH_LOGOUT });
+      })
+      .catch(err => {
+        // TODO Should we handle authLogout faile seperately
+        dispatch(authFail(err));
+      });
   };
 };
 
@@ -111,7 +120,7 @@ export const authRequest = (
         dispatch(updateUserInfo(name, dob, sex, true, userLon, userLat));
 
         // @ts-ignore
-        dispatch(checkAuthTimeout(expiresIn)); // todo what is this and why should we implement this???
+        dispatch(checkAuthTimeout(expiresIn)); // todo what is this and why should we implement this??? answer: we do not need to implement this. Get rid of this.
       })
       .catch(err => {
         formikSetSubmitting(false);
