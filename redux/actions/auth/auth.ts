@@ -44,7 +44,7 @@ export const updateUserInfo = (
   };
 };
 
-export const authFail = (error: any) => {
+export const authFail = (error: Error) => {
   return {
     type: AUTH_FAIL,
     error: error,
@@ -52,6 +52,7 @@ export const authFail = (error: any) => {
 };
 
 export const authLogout = () => {
+  // TODO need to send a request to back end in order to blacklist the refreshToken
   return (dispatch: Dispatch) => {
     dispatch(updateUserInfo(null, null, null, false, null, null));
     localStorage.removeItem('accessToken');

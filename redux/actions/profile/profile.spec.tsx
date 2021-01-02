@@ -52,7 +52,7 @@ describe('User Actions', () => {
       });
   });
 
-  test('fetchProfileReq should create correction actions on failure', () => {
+  test('fetchProfileReq should create correct actions on failure', () => {
     const expectedActions = [
       { type: FETCH_PROFILE_START },
       {

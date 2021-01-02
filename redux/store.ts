@@ -1,4 +1,4 @@
-import { createStore, applyMiddleware, Middleware } from 'redux';
+import { createStore, applyMiddleware, Middleware, Store } from 'redux';
 import thunk from 'redux-thunk';
 import { MakeStore, createWrapper } from 'next-redux-wrapper';
 import rootReducer, { RootState } from './reducers';
@@ -16,14 +16,17 @@ const bindMiddlewares = (middleware: Middleware[]) => {
   }
 };
 
+let store: Store<RootState>;
 const makeStore: MakeStore<RootState> = () => {
   if (!process.browser) {
     return createStore(rootReducer, bindMiddlewares([thunk]));
   }
-  const store = createStore(persistedReducer, bindMiddlewares([thunk]));
+  store = createStore(persistedReducer, bindMiddlewares([thunk]));
   // @ts-ignore
   store.__persistor = persistStore(store);
   return store;
 };
+
+export { store };
 
 export const wrapper = createWrapper<RootState>(makeStore, { debug: true });
