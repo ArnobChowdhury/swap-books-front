@@ -1,6 +1,6 @@
 import axios, { AxiosError } from 'axios';
 import { store } from '../redux/store';
-import { authLogout } from '../redux/actions/auth';
+import { authLogout, authSuccess } from '../redux/actions/auth';
 
 const instance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_BASE_URL,
@@ -31,8 +31,10 @@ if (process.env.NODE_ENV !== 'test') {
           .post('/auth/refresh-token', { refreshToken })
           .then(res => {
             const { accessToken, refreshToken } = res.data;
+            const userId = localStorage.getItem('userId');
             localStorage.setItem('accessToken', accessToken);
             localStorage.setItem('refreshToken', refreshToken);
+            store.dispatch(authSuccess(accessToken, userId as string));
             originalReq.headers['Authorization'] = `Bearer ${accessToken}`;
 
             return instance(originalReq);

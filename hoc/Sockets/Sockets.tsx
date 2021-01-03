@@ -37,13 +37,8 @@ interface SocketIOInterestInterface {
 }
 
 export const SocketIO = ({ children }: SocketIOInterestInterface) => {
-  const accessToken = useSelector<RootState, string | null>(
-    (s: RootState) => s.auth.accessToken,
-  );
+  const { userId, accessToken } = useSelector((s: RootState) => s.auth);
   const isSignedIn = Boolean(accessToken);
-  const userId = useSelector<RootState, string | null>(
-    (s: RootState) => s.auth.userId,
-  );
 
   const dispatch = useDispatch();
 
@@ -52,7 +47,9 @@ export const SocketIO = ({ children }: SocketIOInterestInterface) => {
 
   if (isSignedIn) {
     // interest socket
-    socketInterest = io(`${process.env.NEXT_PUBLIC_SOCKET_URL}/interest`);
+    socketInterest = io(`${process.env.NEXT_PUBLIC_SOCKET_URL}/interest`, {
+      query: `token=${accessToken}`,
+    });
 
     socketInterest.on(
       SOCKET_RECEIVE_NOTIFICATION,
@@ -62,20 +59,22 @@ export const SocketIO = ({ children }: SocketIOInterestInterface) => {
         dispatch(getNotificationSuccess(notification));
       },
     );
-
-    // @ts-ignore
-    socketInterest.on(SOCKET_RECEIVE_INTEREST, ({ bookId, interestState }) => {
-      // todo hardcoded bookId needs to change
-      dispatch(expressInterestSuccess(bookId, interestState === 'INTERESTED'));
-    });
-
+    socketInterest.on(
+      SOCKET_RECEIVE_INTEREST,
+      ({ bookId, interestState }: { bookId: string; interestState: string }) => {
+        // todo hardcoded bookId needs to change
+        dispatch(expressInterestSuccess(bookId, interestState === 'INTERESTED'));
+      },
+    );
     socketInterest.on(SOCKET_DISCONNECT, () => {
       // eslint-disable-next-line
       console.log('disconnecting, do something');
     });
 
     // message socket
-    socketMsg = io(`${process.env.NEXT_PUBLIC_SOCKET_URL}/messages`);
+    socketMsg = io(`${process.env.NEXT_PUBLIC_SOCKET_URL}/messages`, {
+      query: `token=${accessToken}`,
+    });
     socketMsg.on(SOCKET_RECEIVE_MSG, (messages: MessageResponseProps[]) => {
       dispatch(fetchCurrentRoomMsgsSuccess(messages));
     });

@@ -52,12 +52,11 @@ export const authFail = (error: Error) => {
 };
 
 export const authLogout = () => {
-  // TODO need to send a request to back end in order to blacklist the refreshToken
   return async (dispatch: Dispatch) => {
     const userId = localStorage.getItem('userId');
     return axios
       .post('/auth/logout', { userId })
-      .then(res => {
+      .then(() => {
         dispatch(updateUserInfo(null, null, null, false, null, null));
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
@@ -66,7 +65,7 @@ export const authLogout = () => {
         return dispatch({ type: AUTH_LOGOUT });
       })
       .catch(err => {
-        // TODO Should we handle authLogout faile seperately
+        // TODO Should we handle authLogout failed seperately from authLogin
         dispatch(authFail(err));
       });
   };
