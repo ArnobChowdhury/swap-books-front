@@ -26,6 +26,18 @@ const theme = {
   spaceNine: '1.8rem',
   spaceTen: '2rem',
   boxShadowOne: '1px 1px rgb(0, 0, 0, .15)',
+  /** below is the new theme - all of old themes should be
+  removed once the new design is implemented */
+  colorWhite: '#FFFFFF',
+  colorPurple: '#8B08F1',
+  colorPink: '#FF4773',
+  colorGreen: '#A3DC29',
+  colorLogoBlue: '#140564',
+  colorBG: '#F5F5F5',
+  colorTextPrimary: '#50586C',
+  colorTextSecondary: '#1E2846',
+  colorTextDark: '#000000',
+  fontSmall: '1.4rem',
 };
 
 export default theme;

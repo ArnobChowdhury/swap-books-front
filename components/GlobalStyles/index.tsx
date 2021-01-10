@@ -22,11 +22,11 @@ const GlobalStyles = createGlobalStyle<GlobalStylesProps>`
   body {
     ${(props): string | null =>
       props.storybook
-        ? "@import url('https://fonts.googleapis.com/css?family=Quicksand:300,400,500,600,700&display=swap')"
+        ? "@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@300;400&display=swap')"
         : null};
-    font-family: 'Quicksand', sans-serif;
+    font-family: 'Rubik', sans-serif;
     box-sizing: border-box;
-    font-weight: 400;
+    font-weight: 300;
     color: ${theme.colorBlackPrimary};
     overflow-x: ${(props): string | null =>
       props.overFlowHidden ? 'hidden' : null};

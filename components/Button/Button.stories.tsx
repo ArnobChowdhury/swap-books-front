@@ -1,28 +1,42 @@
-import { Button } from './Button';
-import { withKnobs, text, boolean } from '@storybook/addon-knobs';
+import { Button, ButtonProps } from './Button';
 import { withA11y } from '@storybook/addon-a11y';
-import { action } from '@storybook/addon-actions';
-import theme from '../../theme';
-import { ThemeProvider } from 'styled-components';
-import GlobalStyles from '../GlobalStyles';
+import { Story, Meta } from '@storybook/react';
 
 export default {
   title: 'Button',
   component: Button,
-  decorators: [withKnobs, withA11y],
-  parameters: {
-    componentSubtitle: 'Button component using Anchor tag',
-    backgrounds: [{ name: 'Black', value: 'rgb(0,0,0)', default: true }],
+  decorators: [withA11y],
+  argTypes: {
+    color: {
+      control: {
+        type: 'select',
+        options: ['white', 'pink'],
+      },
+      defaultValue: 'pink',
+    },
+    asButtonTag: {
+      control: {
+        type: 'boolean',
+      },
+    },
+    type: {
+      control: {
+        type: 'select',
+        options: ['submit', 'reset', 'button'],
+      },
+    },
+    href: {
+      control: {
+        type: 'text',
+      },
+    },
   },
-};
+} as Meta;
 
-export const Default = (): JSX.Element => {
+export const Template: Story<ButtonProps> = (props: ButtonProps) => {
   return (
     <>
-      <ThemeProvider theme={theme}>
-        <GlobalStyles storybook />
-        <Button onClick={action('onClick')}>Sign up</Button>
-      </ThemeProvider>
+      <Button {...props}>Sign up</Button>
     </>
   );
 };

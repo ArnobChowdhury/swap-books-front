@@ -3,29 +3,26 @@ import { ButtonProps } from './Button';
 
 interface ButtonStyledProps {
   color: ButtonProps['color'];
-  fontMedium: boolean;
 }
 
 const ButtonCSS = css<ButtonStyledProps>`
   background: ${(props): string | null => {
     switch (props.color) {
-      case 'yellow':
-        return props.theme.colorYellowDeep;
-      case 'dark':
-        return props.theme.colorBlackPrimary;
+      case 'white':
+        return props.theme.colorWhite;
       default:
-        return 'transparent';
+        return props.theme.colorPink;
     }
   }};
-  border: ${({ color }): string | null =>
-    color === 'transparent' ? '1px solid white' : '1px solid transparent'};
+  border: ${({ theme }) => `2px solid ${theme.colorPurple}`};
   border-radius: ${(props): string | null => props.theme.spaceTwo};
   padding: ${({ theme }): string | null => `${theme.spaceFour} ${theme.spaceTen}`};
   font-family: inherit;
-  font-size: ${(props): string | null => props.theme.fontSizeOne};
-  font-weight: ${({ fontMedium }): string | null => (fontMedium ? '500' : null)};
+  font-size: ${(props): string | null => props.theme.fontSmall};
+  font-weight: 400;
+  letter-spacing: 1px;
   color: ${({ color, theme }): string | null =>
-    color === 'yellow' ? theme.colorBlackDark : 'white'};
+    color === 'white' ? theme.colorTextPrimary : 'black'};
   cursor: pointer;
   transition: all 0.2s;
   text-decoration: none;
