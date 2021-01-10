@@ -27,7 +27,7 @@ const GlobalStyles = createGlobalStyle<GlobalStylesProps>`
     font-family: 'Rubik', sans-serif;
     box-sizing: border-box;
     font-weight: 300;
-    color: ${theme.colorBlackPrimary};
+    color: ${theme.colorTextPrimary};
     overflow-x: ${(props): string | null =>
       props.overFlowHidden ? 'hidden' : null};
     margin: 0;
