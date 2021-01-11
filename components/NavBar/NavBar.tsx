@@ -27,7 +27,6 @@ export const NavBar = ({
   userName,
   currentSelected,
   notifications,
-  logoutFunc,
 }: NavBarProps): JSX.Element => {
   const [dropDown, setDropDown] = useState<
     'Messages' | 'Notifications' | 'User' | null
