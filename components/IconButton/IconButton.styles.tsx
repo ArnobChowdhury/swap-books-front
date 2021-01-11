@@ -12,18 +12,23 @@ export const StyledButton = styled.button<IconButtonStyledProps>`
   align-items: center;
   border: none;
   background: ${({ theme }) => theme.colorWhite};
-  padding: ${({ theme }): string | null => `${theme.spaceFour} ${theme.spaceTen}`};
+  padding: ${({ theme }): string | null => `${theme.spaceTwo} ${theme.spaceTen}`};
   font-family: inherit;
   ${({ fontSize }) => fontSize && `font-size: ${fontSize}px`};
   font-weight: 300;
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
   color: ${({ textColor, theme }): string | null =>
-    textColor === 'primary' ? theme.colorTextPrimary : theme.textColorSecondary};
+    textColor === 'primary' ? theme.colorTextPrimary : theme.colorTextSecondary};
   cursor: pointer;
   transition: all 0.2s;
   text-decoration: none;
+  outline: none;
+
+  &:hover {
+    background: ${({ theme }) => theme.colorBG};
+  }
 `;
 
 export const ButtonText = styled.div`
-  padding-left: ${({ theme }) => theme.spaceFive};
+  padding-left: ${({ theme }) => theme.spaceThree};
 `;

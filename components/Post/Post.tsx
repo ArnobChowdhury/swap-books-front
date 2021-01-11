@@ -8,24 +8,24 @@ import {
   ContentLeft,
   ContentRight,
   InterestIconWrapper,
-  InterestButton,
+  PostOptionWrapper,
 } from './Post.styles';
 import { InterestIcon } from 'assets/InterestIcon';
+import { IconButton } from 'components/IconButton';
+import { PostOption, PostOptionProps } from 'components/PostOption';
 
-interface PostProps {
+export interface PostProps {
   imgUrl: string;
   bookName: string;
   bookAuthor: string;
   bookOwnerName: string;
-  edition?: string;
-  genre?: string;
-  availableIn?: string;
   isInterested: boolean;
   bottomMargin?: boolean;
   interestReqOnGoing: boolean;
-  interestButtonClick?: (e: MouseEvent<HTMLButtonElement>) => void;
+  onInterestButtonClick?: (e: MouseEvent<HTMLButtonElement>) => void;
   key: string;
   isOwners: boolean;
+  postOptions: PostOptionProps['options'];
 }
 
 export const Post = ({
@@ -33,53 +33,49 @@ export const Post = ({
   bookName,
   bookAuthor,
   bookOwnerName,
-  edition,
-  genre,
-  availableIn,
   bottomMargin,
   interestReqOnGoing,
   isInterested = false,
-  interestButtonClick,
+  onInterestButtonClick,
   isOwners,
+  postOptions,
 }: PostProps): JSX.Element => {
   return (
     <PostWrapper bottomMargin={bottomMargin}>
       <ImageWrapper>
-        <Image src={imgUrl} />
+        <Image src={imgUrl} alt={`image of book named: ${bookName}`} />
       </ImageWrapper>
       <ContentContainer>
         <ContentWrapper>
-          <ContentLeft>Book:</ContentLeft>
+          <ContentLeft>Book</ContentLeft>
           <ContentRight isTitle>{bookName}</ContentRight>
         </ContentWrapper>
         <ContentWrapper>
-          <ContentLeft>Author:</ContentLeft>
+          <ContentLeft>Author</ContentLeft>
           <ContentRight>{bookAuthor}</ContentRight>
         </ContentWrapper>
         <ContentWrapper>
-          <ContentLeft>Genre:</ContentLeft>
-          <ContentRight>{genre}</ContentRight>
-        </ContentWrapper>
-        <ContentWrapper>
-          <ContentLeft>Available in:</ContentLeft>
-          <ContentRight>{availableIn}</ContentRight>
-        </ContentWrapper>
-        <ContentWrapper>
-          <ContentLeft>Posted by:</ContentLeft>
+          <ContentLeft>Owner</ContentLeft>
           <ContentRight>{isOwners ? 'You' : bookOwnerName}</ContentRight>
         </ContentWrapper>
       </ContentContainer>
       {!isOwners && (
         <InterestIconWrapper>
-          <InterestButton
-            onClick={interestButtonClick}
-            interestReqOnGoing={interestReqOnGoing}
+          <IconButton
+            buttonText={isInterested ? 'Interested' : 'Show Interest'}
+            icon={<InterestIcon hasBodyColor={isInterested} />}
+            fontSize={16}
+            onClick={onInterestButtonClick}
             disabled={interestReqOnGoing}
-          >
-            <InterestIcon hasBodyColor={isInterested} width="20px" height="20px" />
-            I&apos;m Interested
-          </InterestButton>
+            textColor="secondary"
+          />
         </InterestIconWrapper>
+      )}
+      {/**Todo: Post option should be changed later */}
+      {postOptions && (
+        <PostOptionWrapper>
+          <PostOption options={postOptions} />
+        </PostOptionWrapper>
       )}
     </PostWrapper>
   );

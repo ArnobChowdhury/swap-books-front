@@ -37,7 +37,9 @@ const theme = {
   colorTextPrimary: '#50586C',
   colorTextSecondary: '#1E2846',
   colorTextDark: '#000000',
+  colorSeparator: '#EBEBEB',
   fontSmall: '1.4rem',
+  fontLarge: '1.6rem',
 };
 
 export default theme;

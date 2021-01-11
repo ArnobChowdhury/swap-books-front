@@ -6,7 +6,6 @@ import { InterestIcon } from '../../assets/InterestIcon';
 export default {
   title: 'IconButton',
   component: IconButton,
-  decorators: [withA11y],
   argTypes: {
     icon: {
       defaultValue: <InterestIcon hasBodyColor />,
