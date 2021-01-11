@@ -5,6 +5,8 @@ module.exports = {
     '../components/IconButton/*.stories.tsx',
     '../components/Post/*.stories.tsx',
     '../components/PostOption/*.stories.tsx',
+    '../components/NavBar/*.stories.tsx',
+    '../components/ActivityBar/*.stories.tsx',
   ],
   addons: [
     '@storybook/addon-links',

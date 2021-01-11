@@ -6,15 +6,17 @@ import {
   NavLinkWrapper,
   NavLinks,
   DropDown,
+  ButtonWrapper,
 } from './NavBar.styles';
 import { NotificationDropDown } from 'components/NotificationDropDown';
+import { Button } from 'components/Button';
 import { Logo } from 'assets/Logo';
 import { NotificationShape } from 'redux/reducers/notifications';
 
-interface NavBarProps {
+export interface NavBarProps {
   userName: string | null;
   isSignedIn: boolean;
-  currentSelected?: 'Books' | 'Messages' | 'Notifications' | 'User' | 'Auth';
+  currentSelected?: 'Home' | 'Messages' | 'Notifications' | 'User';
   notifications: NotificationShape[];
   logoutFunc: () => void;
 }
@@ -76,47 +78,41 @@ export const NavBar = ({
       </DropDown>
       <NavWrapper>
         <div>
-          <Logo width={185} />
+          <Logo />
         </div>
-        <NavUL>
-          <NavLinkWrapper isSelected={currentSelected === 'Books'}>
-            <NavLinks href="/books" isSelected={currentSelected === 'Books'}>
-              Books
-            </NavLinks>
-          </NavLinkWrapper>
-          {isSignedIn && (
-            <>
-              <NavLinkWrapper
-                isSelected={currentSelected === 'Notifications'}
-                onClick={handleNotificationDropDown}
-                ref={notificationRef}
-              >
-                <NavLinks href="#" isSelected={currentSelected === 'Notifications'}>
-                  Notifications
-                </NavLinks>
-              </NavLinkWrapper>
-              <NavLinkWrapper isSelected={currentSelected === 'User'}>
-                <NavLinks href="/user" isSelected={currentSelected === 'User'}>
-                  {userName}
-                </NavLinks>
-              </NavLinkWrapper>
-            </>
-          )}
-          <NavLinkWrapper
-            isSelected={currentSelected === 'Auth'}
-            onClick={() => {
-              isSignedIn
-                ? logoutFunc()
-                : () => {
-                    /**Login modal will appear */
-                  };
-            }}
-          >
-            <NavLinks href="#" isSelected={currentSelected === 'Auth'}>
-              {isSignedIn ? 'Logout' : 'Login'}
-            </NavLinks>
-          </NavLinkWrapper>
-        </NavUL>
+        {isSignedIn && (
+          <NavUL>
+            <NavLinkWrapper isSelected={currentSelected === 'Home'}>
+              <NavLinks href="/" isSelected={currentSelected === 'Home'}>
+                Books
+              </NavLinks>
+            </NavLinkWrapper>
+            <NavLinkWrapper
+              isSelected={currentSelected === 'Notifications'}
+              onClick={handleNotificationDropDown}
+              ref={notificationRef}
+            >
+              <NavLinks href="#" isSelected={currentSelected === 'Notifications'}>
+                Notifications
+              </NavLinks>
+            </NavLinkWrapper>
+            <NavLinkWrapper isSelected={currentSelected === 'User'}>
+              <NavLinks href="/user" isSelected={currentSelected === 'User'}>
+                {userName}
+              </NavLinks>
+            </NavLinkWrapper>
+          </NavUL>
+        )}
+        {!isSignedIn && (
+          <ButtonWrapper>
+            <Button asButtonTag color="white">
+              Log in
+            </Button>
+            <Button asButtonTag color="pink">
+              Sign up
+            </Button>
+          </ButtonWrapper>
+        )}
       </NavWrapper>
     </NavContainer>
   );

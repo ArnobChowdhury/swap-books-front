@@ -1,19 +1,21 @@
 import styled from 'styled-components';
 
 export const NavContainer = styled.div`
-  background: ${({ theme }) => theme.colorBlackLight};
+  background: ${({ theme }) => theme.colorWhite};
   display: flex;
   justify-content: center;
   position: relative;
+  border-bottom: ${({ theme }) => `1px solid ${theme.colorSeparator}`};
 `;
 
 export const NavWrapper = styled.nav`
   width: 1400px;
-  height: 55px;
+  height: 60px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   font-size: ${({ theme }) => theme.fontSizeOne};
+  padding: ${({ theme }) => theme.spaceFour};
 `;
 
 export const NavUL = styled.ul`
@@ -51,4 +53,10 @@ export const DropDown = styled.div<{ isSelected: boolean }>`
   background: white;
   border: ${({ theme }) => `1px solid ${theme.colorGreyPrimary}`};
   border-radius: 5px;
+`;
+
+export const ButtonWrapper = styled.div`
+  & button:first-child {
+    margin-right: ${({ theme }) => theme.spaceThree};
+  }
 `;

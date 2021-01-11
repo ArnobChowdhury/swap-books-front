@@ -16,16 +16,18 @@ const ButtonCSS = css<ButtonStyledProps>`
   }};
   border: ${({ theme }) => `2px solid ${theme.colorPurple}`};
   border-radius: ${(props): string | null => props.theme.spaceTwo};
-  padding: ${({ theme }): string | null => `${theme.spaceFour} ${theme.spaceTen}`};
+  padding: ${({ theme }): string | null => `${theme.spaceThree} ${theme.spaceFive}`};
   font-family: inherit;
   font-size: ${(props): string | null => props.theme.fontSmall};
   font-weight: 400;
-  letter-spacing: 1px;
-  color: ${({ color, theme }): string | null =>
-    color === 'white' ? theme.colorTextPrimary : 'black'};
+  color: ${({ theme }): string | null => theme.colorTextDark};
   cursor: pointer;
   transition: all 0.2s;
   text-decoration: none;
+
+  @media (min-width: 360px) {
+    padding: ${({ theme }): string | null => `${theme.spaceFour} ${theme.spaceTen}`};
+  }
 
   &:hover {
     transform: translateY(-0.2rem);
