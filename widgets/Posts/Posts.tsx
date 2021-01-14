@@ -1,18 +1,17 @@
-import { useEffect, useContext } from 'react';
-import { NextPage } from 'next';
+import React, { useContext, useEffect } from 'react';
 import { Post } from 'modules/Post';
-import { NavBar } from 'widgets/NavBar';
-import { PageLayout } from 'hoc/PageLayout';
-import { SocketIoContext } from 'hoc/Sockets';
 import { useDispatch, useSelector } from 'react-redux';
+import { SocketIoContext } from 'hoc/Sockets';
 import { fetchBooksRequest, expressInterestStart } from 'redux/actions/book';
-import { authLogout } from 'redux/actions/auth';
 import { RootState } from 'redux/reducers';
+import { PageLayout } from 'hoc/PageLayout';
 import { Spinner } from 'ui-kits/Spinner';
+import { RootContext, RootContextProps } from 'contexts/RootContext';
 
-const Books: NextPage = (): JSX.Element => {
+export const Posts = (): JSX.Element => {
   const dispatch = useDispatch();
   const { socketInterest } = useContext(SocketIoContext);
+  const { setPopupType, setShowModal } = useContext(RootContext) as RootContextProps;
 
   useEffect(() => {
     if (process.browser) {
@@ -26,14 +25,14 @@ const Books: NextPage = (): JSX.Element => {
 
   const isSignedIn = Boolean(accessToken);
 
-  //const { books, loading } = booksState;
-
   const handleUnsignedInterest = () => {
-    alert('You need to sign in to express interest');
+    setShowModal(true);
+    setPopupType('requireLoginOrSignup');
   };
 
   let posts;
   if (books) {
+    // posts = books.map(el => {
     posts = books.map(el => {
       const {
         bookId,
@@ -71,7 +70,6 @@ const Books: NextPage = (): JSX.Element => {
           }}
           isInterested={userIsInterested}
           key={bookId}
-          // todo availableIn ??? really? Let's remove this soon
           bottomMargin
           interestReqOnGoing={interestOnGoing}
           isOwners={bookOwnerId === userId}
@@ -79,13 +77,12 @@ const Books: NextPage = (): JSX.Element => {
       );
     });
   }
-
+  // TODO is PageLayout a HOC? I don't think anymore
+  // return <PageLayout>{!loading ? posts : <Spinner />}</PageLayout>;
   return (
-    <>
-      <NavBar />
-      <PageLayout>{!loading ? posts : <Spinner />}</PageLayout>
-    </>
+    <PageLayout>
+      {loading && <Spinner />}
+      {!loading && posts}
+    </PageLayout>
   );
 };
-
-export default Books;

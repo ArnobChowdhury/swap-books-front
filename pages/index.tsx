@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { NextPage } from 'next';
-import { Landing } from '../components/Landing';
 import { Input } from '../components/Input';
-import { Button } from '../components/Button';
-import { Modal } from '../components/Modal';
-import { Spinner } from '../components/Spinner';
+import { Button } from 'ui-kits/Button';
+import { Modal } from 'ui-kits/Modal';
+import { Spinner } from 'ui-kits/Spinner';
 import { Formik, Form } from 'formik';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from 'redux/reducers';
@@ -90,7 +89,7 @@ const Home: NextPage = (): JSX.Element => {
                 />
                 <div style={{ minWidth: '10rem', display: 'inline-block' }} />
                 <div style={{ display: 'inline-block' }}>
-                  <Button color="dark" type="submit" fontMedium asButtonTag>
+                  <Button color="pink" type="submit" asButtonTag>
                     Log in
                   </Button>
                 </div>

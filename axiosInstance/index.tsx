@@ -16,38 +16,38 @@ instance.interceptors.request.use(config => {
   return config;
 });
 
-if (process.env.NODE_ENV !== 'test') {
-  instance.interceptors.response.use(
-    value => value,
-    async error => {
-      const originalReq = error.config;
-      const errorResponse = error.response;
-      if (
-        errorResponse.status === 401 &&
-        errorResponse.data.message === 'jwt expired'
-      ) {
-        const refreshToken = localStorage.getItem('refreshToken');
-        return instance
-          .post('/auth/refresh-token', { refreshToken })
-          .then(res => {
-            const { accessToken, refreshToken } = res.data;
-            const userId = localStorage.getItem('userId');
-            localStorage.setItem('accessToken', accessToken);
-            localStorage.setItem('refreshToken', refreshToken);
-            store.dispatch(authSuccess(accessToken, userId as string));
-            originalReq.headers['Authorization'] = `Bearer ${accessToken}`;
+// if (process.env.NODE_ENV !== 'test') {
+//   instance.interceptors.response.use(
+//     value => value,
+//     async error => {
+//       const originalReq = error.config;
+//       const errorResponse = error.response;
+//       if (
+//         errorResponse.status === 401 &&
+//         errorResponse.data.message === 'jwt expired'
+//       ) {
+//         const refreshToken = localStorage.getItem('refreshToken');
+//         return instance
+//           .post('/auth/refresh-token', { refreshToken })
+//           .then(res => {
+//             const { accessToken, refreshToken } = res.data;
+//             const userId = localStorage.getItem('userId');
+//             localStorage.setItem('accessToken', accessToken);
+//             localStorage.setItem('refreshToken', refreshToken);
+//             store.dispatch(authSuccess(accessToken, userId as string));
+//             originalReq.headers['Authorization'] = `Bearer ${accessToken}`;
 
-            return instance(originalReq);
-          })
-          .catch((err: AxiosError) => {
-            // @ts-ignore
-            store.dispatch(authLogout());
-            throw err;
-          });
-      }
-      return Promise.reject(error);
-    },
-  );
-}
+//             return instance(originalReq);
+//           })
+//           .catch((err: AxiosError) => {
+//             // @ts-ignore
+//             store.dispatch(authLogout());
+//             throw err;
+//           });
+//       }
+//       return Promise.reject(error);
+//     },
+//   );
+// }
 
 export default instance;

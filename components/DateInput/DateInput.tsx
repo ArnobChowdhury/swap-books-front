@@ -1,7 +1,7 @@
 import { useState, ChangeEvent, useEffect } from 'react';
 import { DateInputWrapper, Input } from './DateInput.styles';
-import { Label } from 'components/Label';
-import { FormikError } from 'components/FormikError';
+import { Label } from 'ui-kits/Label';
+import { FormikError } from 'ui-kits/FormikError';
 import { useField } from 'formik';
 
 function daysInAMonth(month: number, year?: number) {
@@ -10,7 +10,7 @@ function daysInAMonth(month: number, year?: number) {
 
 const currentYear = new Date().getFullYear();
 
-interface DateInputProps {
+export interface DateInputProps {
   name: string;
   value?: string;
   labelText?: string;

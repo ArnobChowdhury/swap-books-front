@@ -1,5 +1,5 @@
 import { cleanup, render, fireEvent } from '@testing-library/react';
-import '@testing-library/jest-dom/extend-expect';
+import 'ui-kits/FlexContainer/node_modules/@testing-library/jest-dom/extend-expect';
 import { Input, InputProps } from './Input';
 
 describe('<Input />,', () => {

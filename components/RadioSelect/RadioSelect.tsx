@@ -1,7 +1,7 @@
-import { RadioInput } from 'components/RadioInput';
-import { Label as FormHeading } from 'components/Label';
+import { RadioInput } from 'ui-kits/RadioInput';
+import { Label as FormHeading } from 'ui-kits/Label';
 import { useField } from 'formik';
-import { FormikError } from 'components/FormikError';
+import { FormikError } from 'ui-kits/FormikError';
 
 interface RadioOptions {
   value: string;

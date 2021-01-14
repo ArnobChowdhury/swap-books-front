@@ -31,7 +31,7 @@ const GlobalStyles = createGlobalStyle<GlobalStylesProps>`
     overflow-x: ${(props): string | null =>
       props.overFlowHidden ? 'hidden' : null};
     margin: 0;
-    background: ${theme.colorGlobalBackground};
+    background: ${theme.colorBG};
   }
 `;
 

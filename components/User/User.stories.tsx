@@ -1,18 +1,8 @@
-import { withKnobs } from '@storybook/addon-knobs';
-import { withA11y } from '@storybook/addon-a11y';
-import { action } from '@storybook/addon-actions';
-import GlobalStyles from '../GlobalStyles';
-import { ThemeProvider } from 'styled-components';
-import theme from '../../theme';
 import { User } from './User';
 
 export default {
   title: 'User',
   component: User,
-  decorators: [withKnobs, withA11y],
-  parameters: {
-    componentSubtitle: "User's profile page",
-  },
 };
 
 export const Default = (): JSX.Element => {
@@ -42,21 +32,20 @@ export const Default = (): JSX.Element => {
   ];
 
   return (
-    <>
-      <ThemeProvider theme={theme}>
-        <GlobalStyles storybook />
-        <User
-          books={books}
-          userName="Sami"
-          isSignedIn
-          logoutFunc={action('logoutFunc')}
-          loading={false}
-          notifications={[]}
-          profileUserName="Jon"
-          userId="12asdf123435as"
-          interestButtonClick={action('interestButtonClick')}
-        />
-      </ThemeProvider>
-    </>
+    <User
+      books={books}
+      userName="Sami"
+      isSignedIn
+      logoutFunc={() => {
+        /** */
+      }}
+      loading={false}
+      notifications={[]}
+      profileUserName="Jon"
+      userId="12asdf123435as"
+      interestButtonClick={() => {
+        /** */
+      }}
+    />
   );
 };

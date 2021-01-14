@@ -4,9 +4,9 @@ import { useRouter } from 'next/router';
 import { Input } from 'components/Input';
 import { DateInput } from 'components/DateInput';
 import { RadioSelect } from 'components/RadioSelect';
-import { CenterContainer } from 'components/CenterContainer';
-import { Button } from '../components/Button';
-import { Spinner } from 'components/Spinner';
+import { CenterContainer } from 'ui-kits/CenterContainer';
+import { Button } from 'ui-kits/Button';
+import { Spinner } from 'ui-kits/Spinner';
 import { Formik, Form } from 'formik';
 import { Logo } from 'assets/Logo';
 import * as Yup from 'yup';
@@ -106,7 +106,7 @@ const UserDetails: NextPage = (): JSX.Element => {
               { value: 'female', labelText: 'Female' },
             ]}
           />
-          <Button color="dark" type="submit" fontMedium asButtonTag>
+          <Button color="pink" type="submit" asButtonTag>
             Submit
           </Button>
         </Form>

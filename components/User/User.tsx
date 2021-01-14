@@ -1,7 +1,7 @@
-import { UserInfo } from 'components/UserInfo';
-import { NavBar } from 'components/NavBar';
-import { Spinner } from 'components/Spinner';
-import { Post } from 'components/Post';
+import { UserInfo } from 'widgets/UserInfo';
+import { NavBar } from 'widgets/NavBar';
+import { Spinner } from 'ui-kits/Spinner';
+import { Post } from 'modules/Post';
 import { PageLayout } from 'hoc/PageLayout';
 import { BookShape } from 'redux/reducers/books';
 import { NotificationShape } from 'redux/reducers/notifications';
@@ -55,16 +55,14 @@ export const User = ({
           bookName={bookName}
           bookAuthor={bookAuthor}
           bookOwnerName={bookOwnerName}
-          genre="Novel"
           imgUrl={`${process.env.NEXT_PUBLIC_IMAGE_URL}${bookPicturePath}`}
           isInterested={userIsInterested}
           key={bookId}
           // todo availableIn ??? really? Let's remove this soon
-          availableIn="Dhanmondi"
           bottomMargin
           interestReqOnGoing={interestOnGoing}
           isOwners={bookOwnerId === userId}
-          interestButtonClick={() => {
+          onInterestButtonClick={() => {
             if (interestButtonClick != undefined) {
               interestButtonClick(bookId, bookName, bookOwnerId, bookOwnerName);
             }
@@ -78,13 +76,7 @@ export const User = ({
 
   return (
     <>
-      <NavBar
-        isSignedIn={isSignedIn}
-        currentSelected="Books"
-        userName={userName}
-        notifications={notifications}
-        logoutFunc={logoutFunc}
-      />
+      <NavBar />
       <PageLayout>
         {!loading && (
           <>

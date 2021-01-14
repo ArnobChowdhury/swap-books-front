@@ -1,51 +1,59 @@
-import { NotificationChild } from './NotificationChild';
-import { withKnobs } from '@storybook/addon-knobs';
-import { withA11y } from '@storybook/addon-a11y';
-import theme from '../../theme';
-import { ThemeProvider } from 'styled-components';
-import GlobalStyles from '../GlobalStyles';
+import { NotificationChild, NotificationChildProps } from './NotificationChild';
+import { Story, Meta } from '@storybook/react';
 
 export default {
   title: 'NotificationChild',
   component: NotificationChild,
-  decorators: [withKnobs, withA11y],
-  parameters: {
-    componentSubtitle: 'A single notification',
-    backgrounds: [{ name: 'Light', value: 'rgb(250,255,255)', default: true }],
+  argTypes: {
+    seen: {
+      control: {
+        type: 'boolean',
+      },
+      defaultValue: false,
+    },
+    fromId: {
+      control: {
+        type: 'text',
+      },
+      defaultValue: '123456',
+    },
+    fromName: {
+      control: {
+        type: 'text',
+      },
+      defaultValue: 'Arnob',
+    },
+    bookName: {
+      control: {
+        type: 'text',
+      },
+      defaultValue: 'Amazing',
+    },
+    type: {
+      control: {
+        type: 'text',
+        options: ['interest', 'match'],
+      },
+      defaultValue: 'interest',
+    },
   },
+} as Meta;
+
+export const Interest: Story<NotificationChildProps> = (
+  props: NotificationChildProps,
+): JSX.Element => {
+  return <NotificationChild {...props} />;
 };
 
-export const Default = (): JSX.Element => {
+export const Match = (): JSX.Element => {
   return (
-    <>
-      <ThemeProvider theme={theme}>
-        <GlobalStyles storybook />
-        <NotificationChild
-          seen={false}
-          fromId="1233355"
-          fromName="Shakhawat"
-          bookName="Amazing"
-          type="interest"
-        />
-      </ThemeProvider>
-    </>
-  );
-};
-
-export const TypeMatch = (): JSX.Element => {
-  return (
-    <>
-      <ThemeProvider theme={theme}>
-        <GlobalStyles storybook />
-        <NotificationChild
-          seen={false}
-          fromId="1233355"
-          fromName="Shakhawat"
-          bookName="Amazing"
-          type="match"
-          roomLink="1233425adas121"
-        />
-      </ThemeProvider>
-    </>
+    <NotificationChild
+      seen={false}
+      fromId="1233355"
+      fromName="Shakhawat"
+      bookName="Amazing"
+      type="match"
+      roomLink="1233425adas121"
+    />
   );
 };

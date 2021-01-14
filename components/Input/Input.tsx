@@ -1,6 +1,6 @@
-import { Label } from 'components/Label';
-import { FormikError } from 'components/FormikError';
-import InputBox from '../InputBox';
+import { Label } from 'ui-kits/Label';
+import { FormikError } from 'ui-kits/FormikError';
+import { InputBox } from 'ui-kits/InputBox';
 import { useField } from 'formik';
 
 export interface InputProps {

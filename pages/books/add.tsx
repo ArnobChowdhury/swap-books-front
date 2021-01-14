@@ -2,17 +2,16 @@ import { useState } from 'react';
 import { NextPage } from 'next';
 import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
-import { NavBar } from 'components/NavBar';
+import { TopBar } from 'widgets/TopBar';
 import { PageLayout } from 'hoc/PageLayout';
-import { FlexContainer } from 'components/FlexContainer';
-import { FlexItem } from 'components/FlexItem';
+import { FlexContainer } from 'ui-kits/FlexContainer';
+import { FlexItem } from 'ui-kits/FlexItem';
 import { Input } from 'components/Input';
-import { FileInput } from 'components/FileInput';
-import { Button } from 'components/Button';
+import { FileInput } from 'ui-kits/FileInput';
+import { Button } from 'ui-kits/Button';
 import { useDispatch, useSelector } from 'react-redux';
 import { addABookRequest } from 'redux/actions/book';
 import { RootState } from 'redux/reducers';
-import { authLogout } from 'redux/actions/auth';
 
 // todo this page needs to be protected
 const AddABook: NextPage = (): JSX.Element => {
@@ -34,11 +33,10 @@ const AddABook: NextPage = (): JSX.Element => {
 
   return (
     <>
-      <NavBar
+      <TopBar
         userName={userName}
         isSignedIn={isSignedIn}
         notifications={notifications}
-        logoutFunc={() => dispatch(authLogout())}
       />
       <PageLayout>
         <FlexContainer>
@@ -95,7 +93,7 @@ const AddABook: NextPage = (): JSX.Element => {
                   labelText="Pick a picture"
                   onChange={e => handleFileClick(e)}
                 />
-                <Button color="dark" type="submit" fontMedium asButtonTag>
+                <Button color="pink" type="submit" asButtonTag>
                   Add
                 </Button>
               </Form>
