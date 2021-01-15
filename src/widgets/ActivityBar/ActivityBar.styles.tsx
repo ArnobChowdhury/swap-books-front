@@ -1,8 +1,13 @@
 import styled from 'styled-components';
+import { mideumScreen } from 'mediaConfig';
 
 export const ActivityContainer = styled.div`
   display: flex;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+
+  @media (min-width: ${mideumScreen}px) {
+    box-shadow: none;
+  }
 `;
 
 export const ActivitySections = styled.div<{ rightBorder?: boolean }>`
@@ -15,5 +20,16 @@ export const ActivitySections = styled.div<{ rightBorder?: boolean }>`
 
   & button {
     width: 100%;
+    &:hover {
+      background: ${({ theme }) => theme.colorBG};
+    }
+  }
+
+  @media (min-width: ${mideumScreen}px) {
+    border-right: none;
+
+    & button {
+      width: 180px;
+    }
   }
 `;

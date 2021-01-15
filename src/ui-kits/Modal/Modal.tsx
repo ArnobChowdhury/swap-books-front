@@ -8,7 +8,7 @@ export interface ModalProps {
 export const Modal: React.FC<ModalProps> = ({
   children,
   onClick,
-  modalContentPadding = '2rem',
+  modalContentPadding = '3rem',
 }: ModalProps): JSX.Element => {
   return (
     <>

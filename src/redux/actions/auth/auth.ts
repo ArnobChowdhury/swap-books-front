@@ -84,6 +84,7 @@ export const authRequest = (
   email: string,
   password: string,
   formikSetSubmitting: (submissionResolved: boolean) => void,
+  setShowModal: React.Dispatch<React.SetStateAction<boolean>>,
 ): ThunkAction<void, RootState, unknown, Action<string>> => {
   return async (dispatch: Dispatch) => {
     dispatch(authStart());
@@ -96,6 +97,7 @@ export const authRequest = (
       .post(url, authData)
       .then(response => {
         formikSetSubmitting(false);
+        setShowModal(false);
         // todo how should we handle the message???
         const {
           name,

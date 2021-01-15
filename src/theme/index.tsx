@@ -40,6 +40,7 @@ const theme = {
   colorSeparator: '#EBEBEB',
   fontSmall: '1.4rem',
   fontLarge: '1.6rem',
+  borderRadius: '.3rem',
 };
 
 export default theme;

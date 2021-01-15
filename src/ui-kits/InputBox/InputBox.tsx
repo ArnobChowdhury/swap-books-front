@@ -8,6 +8,7 @@ export interface InputBoxProps {
   onChange?: React.FormEventHandler<HTMLInputElement>;
   isFullWidth?: boolean;
   labelAtTop?: boolean;
+  autoFocus?: boolean;
 }
 
 /**
@@ -22,6 +23,7 @@ export const InputBox: React.FC<InputBoxProps> = ({
   isFullWidth = false,
   labelAtTop = false,
   name,
+  autoFocus,
 }: InputBoxProps): JSX.Element => {
   return (
     <InputHTML
@@ -33,6 +35,7 @@ export const InputBox: React.FC<InputBoxProps> = ({
       {...{ isFullWidth }}
       {...{ labelAtTop }}
       data-testid="inputFieldTestid"
+      autoFocus={autoFocus}
     />
   );
 };

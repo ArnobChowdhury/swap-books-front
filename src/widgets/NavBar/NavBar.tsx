@@ -4,13 +4,29 @@ import {
   NavBarWrapper,
   NavButton,
   // DropDown,
+  UserIcon,
 } from './NavBar.styles';
 // import { NotificationDropDown } from 'widgets/NotificationDropDown';
-// import { useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 // import { RootState } from 'redux/reducers';
+import { HomeIcon } from 'assets/HomeIcon';
+import { ChatIcon } from 'assets/ChatIcon';
+import { NotificationIcon } from 'assets/NotificationIcon';
+import { RootState } from 'redux/reducers';
+import { authLogout } from 'redux/actions/auth';
+import { getUserInitials } from 'utils/index';
 
 // todo there should be not be any default arguments
 export const NavBar = (): JSX.Element => {
+  const dispatch = useDispatch();
+  const userName = useSelector((s: RootState) => s.user.name);
+
+  let userInitials;
+  if (userName) {
+    userInitials = getUserInitials(userName as string);
+  }
+
   // const { notifications } = useSelector((s: RootState) => s.notifications);
   // const [dropDown, setDropDown] = useState<
   //   'Messages' | 'Notifications' | 'User' | null
@@ -60,9 +76,22 @@ export const NavBar = (): JSX.Element => {
         <NotificationDropDown notifications={notifications} />
       </DropDown> */}
       <NavBarWrapper>
-        <NavButton>Books</NavButton>
-        <NavButton>Notifications</NavButton>
-        <NavButton>A name coorect it</NavButton>
+        <NavButton>
+          <HomeIcon />
+        </NavButton>
+        <NavButton>
+          <ChatIcon />
+        </NavButton>
+        <NavButton>
+          <NotificationIcon />
+        </NavButton>
+        <NavButton
+          onClick={() => {
+            dispatch(authLogout());
+          }}
+        >
+          <UserIcon>{userInitials}</UserIcon>
+        </NavButton>
       </NavBarWrapper>
     </NavBarContainer>
   );

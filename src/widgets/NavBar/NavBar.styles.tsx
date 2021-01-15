@@ -9,7 +9,7 @@ export const NavBarContainer = styled.div`
 `;
 
 export const NavBarWrapper = styled.nav`
-  width: 1400px;
+  width: 250px;
   height: 60px;
   display: flex;
   justify-content: space-between;
@@ -39,7 +39,10 @@ export const NavButton = styled.button`
   height: 100%;
   display: flex;
   align-items: center;
-  padding: 0 ${({ theme }) => theme.spaceEight};
+  font-family: inherit;
+  border: none;
+  background: none;
+  cursor: pointer;
 `;
 
 export const DropDown = styled.div<{ isSelected: boolean }>`
@@ -51,4 +54,16 @@ export const DropDown = styled.div<{ isSelected: boolean }>`
   background: white;
   border: ${({ theme }) => `1px solid ${theme.colorGreyPrimary}`};
   border-radius: 5px;
+`;
+
+export const UserIcon = styled.div`
+  width: 32px;
+  height: 32px;
+  border: ${({ theme }) => `2px solid ${theme.colorTextPrimary}`};
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: ${({ theme }) => theme.colorTextPrimary};
+  font-family: inherit;
 `;

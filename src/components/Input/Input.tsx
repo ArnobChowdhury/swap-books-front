@@ -15,6 +15,7 @@ export interface InputProps {
   labelAtTop?: boolean;
   labelMinWidth?: string;
   marginBottom?: string;
+  autoFocus?: boolean;
 }
 
 /**
@@ -30,6 +31,7 @@ export const Input: React.FC<InputProps> = (props: InputProps) => {
     labelAtTop = false,
     labelMinWidth,
     marginBottom,
+    autoFocus,
   } = props;
 
   const [field, meta] = useField(props);
@@ -47,6 +49,7 @@ export const Input: React.FC<InputProps> = (props: InputProps) => {
         placeholder={placeholder}
         isFullWidth={inputFieldFullWidth}
         labelAtTop={labelAtTop}
+        autoFocus={autoFocus}
         {...field}
       />
       <FormikError

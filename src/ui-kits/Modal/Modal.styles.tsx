@@ -8,7 +8,7 @@ export const ModalDiv = styled.div<{ modalPadding?: string }>`
   top: 40%;
   padding: ${({ modalPadding }) => (modalPadding ? modalPadding : null)};
   transform: translate(-50%, -50%);
-  background: ${(props): string | null => props.theme.colorYellowDeep};
+  background: ${({ theme: { colorWhite } }): string | null => colorWhite};
   border-radius: ${(props): string | null => props.theme.spaceOne};
   z-index: 1200;
   box-shadow: 0.5rem 0.5rem 0.3rem rgba(10, 10, 10, 0.15);

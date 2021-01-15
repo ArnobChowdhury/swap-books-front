@@ -14,6 +14,7 @@ const ButtonCSS = css<ButtonStyledProps>`
         return props.theme.colorPink;
     }
   }};
+  border-radius: 0.3rem;
   border: ${({ theme }) => `2px solid ${theme.colorPurple}`};
   padding: ${({ theme }): string | null => `${theme.spaceThree} ${theme.spaceFive}`};
   font-family: inherit;

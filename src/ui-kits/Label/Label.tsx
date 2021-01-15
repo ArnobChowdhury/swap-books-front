@@ -24,26 +24,20 @@ export const Label = ({
       {!as ? (
         <LabelHTML {...{ labelAtTop }} marginBottom={marginBottom}>
           <LabelSpan {...{ labelAtTop }} labelMinWidth={labelMinWidth}>
-            {isRequired && !labelAtTop ? (
-              <RequiredSpan {...{ labelAtTop }}>*</RequiredSpan>
-            ) : null}
             {labelText}
-            {isRequired && labelAtTop ? (
-              <RequiredSpan {...{ labelAtTop }}> (Required)</RequiredSpan>
-            ) : null}
+            {isRequired && (
+              <RequiredSpan {...{ labelAtTop }}>
+                <sup>*</sup>
+              </RequiredSpan>
+            )}
           </LabelSpan>
           {children}
         </LabelHTML>
       ) : (
         <DIV {...{ labelAtTop }} marginBottom={marginBottom}>
           <LabelSpan {...{ labelAtTop }} labelMinWidth={labelMinWidth}>
-            {isRequired && !labelAtTop ? (
-              <RequiredSpan {...{ labelAtTop }}>*</RequiredSpan>
-            ) : null}
+            {isRequired && <RequiredSpan {...{ labelAtTop }}>*</RequiredSpan>}
             {labelText}
-            {isRequired && labelAtTop ? (
-              <RequiredSpan {...{ labelAtTop }}> (Required)</RequiredSpan>
-            ) : null}
           </LabelSpan>
           {children}
         </DIV>

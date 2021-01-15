@@ -8,14 +8,14 @@ export const TopBarContainer = styled.div`
   border-bottom: ${({ theme }) => `1px solid ${theme.colorSeparator}`};
 `;
 
-export const TopBarWrapper = styled.nav`
-  width: 1400px;
+export const TopBarWrapper = styled.div`
+  width: 100%;
   height: 60px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   font-size: ${({ theme }) => theme.fontSizeOne};
-  padding: ${({ theme }) => theme.spaceFour};
+  padding: ${({ theme }) => theme.spaceTen};
 `;
 
 export const TopBarUL = styled.ul`
@@ -59,4 +59,17 @@ export const ButtonWrapper = styled.div`
   & button:first-child {
     margin-right: ${({ theme }) => theme.spaceThree};
   }
+`;
+export const ItemWrapper = styled.div<{ itemAlign: 'left' | 'center' | 'right' }>`
+  width: 33%;
+  display: flex;
+  justify-content: ${({ itemAlign }) => {
+    if (itemAlign === 'left') {
+      return 'flex-start';
+    } else if (itemAlign === 'right') {
+      return 'flex-end';
+    } else {
+      return 'center';
+    }
+  }};
 `;

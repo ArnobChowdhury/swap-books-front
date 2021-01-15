@@ -11,10 +11,8 @@ interface InputStyleProps {
 }
 
 export const Label = styled.label<InputStyleProps>`
-  font-size: 1.5rem;
-  ${({ labelAtTop }): string | false | undefined =>
-    labelAtTop && 'font-weight: 600'};
-  letter-spacing: 0.1rem;
+  font-size: ${({ theme }) => theme.fontSmall};
+  font-weight: 400;
   display: ${({ labelAtTop }): string | null => (!labelAtTop ? 'flex' : null)};
   align-items: ${({ labelAtTop }): string | null => (!labelAtTop ? 'center' : null)};
   margin-bottom: ${({ marginBottom }): string | null =>
@@ -23,15 +21,14 @@ export const Label = styled.label<InputStyleProps>`
 `;
 
 export const DIV = styled.div<InputStyleProps>`
-  font-size: 1.5rem;
   ${({ labelAtTop }): string | false | undefined =>
     labelAtTop && 'font-weight: 600'};
-  letter-spacing: 0.1rem;
   display: ${({ labelAtTop }): string | null => (!labelAtTop ? 'flex' : null)};
   align-items: ${({ labelAtTop }): string | null => (!labelAtTop ? 'center' : null)};
   margin-bottom: ${({ marginBottom }): string | null =>
     marginBottom ? marginBottom : null};
   flex-wrap: wrap;
+  font-weight: 500;
 `;
 
 const labelAtSideMixin = css<InputStyleProps>`
@@ -52,7 +49,7 @@ export const LabelSpan = styled.span<InputStyleProps>`
 `;
 
 export const RequiredSpan = styled.span<InputStyleProps>`
-  font-size: ${(props): string | null => (props.labelAtTop ? '1.2rem' : '1.6rem')};
+  font-size: ${({ theme }): string | null => theme.fontSmall};
   ${({ labelAtTop }): string | false | undefined =>
     labelAtTop && 'font-weight: 400'};
   vertical-align: ${(props): string | null => (!props.labelAtTop ? 'top' : null)};
