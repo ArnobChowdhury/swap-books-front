@@ -4,4 +4,5 @@ export {
   createUserSuccess,
   createUserFail,
   updateUserLocationReq,
+  updateUserLocationSuccess,
 } from './user';

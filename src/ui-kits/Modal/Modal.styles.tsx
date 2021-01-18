@@ -1,11 +1,11 @@
 import styled from 'styled-components';
 
-export const ModalDiv = styled.div<{ modalPadding?: string }>`
-  width: 30vw;
+export const ModalDiv = styled.div<{ modalPadding?: string; largeModal?: boolean }>`
+  width: ${({ largeModal }) => (largeModal ? '60vw' : '30vw')};
   min-width: 55rem;
   position: fixed;
   left: 50%;
-  top: 40%;
+  top: ${({ largeModal }) => (largeModal ? '45%' : '40%')};
   padding: ${({ modalPadding }) => (modalPadding ? modalPadding : null)};
   transform: translate(-50%, -50%);
   background: ${({ theme: { colorWhite } }): string | null => colorWhite};

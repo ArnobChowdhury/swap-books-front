@@ -13,15 +13,17 @@ export const Posts = (): JSX.Element => {
   const { socketInterest } = useContext(SocketIoContext);
   const { setPopupType, setShowModal } = useContext(RootContext) as RootContextProps;
 
-  useEffect(() => {
-    if (process.browser) {
-      dispatch(fetchBooksRequest());
-    }
-  }, []);
-
   const { books, loading } = useSelector((store: RootState) => store.books);
-  const { name: userName } = useSelector((store: RootState) => store.user);
+  const { name: userName, userLon, userLat } = useSelector(
+    (store: RootState) => store.user,
+  );
   const { accessToken, userId } = useSelector((s: RootState) => s.auth);
+
+  useEffect(() => {
+    if (process.browser && userLon && userLat) {
+      dispatch(fetchBooksRequest(userLon, userLat));
+    }
+  }, [userLon, userLat]);
 
   const isSignedIn = Boolean(accessToken);
 

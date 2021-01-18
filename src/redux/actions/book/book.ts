@@ -89,7 +89,7 @@ export const fetchBooksFail = (error: any) => {
   return { type: FETCH_BOOKS_FAIL, error: error };
 };
 
-export const fetchBooksRequest = () => {
+export const fetchBooksRequest = (userLon: number, userLat: number) => {
   return async (dispatch: Dispatch) => {
     // todo need to have state that the request has started. skipped for now
     dispatch(fetchBooksStart());
@@ -98,7 +98,7 @@ export const fetchBooksRequest = () => {
 
     const path = '/books';
     return axios
-      .get(path, { params: { userId } })
+      .get(path, { params: { userLon, userLat, userId } })
       .then(response => {
         const { message, books } = response.data;
         const booksStructured: BookShape[] = books.map((book: any) => {

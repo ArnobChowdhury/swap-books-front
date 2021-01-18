@@ -21,11 +21,6 @@ import { useSelector } from 'react-redux';
 import { RootState } from 'redux/reducers';
 import { RootContext, RootContextProps } from 'contexts/RootContext';
 import { NavBar } from 'widgets/NavBar';
-import { Modal } from 'ui-kits/Modal';
-import { Login, LoginCredentials } from 'modules/Login';
-import { useDispatch } from 'react-redux';
-import { authRequest } from 'redux/actions/auth';
-import { FormikHelpers } from 'formik';
 
 // todo there should be not be any default arguments
 export interface TopBarProps {
@@ -35,7 +30,6 @@ export interface TopBarProps {
 export const TopBar = ({ activityBar }: TopBarProps): JSX.Element => {
   const { accessToken } = useSelector((s: RootState) => s.auth);
   const isSignedIn = Boolean(accessToken);
-  const dispatch = useDispatch();
 
   // refs
   // const dropDownRef = useRef<HTMLDivElement | null>(null);
@@ -68,12 +62,7 @@ export const TopBar = ({ activityBar }: TopBarProps): JSX.Element => {
   // }, [dropDown]);
 
   const rootContext = useContext(RootContext);
-  const {
-    setPopupType,
-    setShowModal,
-    showModal,
-    popupType,
-  } = rootContext as RootContextProps;
+  const { setPopupType, setShowModal } = rootContext as RootContextProps;
 
   const handleLoginButtonClick = () => {
     setShowModal(true);
@@ -85,20 +74,8 @@ export const TopBar = ({ activityBar }: TopBarProps): JSX.Element => {
     setPopupType('signup');
   };
 
-  const handleLoginSubmit = (
-    { email, password }: LoginCredentials,
-    { setSubmitting }: FormikHelpers<LoginCredentials>,
-  ) => {
-    dispatch(authRequest(email, password, setSubmitting, setShowModal));
-  };
-
   return (
     <TopBarContainer>
-      {showModal && (
-        <Modal onClick={() => setShowModal(false)}>
-          {popupType === 'login' && <Login onSubmit={handleLoginSubmit} />}
-        </Modal>
-      )}
       <TopBarWrapper>
         <ItemWrapper itemAlign="left">
           <Logo />

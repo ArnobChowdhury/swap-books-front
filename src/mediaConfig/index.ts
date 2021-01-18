@@ -1,1 +1,1 @@
-export const mideumScreen = 1024;
+export const mediumScreen = 1024;

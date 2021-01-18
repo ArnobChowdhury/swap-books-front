@@ -65,7 +65,7 @@ const updateUserLocationStart = () => {
   };
 };
 
-const updateUserLocationSuccess = (userLon: number, userLat: number) => {
+export const updateUserLocationSuccess = (userLon: number, userLat: number) => {
   return {
     type: UPDATE_USER_LOC_SUCCESS,
     userLon,
@@ -80,7 +80,11 @@ const updateUserLocationFail = (err: Error) => {
   };
 };
 
-export const updateUserLocationReq = (userLon: number, userLat: number) => {
+export const updateUserLocationReq = (
+  userLon: number,
+  userLat: number,
+  showModalFunc?: React.Dispatch<React.SetStateAction<boolean>>,
+) => {
   return (dispatch: Dispatch) => {
     dispatch(updateUserLocationStart());
     const path = '/user/loc';
@@ -90,6 +94,9 @@ export const updateUserLocationReq = (userLon: number, userLat: number) => {
       .then(res => {
         const { userLon, userLat } = res.data;
         dispatch(updateUserLocationSuccess(userLon, userLat));
+        if (showModalFunc) {
+          showModalFunc(false);
+        }
       })
       .catch(err => {
         dispatch(updateUserLocationFail(err));

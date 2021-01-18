@@ -1,11 +1,11 @@
-// eslint-disable-next-line
-let key = 'pk.cf2d4ca311f0b700ddd1ac21fb730434';
+const key = process.env.NEXT_PUBLIC_LOCATIONIQ_ACCESS_KEY;
 let map;
 let marker;
 
 export const initiateMap = (
   userLat,
   userLon,
+  zoom,
   attachMapFunc,
   attachMarkerFunc,
   attachGeoCoderFunc,
@@ -13,7 +13,7 @@ export const initiateMap = (
   map = L.map('map', {
     // center: [39.73, -104.99], // Map loads with this location as center
     center: [userLat, userLon],
-    zoom: 13,
+    zoom,
     scrollWheelZoom: true,
     zoomControl: false,
   });
@@ -42,7 +42,6 @@ export const initiateMap = (
     })
     .addTo(map);
 
-  // map.on('click', handleClick);
   attachMapFunc(map);
   attachMarkerFunc(marker);
   attachGeoCoderFunc(geocoder);

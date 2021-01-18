@@ -1,11 +1,11 @@
 import styled from 'styled-components';
-import { mideumScreen } from 'mediaConfig';
+import { mediumScreen } from 'mediaConfig';
 
 export const ActivityContainer = styled.div`
   display: flex;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 
-  @media (min-width: ${mideumScreen}px) {
+  @media (min-width: ${mediumScreen}px) {
     box-shadow: none;
   }
 `;
@@ -25,7 +25,7 @@ export const ActivitySections = styled.div<{ rightBorder?: boolean }>`
     }
   }
 
-  @media (min-width: ${mideumScreen}px) {
+  @media (min-width: ${mediumScreen}px) {
     border-right: none;
 
     & button {

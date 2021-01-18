@@ -33,6 +33,10 @@ const ButtonCSS = css<ButtonStyledProps>`
   &:active {
     box-shadow: 0 2px 2px rgba(0, 0, 0, 0.3);
   }
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 `;
 
 export const ButtonBTag = styled.button<ButtonStyledProps>`

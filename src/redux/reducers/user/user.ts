@@ -12,7 +12,7 @@ import {
 } from '../../actions/actionTypes';
 
 export interface UserState {
-  _id?: string | null;
+  _id: string | null;
   name: string | null;
   dob: string | null;
   sex: string | null;
@@ -25,6 +25,7 @@ export interface UserState {
 }
 
 export const initialState: UserState = {
+  _id: null,
   name: null,
   dob: null,
   sex: null,
