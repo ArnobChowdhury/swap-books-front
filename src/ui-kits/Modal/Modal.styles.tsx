@@ -1,17 +1,28 @@
 import styled from 'styled-components';
+import { smallScreen, verySmallScreen } from 'mediaConfig';
 
-export const ModalDiv = styled.div<{ modalPadding?: string; largeModal?: boolean }>`
+export const ModalDiv = styled.div<{ largeModal?: boolean }>`
   width: ${({ largeModal }) => (largeModal ? '60vw' : '30vw')};
-  min-width: 55rem;
+  min-width: 30rem;
   position: fixed;
   left: 50%;
-  top: ${({ largeModal }) => (largeModal ? '45%' : '40%')};
-  padding: ${({ modalPadding }) => (modalPadding ? modalPadding : null)};
-  transform: translate(-50%, -50%);
+  top: ${({ largeModal }) => (largeModal ? '50%' : '40%')};
+  padding: 2rem;
+  transform: ${({ largeModal }) =>
+    `translate(-50%, ${largeModal ? '-50%' : '-60%'} )`};
   background: ${({ theme: { colorWhite } }): string | null => colorWhite};
   border-radius: ${(props): string | null => props.theme.spaceOne};
   z-index: 1200;
   box-shadow: 0.5rem 0.5rem 0.3rem rgba(10, 10, 10, 0.15);
+
+  @media screen and (min-width: ${verySmallScreen}px) {
+    min-width: 35rem;
+  }
+
+  @media screen and (min-width: ${smallScreen}px) {
+    min-width: 55rem;
+    padding: 3rem;
+  }
 `;
 
 export const BackgroundDiv = styled.div`

@@ -26,7 +26,7 @@ export const initiateMap = (
 
   L.control
     .zoom({
-      position: 'topright',
+      position: 'bottomright',
     })
     .addTo(map);
 

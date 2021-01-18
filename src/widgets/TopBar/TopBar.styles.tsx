@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { mediumScreen } from 'mediaConfig';
 
 export const TopBarContainer = styled.div`
   background: ${({ theme }) => theme.colorWhite};
@@ -61,7 +62,6 @@ export const ButtonWrapper = styled.div`
   }
 `;
 export const ItemWrapper = styled.div<{ itemAlign: 'left' | 'center' | 'right' }>`
-  width: 33%;
   display: flex;
   justify-content: ${({ itemAlign }) => {
     if (itemAlign === 'left') {
@@ -72,4 +72,8 @@ export const ItemWrapper = styled.div<{ itemAlign: 'left' | 'center' | 'right' }
       return 'center';
     }
   }};
+
+  @media screen and (min-width: ${mediumScreen}px) {
+    width: 33%;
+  }
 `;

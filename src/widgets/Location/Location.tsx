@@ -57,6 +57,13 @@ const scriptSources = [
   'https://maps.locationiq.com/v2/libs/leaflet-geocoder/1.9.5/leaflet-geocoder-locationiq.min.js',
 ];
 
+function popupCreator(text: string) {
+  const popupDiv = document.createElement('div');
+  popupDiv.className = 'locationPopup';
+  popupDiv.textContent = text;
+  return popupDiv;
+}
+
 export const Location = () => {
   const { setShowModal } = useContext(RootContext) as RootContextProps;
   const [popupText, setPopupText] = useState<string>('');
@@ -74,7 +81,7 @@ export const Location = () => {
   const [locIQMarker, setLocIQMarker] = useState<Marker | null>();
   const [geoCoder, setGeoCoder] = useState<Geocoder | null>();
 
-  const { spaceTen, spaceFive } = theme;
+  const { spaceSeven, spaceFive } = theme;
 
   for (let i = numOfScripts; i >= 0; i--) {
     if (i == numOfScripts) {
@@ -181,7 +188,7 @@ export const Location = () => {
     if (locIQMarker) {
       const { lat, lng } = locIQMarker.getLatLng() as LatLng;
       if (lat !== 0 && lng !== 0) {
-        const n = showPopupLoader ? 'Loading...' : popupText;
+        const n = popupCreator(showPopupLoader ? 'Loading...' : popupText);
         locIQMarker.bindPopup(n).openPopup();
       }
     }
@@ -243,7 +250,7 @@ export const Location = () => {
         ></link>
       </Head>
       <Header marginBelow={spaceFive}>Location</Header>
-      <Paragraph marginBelow={spaceTen}>
+      <Paragraph marginBelow={spaceSeven}>
         Select your location to discover books available to swap around you.
       </Paragraph>
       <MapContainer id="map" />
