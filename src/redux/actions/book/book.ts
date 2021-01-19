@@ -37,24 +37,18 @@ export const addABookFail = (error: any) => {
 
 // todo store needs to update after request success and failure
 export const addABookRequest = (
-  bookName: string,
-  bookAuthor: string,
-  bookPicture: any,
-  bookOwnerName: string,
+  bookname: string,
+  bookauthor: string,
+  bookimage: any,
   formikSetSubmitting: (submissionResolved: boolean) => void,
+  setShowModal: React.Dispatch<React.SetStateAction<boolean>>,
 ) => {
   return async (dispatch: Dispatch) => {
     dispatch(addABookStart());
-    const userId = localStorage.getItem('userId');
     const fd = new FormData();
-    fd.append('bookName', bookName);
-    fd.append('bookAuthor', bookAuthor);
-    fd.append('bookPicture', bookPicture);
-    fd.append('bookOwnerName', bookOwnerName);
-    // what if the user is not signed in???
-    if (userId) {
-      fd.append('userId', userId);
-    }
+    fd.append('bookName', bookname);
+    fd.append('bookAuthor', bookauthor);
+    fd.append('bookImage', bookimage);
     const path = '/books/add';
     // todo below put method should be changed to post method.
     return axios
@@ -64,10 +58,11 @@ export const addABookRequest = (
         },
       })
       .then(response => {
-        formikSetSubmitting(false);
         // todo how should we handle the message???
         const { message, bookId } = response.data;
         dispatch(addABookSuccess());
+        formikSetSubmitting(false);
+        setShowModal(false);
       })
       .catch(err => {
         formikSetSubmitting(false);

@@ -9,7 +9,9 @@ import { useWindowSize } from 'hooks';
 import { mediumScreen } from 'mediaConfig';
 import { Modal } from 'ui-kits/Modal';
 import { Login, LoginCredentials } from 'modules/Login';
+import { AddBook, BookType } from 'modules/AddBook';
 import { authRequest } from 'redux/actions/auth';
+import { addABookRequest } from 'redux/actions/book';
 import { FormikHelpers } from 'formik';
 import { useDispatch } from 'react-redux';
 
@@ -27,6 +29,15 @@ const Root: NextPage = (): JSX.Element => {
     dispatch(authRequest(email, password, setSubmitting, setShowModal));
   };
 
+  const handleAddBookSubmit = (
+    { bookname, bookauthor, bookimage }: BookType,
+    { setSubmitting }: FormikHelpers<BookType>,
+  ) => {
+    dispatch(
+      addABookRequest(bookname, bookauthor, bookimage, setSubmitting, setShowModal),
+    );
+  };
+
   return (
     <RootContext.Provider
       value={{ showModal, setShowModal, popupType, setPopupType }}
@@ -34,6 +45,11 @@ const Root: NextPage = (): JSX.Element => {
       {showModal && popupType === 'login' && (
         <Modal onClick={() => setShowModal(false)}>
           <Login onSubmit={handleLoginSubmit} />
+        </Modal>
+      )}
+      {showModal && popupType === 'addABook' && (
+        <Modal onClick={() => setShowModal(false)}>
+          <AddBook onSubmit={handleAddBookSubmit} />
         </Modal>
       )}
       {showModal && popupType === 'location' && (

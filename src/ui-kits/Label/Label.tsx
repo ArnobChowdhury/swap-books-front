@@ -1,4 +1,5 @@
 import { Label as LabelHTML, DIV, LabelSpan, RequiredSpan } from './Label.styles';
+import { LabelHTMLAttributes } from 'react';
 
 interface LabelProps {
   labelText?: string;

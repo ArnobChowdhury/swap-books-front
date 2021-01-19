@@ -32,9 +32,6 @@ export const Login = ({ onSubmit }: LoginProps): JSX.Element => {
             .min(8, 'Too short. Needs to have min. 8 characters')
             .matches(/[a-zA-Z]/, 'Password can only contain latin letters'),
         })}
-        // onSubmit={({ email, password }, { setSubmitting }) => {
-        //   dispatch(authRequest(email, password, setSubmitting));
-        // }}
         onSubmit={onSubmit}
       >
         <Form>
