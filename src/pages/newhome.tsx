@@ -14,6 +14,7 @@ import { authRequest } from 'redux/actions/auth';
 import { addABookRequest } from 'redux/actions/book';
 import { FormikHelpers } from 'formik';
 import { useDispatch } from 'react-redux';
+import { NeedAuth } from 'widgets/NeedAuth';
 
 const Root: NextPage = (): JSX.Element => {
   const [showModal, setShowModal] = useState<boolean>(false);
@@ -50,6 +51,11 @@ const Root: NextPage = (): JSX.Element => {
       {showModal && popupType === 'addABook' && (
         <Modal onClick={() => setShowModal(false)}>
           <AddBook onSubmit={handleAddBookSubmit} />
+        </Modal>
+      )}
+      {showModal && popupType === 'requireLoginOrSignup' && (
+        <Modal onClick={() => setShowModal(false)}>
+          <NeedAuth />
         </Modal>
       )}
       {showModal && popupType === 'location' && (

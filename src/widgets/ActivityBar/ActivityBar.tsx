@@ -4,8 +4,13 @@ import { IconButton } from 'ui-kits/IconButton';
 import { AddBookIcon } from 'assets/AddBookIcon';
 import { LocatorIcon } from 'assets/LocatorIcon';
 import { RootContext, RootContextProps } from 'contexts/RootContext';
+import { useSelector } from 'react-redux';
+import { RootState } from 'redux/reducers';
 
 export const ActivityBar = (): JSX.Element => {
+  const { accessToken } = useSelector((s: RootState) => s.auth);
+  const isSignedIn = Boolean(accessToken);
+
   const rootContext = useContext(RootContext);
   const { setPopupType, setShowModal } = rootContext as RootContextProps;
 
@@ -15,8 +20,13 @@ export const ActivityBar = (): JSX.Element => {
   };
 
   const handleAddABookButtonClick = () => {
-    setShowModal(true);
-    setPopupType('addABook');
+    if (isSignedIn) {
+      setShowModal(true);
+      setPopupType('addABook');
+    } else {
+      setShowModal(true);
+      setPopupType('requireLoginOrSignup');
+    }
   };
 
   return (
