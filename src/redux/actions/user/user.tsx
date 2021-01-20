@@ -32,8 +32,8 @@ export const createUserReq = (
   name: string,
   email: string,
   password: string,
-  dob: string,
-  sex: string,
+  ageConfirmation: boolean,
+  termsConfirmation: boolean,
   formikSetSubmitting: (submissionResolved: boolean) => void,
 ) => {
   return (dispatch: Dispatch) => {
@@ -42,8 +42,8 @@ export const createUserReq = (
       name,
       email,
       password,
-      dob,
-      sex,
+      ageConfirmation,
+      termsConfirmation,
     };
 
     return axios

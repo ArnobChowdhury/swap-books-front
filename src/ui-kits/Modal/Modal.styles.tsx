@@ -21,7 +21,7 @@ export const ModalDiv = styled.div<{ largeModal?: boolean }>`
 
   @media screen and (min-width: ${smallScreen}px) {
     min-width: 55rem;
-    padding: 3rem;
+    padding: 4rem;
   }
 `;
 

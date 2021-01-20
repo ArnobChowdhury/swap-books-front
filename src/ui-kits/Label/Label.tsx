@@ -1,14 +1,15 @@
 import { Label as LabelHTML, DIV, LabelSpan, RequiredSpan } from './Label.styles';
-import { LabelHTMLAttributes } from 'react';
+import { ReactNode } from 'react';
 
 interface LabelProps {
-  labelText?: string;
+  labelText?: string | ReactNode;
   labelAtTop: boolean;
   isRequired?: boolean;
   labelMinWidth?: string;
   children?: React.ReactNode;
   marginBottom?: string;
   as?: 'div';
+  htmlFor?: string;
 }
 
 export const Label = ({
@@ -19,11 +20,12 @@ export const Label = ({
   children,
   marginBottom,
   as,
+  htmlFor,
 }: LabelProps): JSX.Element => {
   return (
     <>
       {!as ? (
-        <LabelHTML {...{ labelAtTop }} marginBottom={marginBottom}>
+        <LabelHTML {...{ labelAtTop }} marginBottom={marginBottom} htmlFor={htmlFor}>
           <LabelSpan {...{ labelAtTop }} labelMinWidth={labelMinWidth}>
             {labelText}
             {isRequired && (

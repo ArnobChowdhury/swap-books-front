@@ -18,7 +18,7 @@ export const InputHTML = styled.input.attrs(props => {
   flex-grow: ${(props): string | null =>
     props.isFullWidth && !props.labelAtTop ? '1' : null};
   border: ${(props): string | null =>
-    props.labelAtTop ? `1px solid ${props.theme.colorTextPrimary}` : 'none'};
+    props.labelAtTop ? `1px solid ${props.theme.colorInputBox}` : 'none'};
   border-radius: ${({ theme }) => theme.borderRadius};
   min-width: 22rem;
   min-height: 3.8rem;

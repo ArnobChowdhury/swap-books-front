@@ -17,52 +17,50 @@ export interface LoginProps {
 
 export const Login = ({ onSubmit }: LoginProps): JSX.Element => {
   return (
-    <div>
-      <Formik
-        initialValues={{
-          email: '',
-          password: '',
-        }}
-        validationSchema={Yup.object({
-          email: Yup.string()
-            .email('Invalid email address')
-            .required('Required'),
-          password: Yup.string()
-            .required('Password needed')
-            .min(8, 'Too short. Needs to have min. 8 characters')
-            .matches(/[a-zA-Z]/, 'Password can only contain latin letters'),
-        })}
-        onSubmit={onSubmit}
-      >
-        <Form>
-          <Input
-            type="email"
-            labelText="Email"
-            name="email"
-            placeholder="Please type your email address"
-            isRequired={true}
-            inputFieldFullWidth={true}
-            labelMinWidth="10rem"
-            marginBottom="1rem"
-            labelAtTop
-            autoFocus
-          />
-          <Input
-            type="password"
-            labelText="Password"
-            name="password"
-            placeholder="Choose a strong password"
-            isRequired={true}
-            inputFieldFullWidth={true}
-            labelMinWidth="10rem"
-            marginBottom="1rem"
-            labelAtTop
-          />
-          <Button color="pink" type="submit" asButtonTag>
-            Log in
-          </Button>
-        </Form>
-      </Formik>
-    </div>
+    <Formik
+      initialValues={{
+        email: '',
+        password: '',
+      }}
+      validationSchema={Yup.object({
+        email: Yup.string()
+          .email('Invalid email address')
+          .required('Required'),
+        password: Yup.string()
+          .required('Password needed')
+          .min(8, 'Too short. Needs to have min. 8 characters')
+          .matches(/[a-zA-Z]/, 'Password can only contain latin letters'),
+      })}
+      onSubmit={onSubmit}
+    >
+      <Form>
+        <Input
+          type="email"
+          labelText="Email"
+          name="email"
+          placeholder="Please type your email address"
+          isRequired={true}
+          inputFieldFullWidth={true}
+          labelMinWidth="10rem"
+          marginBottom="1rem"
+          labelAtTop
+          autoFocus
+        />
+        <Input
+          type="password"
+          labelText="Password"
+          name="password"
+          placeholder="Choose a strong password"
+          isRequired={true}
+          inputFieldFullWidth={true}
+          labelMinWidth="10rem"
+          marginBottom="1rem"
+          labelAtTop
+        />
+        <Button color="pink" type="submit" asButtonTag>
+          Log in
+        </Button>
+      </Form>
+    </Formik>
   );
 };

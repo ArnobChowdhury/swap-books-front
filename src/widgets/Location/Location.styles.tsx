@@ -4,7 +4,7 @@ import { smallScreen } from 'mediaConfig';
 export const MapContainer = styled.div`
   margin-bottom: ${({ theme }) => theme.spaceTen};
   height: 50vh;
-  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 ${({ theme }) => theme.boxShadow};
 
   @media screen and (min-width: ${smallScreen}px) {
     height: 60vh;
@@ -12,7 +12,7 @@ export const MapContainer = styled.div`
 
   & div.leaflet-locationiq-expanded {
     border-radius: ${({ theme }) => theme.borderRadius};
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    box-shadow: ${({ theme }) => theme.boxShadow};
     border: 0;
   }
 

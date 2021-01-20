@@ -38,10 +38,12 @@ const theme = {
   colorTextSecondary: '#1E2846',
   colorTextDark: '#000000',
   colorSeparator: '#EBEBEB',
+  colorInputBox: '#CCC',
   fontSmall: '1.4rem',
   fontLarge: '1.6rem',
   fontHeader: '22.65px',
   borderRadius: '.3rem',
+  boxShadow: '0 1px 2px rgb(0, 0, 0, .2)',
 };
 
 export default theme;
