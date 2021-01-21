@@ -3,11 +3,11 @@ import { Story, Meta } from '@storybook/react';
 import { InterestIcon } from '../../assets/InterestIcon';
 
 export default {
-  title: 'IconButton',
+  title: 'ui-kits/IconButton',
   component: IconButton,
   argTypes: {
     icon: {
-      defaultValue: <InterestIcon hasBodyColor />,
+      defaultValue: <InterestIcon />,
     },
     textColor: {
       control: {

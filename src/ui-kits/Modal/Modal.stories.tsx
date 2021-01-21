@@ -4,7 +4,7 @@ import { FlexItem } from '../FlexItem';
 import { Story, Meta } from '@storybook/react';
 
 export default {
-  title: 'Modal',
+  title: 'ui-kits/Modal',
   component: Modal,
 } as Meta;
 

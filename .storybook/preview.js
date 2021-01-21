@@ -1,6 +1,6 @@
-import theme from '../theme';
+import theme from '../src/theme';
 import { ThemeProvider } from 'styled-components';
-import GlobalStyles from '../components/GlobalStyles';
+import GlobalStyles from '../src/components/GlobalStyles';
 import { withA11y } from '@storybook/addon-a11y';
 
 export const parameters = {

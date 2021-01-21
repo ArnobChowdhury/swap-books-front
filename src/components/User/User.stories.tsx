@@ -1,7 +1,7 @@
 import { User } from './User';
 
 export default {
-  title: 'User',
+  title: 'components/User',
   component: User,
 };
 

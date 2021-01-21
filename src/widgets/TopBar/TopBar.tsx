@@ -92,7 +92,7 @@ export const TopBar = ({ activityBar }: TopBarProps): JSX.Element => {
               <Button onClick={handleLoginButtonClick} asButtonTag color="white">
                 Log in
               </Button>
-              <Button onClick={handleSignupButtonClick} asButtonTag color="pink">
+              <Button href="/signup" color="pink">
                 Sign up
               </Button>
             </ButtonWrapper>

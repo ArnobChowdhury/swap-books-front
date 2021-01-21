@@ -2,7 +2,7 @@ import { NotificationChild, NotificationChildProps } from './NotificationChild';
 import { Story, Meta } from '@storybook/react';
 
 export default {
-  title: 'NotificationChild',
+  title: 'components/NotificationChild',
   component: NotificationChild,
   argTypes: {
     seen: {
@@ -23,11 +23,8 @@ export default {
       },
       defaultValue: 'Arnob',
     },
-    bookName: {
-      control: {
-        type: 'text',
-      },
-      defaultValue: 'Amazing',
+    bookNames: {
+      defaultValue: ['Amazing', 'The Sealed Nectar'],
     },
     type: {
       control: {
@@ -45,15 +42,13 @@ export const Interest: Story<NotificationChildProps> = (
   return <NotificationChild {...props} />;
 };
 
-export const Match = (): JSX.Element => {
-  return (
-    <NotificationChild
-      seen={false}
-      fromId="1233355"
-      fromName="Shakhawat"
-      bookName="Amazing"
-      type="match"
-      roomLink="1233425adas121"
-    />
-  );
+export const Match = Interest.bind({});
+Match.args = {
+  seen: true,
+  fromId: '12345',
+  fromName: 'Shakhawat',
+  bookNames: ['Amazing', 'The book thief'],
+  ownersBookInterests: ['Uponnash Troyee', 'Kalo Haat - Tin goyenda'],
+  type: 'match',
+  roomLink: '12343525321',
 };

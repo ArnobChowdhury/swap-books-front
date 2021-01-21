@@ -2,7 +2,7 @@ import { Button, ButtonProps } from './Button';
 import { Story, Meta } from '@storybook/react';
 
 export default {
-  title: 'Button',
+  title: 'ui-kits/Button',
   component: Button,
   argTypes: {
     color: {

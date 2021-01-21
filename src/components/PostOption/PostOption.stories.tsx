@@ -2,7 +2,7 @@ import { PostOptionProps, PostOption } from './PostOption';
 import { Story, Meta } from '@storybook/react';
 
 export default {
-  title: 'PostOption',
+  title: 'components/PostOption',
   component: PostOption,
   argTypes: {
     options: {

@@ -5,7 +5,7 @@ import { FlexContainer, FlexContainerProps } from '.';
 import { Story, Meta } from '@storybook/react';
 
 export default {
-  title: 'FlexContainer',
+  title: 'ui-kits/FlexContainer',
   component: FlexContainer,
   argTypes: {
     alignContent: {

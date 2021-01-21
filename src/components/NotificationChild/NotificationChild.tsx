@@ -5,44 +5,57 @@ import {
   ChatButton,
 } from './NotificationChild.styles';
 import { InterestIcon } from 'assets/InterestIcon';
-import { AgreementIcon } from 'assets/AgreementIcon';
+import { MatchIcon } from 'assets/MatchIcon';
 import { HTMLAttributes } from 'react';
 
 export interface NotificationChildProps {
   seen: boolean;
   fromId: string;
   fromName: string;
-  bookName?: string;
+  bookNames?: string[];
+  ownersBookInterests?: string[];
   type: 'interest' | 'match' | 'notice';
   noticeText?: string;
   roomLink?: string;
   otherProps?: HTMLAttributes<HTMLDivElement>;
+  onChatButtonClick?: (fromId: string) => void;
 }
 
 export const NotificationChild: React.FC<NotificationChildProps> = ({
   seen,
   fromId: interestedUserId,
   fromName: interestedUserName,
-  bookName,
+  bookNames,
+  ownersBookInterests,
   type,
   roomLink,
   noticeText,
   otherProps,
+  onChatButtonClick,
 }: NotificationChildProps): JSX.Element => {
+  const bookNamesArePlural = bookNames && bookNames.length > 1;
+
+  const books = bookNames?.join(', ');
+  const ownersInterests = ownersBookInterests?.join(', ');
+
+  const handleChatButtonClick = () => {
+    if (onChatButtonClick && roomLink) {
+      onChatButtonClick(roomLink);
+    }
+  };
+
   return (
     <Wrapper seen={seen} {...otherProps}>
       <IconWrapper>
-        {type === 'interest' && (
-          <InterestIcon hasBodyColor width="25px" height="25px" />
-        )}
-        {type === 'match' && <AgreementIcon width="45px" height="38px" />}
+        {type === 'interest' && <InterestIcon />}
+        {type === 'match' && <MatchIcon />}
       </IconWrapper>
 
       {type === 'interest' && (
         <span>
           <strong>Expressed Interest: </strong>
-          {interestedUserName} is interested in your book {bookName}. Check books you
-          can swap with
+          {interestedUserName} is interested in your book <i>{books}</i>. Check books
+          you can swap with
           <InterestedUserLink href={`/user/${interestedUserId}`}>
             {` ${interestedUserName}.`}
           </InterestedUserLink>
@@ -52,12 +65,14 @@ export const NotificationChild: React.FC<NotificationChildProps> = ({
       {type === 'match' && roomLink && (
         <span>
           <strong>Time to Swap: </strong>
-          {interestedUserName} is interested in your book {bookName}. Check other
-          books you can swap with
           <InterestedUserLink href={`/user/${interestedUserId}`}>
-            {` ${interestedUserName}.`}
+            {interestedUserName}
           </InterestedUserLink>{' '}
-          Or <ChatButton>chat</ChatButton> with him to make a deal.
+          is interested in your {bookNamesArePlural ? 'books' : 'book'}{' '}
+          <i>{books}</i>. You are interested in {interestedUserName}&apos;s -{' '}
+          <i>{ownersInterests}.</i>{' '}
+          <ChatButton onClick={handleChatButtonClick}>Chat</ChatButton> with him to
+          make a swap deal.
         </span>
       )}
 

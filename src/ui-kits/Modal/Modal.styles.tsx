@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { smallScreen, verySmallScreen } from 'mediaConfig';
+import { smallScreen, verySmallScreen } from '../../mediaConfig';
 
 export const ModalDiv = styled.div<{ largeModal?: boolean }>`
   width: ${({ largeModal }) => (largeModal ? '60vw' : '30vw')};
