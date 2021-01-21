@@ -7,4 +7,5 @@ export const LayoutWrapper = styled.div`
 
 export const PageContainer = styled.div`
   max-width: 700px;
+  margin-top: 60px;
 `;

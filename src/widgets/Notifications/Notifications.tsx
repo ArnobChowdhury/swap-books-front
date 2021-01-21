@@ -1,14 +1,12 @@
-import { Wrapper } from './NotificationDropDown.styles';
+import { Wrapper } from './Notifications.styles';
 import { NotificationShape } from 'redux/reducers/notifications';
 import { NotificationChild } from 'components/NotificationChild';
 
-export interface NotificationDropDownProps {
+export interface NotificationProps {
   notifications: NotificationShape[];
 }
 
-export const NotificationDropDown: React.FC<NotificationDropDownProps> = ({
-  notifications,
-}: NotificationDropDownProps): JSX.Element => {
+export const Notifications = ({ notifications }: NotificationProps): JSX.Element => {
   const notificationsChildren = notifications.map(
     ({
       fromId,
@@ -24,7 +22,7 @@ export const NotificationDropDown: React.FC<NotificationDropDownProps> = ({
         key={notificationId}
         fromId={fromId}
         seen={seen}
-        bookName={bookName}
+        // bookNames={bookName}
         fromName={fromName}
         type={type}
         noticeText={noticeText}

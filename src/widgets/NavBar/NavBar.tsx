@@ -1,12 +1,12 @@
-// import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import {
   NavBarContainer,
   NavBarWrapper,
   NavButton,
-  // DropDown,
+  DropDown,
   UserIcon,
 } from './NavBar.styles';
-// import { NotificationDropDown } from 'widgets/NotificationDropDown';
+import { Notifications } from 'widgets/Notifications';
 import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
 // import { RootState } from 'redux/reducers';
@@ -27,65 +27,83 @@ export const NavBar = (): JSX.Element => {
     userInitials = getUserInitials(userName as string);
   }
 
-  // const { notifications } = useSelector((s: RootState) => s.notifications);
-  // const [dropDown, setDropDown] = useState<
-  //   'Messages' | 'Notifications' | 'User' | null
-  // >(null);
+  const { notifications } = useSelector((s: RootState) => s.notifications);
+  const [dropDown, setDropDown] = useState<
+    'Messages' | 'Notifications' | 'User' | null
+  >(null);
 
-  // const handleNotificationDropDown = () => {
-  //   if (dropDown === 'Notifications') {
-  //     setDropDown(null);
-  //   } else {
-  //     setDropDown('Notifications');
-  //   }
-  // };
+  const handleNotificationDropDown = () => {
+    if (dropDown === 'Notifications') {
+      setDropDown(null);
+    } else {
+      setDropDown('Notifications');
+    }
+  };
 
   // refs
-  // const dropDownRef = useRef<HTMLDivElement | null>(null);
-  // const notificationRef = useRef<HTMLLIElement | null>(null);
+  const dropDownRef = useRef<HTMLDivElement | null>(null);
+  const navigationRef = useRef<HTMLDivElement | null>(null);
+  const messageButtonRef = useRef<HTMLButtonElement | null>(null);
+  const notificationButtonRef = useRef<HTMLButtonElement | null>(null);
 
   // close modal on click outside the dropDown and on escape key anywhere
-  // useEffect(() => {
-  //   const handleMouseClickOutsideDropDown = (e: MouseEvent) => {
-  //     if (
-  //       !dropDownRef.current?.contains(e.target as Node) &&
-  //       !notificationRef.current?.contains(e.target as Node) &&
-  //       dropDown !== null
-  //     ) {
-  //       setDropDown(null);
-  //     }
-  //   };
+  useEffect(() => {
+    const handleMouseClickOutsideDropDown = (e: MouseEvent) => {
+      if (
+        !dropDownRef.current?.contains(e.target as Node) &&
+        !messageButtonRef.current?.contains(e.target as Node) &&
+        !notificationButtonRef.current?.contains(e.target as Node) &&
+        // !navigationRef.current?.contains(e.target as Node) &&
+        dropDown !== null
+      ) {
+        setDropDown(null);
+      }
+    };
 
-  //   const handleEscKeyDownDropDown = (e: KeyboardEvent) => {
-  //     if (e.key === 'Escape' && dropDown !== null) {
-  //       setDropDown(null);
-  //     }
-  //   };
+    const handleEscKeyDownDropDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && dropDown !== null) {
+        setDropDown(null);
+      }
+    };
 
-  //   document.addEventListener('click', handleMouseClickOutsideDropDown);
-  //   document.addEventListener('keydown', handleEscKeyDownDropDown);
-  //   return () => {
-  //     document.removeEventListener('click', handleMouseClickOutsideDropDown);
-  //     document.removeEventListener('keydown', handleEscKeyDownDropDown);
-  //   };
-  // }, [dropDown]);
+    document.addEventListener('click', handleMouseClickOutsideDropDown);
+    document.addEventListener('keydown', handleEscKeyDownDropDown);
+    return () => {
+      document.removeEventListener('click', handleMouseClickOutsideDropDown);
+      document.removeEventListener('keydown', handleEscKeyDownDropDown);
+    };
+  }, [dropDown]);
 
   return (
-    <NavBarContainer>
-      {/* <DropDown isSelected={Boolean(dropDown)} ref={dropDownRef}>
-        <NotificationDropDown notifications={notifications} />
-      </DropDown> */}
+    <NavBarContainer ref={navigationRef}>
+      <DropDown isSelected={Boolean(dropDown)} ref={dropDownRef}>
+        {dropDown === 'Notifications' && (
+          <Notifications notifications={notifications} />
+        )}
+      </DropDown>
       <NavBarWrapper>
-        <NavButton>
-          <HomeIcon />
-        </NavButton>
-        <NavButton>
-          <ChatIcon />
-        </NavButton>
-        <NavButton>
-          <NotificationIcon />
+        <NavButton borderBottom={false}>
+          <HomeIcon hasBodyColor={true} />
         </NavButton>
         <NavButton
+          borderBottom={dropDown === 'Messages'}
+          onClick={e => {
+            e.stopPropagation();
+            setDropDown('Messages');
+          }}
+          ref={messageButtonRef}
+        >
+          <ChatIcon hasBodyColor={dropDown === 'Messages'} />
+        </NavButton>
+        <NavButton
+          borderBottom={dropDown === 'Notifications'}
+          onClick={() => setDropDown('Notifications')}
+          ref={notificationButtonRef}
+        >
+          <NotificationIcon hasBodyColor={dropDown === 'Notifications'} />
+        </NavButton>
+        <NavButton
+          borderBottom={dropDown === 'User'}
           onClick={() => {
             dispatch(authLogout());
           }}

@@ -7,6 +7,11 @@ export const TopBarContainer = styled.div`
   justify-content: center;
   position: relative;
   border-bottom: ${({ theme }) => `1px solid ${theme.colorSeparator}`};
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
 `;
 
 export const TopBarWrapper = styled.div`

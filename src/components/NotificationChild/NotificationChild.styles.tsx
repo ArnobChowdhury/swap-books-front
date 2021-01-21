@@ -4,13 +4,16 @@ export const Wrapper = styled.div<{ seen: boolean }>`
   padding: ${({ theme }) => theme.spaceFive};
   flex-basis: 100%;
   width: 100%;
-  background: ${({ theme, seen }) =>
-    seen ? theme.colorSeparator : theme.colorWhite};
+  background: ${({ theme }) => theme.colorWhite};
   font-size: ${({ theme }) => theme.fontSizeMedium};
   display: flex;
   align-items: flex-start;
   justify-content: flex-start;
   box-shadow: ${({ theme }) => theme.boxShadow};
+
+  &:not(:last-child) {
+    margin-bottom: ${({ theme }) => theme.spaceTwo};
+  }
 `;
 
 export const InterestedUserLink = styled.a`

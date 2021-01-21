@@ -4,7 +4,7 @@ import {
   IconWrapper,
   ChatButton,
 } from './NotificationChild.styles';
-import { InterestIcon } from 'assets/InterestIcon';
+import { InterestNotificationIcon } from 'assets/InterestNotificationIcon';
 import { MatchIcon } from 'assets/MatchIcon';
 import { HTMLAttributes } from 'react';
 
@@ -35,7 +35,11 @@ export const NotificationChild: React.FC<NotificationChildProps> = ({
 }: NotificationChildProps): JSX.Element => {
   const bookNamesArePlural = bookNames && bookNames.length > 1;
 
-  const books = bookNames?.join(', ');
+  let books;
+  if (bookNames && bookNames.length > 1) {
+    books = bookNames.length > 1 ? bookNames.join(', ') : bookNames[0];
+  }
+
   const ownersInterests = ownersBookInterests?.join(', ');
 
   const handleChatButtonClick = () => {
@@ -47,7 +51,7 @@ export const NotificationChild: React.FC<NotificationChildProps> = ({
   return (
     <Wrapper seen={seen} {...otherProps}>
       <IconWrapper>
-        {type === 'interest' && <InterestIcon />}
+        {type === 'interest' && <InterestNotificationIcon />}
         {type === 'match' && <MatchIcon />}
       </IconWrapper>
 

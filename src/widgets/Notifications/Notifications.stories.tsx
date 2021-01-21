@@ -1,13 +1,9 @@
-import { NotificationDropDown } from './NotificationDropDown';
+import { Notifications } from './Notifications';
 import { NotificationShape } from 'redux/reducers/notifications';
 
 export default {
-  title: 'NotificationDropDown',
-  component: NotificationDropDown,
-  parameters: {
-    componentSubtitle: 'NotificationDropDown',
-    backgrounds: [{ name: 'Light', value: 'rgb(250,255,255)', default: true }],
-  },
+  title: 'Notifications',
+  component: Notifications,
 };
 
 export const Default = (): JSX.Element => {
@@ -64,9 +60,5 @@ export const Default = (): JSX.Element => {
     },
   ];
 
-  return (
-    <>
-      <NotificationDropDown notifications={notifications} />
-    </>
-  );
+  return <Notifications notifications={notifications} />;
 };
