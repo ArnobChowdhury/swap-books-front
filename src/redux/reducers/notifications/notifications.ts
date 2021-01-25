@@ -7,29 +7,30 @@ import {
   GET_NOTIFICATIONS_FAIL,
 } from '../../actions/actionTypes';
 
+export interface NotificationParticipantShape {
+  userId: string;
+  userName: string;
+  interests?: NotificationBookShape[];
+  interestSeen: boolean;
+}
+
+interface NotificationBookShape {
+  bookName: string;
+  bookId: string;
+}
 export interface NotificationResponseShape {
   _id: string;
-  fromId: string;
-  fromName: string;
-  notificationType: 'interest' | 'match' | 'notice';
-  bookId?: string;
-  bookName?: string;
-  seen: boolean;
-  timestamp: number;
-  toId: string;
+  participants: NotificationParticipantShape[];
 }
 
 export interface NotificationShape {
-  notificationId: string;
-  fromId: string;
-  fromName: string;
-  type: 'interest' | 'match' | 'notice';
-  bookId?: string;
-  bookName?: string;
+  _id: string;
+  interestedUserId: string;
+  interestedUserName: string;
+  notificationType: 'interest' | 'match' | 'notice';
+  interestsOfInterestedUser?: NotificationBookShape[];
+  interestsOfThisUser?: NotificationBookShape[];
   seen: boolean;
-  noticeText?: string;
-  roomLink?: string;
-  timestamp: number;
 }
 
 export interface NotificationState {
@@ -53,20 +54,7 @@ const reducer = (state = initialState, action: AnyAction) => {
     case GET_NOTIFICATIONS_START:
       return { ...state, loading: true };
     case GET_NOTIFICATIONS_SUCCESS:
-      const notificationsReshaped = notifications
-        .sort(
-          (a: NotificationResponseShape, b: NotificationResponseShape) =>
-            b.timestamp - a.timestamp,
-        )
-        .map((notification: NotificationResponseShape) => {
-          const notificationId = notification._id;
-          const type = notification.notificationType;
-          delete notification._id;
-          delete notification.notificationType;
-          delete notification.toId;
-          return { ...notification, notificationId, type };
-        });
-      return { ...state, loading: false, notifications: notificationsReshaped };
+      return { ...state, loading: false, notifications };
     case GET_NOTIFICATIONS_FAIL:
       return { ...state, loading: false, error };
     default:

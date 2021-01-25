@@ -53,17 +53,17 @@ export const SocketIO = ({ children }: SocketIOInterestInterface) => {
 
     socketInterest.on(
       SOCKET_RECEIVE_NOTIFICATION,
-      (notification: NotificationResponseShape[]) => {
+      (notifications: NotificationResponseShape[]) => {
         // something like below code will be implemented for notification
         // todo some thing is wrong here
-        dispatch(getNotificationSuccess(notification));
+        // console.log(notifications);
+        dispatch(getNotificationSuccess(notifications));
       },
     );
     socketInterest.on(
       SOCKET_RECEIVE_INTEREST,
-      ({ bookId, interestState }: { bookId: string; interestState: string }) => {
-        // todo hardcoded bookId needs to change
-        dispatch(expressInterestSuccess(bookId, interestState === 'INTERESTED'));
+      ({ bookId, isInterested }: { bookId: string; isInterested: boolean }) => {
+        dispatch(expressInterestSuccess(bookId, isInterested));
       },
     );
     socketInterest.on(SOCKET_DISCONNECT, () => {
@@ -82,7 +82,7 @@ export const SocketIO = ({ children }: SocketIOInterestInterface) => {
 
   useEffect(() => {
     if (isSignedIn && socketInterest && userId) {
-      dispatch(getNotificationsRequest(socketInterest, userId));
+      dispatch(getNotificationsRequest(socketInterest, userId, 1));
     }
     if (isSignedIn && socketMsg && userId) {
       dispatch(fetchActiveRoomsReq(socketMsg, userId));

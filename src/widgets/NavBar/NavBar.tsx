@@ -27,18 +27,9 @@ export const NavBar = (): JSX.Element => {
     userInitials = getUserInitials(userName as string);
   }
 
-  const { notifications } = useSelector((s: RootState) => s.notifications);
   const [dropDown, setDropDown] = useState<
     'Messages' | 'Notifications' | 'User' | null
   >(null);
-
-  const handleNotificationDropDown = () => {
-    if (dropDown === 'Notifications') {
-      setDropDown(null);
-    } else {
-      setDropDown('Notifications');
-    }
-  };
 
   // refs
   const dropDownRef = useRef<HTMLDivElement | null>(null);
@@ -53,7 +44,6 @@ export const NavBar = (): JSX.Element => {
         !dropDownRef.current?.contains(e.target as Node) &&
         !messageButtonRef.current?.contains(e.target as Node) &&
         !notificationButtonRef.current?.contains(e.target as Node) &&
-        // !navigationRef.current?.contains(e.target as Node) &&
         dropDown !== null
       ) {
         setDropDown(null);
@@ -74,12 +64,22 @@ export const NavBar = (): JSX.Element => {
     };
   }, [dropDown]);
 
+  const handleNavButtonClick = (
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+    button: 'Messages' | 'Notifications' | 'User' | null,
+  ) => {
+    event.preventDefault();
+    if (dropDown === button) {
+      setDropDown(null);
+    } else {
+      setDropDown(button);
+    }
+  };
+
   return (
     <NavBarContainer ref={navigationRef}>
       <DropDown isSelected={Boolean(dropDown)} ref={dropDownRef}>
-        {dropDown === 'Notifications' && (
-          <Notifications notifications={notifications} />
-        )}
+        {dropDown === 'Notifications' && <Notifications />}
       </DropDown>
       <NavBarWrapper>
         <NavButton borderBottom={false}>
@@ -88,8 +88,7 @@ export const NavBar = (): JSX.Element => {
         <NavButton
           borderBottom={dropDown === 'Messages'}
           onClick={e => {
-            e.stopPropagation();
-            setDropDown('Messages');
+            handleNavButtonClick(e, 'Messages');
           }}
           ref={messageButtonRef}
         >
@@ -97,7 +96,7 @@ export const NavBar = (): JSX.Element => {
         </NavButton>
         <NavButton
           borderBottom={dropDown === 'Notifications'}
-          onClick={() => setDropDown('Notifications')}
+          onClick={e => handleNavButtonClick(e, 'Notifications')}
           ref={notificationButtonRef}
         >
           <NotificationIcon hasBodyColor={dropDown === 'Notifications'} />

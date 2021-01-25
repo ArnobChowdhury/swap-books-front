@@ -164,6 +164,7 @@ export const expressInterestStart = (
   bookName: string,
   bookOwnerId: string,
   bookOwnerName: string,
+  isInterested: boolean,
 ) => {
   const userId = localStorage.getItem('userId');
   socket.emit(SOCKET_EXPRESS_INTEREST, {
@@ -173,8 +174,9 @@ export const expressInterestStart = (
     bookName,
     bookOwnerId,
     bookOwnerName,
+    isInterested,
   });
-
+  // TODO: can be a callback like notification
   return { type: EXPRESS_INTEREST_START, interestActivity: { bookId } };
 };
 

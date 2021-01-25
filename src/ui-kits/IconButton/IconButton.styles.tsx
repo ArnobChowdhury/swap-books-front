@@ -4,6 +4,7 @@ import { IconButtonProps } from './IconButton';
 interface IconButtonStyledProps {
   textColor: IconButtonProps['textColor'];
   fontSize?: IconButtonProps['fontSize'];
+  disabled?: IconButtonProps['disabled'];
 }
 
 export const StyledButton = styled.button<IconButtonStyledProps>`
@@ -19,7 +20,7 @@ export const StyledButton = styled.button<IconButtonStyledProps>`
   letter-spacing: 0.5px;
   color: ${({ textColor, theme }): string | null =>
     textColor === 'primary' ? theme.colorTextPrimary : theme.colorTextSecondary};
-  cursor: pointer;
+  cursor: ${({ disabled }) => (disabled ? 'wait' : 'pointer')};
   transition: all 0.2s;
   text-decoration: none;
   outline: none;

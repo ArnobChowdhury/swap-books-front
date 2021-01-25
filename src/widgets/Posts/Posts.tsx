@@ -64,6 +64,7 @@ export const Posts = (): JSX.Element => {
                   bookName,
                   bookOwnerId,
                   bookOwnerName,
+                  !userIsInterested,
                 ),
               );
             } else {

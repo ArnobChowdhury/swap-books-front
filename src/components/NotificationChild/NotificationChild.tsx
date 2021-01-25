@@ -16,9 +16,9 @@ export interface NotificationChildProps {
   ownersBookInterests?: string[];
   type: 'interest' | 'match' | 'notice';
   noticeText?: string;
-  roomLink?: string;
   otherProps?: HTMLAttributes<HTMLDivElement>;
   onChatButtonClick?: (fromId: string) => void;
+  roomLink: string;
 }
 
 export const NotificationChild: React.FC<NotificationChildProps> = ({
@@ -28,22 +28,22 @@ export const NotificationChild: React.FC<NotificationChildProps> = ({
   bookNames,
   ownersBookInterests,
   type,
-  roomLink,
   noticeText,
   otherProps,
   onChatButtonClick,
+  roomLink,
 }: NotificationChildProps): JSX.Element => {
   const bookNamesArePlural = bookNames && bookNames.length > 1;
 
   let books;
-  if (bookNames && bookNames.length > 1) {
+  if (bookNames) {
     books = bookNames.length > 1 ? bookNames.join(', ') : bookNames[0];
   }
 
   const ownersInterests = ownersBookInterests?.join(', ');
 
   const handleChatButtonClick = () => {
-    if (onChatButtonClick && roomLink) {
+    if (onChatButtonClick) {
       onChatButtonClick(roomLink);
     }
   };
@@ -58,15 +58,16 @@ export const NotificationChild: React.FC<NotificationChildProps> = ({
       {type === 'interest' && (
         <span>
           <strong>Expressed Interest: </strong>
-          {interestedUserName} is interested in your book <i>{books}</i>. Check books
-          you can swap with
+          {interestedUserName} is interested in your{' '}
+          {bookNamesArePlural ? 'books' : 'book'} <i>{books}</i>. Check books you can
+          swap with
           <InterestedUserLink href={`/user/${interestedUserId}`}>
             {` ${interestedUserName}.`}
           </InterestedUserLink>
         </span>
       )}
 
-      {type === 'match' && roomLink && (
+      {type === 'match' && (
         <span>
           <strong>Time to Swap: </strong>
           <InterestedUserLink href={`/user/${interestedUserId}`}>
