@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { mediumScreen } from 'mediaConfig';
 
 export const LayoutWrapper = styled.div`
   display: flex;
@@ -7,5 +8,8 @@ export const LayoutWrapper = styled.div`
 
 export const PageContainer = styled.div`
   max-width: 700px;
-  margin-top: 60px;
+
+  @media (min-width: ${mediumScreen}px) {
+    margin-top: 60px;
+  }
 `;

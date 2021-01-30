@@ -1,19 +1,22 @@
 import styled from 'styled-components';
 
-export const Wrapper = styled.div<{ seen: boolean }>`
-  padding: ${({ theme }) => theme.spaceFive};
+interface WrapperProps {
+  seen: boolean;
+  dataRoomLink: string;
+}
+
+export const Wrapper = styled.div.attrs(({ dataRoomLink }: WrapperProps) => ({
+  dataRoomLink,
+}))<WrapperProps>`
+  padding: ${({ theme }) => `${theme.spaceSix} 0`};
   flex-basis: 100%;
   width: 100%;
   background: ${({ theme }) => theme.colorWhite};
-  font-size: ${({ theme }) => theme.fontSizeMedium};
+  font-size: ${({ theme }) => theme.fontSmall};
   display: flex;
   align-items: flex-start;
   justify-content: flex-start;
-  box-shadow: ${({ theme }) => theme.boxShadow};
-
-  &:not(:last-child) {
-    margin-bottom: ${({ theme }) => theme.spaceTwo};
-  }
+  border-top: 1px solid ${({ theme }) => theme.colorSeparator};
 `;
 
 export const InterestedUserLink = styled.a`
@@ -35,7 +38,16 @@ export const ChatButton = styled.button`
   padding: ${({ theme }) => `0 ${theme.spaceFour}`};
   cursor: pointer;
   box-shadow: ${({ theme }) => theme.boxShadowOne};
+  font-size: inherit;
+  font-family: inherit;
+  font-weight: 300;
+  padding: ${({ theme }) => theme.spaceTwo};
   &:active {
     transform: translateY(1px);
   }
+`;
+
+export const LastModifiedStyled = styled.span`
+  font-size: ${({ theme }) => theme.fontSuperSmall};
+  margin-left: ${({ theme }) => theme.spaceThree};
 `;

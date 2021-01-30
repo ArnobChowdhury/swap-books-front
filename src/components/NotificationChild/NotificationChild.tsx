@@ -1,8 +1,10 @@
+import React from 'react';
 import {
   Wrapper,
   InterestedUserLink,
   IconWrapper,
   ChatButton,
+  LastModifiedStyled,
 } from './NotificationChild.styles';
 import { InterestNotificationIcon } from 'assets/InterestNotificationIcon';
 import { MatchIcon } from 'assets/MatchIcon';
@@ -19,9 +21,10 @@ export interface NotificationChildProps {
   otherProps?: HTMLAttributes<HTMLDivElement>;
   onChatButtonClick?: (fromId: string) => void;
   roomLink: string;
+  lastModified: string;
 }
 
-export const NotificationChild: React.FC<NotificationChildProps> = ({
+export const NotificationChild = ({
   seen,
   fromId: interestedUserId,
   fromName: interestedUserName,
@@ -32,6 +35,7 @@ export const NotificationChild: React.FC<NotificationChildProps> = ({
   otherProps,
   onChatButtonClick,
   roomLink,
+  lastModified,
 }: NotificationChildProps): JSX.Element => {
   const bookNamesArePlural = bookNames && bookNames.length > 1;
 
@@ -48,8 +52,12 @@ export const NotificationChild: React.FC<NotificationChildProps> = ({
     }
   };
 
+  const LastModified = React.useCallback(() => {
+    return <LastModifiedStyled>{lastModified}</LastModifiedStyled>;
+  }, [lastModified]);
+
   return (
-    <Wrapper seen={seen} {...otherProps}>
+    <Wrapper seen={seen} {...otherProps} data-roomid={roomLink}>
       <IconWrapper>
         {type === 'interest' && <InterestNotificationIcon />}
         {type === 'match' && <MatchIcon />}
@@ -63,7 +71,8 @@ export const NotificationChild: React.FC<NotificationChildProps> = ({
           swap with
           <InterestedUserLink href={`/user/${interestedUserId}`}>
             {` ${interestedUserName}.`}
-          </InterestedUserLink>
+          </InterestedUserLink>{' '}
+          <LastModified />
         </span>
       )}
 
@@ -77,7 +86,7 @@ export const NotificationChild: React.FC<NotificationChildProps> = ({
           <i>{books}</i>. You are interested in {interestedUserName}&apos;s -{' '}
           <i>{ownersInterests}.</i>{' '}
           <ChatButton onClick={handleChatButtonClick}>Chat</ChatButton> with him to
-          make a swap deal.
+          make a swap deal. <LastModified />
         </span>
       )}
 

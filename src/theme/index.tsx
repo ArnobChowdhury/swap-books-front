@@ -39,6 +39,7 @@ const theme = {
   colorTextDark: '#000000',
   colorSeparator: '#EBEBEB',
   colorInputBox: '#CCC',
+  fontSuperSmall: '1.2rem',
   fontSmall: '1.4rem',
   fontLarge: '1.6rem',
   fontHeader: '22.65px',

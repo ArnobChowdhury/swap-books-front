@@ -1,7 +1,8 @@
-export const SOCKET_GET_NOTIFICATION = 'get notification';
-export const SOCKET_RECEIVE_NOTIFICATION = 'receive notification';
+export const SOCKET_JOIN_INTEREST_SOCKET = 'join interest socket';
+export const SOCKET_RECEIVE_LATEST_NOTIFICATION = 'receive latest notification';
 
 export const SOCKET_RECEIVE_INTEREST = 'receive interest';
+
 export const SOCKET_EXPRESS_INTEREST = 'express interest';
 
 export const SOCKET_JOIN_ALL_ROOMS = 'join all rooms';

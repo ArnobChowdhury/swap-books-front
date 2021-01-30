@@ -5,6 +5,8 @@ import {
   GET_NOTIFICATIONS_START,
   GET_NOTIFICATIONS_SUCCESS,
   GET_NOTIFICATIONS_FAIL,
+  SET_NOTIFICATION_AS_SEEN,
+  ADD_LATEST_NOTIFICATION,
 } from '../../actions/actionTypes';
 
 export interface NotificationParticipantShape {
@@ -18,9 +20,15 @@ interface NotificationBookShape {
   bookName: string;
   bookId: string;
 }
-export interface NotificationResponseShape {
+
+export interface NotificationShapeOnTheServer {
   _id: string;
   participants: NotificationParticipantShape[];
+  lastModified: string;
+}
+export interface NotificationResponseShape {
+  notifications: NotificationShapeOnTheServer[];
+  unseen: number;
 }
 
 export interface NotificationShape {
@@ -31,32 +39,78 @@ export interface NotificationShape {
   interestsOfInterestedUser?: NotificationBookShape[];
   interestsOfThisUser?: NotificationBookShape[];
   seen: boolean;
+  lastModified: string;
 }
 
 export interface NotificationState {
   notifications: NotificationShape[];
+  totalUnseen: number | null;
   error: string | null | Error;
   loading: boolean;
+  hasMoreNotifications: boolean;
 }
 
 export const initialState: NotificationState = {
   notifications: [],
   error: null,
   loading: false,
+  totalUnseen: null,
+  hasMoreNotifications: true,
 };
 
 // todo write tests for expressInterest related functions
 const reducer = (state = initialState, action: AnyAction) => {
-  const { notifications, error } = action;
+  const {
+    notifications,
+    totalUnseen,
+    error,
+    seenNotificationId,
+    hasMoreNotifications,
+    latestNotification,
+  } = action;
+
   switch (action.type) {
     case HYDRATE:
       return { ...state };
     case GET_NOTIFICATIONS_START:
+      // return { ...state, notifications: [], loading: true };
       return { ...state, loading: true };
     case GET_NOTIFICATIONS_SUCCESS:
-      return { ...state, loading: false, notifications };
+      const newNotifications = [...state.notifications, ...notifications];
+      return {
+        ...state,
+        loading: false,
+        notifications: newNotifications,
+        totalUnseen,
+        hasMoreNotifications,
+      };
+
+    case ADD_LATEST_NOTIFICATION:
+      const previousNotifications = state.notifications.filter(
+        notification => notification._id !== latestNotification._id,
+      );
+      const latestNotifications = [latestNotification, ...previousNotifications];
+      return { ...state, notifications: latestNotifications, totalUnseen };
+
     case GET_NOTIFICATIONS_FAIL:
       return { ...state, loading: false, error };
+    case SET_NOTIFICATION_AS_SEEN:
+      const newState = { ...state };
+      const {
+        notifications: allNotification,
+        totalUnseen: currentTotalUnseen,
+      } = newState;
+      const seenNotificationIndex = allNotification.findIndex(
+        notification => notification._id === seenNotificationId,
+      );
+      allNotification[seenNotificationIndex].seen = true;
+
+      return {
+        ...newState,
+        totalUnseen: currentTotalUnseen
+          ? currentTotalUnseen - 1
+          : currentTotalUnseen,
+      };
     default:
       return state;
   }

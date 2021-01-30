@@ -13,7 +13,8 @@ export const StyledButton = styled.button<IconButtonStyledProps>`
   align-items: center;
   border: none;
   background: ${({ theme }) => theme.colorWhite};
-  padding: ${({ theme }): string | null => `${theme.spaceTwo} ${theme.spaceTen}`};
+  padding: ${({ theme }): string | null => `${theme.spaceTwo} 0`};
+  width: 165px;
   font-family: inherit;
   ${({ fontSize }) => fontSize && `font-size: ${fontSize}px`};
   font-weight: 300;

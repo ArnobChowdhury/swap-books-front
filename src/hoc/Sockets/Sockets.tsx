@@ -6,18 +6,16 @@ import { NotificationResponseShape } from 'redux/reducers/notifications';
 import { MessageResponseProps } from 'redux/reducers/message';
 import { useSelector } from 'react-redux';
 import { expressInterestSuccess } from 'redux/actions/book';
-import {
-  getNotificationsRequest,
-  getNotificationSuccess,
-} from 'redux/actions/notifications';
+import { addLatestNotification } from 'redux/actions/notifications';
 import { fetchCurrentRoomMsgsSuccess } from 'redux/actions/message';
 import { fetchActiveRoomsReq } from 'redux/actions/message';
 import { useDispatch } from 'react-redux';
 import {
   SOCKET_RECEIVE_INTEREST,
   SOCKET_DISCONNECT,
-  SOCKET_RECEIVE_NOTIFICATION,
+  SOCKET_JOIN_INTEREST_SOCKET,
   SOCKET_RECEIVE_MSG,
+  SOCKET_RECEIVE_LATEST_NOTIFICATION,
 } from 'socketTypes';
 
 interface SocketIoInterestContextProps {
@@ -52,14 +50,12 @@ export const SocketIO = ({ children }: SocketIOInterestInterface) => {
     });
 
     socketInterest.on(
-      SOCKET_RECEIVE_NOTIFICATION,
-      (notifications: NotificationResponseShape[]) => {
-        // something like below code will be implemented for notification
-        // todo some thing is wrong here
-        // console.log(notifications);
-        dispatch(getNotificationSuccess(notifications));
+      SOCKET_RECEIVE_LATEST_NOTIFICATION,
+      (notification: NotificationResponseShape) => {
+        dispatch(addLatestNotification(notification));
       },
     );
+
     socketInterest.on(
       SOCKET_RECEIVE_INTEREST,
       ({ bookId, isInterested }: { bookId: string; isInterested: boolean }) => {
@@ -82,7 +78,8 @@ export const SocketIO = ({ children }: SocketIOInterestInterface) => {
 
   useEffect(() => {
     if (isSignedIn && socketInterest && userId) {
-      dispatch(getNotificationsRequest(socketInterest, userId, 1));
+      // TODO: Can be got rid of once interest expression is also through rooms
+      socketInterest.emit(SOCKET_JOIN_INTEREST_SOCKET, { userId });
     }
     if (isSignedIn && socketMsg && userId) {
       dispatch(fetchActiveRoomsReq(socketMsg, userId));

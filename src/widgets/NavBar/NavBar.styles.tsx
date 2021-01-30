@@ -33,7 +33,11 @@ export const NavBarLinkWrapper = styled.li<{ isSelected: boolean }>`
   }
 `;
 
-export const NavButton = styled.button<{ borderBottom: boolean }>`
+export const NavButton = styled.button<{
+  borderBottom: boolean;
+  buttonType: 'Messages' | 'Notifications' | 'Home' | 'User';
+}>`
+  position: relative;
   text-decoration: none;
   height: 100%;
   display: flex;
@@ -42,21 +46,31 @@ export const NavButton = styled.button<{ borderBottom: boolean }>`
   border: none;
   background: none;
   cursor: pointer;
-  border-bottom: ${({ theme, borderBottom }) =>
-    `4px solid ${borderBottom ? theme.colorPurple : 'transparent'}`};
+  border-bottom: ${({ theme, borderBottom, buttonType }) => {
+    let color;
+    if (buttonType === 'Messages') {
+      color = theme.colorGreen;
+    } else if (buttonType === 'Notifications') {
+      color = theme.colorPink;
+    } else if (buttonType === 'Home') {
+      color = theme.colorPurple;
+    } else {
+      color = theme.colorLogo;
+    }
+    return `4px solid ${borderBottom ? color : 'transparent'}`;
+  }};
   outline: none;
 `;
 
 export const DropDown = styled.div<{ isSelected: boolean }>`
   position: absolute;
-  top: 65px;
+  top: 70px;
   right: -6px;
   display: ${({ isSelected }) => (isSelected ? 'block' : 'none')};
   width: 400px;
-  background: ${({ theme }) => theme.colorBG};
-  border-radius: 5px;
+  background: ${({ theme }) => theme.colorWhite};
   box-shadow: ${({ theme }) => theme.boxShadow};
-  padding: ${({ theme }) => theme.spaceTwo};
+  padding: ${({ theme: { spaceFour } }) => `${spaceFour} 0 0 ${spaceFour}`};
 `;
 
 export const UserIcon = styled.div`
@@ -69,4 +83,21 @@ export const UserIcon = styled.div`
   align-items: center;
   color: ${({ theme }) => theme.colorTextPrimary};
   font-family: inherit;
+`;
+
+export const Count = styled.div<{ buttonType: 'Messages' | 'Notification' }>`
+  position: absolute;
+  top: 12%;
+  right: 0;
+  width: ${({ theme }) => theme.spaceTen};
+  height: ${({ theme }) => theme.spaceTen};
+  border-radius: 50%;
+  background: ${({ theme, buttonType }) =>
+    buttonType === 'Messages' ? theme.colorGreen : theme.colorPink};
+  color: ${({ theme }) => theme.colorTextDark};
+  font-size: ${({ theme }) => theme.fontSmall};
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;

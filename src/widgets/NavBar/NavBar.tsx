@@ -5,6 +5,7 @@ import {
   NavButton,
   DropDown,
   UserIcon,
+  Count,
 } from './NavBar.styles';
 import { Notifications } from 'widgets/Notifications';
 import { useSelector } from 'react-redux';
@@ -15,12 +16,14 @@ import { ChatIcon } from 'assets/ChatIcon';
 import { NotificationIcon } from 'assets/NotificationIcon';
 import { RootState } from 'redux/reducers';
 import { authLogout } from 'redux/actions/auth';
+import { getNotificationsRequest } from 'redux/actions/notifications';
 import { getUserInitials } from 'utils/index';
 
 // todo there should be not be any default arguments
 export const NavBar = (): JSX.Element => {
   const dispatch = useDispatch();
   const userName = useSelector((s: RootState) => s.user.name);
+  const { totalUnseen } = useSelector((s: RootState) => s.notifications);
 
   let userInitials;
   if (userName) {
@@ -64,6 +67,10 @@ export const NavBar = (): JSX.Element => {
     };
   }, [dropDown]);
 
+  useEffect(() => {
+    dispatch(getNotificationsRequest());
+  }, []);
+
   const handleNavButtonClick = (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
     button: 'Messages' | 'Notifications' | 'User' | null,
@@ -82,7 +89,7 @@ export const NavBar = (): JSX.Element => {
         {dropDown === 'Notifications' && <Notifications />}
       </DropDown>
       <NavBarWrapper>
-        <NavButton borderBottom={false}>
+        <NavButton borderBottom={false} buttonType="Home">
           <HomeIcon hasBodyColor={true} />
         </NavButton>
         <NavButton
@@ -91,6 +98,7 @@ export const NavBar = (): JSX.Element => {
             handleNavButtonClick(e, 'Messages');
           }}
           ref={messageButtonRef}
+          buttonType="Messages"
         >
           <ChatIcon hasBodyColor={dropDown === 'Messages'} />
         </NavButton>
@@ -98,11 +106,16 @@ export const NavBar = (): JSX.Element => {
           borderBottom={dropDown === 'Notifications'}
           onClick={e => handleNavButtonClick(e, 'Notifications')}
           ref={notificationButtonRef}
+          buttonType="Notifications"
         >
+          {totalUnseen !== null && totalUnseen > 0 && (
+            <Count buttonType="Notification">{totalUnseen}</Count>
+          )}
           <NotificationIcon hasBodyColor={dropDown === 'Notifications'} />
         </NavButton>
         <NavButton
           borderBottom={dropDown === 'User'}
+          buttonType="User"
           onClick={() => {
             dispatch(authLogout());
           }}

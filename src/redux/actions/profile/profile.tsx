@@ -31,7 +31,7 @@ export const fetchProfileReq = (userId: string) => {
     dispatch(fetchProfileStart());
 
     return axios
-      .get(`/user/${userId}`)
+      .get(`/user/${userId}`, { params: { userId } })
       .then(response => {
         const { userInfo } = response.data;
         dispatch(fetchProfileSuccess(userInfo));

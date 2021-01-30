@@ -8,6 +8,7 @@
   "private": true,
   "dependencies": {
     "axios": "^0.19.2",
+    "date-fns": "^2.16.1",
     "formik": "^2.1.4",
     "next": "^9.4.4",
     "next-redux-wrapper": "^6.0.2",
