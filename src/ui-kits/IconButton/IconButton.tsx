@@ -8,6 +8,7 @@ export interface IconButtonProps {
   buttonText?: string;
   fontSize?: number;
   disabled?: boolean;
+  requestOngoing: boolean;
 }
 
 export const IconButton: React.FC<IconButtonProps> = ({
@@ -17,6 +18,7 @@ export const IconButton: React.FC<IconButtonProps> = ({
   buttonText,
   fontSize,
   disabled,
+  requestOngoing,
 }: IconButtonProps): JSX.Element => {
   return (
     <StyledButton
@@ -25,6 +27,7 @@ export const IconButton: React.FC<IconButtonProps> = ({
       onClick={onClick}
       textColor={textColor}
       disabled={disabled}
+      requestOngoing={requestOngoing}
     >
       {icon}
       <ButtonText>{buttonText}</ButtonText>

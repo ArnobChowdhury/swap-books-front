@@ -1,10 +1,20 @@
 import styled, { keyframes } from 'styled-components';
+import { largeScreen } from 'mediaConfig';
 
 export const Wrapper = styled.div`
-  max-height: 345px;
   width: 100%;
   overflow-y: scroll;
-  padding: ${({ theme }) => `0 ${theme.spaceSix} 0 ${theme.spaceTwo}`};
+  background: ${({ theme }) => theme.colorWhite};
+  padding: ${({ theme }) => theme.spaceTen};
+  margin-top: ${({ theme }) => theme.spaceFive};
+  box-shadow: ${({ theme }) => theme.boxShadow};
+
+  @media (min-width: ${largeScreen}px) {
+    max-height: 345px;
+    padding: ${({ theme }) => `0 ${theme.spaceSix} 0 ${theme.spaceTwo}`};
+    margin-top: 0;
+    box-shadow: none;
+  }
 `;
 
 const placeHolderShimmer = keyframes`
@@ -18,6 +28,7 @@ const placeHolderShimmer = keyframes`
     background-position: 468px 0
   }
 `;
+
 export const NotificationLoaderWrapper = styled.div`
   height: 6rem;
   width: 100%;

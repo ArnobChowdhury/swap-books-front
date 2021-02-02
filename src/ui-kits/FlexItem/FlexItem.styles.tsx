@@ -12,4 +12,10 @@ export const FlexItemDiv = styled.div<FlexItemDivProps>`
   ${(props): string => props.flexCss}
   width: ${(props): string | null => (props.width ? props.width : null)};
   height: ${(props): string | null => (props.height ? props.height : null)};
+  ${({ isFlexAndCenter }) =>
+    isFlexAndCenter &&
+    `
+    display: flex;
+    justify-content: center;
+  `}
 `;

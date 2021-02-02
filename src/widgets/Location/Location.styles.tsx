@@ -1,12 +1,12 @@
 import styled from 'styled-components';
-import { smallScreen } from 'mediaConfig';
+import { mediumScreen } from 'mediaConfig';
 
 export const MapContainer = styled.div`
   margin-bottom: ${({ theme }) => theme.spaceTen};
   height: 50vh;
   box-shadow: 0 ${({ theme }) => theme.boxShadow};
 
-  @media screen and (min-width: ${smallScreen}px) {
+  @media screen and (min-width: ${mediumScreen}px) {
     height: 60vh;
   }
 

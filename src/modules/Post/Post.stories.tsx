@@ -1,8 +1,9 @@
 import { Post, PostProps } from './Post';
+import { PostShimmer } from './PostShimmer';
 import { Story, Meta } from '@storybook/react';
 
 export default {
-  title: 'Post',
+  title: 'Modules/Post',
   component: Post,
   argTypes: {
     imgUrl: {
@@ -35,7 +36,7 @@ export default {
       },
       defaultValue: true,
     },
-    bottomMargin: {
+    topMargin: {
       control: {
         type: 'boolean',
       },
@@ -72,6 +73,10 @@ export default {
   },
 } as Meta;
 
-export const Template: Story<PostProps> = (props: PostProps) => {
+export const Default: Story<PostProps> = (props: PostProps) => {
   return <Post {...props} />;
+};
+
+export const Shimmer: Story<PostProps> = () => {
+  return <PostShimmer />;
 };

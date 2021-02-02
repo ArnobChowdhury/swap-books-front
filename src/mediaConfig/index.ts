@@ -1,3 +1,3 @@
-export const mediumScreen = 1024;
-export const smallScreen = 600;
-export const verySmallScreen = 360;
+export const largeScreen = 1025;
+export const mediumScreen = 601;
+export const smallScreen = 361;

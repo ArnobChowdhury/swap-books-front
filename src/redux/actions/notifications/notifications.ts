@@ -9,9 +9,10 @@ import axios from 'axiosInstance';
 import {
   GET_NOTIFICATIONS_FAIL,
   GET_NOTIFICATIONS_START,
-  GET_NOTIFICATIONS_SUCCESS,
+  GET_INITIAL_NOTIFICATIONS_SUCCESS,
   SET_NOTIFICATION_AS_SEEN,
-  ADD_LATEST_NOTIFICATION,
+  ADD_LIVE_NOTIFICATION,
+  GET_MORE_NOTIFICATIONS_SUCCESS,
 } from './../actionTypes';
 
 export const getNotificationStart = () => {
@@ -55,7 +56,10 @@ const processNotificationForState = (notification: NotificationShapeOnTheServer)
   };
 };
 
-export const getNotificationSuccess = (response: NotificationResponseShape) => {
+export const getNotificationSuccess = (
+  response: NotificationResponseShape,
+  type: string,
+) => {
   const { notifications: notificationsFromServer, unseen } = response;
   const notifications: NotificationShape[] = notificationsFromServer.map(
     processNotificationForState,
@@ -64,7 +68,7 @@ export const getNotificationSuccess = (response: NotificationResponseShape) => {
   const hasMoreNotifications = notifications.length < 5 ? false : true;
 
   return {
-    type: GET_NOTIFICATIONS_SUCCESS,
+    type,
     notifications,
     totalUnseen: unseen,
     hasMoreNotifications,
@@ -84,7 +88,11 @@ export const getNotificationsRequest = (skip = 0) => (dispatch: Dispatch) => {
     .get('/user/notifications', { params: { skip } })
     .then(res => {
       const notificationResponse = res.data;
-      dispatch(getNotificationSuccess(notificationResponse));
+      const type =
+        skip === 0
+          ? GET_INITIAL_NOTIFICATIONS_SUCCESS
+          : GET_MORE_NOTIFICATIONS_SUCCESS;
+      dispatch(getNotificationSuccess(notificationResponse, type));
     })
     .catch(err => {
       dispatch(getNotificationFail(err));
@@ -107,7 +115,7 @@ export const addLatestNotification = (notification: NotificationResponseShape) =
   );
 
   return {
-    type: ADD_LATEST_NOTIFICATION,
+    type: ADD_LIVE_NOTIFICATION,
     latestNotification: notificationProcessedForState,
     totalUnseen,
   };

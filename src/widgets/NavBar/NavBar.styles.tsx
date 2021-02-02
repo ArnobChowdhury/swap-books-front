@@ -1,20 +1,39 @@
 import styled from 'styled-components';
+import { largeScreen } from 'mediaConfig';
 
 export const NavBarContainer = styled.div`
+  position: fixed;
+  left: 0;
+  bottom: 0;
   background: ${({ theme }) => theme.colorWhite};
   display: flex;
   justify-content: center;
-  position: relative;
   border-bottom: ${({ theme }) => `1px solid ${theme.colorSeparator}`};
+  z-index: 1000;
+  width: 100vw;
+  box-shadow: 0 -1px 2px rgb(0, 0, 0, 0.2);
+
+  @media (min-width: ${largeScreen}px) {
+    position: relative;
+    bottom: auto;
+    left: auto;
+    box-shadow: none;
+    width: auto;
+  }
 `;
 
 export const NavBarWrapper = styled.nav`
-  width: 250px;
+  width: 100%;
   height: 60px;
   display: flex;
-  justify-content: space-between;
+  justify-content: space-evenly;
   align-items: center;
   font-size: ${({ theme }) => theme.fontSizeOne};
+
+  @media (min-width: ${largeScreen}px) {
+    width: 250px;
+    justify-content: space-between;
+  }
 `;
 
 export const NavBarUL = styled.ul`
@@ -35,31 +54,55 @@ export const NavBarLinkWrapper = styled.li<{ isSelected: boolean }>`
 
 export const NavButton = styled.button<{
   borderBottom: boolean;
-  buttonType: 'Messages' | 'Notifications' | 'Home' | 'User';
+  buttonType: 'Messages' | 'Notifications' | 'Posts' | 'User';
 }>`
   position: relative;
   text-decoration: none;
   height: 100%;
+  width: 90px;
   display: flex;
   align-items: center;
+  justify-content: center;
   font-family: inherit;
   border: none;
   background: none;
   cursor: pointer;
-  border-bottom: ${({ theme, borderBottom, buttonType }) => {
+  outline: none;
+  border-top: ${({ theme, borderBottom, buttonType }) => {
     let color;
     if (buttonType === 'Messages') {
       color = theme.colorGreen;
     } else if (buttonType === 'Notifications') {
       color = theme.colorPink;
-    } else if (buttonType === 'Home') {
+    } else if (buttonType === 'Posts') {
       color = theme.colorPurple;
     } else {
       color = theme.colorLogo;
     }
     return `4px solid ${borderBottom ? color : 'transparent'}`;
   }};
-  outline: none;
+
+  @media (min-width: ${largeScreen}px) {
+    width: 60px;
+    border-top: none;
+    border-bottom: ${({ theme, borderBottom, buttonType }) => {
+      let color;
+      if (buttonType === 'Messages') {
+        color = theme.colorGreen;
+      } else if (buttonType === 'Notifications') {
+        color = theme.colorPink;
+      } else if (buttonType === 'Posts') {
+        color = theme.colorPurple;
+      } else {
+        color = theme.colorLogo;
+      }
+      return `4px solid ${borderBottom ? color : 'transparent'}`;
+    }};
+  }
+
+  &:hover {
+    background: ${({ theme }) => theme.colorBG};
+  }
 `;
 
 export const DropDown = styled.div<{ isSelected: boolean }>`
@@ -88,7 +131,7 @@ export const UserIcon = styled.div`
 export const Count = styled.div<{ buttonType: 'Messages' | 'Notification' }>`
   position: absolute;
   top: 12%;
-  right: 0;
+  right: 25%;
   width: ${({ theme }) => theme.spaceTen};
   height: ${({ theme }) => theme.spaceTen};
   border-radius: 50%;
@@ -100,4 +143,8 @@ export const Count = styled.div<{ buttonType: 'Messages' | 'Notification' }>`
   display: flex;
   align-items: center;
   justify-content: center;
+
+  @media (min-width: ${largeScreen}px) {
+    right: 20%;
+  }
 `;

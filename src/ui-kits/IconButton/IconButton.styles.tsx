@@ -5,6 +5,7 @@ interface IconButtonStyledProps {
   textColor: IconButtonProps['textColor'];
   fontSize?: IconButtonProps['fontSize'];
   disabled?: IconButtonProps['disabled'];
+  requestOngoing?: IconButtonProps['requestOngoing'];
 }
 
 export const StyledButton = styled.button<IconButtonStyledProps>`
@@ -21,10 +22,15 @@ export const StyledButton = styled.button<IconButtonStyledProps>`
   letter-spacing: 0.5px;
   color: ${({ textColor, theme }): string | null =>
     textColor === 'primary' ? theme.colorTextPrimary : theme.colorTextSecondary};
-  cursor: ${({ disabled }) => (disabled ? 'wait' : 'pointer')};
+  cursor: ${({ requestOngoing }) => (requestOngoing ? 'wait' : 'pointer')};
   transition: all 0.2s;
   text-decoration: none;
   outline: none;
+
+  &:disabled {
+    pointer-events: none;
+    opacity: 0.5;
+  }
 
   &:hover {
     background: ${({ theme }) => theme.colorBG};

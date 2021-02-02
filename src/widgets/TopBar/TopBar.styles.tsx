@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { mediumScreen } from 'mediaConfig';
+import { largeScreen, mediumScreen } from 'mediaConfig';
 
 export const TopBarContainer = styled.div`
   background: ${({ theme }) => theme.colorWhite};
@@ -14,14 +14,19 @@ export const TopBarContainer = styled.div`
   z-index: 1000;
 `;
 
-export const TopBarWrapper = styled.div`
+export const TopBarWrapper = styled.div<{ isSignedIn: boolean }>`
   width: 100%;
   height: 60px;
   display: flex;
-  justify-content: space-between;
   align-items: center;
   font-size: ${({ theme }) => theme.fontSizeOne};
   padding: ${({ theme }) => theme.spaceTen};
+  ${({ isSignedIn }) =>
+    `justify-content: ${isSignedIn ? 'center' : 'space-between'}`};
+
+  @media (min-width: ${mediumScreen}px) {
+    justify-content: space-between;
+  }
 `;
 
 export const TopBarUL = styled.ul`
@@ -78,7 +83,7 @@ export const ItemWrapper = styled.div<{ itemAlign: 'left' | 'center' | 'right' }
     }
   }};
 
-  @media screen and (min-width: ${mediumScreen}px) {
+  @media screen and (min-width: ${largeScreen}px) {
     width: 33%;
   }
 `;

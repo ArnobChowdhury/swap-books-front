@@ -9,7 +9,7 @@ import { SocketIO } from 'hoc/Sockets';
 import { Message } from 'hoc/Message';
 import GlobalStyles from '../components/GlobalStyles';
 import theme from '../theme';
-import { RootContext, PopupType } from 'contexts/RootContext';
+import { RootContext, PopupType, ContentType } from 'contexts/RootContext';
 
 // todo
 // eslint-disable-next-line react/prop-types
@@ -21,10 +21,18 @@ const WrappedApp: FC<AppProps> = ({ Component, pageProps }) => {
 
   const [showModal, setShowModal] = useState<boolean>(false);
   const [popupType, setPopupType] = useState<PopupType | null>(null);
+  const [contentType, setContentType] = useState<ContentType>('Posts');
 
   return (
     <RootContext.Provider
-      value={{ showModal, setShowModal, popupType, setPopupType }}
+      value={{
+        showModal,
+        setShowModal,
+        popupType,
+        setPopupType,
+        contentType,
+        setContentType,
+      }}
     >
       <ThemeProvider theme={theme}>
         <GlobalStyles />

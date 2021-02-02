@@ -1,11 +1,11 @@
 import React, { useContext, useEffect } from 'react';
-import { Post } from 'modules/Post';
 import { useDispatch, useSelector } from 'react-redux';
-import { SocketIoContext } from 'hoc/Sockets';
 import { fetchBooksRequest, expressInterestStart } from 'redux/actions/book';
 import { RootState } from 'redux/reducers';
-import { PageLayout } from 'hoc/PageLayout';
-import { Spinner } from 'ui-kits/Spinner';
+import { SocketIoContext } from 'hoc/Sockets';
+import { Post, PostShimmer } from 'modules/Post';
+import { FlexContainer } from 'ui-kits/FlexContainer';
+import { FlexItem } from 'ui-kits/FlexItem';
 import { RootContext, RootContextProps } from 'contexts/RootContext';
 
 export const Posts = (): JSX.Element => {
@@ -18,7 +18,6 @@ export const Posts = (): JSX.Element => {
     (store: RootState) => store.user,
   );
   const { accessToken, userId } = useSelector((s: RootState) => s.auth);
-
   useEffect(() => {
     if (process.browser && userLon && userLat) {
       dispatch(fetchBooksRequest(userLon, userLat));
@@ -49,43 +48,58 @@ export const Posts = (): JSX.Element => {
 
       // todo if the expressing interest network activity goes wrong what do we do???
       return (
-        <Post
-          bookName={bookName}
-          bookAuthor={bookAuthor}
-          bookOwnerName={bookOwnerName}
-          imgUrl={`${process.env.NEXT_PUBLIC_IMAGE_URL}${bookPicturePath}`}
-          onInterestButtonClick={() => {
-            if (isSignedIn && socketInterest !== undefined && userName) {
-              dispatch(
-                expressInterestStart(
-                  socketInterest,
-                  userName,
-                  bookId,
-                  bookName,
-                  bookOwnerId,
-                  bookOwnerName,
-                  !userIsInterested,
-                ),
-              );
-            } else {
-              handleUnsignedInterest();
-            }
-          }}
-          isInterested={userIsInterested}
-          key={bookId}
-          bottomMargin
-          interestReqOnGoing={interestOnGoing}
-          isOwners={bookOwnerId === userId}
-        />
+        <FlexItem isFlexAndCenter key={bookId} defaultSize={100} sm={50}>
+          <Post
+            bookName={bookName}
+            bookAuthor={bookAuthor}
+            bookOwnerName={bookOwnerName}
+            imgUrl={`${process.env.NEXT_PUBLIC_IMAGE_URL}${bookPicturePath}`}
+            onInterestButtonClick={() => {
+              if (isSignedIn && socketInterest !== undefined && userName) {
+                dispatch(
+                  expressInterestStart(
+                    socketInterest,
+                    userName,
+                    bookId,
+                    bookName,
+                    bookOwnerId,
+                    bookOwnerName,
+                    !userIsInterested,
+                  ),
+                );
+              } else {
+                handleUnsignedInterest();
+              }
+            }}
+            isInterested={userIsInterested}
+            topMargin
+            interestReqOnGoing={interestOnGoing}
+            isOwners={bookOwnerId === userId}
+          />
+        </FlexItem>
       );
     });
   }
-  // TODO is PageLayout a HOC? I don't think anymore
-  // return <PageLayout>{!loading ? posts : <Spinner />}</PageLayout>;
+  // TODO is PageLayout a HOC? I don't think it is anymore
   return (
-    <PageLayout>
-      {loading && <Spinner />}
+    <FlexContainer justify="center" alignItems="center">
+      {loading && (
+        <>
+          <FlexItem isFlexAndCenter defaultSize={100} sm={50}>
+            <PostShimmer />
+          </FlexItem>
+          <FlexItem isFlexAndCenter defaultSize={100} sm={50}>
+            <PostShimmer />
+          </FlexItem>
+          <FlexItem isFlexAndCenter defaultSize={100} sm={50}>
+            <PostShimmer />
+          </FlexItem>
+          <FlexItem isFlexAndCenter defaultSize={100} sm={50}>
+            <PostShimmer />
+          </FlexItem>
+        </>
+      )}
       {!loading && posts}
-    </PageLayout>
+    </FlexContainer>
   );
 };

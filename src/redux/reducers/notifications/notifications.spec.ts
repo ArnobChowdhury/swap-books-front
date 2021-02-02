@@ -8,7 +8,8 @@ import {
 import {
   GET_NOTIFICATIONS_START,
   GET_NOTIFICATIONS_FAIL,
-  GET_NOTIFICATIONS_SUCCESS,
+  GET_INITIAL_NOTIFICATIONS_SUCCESS,
+  GET_MORE_NOTIFICATIONS_SUCCESS,
 } from '../../actions/actionTypes';
 
 describe('Notification reducer', () => {
@@ -140,7 +141,7 @@ describe('Notification reducer', () => {
 
     const expectedState: NotificationState = { ...initialState, notifications };
     const newState = notificationReducer(initialState, {
-      type: GET_NOTIFICATIONS_SUCCESS,
+      type: GET_INITIAL_NOTIFICATIONS_SUCCESS,
       notifications: notificationsResponose,
     });
     expect(newState).toStrictEqual(expectedState);

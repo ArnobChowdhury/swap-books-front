@@ -6,7 +6,7 @@ import {
 } from './notifications';
 import {
   GET_NOTIFICATIONS_START,
-  GET_NOTIFICATIONS_SUCCESS,
+  GET_INITIAL_NOTIFICATIONS_SUCCESS,
   GET_NOTIFICATIONS_FAIL,
 } from '../actionTypes';
 import { mockStore } from '../../_testutils';
@@ -68,7 +68,9 @@ describe('Book Action tests', () => {
         toId: '12321098098098',
       },
     ];
-    const expectedActions = [{ type: GET_NOTIFICATIONS_SUCCESS, notifications }];
+    const expectedActions = [
+      { type: GET_INITIAL_NOTIFICATIONS_SUCCESS, notifications },
+    ];
 
     store.dispatch(getNotificationSuccess(notifications));
     expect(store.getActions()).toEqual(expectedActions);

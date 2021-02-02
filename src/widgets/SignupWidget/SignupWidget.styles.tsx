@@ -1,12 +1,12 @@
 import styled from 'styled-components';
-import { smallScreen } from 'mediaConfig';
+import { mediumScreen } from 'mediaConfig';
 
 export const PageContainer = styled.div`
   display: flex;
   justify-content: center;
   padding: 4rem 2rem;
 
-  @media (min-width: ${smallScreen}px) {
+  @media (min-width: ${mediumScreen}px) {
     padding: 8rem;
   }
 `;
@@ -19,7 +19,7 @@ export const CenterContainer = styled.div<{ containerWidth?: number }>`
   padding: 4rem;
   box-shadow: ${({ theme }) => theme.boxShadow};
 
-  @media (min-width: ${smallScreen}px) {
+  @media (min-width: ${mediumScreen}px) {
     width: 40rem;
     flex-basis: 40rem;
   }

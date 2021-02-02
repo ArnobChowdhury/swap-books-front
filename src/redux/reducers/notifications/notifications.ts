@@ -3,10 +3,11 @@ import { AnyAction } from 'redux';
 
 import {
   GET_NOTIFICATIONS_START,
-  GET_NOTIFICATIONS_SUCCESS,
+  GET_INITIAL_NOTIFICATIONS_SUCCESS,
   GET_NOTIFICATIONS_FAIL,
   SET_NOTIFICATION_AS_SEEN,
-  ADD_LATEST_NOTIFICATION,
+  ADD_LIVE_NOTIFICATION,
+  GET_MORE_NOTIFICATIONS_SUCCESS,
 } from '../../actions/actionTypes';
 
 export interface NotificationParticipantShape {
@@ -75,7 +76,16 @@ const reducer = (state = initialState, action: AnyAction) => {
     case GET_NOTIFICATIONS_START:
       // return { ...state, notifications: [], loading: true };
       return { ...state, loading: true };
-    case GET_NOTIFICATIONS_SUCCESS:
+    case GET_INITIAL_NOTIFICATIONS_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        notifications,
+        totalUnseen,
+        hasMoreNotifications,
+      };
+
+    case GET_MORE_NOTIFICATIONS_SUCCESS:
       const newNotifications = [...state.notifications, ...notifications];
       return {
         ...state,
@@ -85,7 +95,7 @@ const reducer = (state = initialState, action: AnyAction) => {
         hasMoreNotifications,
       };
 
-    case ADD_LATEST_NOTIFICATION:
+    case ADD_LIVE_NOTIFICATION:
       const previousNotifications = state.notifications.filter(
         notification => notification._id !== latestNotification._id,
       );

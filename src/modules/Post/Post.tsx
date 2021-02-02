@@ -5,14 +5,15 @@ import {
   Image,
   ContentWrapper,
   ContentContainer,
-  ContentLeft,
-  ContentRight,
   InterestIconWrapper,
   PostOptionWrapper,
+  PostOwner,
+  PostOwnerImg,
 } from './Post.styles';
 import { InterestIcon } from 'assets/InterestIcon';
 import { IconButton } from 'ui-kits/IconButton';
 import { PostOption, PostOptionProps } from 'components/PostOption';
+import { getUserInitials } from 'utils/getUserInitials';
 
 export interface PostProps {
   imgUrl: string;
@@ -20,10 +21,9 @@ export interface PostProps {
   bookAuthor: string;
   bookOwnerName: string;
   isInterested: boolean;
-  bottomMargin?: boolean;
+  topMargin?: boolean;
   interestReqOnGoing: boolean;
   onInterestButtonClick?: (e: MouseEvent<HTMLButtonElement>) => void;
-  key: string;
   isOwners: boolean;
   postOptions?: PostOptionProps['options'];
 }
@@ -33,7 +33,7 @@ export const Post = ({
   bookName,
   bookAuthor,
   bookOwnerName,
-  bottomMargin,
+  topMargin,
   interestReqOnGoing,
   isInterested = false,
   onInterestButtonClick,
@@ -41,43 +41,38 @@ export const Post = ({
   postOptions,
 }: PostProps): JSX.Element => {
   return (
-    <PostWrapper bottomMargin={bottomMargin}>
-      <ImageWrapper>
-        <Image src={imgUrl} alt={`image of book named: ${bookName}`} />
-      </ImageWrapper>
-      <ContentContainer>
-        <ContentWrapper>
-          <ContentLeft>Book</ContentLeft>
-          <ContentRight isTitle>{bookName}</ContentRight>
-        </ContentWrapper>
-        <ContentWrapper>
-          <ContentLeft>Author</ContentLeft>
-          <ContentRight>{bookAuthor}</ContentRight>
-        </ContentWrapper>
-        <ContentWrapper>
-          <ContentLeft>Owner</ContentLeft>
-          <ContentRight>{isOwners ? 'You' : bookOwnerName}</ContentRight>
-        </ContentWrapper>
-      </ContentContainer>
-      {!isOwners && (
+    <>
+      <PostWrapper topMargin={topMargin}>
+        <PostOwner>
+          <PostOwnerImg>{getUserInitials(bookOwnerName)}</PostOwnerImg>
+          {bookOwnerName}
+        </PostOwner>
+        <ImageWrapper>
+          <Image src={imgUrl} alt={`image of book named: ${bookName}`} />
+          <ContentWrapper>
+            <ContentContainer isBookName>{bookName}</ContentContainer>
+            <ContentContainer>{bookAuthor}</ContentContainer>
+          </ContentWrapper>
+        </ImageWrapper>
         <InterestIconWrapper>
           <IconButton
             buttonText={isInterested ? 'Interested' : 'Show Interest'}
             icon={
-              <InterestIcon hasBodyColor={isInterested} width="25" height="25" />
+              <InterestIcon hasBodyColor={isInterested} width="30" height="30" />
             }
             onClick={onInterestButtonClick}
-            disabled={interestReqOnGoing}
-            textColor="secondary"
+            disabled={interestReqOnGoing || isOwners}
+            requestOngoing={interestReqOnGoing}
+            textColor="primary"
           />
         </InterestIconWrapper>
-      )}
-      {/**Todo: Post option should be changed later */}
-      {postOptions && (
-        <PostOptionWrapper>
-          <PostOption options={postOptions} />
-        </PostOptionWrapper>
-      )}
-    </PostWrapper>
+        {/**Todo: Post option should be changed later */}
+        {postOptions && (
+          <PostOptionWrapper>
+            <PostOption options={postOptions} />
+          </PostOptionWrapper>
+        )}
+      </PostWrapper>
+    </>
   );
 };

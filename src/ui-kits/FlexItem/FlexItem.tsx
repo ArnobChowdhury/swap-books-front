@@ -11,6 +11,7 @@ export interface FlexItemProps {
   defaultSize?: number | 'auto' | boolean;
   width?: string;
   height?: string;
+  isFlexAndCenter?: boolean;
 }
 
 export const FlexItem = ({
@@ -23,6 +24,7 @@ export const FlexItem = ({
   defaultSize,
   width,
   height,
+  isFlexAndCenter,
 }: FlexItemProps): JSX.Element => {
   const generateFlexItem = (size: number | boolean | string): string => {
     let styles = '';
@@ -52,7 +54,7 @@ export const FlexItem = ({
     let cssString = '';
 
     cssString += defaultSize ? generateFlexItem(defaultSize) : '';
-    cssString += sm ? `@media (min-width: 600px) {${generateFlexItem(sm)}}` : '';
+    cssString += sm ? `@media (min-width: 601px) {${generateFlexItem(sm)}}` : '';
     cssString += md ? `@media (min-width: 960px) {${generateFlexItem(md)}}` : '';
     cssString += lg ? `@media (min-width: 1280px) {${generateFlexItem(lg)}}` : '';
     cssString += xl ? `@media (min-width: 1920px) {${generateFlexItem(xl)}}` : '';
@@ -67,6 +69,7 @@ export const FlexItem = ({
       {...(width ? { width } : {})}
       {...(height ? { height } : {})}
       data-testid="FlexItemTestId"
+      isFlexAndCenter={isFlexAndCenter}
     >
       {children ? children : null}
     </FlexItemDiv>

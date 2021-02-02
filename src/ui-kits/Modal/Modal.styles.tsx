@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { smallScreen, verySmallScreen } from '../../mediaConfig';
+import { mediumScreen, smallScreen } from '../../mediaConfig';
 
 export const ModalDiv = styled.div<{ largeModal?: boolean }>`
   width: ${({ largeModal }) => (largeModal ? '60vw' : '30vw')};
@@ -15,11 +15,11 @@ export const ModalDiv = styled.div<{ largeModal?: boolean }>`
   z-index: 1200;
   box-shadow: 0.5rem 0.5rem 0.3rem rgba(10, 10, 10, 0.15);
 
-  @media screen and (min-width: ${verySmallScreen}px) {
+  @media screen and (min-width: ${smallScreen}px) {
     min-width: 35rem;
   }
 
-  @media screen and (min-width: ${smallScreen}px) {
+  @media screen and (min-width: ${mediumScreen}px) {
     min-width: 55rem;
     padding: 4rem;
   }

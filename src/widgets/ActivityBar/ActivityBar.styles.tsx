@@ -4,11 +4,16 @@ import { mediumScreen } from 'mediaConfig';
 export const ActivityContainer = styled.div`
   display: flex;
   box-shadow: ${({ theme }) => theme.boxShadow};
-  margin-top: 6rem;
+  position: fixed;
+  left: 0;
+  top: 6.1rem;
+  z-index: 1000;
+  width: 100vw;
 
   @media (min-width: ${mediumScreen}px) {
     box-shadow: none;
-    margin-top: 0;
+    position: static;
+    width: auto;
   }
 `;
 

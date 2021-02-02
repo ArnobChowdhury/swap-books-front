@@ -59,7 +59,7 @@ export const User = ({
           isInterested={userIsInterested}
           key={bookId}
           // todo availableIn ??? really? Let's remove this soon
-          bottomMargin
+          topMargin
           interestReqOnGoing={interestOnGoing}
           isOwners={bookOwnerId === userId}
           onInterestButtonClick={() => {
