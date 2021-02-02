@@ -4,6 +4,7 @@ import { AnyAction } from 'redux';
 import {
   FETCH_BOOKS_START,
   FETCH_BOOKS_SUCCESS,
+  FETCH_MORE_BOOKS_SUCCESS,
   FETCH_BOOKS_FAIL,
   EXPRESS_INTEREST_START,
   EXPRESS_INTEREST_SUCCESS,
@@ -26,6 +27,8 @@ export interface BooksState {
   books: BookShape[];
   error: string | null | Error;
   loading: boolean;
+  page: number;
+  hasMorePages: boolean;
 }
 
 export const initialState: BooksState = {
@@ -33,11 +36,13 @@ export const initialState: BooksState = {
   books: [],
   error: null,
   loading: false,
+  page: 0,
+  hasMorePages: true,
 };
 
 // todo write tests for expressInterest related functions
 const reducer = (state = initialState, action: AnyAction) => {
-  const { books, error, interestActivity } = action;
+  const { books, error, interestActivity, page, hasMorePages } = action;
   switch (action.type) {
     case HYDRATE:
       // our action do not return a property named payload
@@ -45,7 +50,11 @@ const reducer = (state = initialState, action: AnyAction) => {
     case FETCH_BOOKS_START:
       return { ...state, loading: true };
     case FETCH_BOOKS_SUCCESS:
-      return { ...state, loading: false, books };
+      return { ...state, loading: false, books, page, hasMorePages };
+    case FETCH_MORE_BOOKS_SUCCESS:
+      const prevBooks = state.books;
+      const newBooks = [...prevBooks, ...books];
+      return { ...state, loading: false, books: newBooks, page, hasMorePages };
     case FETCH_BOOKS_FAIL:
       return { ...state, loading: false, error };
     case EXPRESS_INTEREST_START:

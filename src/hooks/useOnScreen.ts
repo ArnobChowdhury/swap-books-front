@@ -2,8 +2,8 @@ import { useEffect, useState, MutableRefObject } from 'react';
 
 export const useOnScreen = (
   childRef: MutableRefObject<any>,
-  rootRef: MutableRefObject<any>,
-  dependency: any[],
+  rootRef?: MutableRefObject<any>,
+  dependency?: any[],
   cb?: () => void,
   executeOnce?: boolean,
 ) => {
@@ -11,12 +11,20 @@ export const useOnScreen = (
 
   useEffect(() => {
     let interesectionObserver: IntersectionObserver;
-    if (childRef.current && rootRef.current) {
+    if (childRef.current) {
       interesectionObserver = new IntersectionObserver(
         ([entry], observer) => {
           if (entry.isIntersecting) {
             setOnScreen(true);
-            if (cb) cb();
+            if (cb) {
+              // @ts-ignore
+              if (window.requestIdleCallback) {
+                // @ts-ignore
+                window.requestIdleCallback(cb);
+              } else {
+                cb();
+              }
+            }
             if (executeOnce) {
               observer.unobserve(childRef.current);
             }
@@ -24,7 +32,7 @@ export const useOnScreen = (
             setOnScreen(false);
           }
         },
-        { root: rootRef.current, threshold: 0.75 },
+        { root: rootRef && rootRef.current, threshold: 0.1 },
       );
 
       if (childRef.current) {
@@ -37,7 +45,7 @@ export const useOnScreen = (
         interesectionObserver.disconnect();
       }
     };
-  }, [dependency]);
+  }, dependency && [dependency]);
 
   return onScreen;
 };

@@ -10,6 +10,7 @@ import {
   FETCH_BOOKS_FAIL,
   FETCH_BOOKS_START,
   FETCH_BOOKS_SUCCESS,
+  FETCH_MORE_BOOKS_SUCCESS,
   EXPRESS_INTEREST_START,
   EXPRESS_INTEREST_SUCCESS,
   EXPRESS_INTEREST_FAIL,
@@ -76,15 +77,24 @@ export const fetchBooksStart = () => {
   return { type: FETCH_BOOKS_START };
 };
 
-export const fetchBooksSuccess = (books: any) => {
-  return { type: FETCH_BOOKS_SUCCESS, books: books };
+export const fetchBooksSuccess = (
+  books: BookShape[],
+  type: typeof FETCH_BOOKS_SUCCESS | typeof FETCH_MORE_BOOKS_SUCCESS,
+  page: number,
+) => {
+  const hasMorePages = books.length < 6 ? false : true;
+  return { type, books, page, hasMorePages };
 };
 
 export const fetchBooksFail = (error: any) => {
   return { type: FETCH_BOOKS_FAIL, error: error };
 };
 
-export const fetchBooksRequest = (userLon: number, userLat: number) => {
+export const fetchBooksRequest = (
+  userLon: number,
+  userLat: number,
+  page: number,
+) => {
   return async (dispatch: Dispatch) => {
     // todo need to have state that the request has started. skipped for now
     dispatch(fetchBooksStart());
@@ -93,7 +103,7 @@ export const fetchBooksRequest = (userLon: number, userLat: number) => {
 
     const path = '/books';
     return axios
-      .get(path, { params: { userLon, userLat, userId } })
+      .get(path, { params: { userLon, userLat, userId, page } })
       .then(response => {
         const { message, books } = response.data;
         const booksStructured: BookShape[] = books.map((book: any) => {
@@ -110,7 +120,8 @@ export const fetchBooksRequest = (userLon: number, userLat: number) => {
             interestReqError: null,
           };
         });
-        dispatch(fetchBooksSuccess(booksStructured));
+        const type = page === 1 ? FETCH_BOOKS_SUCCESS : FETCH_MORE_BOOKS_SUCCESS;
+        dispatch(fetchBooksSuccess(booksStructured, type, page));
       })
       .catch(err => {
         // todo need to check what kind of possible errors we can get???
@@ -118,7 +129,7 @@ export const fetchBooksRequest = (userLon: number, userLat: number) => {
       });
   };
 };
-
+// TODO Fix this when we fix USER page
 export const fetchProfileBooksRequest = (profileId: string) => {
   return async (dispatch: Dispatch) => {
     // todo need to have state that the request has started. skipped for now
@@ -146,6 +157,7 @@ export const fetchProfileBooksRequest = (profileId: string) => {
             interestReqError: null,
           };
         });
+        // TODO This should be changed when I fix the user page
         dispatch(fetchBooksSuccess(booksStructured));
       })
       .catch(err => {
