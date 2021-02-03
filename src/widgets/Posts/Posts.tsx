@@ -128,8 +128,8 @@ export const Posts = (): JSX.Element => {
   // TODO is PageLayout a HOC? I don't think it is anymore
   return (
     <FlexContainer justify="center" alignItems="center">
-      {loading && <PostShimmerComponent />}
-      {!loading && (
+      {loading && books.length === 0 && <PostShimmerComponent />}
+      {books.length > 0 && (
         <>
           {posts}
           {hasMorePages && <PostShimmerComponent ref={shimmerRef} />}
