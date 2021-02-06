@@ -7,7 +7,7 @@ import { AddBook, BookType } from 'modules/AddBook';
 import { authRequest } from 'redux/actions/auth';
 import { addABookRequest } from 'redux/actions/book';
 import { FormikHelpers } from 'formik';
-import { NeedAuth } from 'widgets/NeedAuth';
+import { NeedAuth } from 'modules/NeedAuth';
 import { Location } from 'widgets/Location';
 
 export const ModalManager = (): JSX.Element => {

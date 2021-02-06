@@ -43,7 +43,7 @@ PostShimmerComponent.displayName = 'PostShimmerComponent';
 
 export const Posts = (): JSX.Element => {
   const dispatch = useDispatch();
-  const { socketInterest } = useContext(SocketIoContext);
+  const { socketIo } = useContext(SocketIoContext);
   const { setPopupType, setShowModal } = useContext(RootContext) as RootContextProps;
   const shimmerRef = useRef<HTMLDivElement | null>(null);
 
@@ -100,10 +100,10 @@ export const Posts = (): JSX.Element => {
             bookOwnerName={bookOwnerName}
             imgUrl={`${process.env.NEXT_PUBLIC_IMAGE_URL}${bookPicturePath}`}
             onInterestButtonClick={() => {
-              if (isSignedIn && socketInterest !== undefined && userName) {
+              if (isSignedIn && socketIo !== undefined && userName) {
                 dispatch(
                   expressInterestStart(
-                    socketInterest,
+                    socketIo,
                     userName,
                     bookId,
                     bookName,

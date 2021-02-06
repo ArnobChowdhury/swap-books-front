@@ -1,51 +1,42 @@
-export const SendIcon = ({ width, height }: { width: string; height: string }) => {
+export const SendIcon = ({
+  width = '32',
+  height = '32',
+}: {
+  width: string;
+  height: string;
+}) => {
   return (
     <svg
-      version="1.1"
-      id="Capa_1"
-      xmlns="http://www.w3.org/2000/svg"
-      x="0px"
-      y="0px"
-      viewBox="0 0 512 512"
-      xmlSpace="preserve"
+      className="icon line"
       width={width}
       height={height}
+      id="send"
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
     >
       <path
-        style={{ fill: '#FE9923' }}
-        d="M120,339.226V496.99c0,14.374,18.38,20.499,26.997,8.994l77.065-102.729l23.492-12.037L501.919,31.57
-
-	l4.731-27.966l-41.329,22.839L119.916,326.288L120,339.226z"
+        d="M5.44,4.15l14.65,7a1,1,0,0,1,0,1.8l-14.65,7A1,1,0,0,1,4.1,18.54l2.72-6.13a1.06,1.06,0,0,0,0-.82L4.1,5.46A1,1,0,0,1,5.44,4.15Z"
+        style={{
+          fill: 'none',
+          stroke: '#50586C',
+          strokeLinecap: 'round',
+          strokeLinejoin: 'round',
+          strokeWidth: '2px',
+        }}
+      ></path>
+      <line
+        x1="7"
+        y1="12"
+        x2="11"
+        y2="12"
+        style={{
+          fill: 'none',
+          stroke: '#50586C',
+          strokeLinecap: 'round',
+          strokeLinejoin: 'round',
+          strokeWidth: '2px',
+        }}
       />
-
-      <path
-        style={{ fill: '#FEDB41' }}
-        d="M491.237,1.196C490.56,1.467,8.933,243.282,8.279,243.61c-10.503,5.251-11.149,20.024-1.157,26.191
-
-	l112.866,69.463L506.638,3.642l0,0C502.707,0.236,497.062-1.218,491.237,1.196z"
-      />
-
-      <path
-        style={{ fill: '#FFCC33' }}
-        d="M507.165,4.34c-0.216-0.211-0.287-0.538-0.515-0.736l-2.935,4.16l-279.653,395.49l173.071,106.509
-
-	c9.014,5.541,20.68,0.258,22.603-10.005l92.021-481.989C512.735,12.682,510.673,7.755,507.165,4.34z"
-      />
-      <g></g>
-      <g></g>
-      <g></g>
-      <g></g>
-      <g></g>
-      <g></g>
-      <g></g>
-      <g></g>
-      <g></g>
-      <g></g>
-      <g></g>
-      <g></g>
-      <g></g>
-      <g></g>
-      <g></g>
     </svg>
   );
 };

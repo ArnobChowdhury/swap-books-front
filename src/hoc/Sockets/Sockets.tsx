@@ -19,13 +19,11 @@ import {
 } from 'socketTypes';
 
 interface SocketIoInterestContextProps {
-  socketInterest: SocketIOClient.Socket | undefined;
-  socketMsg: SocketIOClient.Socket | undefined;
+  socketIo: SocketIOClient.Socket | undefined;
 }
 
 const SocketInitialValue: SocketIoInterestContextProps = {
-  socketInterest: undefined,
-  socketMsg: undefined,
+  socketIo: undefined,
 };
 
 export const SocketIoContext = createContext(SocketInitialValue);
@@ -40,57 +38,49 @@ export const SocketIO = ({ children }: SocketIOInterestInterface) => {
 
   const dispatch = useDispatch();
 
-  let socketInterest: SocketIOClient.Socket | undefined = undefined;
-  let socketMsg: SocketIOClient.Socket | undefined = undefined;
+  let socketIo: SocketIOClient.Socket | undefined = undefined;
 
   if (isSignedIn) {
     // interest socket
-    socketInterest = io(`${process.env.NEXT_PUBLIC_SOCKET_URL}/interest`, {
+    socketIo = io(`${process.env.NEXT_PUBLIC_SOCKET_URL}`, {
       query: `token=${accessToken}`,
     });
 
-    socketInterest.on(
+    socketIo.on(
       SOCKET_RECEIVE_LATEST_NOTIFICATION,
       (notification: NotificationResponseShape) => {
         dispatch(addLatestNotification(notification));
       },
     );
 
-    socketInterest.on(
+    socketIo.on(
       SOCKET_RECEIVE_INTEREST,
       ({ bookId, isInterested }: { bookId: string; isInterested: boolean }) => {
         dispatch(expressInterestSuccess(bookId, isInterested));
       },
     );
-    socketInterest.on(SOCKET_DISCONNECT, () => {
+
+    socketIo.on(SOCKET_DISCONNECT, () => {
       // eslint-disable-next-line
       console.log('disconnecting, do something');
     });
 
-    // message socket
-    socketMsg = io(`${process.env.NEXT_PUBLIC_SOCKET_URL}/messages`, {
-      query: `token=${accessToken}`,
-    });
-    socketMsg.on(SOCKET_RECEIVE_MSG, (messages: MessageResponseProps[]) => {
+    socketIo.on(SOCKET_RECEIVE_MSG, (messages: MessageResponseProps[]) => {
       dispatch(fetchCurrentRoomMsgsSuccess(messages));
     });
   }
 
   useEffect(() => {
-    if (isSignedIn && socketInterest && userId) {
+    if (isSignedIn && socketIo && userId) {
       // TODO: Can be got rid of once interest expression is also through rooms
-      socketInterest.emit(SOCKET_JOIN_INTEREST_SOCKET, { userId });
+      socketIo.emit(SOCKET_JOIN_INTEREST_SOCKET, { userId });
     }
-    if (isSignedIn && socketMsg && userId) {
-      dispatch(fetchActiveRoomsReq(socketMsg, userId));
+    if (isSignedIn && socketIo && userId) {
+      dispatch(fetchActiveRoomsReq(socketIo, userId));
     }
   });
 
   const { Provider: SocketIoProvider } = SocketIoContext;
 
-  return (
-    <SocketIoProvider value={{ socketInterest, socketMsg }}>
-      {children}
-    </SocketIoProvider>
-  );
+  return <SocketIoProvider value={{ socketIo }}>{children}</SocketIoProvider>;
 };

@@ -1,23 +1,22 @@
 import { useRef, useEffect, useContext } from 'react';
+import { UserIcon } from 'ui-kits/UserIcon';
 import {
   NavBarContainer,
   NavBarWrapper,
   NavButton,
   DropDown,
-  UserIcon,
   Count,
 } from './NavBar.styles';
 import { Notifications } from 'widgets/Notifications';
+import { Message } from 'widgets/Message';
 import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
-// import { RootState } from 'redux/reducers';
 import { HomeIcon } from 'assets/HomeIcon';
 import { ChatIcon } from 'assets/ChatIcon';
 import { NotificationIcon } from 'assets/NotificationIcon';
 import { RootState } from 'redux/reducers';
 import { authLogout } from 'redux/actions/auth';
 import { getNotificationsRequest } from 'redux/actions/notifications';
-import { getUserInitials } from 'utils/index';
 import { RootContext, RootContextProps, ContentType } from 'contexts/RootContext';
 import { useWindowSize } from 'hooks/useWindowSize';
 import { largeScreen } from 'mediaConfig';
@@ -33,11 +32,6 @@ export const NavBar = (): JSX.Element => {
   const rootContext = useContext(RootContext);
   const { contentType, setContentType } = rootContext as RootContextProps;
 
-  let userInitials;
-  if (userName) {
-    userInitials = getUserInitials(userName as string);
-  }
-
   // refs
   const dropDownRef = useRef<HTMLDivElement | null>(null);
   const navigationRef = useRef<HTMLDivElement | null>(null);
@@ -46,7 +40,7 @@ export const NavBar = (): JSX.Element => {
 
   // close modal on click outside the dropDown and on escape key anywhere
   useEffect(() => {
-    if (width > largeScreen) {
+    if (width >= largeScreen) {
       const handleMouseClickOutsideDropDown = (e: MouseEvent) => {
         if (
           !dropDownRef.current?.contains(e.target as Node) &&
@@ -94,6 +88,7 @@ export const NavBar = (): JSX.Element => {
       {width >= largeScreen && (
         <DropDown isSelected={contentType !== 'Posts'} ref={dropDownRef}>
           {contentType === 'Notifications' && <Notifications />}
+          {contentType === 'Messages' && <Message />}
         </DropDown>
       )}
       <NavBarWrapper>
@@ -132,7 +127,7 @@ export const NavBar = (): JSX.Element => {
             dispatch(authLogout());
           }}
         >
-          <UserIcon>{userInitials}</UserIcon>
+          <UserIcon userName={userName ? userName : ''} />
         </NavButton>
       </NavBarWrapper>
     </NavBarContainer>

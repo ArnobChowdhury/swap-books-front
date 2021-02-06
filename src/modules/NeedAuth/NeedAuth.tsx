@@ -17,7 +17,7 @@ export const NeedAuth = (): JSX.Element => {
 
   return (
     <>
-      <Paragraph fontLarge centerAlign fontNormal>
+      <Paragraph fontSize="large" centerAlign fontWeight="regular">
         You need to Sign up or Log in to add a book or to show interest to swap a
         book.
       </Paragraph>

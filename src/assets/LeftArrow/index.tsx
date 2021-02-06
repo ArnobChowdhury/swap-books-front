@@ -1,41 +1,32 @@
-export const LeftArrow = ({ width, height }: { width: string; height: string }) => {
+export const LeftArrow = ({
+  width = '20',
+  height = '20',
+}: {
+  width?: string;
+  height?: string;
+}) => {
   return (
     <svg
-      version="1.1"
-      id="Capa_1"
-      xmlns="http://www.w3.org/2000/svg"
-      x="0px"
-      y="0px"
       width={width}
       height={height}
-      viewBox="0 0 443.52 443.52"
+      viewBox="0 0 20 20"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
     >
-      <g>
-        <g>
-          <path
-            d="M143.492,221.863L336.226,29.129c6.663-6.664,6.663-17.468,0-24.132c-6.665-6.662-17.468-6.662-24.132,0l-204.8,204.8
-
-			c-6.662,6.664-6.662,17.468,0,24.132l204.8,204.8c6.78,6.548,17.584,6.36,24.132-0.42c6.387-6.614,6.387-17.099,0-23.712
-
-			L143.492,221.863z"
-          />
-        </g>
-      </g>
-      <g></g>
-      <g></g>
-      <g></g>
-      <g></g>
-      <g></g>
-      <g></g>
-      <g></g>
-      <g></g>
-      <g></g>
-      <g></g>
-      <g></g>
-      <g></g>
-      <g></g>
-      <g></g>
-      <g></g>
+      <path
+        d="M8.33333 15.8334L2.5 10L8.33333 4.16669"
+        stroke="#50586C"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M2.5 10H17.5"
+        stroke="#50586C"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
     </svg>
   );
 };

@@ -1,6 +1,6 @@
-import { StyledButton } from './PostOption.styles';
 import { MouseEvent, useState } from 'react';
 import { PostOptionIcon } from 'assets/PostOptionIcon';
+import { IconOnlyButton } from 'ui-kits/IconOnlyButton';
 
 interface Option {
   name: string;
@@ -25,9 +25,9 @@ export const PostOption: React.FC<PostOptionProps> = ({
 
   return (
     <>
-      <StyledButton onClick={() => setShowOptions(!showOptions)}>
+      <IconOnlyButton onClick={() => setShowOptions(!showOptions)}>
         <PostOptionIcon width="20" height="20" />
-      </StyledButton>
+      </IconOnlyButton>
       {showOptions && optionsAsListItem}
     </>
   );

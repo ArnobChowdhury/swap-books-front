@@ -1,5 +1,6 @@
 import { HYDRATE } from 'next-redux-wrapper';
 import { AnyAction } from 'redux';
+import { NotificationBookShape } from 'redux/reducers/notifications';
 
 import {
   FETCH_ACTIVE_ROOMS_START,
@@ -26,12 +27,16 @@ export interface ActiveRoomsResponse {
   roomId: string;
   roomMateName: string;
   roomMateId: string;
+  roomMateInterests: NotificationBookShape[];
+  userInterests: NotificationBookShape[];
 }
 
 export interface MessageProps {
   roomId?: string | null; // a single active conversation (roomId in the backend)
   roomMateName: string | null;
   roomMateId: string | null;
+  roomMateInterests: NotificationBookShape[];
+  userInterests: NotificationBookShape[];
   messages: MessageResponseProps[] | null;
   messageLoading: boolean;
   messageError: Error | null;
@@ -45,6 +50,8 @@ export const initialState: MessageProps = {
   roomId: null,
   roomMateName: null,
   roomMateId: null,
+  roomMateInterests: [],
+  userInterests: [],
   messages: null,
   messageLoading: false,
   messageError: null,
@@ -63,6 +70,8 @@ const reducer = (state = initialState, action: AnyAction): MessageProps => {
     roomId,
     roomMateName,
     roomMateId,
+    roomMateInterests,
+    userInterests,
   } = action;
   switch (action.type) {
     case HYDRATE:
@@ -99,6 +108,8 @@ const reducer = (state = initialState, action: AnyAction): MessageProps => {
         roomId,
         roomMateName,
         roomMateId,
+        roomMateInterests,
+        userInterests,
       };
     case OPEN_MESSAGE_BOX:
       return {

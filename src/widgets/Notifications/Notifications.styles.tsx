@@ -5,13 +5,15 @@ export const Wrapper = styled.div`
   width: 100%;
   overflow-y: scroll;
   background: ${({ theme }) => theme.colorWhite};
-  padding: ${({ theme }) => theme.spaceTen};
+  padding: ${({ theme }) =>
+    `${theme.spaceEight} ${theme.spaceEight} ${theme.spaceFour} ${theme.spaceEight}`};
   margin-top: ${({ theme }) => theme.spaceFive};
   box-shadow: ${({ theme }) => theme.boxShadow};
 
   @media (min-width: ${largeScreen}px) {
     max-height: 345px;
-    padding: ${({ theme }) => `0 ${theme.spaceSix} 0 ${theme.spaceTwo}`};
+    padding: ${({ theme }) =>
+      `${theme.spaceSix} ${theme.spaceSix} 0 ${theme.spaceSix}`};
     margin-top: 0;
     box-shadow: none;
   }

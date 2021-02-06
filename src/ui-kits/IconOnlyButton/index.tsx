@@ -1,0 +1,1 @@
+export { IconOnlyButton } from './IconOnlyButton';

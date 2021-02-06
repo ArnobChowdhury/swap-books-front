@@ -6,6 +6,7 @@ import {
 } from '../../../socketTypes';
 import { Dispatch } from 'redux';
 import { MessageResponseProps } from '../../reducers/message';
+import { NotificationBookShape } from 'redux/reducers/notifications';
 
 import {
   FETCH_ROOM_MESSAGE_START,
@@ -43,12 +44,16 @@ export const setCurrentRoom = (
   roomId: string,
   roomMateName: string,
   roomMateId: string,
+  roomMateInterests: NotificationBookShape[],
+  userInterests: NotificationBookShape[],
 ) => {
   return {
     type: SET_MESSAGE_BOX,
     roomId,
     roomMateName,
     roomMateId,
+    roomMateInterests,
+    userInterests,
   };
 };
 
@@ -67,12 +72,16 @@ export const fetchActiveRoomsReq = (
           roomId: mostCurrentRoomId,
           roomMateName: mostCurrentRoomMateName,
           roomMateId: mostCurrentRoomMateId,
+          roomMateInterests: mostCurrentRoomMateInterests,
+          userInterests: userInterestsAgainstRoomMate,
         } = activeRooms[0];
         dispatch(
           setCurrentRoom(
             mostCurrentRoomId,
             mostCurrentRoomMateName,
             mostCurrentRoomMateId,
+            mostCurrentRoomMateInterests,
+            userInterestsAgainstRoomMate,
           ),
         );
       }

@@ -108,24 +108,13 @@ export const NavButton = styled.button<{
 export const DropDown = styled.div<{ isSelected: boolean }>`
   position: absolute;
   top: 70px;
-  right: -6px;
+  right: ${({ theme }) => theme.spaceSix};
   display: ${({ isSelected }) => (isSelected ? 'block' : 'none')};
   width: 400px;
   background: ${({ theme }) => theme.colorWhite};
-  box-shadow: ${({ theme }) => theme.boxShadow};
-  padding: ${({ theme: { spaceFour } }) => `${spaceFour} 0 0 ${spaceFour}`};
-`;
-
-export const UserIcon = styled.div`
-  width: 32px;
-  height: 32px;
-  border: ${({ theme }) => `2px solid ${theme.colorTextPrimary}`};
-  border-radius: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: ${({ theme }) => theme.colorTextPrimary};
-  font-family: inherit;
+  box-shadow: 0 4px 8px 6px rgb(100, 100, 100, 0.1);
+  border-radius: ${({ theme }) => theme.borderRadius};
+  overflow: hidden;
 `;
 
 export const Count = styled.div<{ buttonType: 'Messages' | 'Notification' }>`

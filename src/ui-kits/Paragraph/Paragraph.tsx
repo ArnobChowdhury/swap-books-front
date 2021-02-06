@@ -4,22 +4,22 @@ import { PTag } from './Paragraph.styles';
 export interface ParagraphProps {
   children: ReactNode;
   marginBelow?: string;
-  fontLarge?: boolean;
-  fontNormal?: boolean;
+  fontSize?: 'large' | 'small' | 'superSmall';
+  fontWeight?: 'regular' | 'light';
   centerAlign?: boolean;
 }
 
 export const Paragraph = ({
   children,
   marginBelow,
-  fontLarge,
+  fontSize,
   centerAlign,
-  fontNormal,
+  fontWeight,
 }: ParagraphProps): JSX.Element => {
   return (
     <PTag
-      fontNormal={fontNormal}
-      fontLarge={fontLarge}
+      fontWeight={fontWeight}
+      fontSize={fontSize}
       centerAlign={centerAlign}
       marginBelow={marginBelow}
     >

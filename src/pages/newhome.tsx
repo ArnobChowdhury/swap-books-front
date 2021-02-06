@@ -6,6 +6,7 @@ import { ModalManager } from 'widgets/ModalManager';
 import { Posts } from 'widgets/Posts';
 import { NavBar } from 'widgets/NavBar';
 import { Notifications } from 'widgets/Notifications';
+import { Message } from 'widgets/Message';
 import { useWindowSize } from 'hooks';
 import { largeScreen } from 'mediaConfig';
 import { useSelector } from 'react-redux';
@@ -32,8 +33,9 @@ const Root: NextPage = (): JSX.Element => {
       {isSignedIn && width < largeScreen && <NavBar />}
 
       <PageLayout>
-        {(width > largeScreen || contentType === 'Posts') && <Posts />}
+        {(width >= largeScreen || contentType === 'Posts') && <Posts />}
         {width < largeScreen && contentType === 'Notifications' && <Notifications />}
+        {width < largeScreen && contentType === 'Messages' && <Message />}
       </PageLayout>
     </>
   );

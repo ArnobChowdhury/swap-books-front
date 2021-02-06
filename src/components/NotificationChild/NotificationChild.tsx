@@ -53,7 +53,7 @@ export const NotificationChild = ({
   };
 
   const LastModified = React.useCallback(() => {
-    return <LastModifiedStyled>{lastModified}</LastModifiedStyled>;
+    return <LastModifiedStyled> &#8210; {lastModified}</LastModifiedStyled>;
   }, [lastModified]);
 
   return (

@@ -17,7 +17,7 @@ export interface NotificationParticipantShape {
   interestSeen: boolean;
 }
 
-interface NotificationBookShape {
+export interface NotificationBookShape {
   bookName: string;
   bookId: string;
 }

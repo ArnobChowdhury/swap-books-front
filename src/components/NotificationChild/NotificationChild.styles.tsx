@@ -49,5 +49,5 @@ export const ChatButton = styled.button`
 
 export const LastModifiedStyled = styled.span`
   font-size: ${({ theme }) => theme.fontSuperSmall};
-  margin-left: ${({ theme }) => theme.spaceThree};
+  display: inline-block;
 `;

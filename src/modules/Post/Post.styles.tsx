@@ -1,7 +1,7 @@
 import styled, { keyframes } from 'styled-components';
 
 export const PostWrapper = styled.div<{ topMargin?: boolean }>`
-  ${({ theme, topMargin }) => topMargin && `margin-top: ${theme.spaceFive}`}
+  ${({ theme, topMargin }) => topMargin && `margin-top: ${theme.spaceFive}`};
   background: ${({ theme }) => theme.colorWhite};
   padding-top: ${({ theme }) => theme.spaceSeven};
   width: 100%;
@@ -11,6 +11,7 @@ export const PostWrapper = styled.div<{ topMargin?: boolean }>`
   position: relative;
   background: ${({ theme }) => theme.colorWhite};
   margin-top: ${({ theme, topMargin }) => topMargin && theme.spaceFive};
+  border-radius: ${({ theme }) => theme.borderRadius};
 
   @media (min-width: 450px) {
     width: 250px;
@@ -23,17 +24,6 @@ export const PostOwner = styled.div`
   align-items: center;
   margin-bottom: ${({ theme }) => theme.spaceSeven};
   padding: ${({ theme }) => `0 ${theme.spaceSeven}`};
-`;
-
-export const PostOwnerImg = styled.div`
-  height: 3.5rem;
-  width: 3.5rem;
-  border-radius: 50%;
-  border: 2px solid ${({ theme }) => theme.colorTextPrimary};
-  margin-right: ${({ theme }) => theme.spaceFive};
-  display: flex;
-  justify-content: center;
-  align-items: center;
 `;
 
 // TODO delete if not used
