@@ -13,7 +13,7 @@ import { useDispatch } from 'react-redux';
 import {
   SOCKET_RECEIVE_INTEREST,
   SOCKET_DISCONNECT,
-  SOCKET_JOIN_INTEREST_SOCKET,
+  SOCKET_INIT_SOCKET,
   SOCKET_RECEIVE_MSG,
   SOCKET_RECEIVE_LATEST_NOTIFICATION,
 } from 'socketTypes';
@@ -73,10 +73,10 @@ export const SocketIO = ({ children }: SocketIOInterestInterface) => {
   useEffect(() => {
     if (isSignedIn && socketIo && userId) {
       // TODO: Can be got rid of once interest expression is also through rooms
-      socketIo.emit(SOCKET_JOIN_INTEREST_SOCKET, { userId });
+      socketIo.emit(SOCKET_INIT_SOCKET);
     }
     if (isSignedIn && socketIo && userId) {
-      dispatch(fetchActiveRoomsReq(socketIo, userId));
+      dispatch(fetchActiveRoomsReq(socketIo));
     }
   });
 

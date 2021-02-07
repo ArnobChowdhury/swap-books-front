@@ -57,36 +57,31 @@ export const setCurrentRoom = (
   };
 };
 
-export const fetchActiveRoomsReq = (
-  socket: SocketIOClient.Socket,
-  userId: string,
-) => (dispatch: Dispatch) => {
+export const fetchActiveRoomsReq = (socket: SocketIOClient.Socket) => (
+  dispatch: Dispatch,
+) => {
   dispatch(fetchActiveRoomsStart());
-  return socket.emit(
-    SOCKET_JOIN_ALL_ROOMS,
-    userId,
-    (activeRooms: ActiveRoomsResponse[]) => {
-      dispatch(fetchActiveRoomsSuccess(activeRooms));
-      if (activeRooms.length) {
-        const {
-          roomId: mostCurrentRoomId,
-          roomMateName: mostCurrentRoomMateName,
-          roomMateId: mostCurrentRoomMateId,
-          roomMateInterests: mostCurrentRoomMateInterests,
-          userInterests: userInterestsAgainstRoomMate,
-        } = activeRooms[0];
-        dispatch(
-          setCurrentRoom(
-            mostCurrentRoomId,
-            mostCurrentRoomMateName,
-            mostCurrentRoomMateId,
-            mostCurrentRoomMateInterests,
-            userInterestsAgainstRoomMate,
-          ),
-        );
-      }
-    },
-  );
+  return socket.emit(SOCKET_JOIN_ALL_ROOMS, (activeRooms: ActiveRoomsResponse[]) => {
+    dispatch(fetchActiveRoomsSuccess(activeRooms));
+    if (activeRooms.length) {
+      const {
+        roomId: mostCurrentRoomId,
+        roomMateName: mostCurrentRoomMateName,
+        roomMateId: mostCurrentRoomMateId,
+        roomMateInterests: mostCurrentRoomMateInterests,
+        userInterests: userInterestsAgainstRoomMate,
+      } = activeRooms[0];
+      dispatch(
+        setCurrentRoom(
+          mostCurrentRoomId,
+          mostCurrentRoomMateName,
+          mostCurrentRoomMateId,
+          mostCurrentRoomMateInterests,
+          userInterestsAgainstRoomMate,
+        ),
+      );
+    }
+  });
 };
 
 export const openMessageBox = () => {
