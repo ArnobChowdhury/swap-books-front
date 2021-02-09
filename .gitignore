@@ -2,3 +2,10 @@ node_modules
 .next
 /coverage/
 /.vscode
+.env
+.env.development
+todo.md
+todo.js
+rest.http
+images
+build

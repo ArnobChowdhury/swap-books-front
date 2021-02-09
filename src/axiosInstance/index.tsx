@@ -3,7 +3,7 @@ import { store } from '../redux/store';
 import { authLogout, authSuccess } from '../redux/actions/auth';
 
 const instance = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_BASE_URL,
+  baseURL: process.env.BASE_URL,
   timeout: 10000,
 });
 

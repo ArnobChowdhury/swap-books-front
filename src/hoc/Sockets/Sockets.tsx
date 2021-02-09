@@ -42,7 +42,7 @@ export const SocketIO = ({ children }: SocketIOInterestInterface) => {
 
   if (isSignedIn) {
     // interest socket
-    socketIo = io(`${process.env.NEXT_PUBLIC_SOCKET_URL}`, {
+    socketIo = io(`${process.env.SOCKET_URL}`, {
       query: `token=${accessToken}`,
     });
 

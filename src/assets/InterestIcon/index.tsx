@@ -3,9 +3,9 @@ export const InterestIcon = ({
   height = '30',
   hasBodyColor = false,
 }: {
-  width: string;
-  height: string;
-  hasBodyColor: boolean;
+  width?: string;
+  height?: string;
+  hasBodyColor?: boolean;
 }) => {
   return (
     <svg

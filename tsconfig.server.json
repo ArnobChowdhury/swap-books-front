@@ -1,0 +1,16 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "target": "ES5",
+    "module": "commonjs",
+    "outDir": "build",
+    "noEmit": false,
+    "rootDir": "server",
+    "strict": true,
+    "baseUrl": "server",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true
+  },
+  "exclude": ["node-modules", "tests"],
+  "include": ["server"]
+}

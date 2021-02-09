@@ -1,105 +1,44 @@
-import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/router';
+import React, { useContext } from 'react';
 import { NextPage } from 'next';
-import { Input } from '../components/Input';
-import { Button } from 'ui-kits/Button';
-import { Modal } from 'ui-kits/Modal';
-import { Spinner } from 'ui-kits/Spinner';
-import { Formik, Form } from 'formik';
-import { useSelector, useDispatch } from 'react-redux';
+import { TopBar } from 'widgets/TopBar';
+import { ActivityBar } from 'widgets/ActivityBar';
+import { ModalManager } from 'widgets/ModalManager';
+import { Posts } from 'widgets/Posts';
+import { NavBar } from 'widgets/NavBar';
+import { Notifications } from 'widgets/Notifications';
+import { Message } from 'widgets/Message';
+import { useWindowSize } from 'hooks';
+import { largeScreen } from 'mediaConfig';
+import { useSelector } from 'react-redux';
 import { RootState } from 'redux/reducers';
-import * as Yup from 'yup';
-import { authRequest } from 'redux/actions/auth';
+import { PageLayout } from 'hoc/PageLayout';
+import { RootContext, RootContextProps } from 'contexts/RootContext';
 
-// TODO
-/**
- * 1. Make the input boxes smaller in width (Maybe follow instagram's form login page). Plnr: on hold: 1
- */
-const Home: NextPage = (): JSX.Element => {
-  const [showLoginForm, setShowLoginForm] = useState<boolean>(false);
-
-  const router = useRouter();
-
-  // todo learn more about useSelector for Redux
-  const accessToken = useSelector<RootState, string | null>(
-    (s: RootState) => s.auth.accessToken,
-  );
-  const isLoading = useSelector<RootState, boolean | null>(
-    (s: RootState) => s.auth.loading,
-  );
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    if (accessToken) {
-      router.push('/books');
-    }
-  }, [accessToken]);
-
-  const closeModal = (): void => {
-    if (!isLoading) {
-      showLoginForm && setShowLoginForm(false);
-    }
-  };
+const Root: NextPage = (): JSX.Element => {
+  const rootContext = useContext(RootContext);
+  const { contentType } = rootContext as RootContextProps;
+  const { width } = useWindowSize();
+  const { accessToken } = useSelector((s: RootState) => s.auth);
+  const isSignedIn = Boolean(accessToken);
 
   return (
     <>
-      <Landing loginOnClick={(): void => setShowLoginForm(!showLoginForm)} />
-      {showLoginForm && (
-        <Modal onClick={closeModal} modalContentPadding="4rem 5rem 4rem 3rem">
-          {isLoading && <Spinner />}
-          <div>
-            <Formik
-              initialValues={{
-                email: '',
-                password: '',
-              }}
-              validationSchema={Yup.object({
-                email: Yup.string()
-                  .email('Invalid email address')
-                  .required('Required'),
-                password: Yup.string()
-                  .required('Password needed')
-                  .min(8, 'Too short. Needs to have min. 8 characters')
-                  .matches(/[a-zA-Z]/, 'Password can only contain latin letters'),
-              })}
-              onSubmit={({ email, password }, { setSubmitting }) => {
-                dispatch(authRequest(email, password, setSubmitting));
-              }}
-            >
-              <Form>
-                <Input
-                  type="email"
-                  labelText="Email"
-                  name="email"
-                  placeholder="Please type your email address"
-                  isRequired={true}
-                  inputFieldFullWidth={true}
-                  labelMinWidth="10rem"
-                  marginBottom="1rem"
-                />
-                <Input
-                  type="password"
-                  labelText="Password"
-                  name="password"
-                  placeholder="Choose a strong password"
-                  isRequired={true}
-                  inputFieldFullWidth={true}
-                  labelMinWidth="10rem"
-                  marginBottom="1rem"
-                />
-                <div style={{ minWidth: '10rem', display: 'inline-block' }} />
-                <div style={{ display: 'inline-block' }}>
-                  <Button color="pink" type="submit" asButtonTag>
-                    Log in
-                  </Button>
-                </div>
-              </Form>
-            </Formik>
-          </div>
-        </Modal>
-      )}
+      <ModalManager />
+      <TopBar
+        navBar={width >= largeScreen && <NavBar />}
+        // activityBar={width >= mediumScreen && <ActivityBar />}
+        activityBar={<ActivityBar />}
+      />
+      {/* {width < mediumScreen && <ActivityBar />} */}
+      {isSignedIn && width < largeScreen && <NavBar />}
+
+      <PageLayout>
+        {(width >= largeScreen || contentType === 'Posts') && <Posts />}
+        {width < largeScreen && contentType === 'Notifications' && <Notifications />}
+        {width < largeScreen && contentType === 'Messages' && <Message />}
+      </PageLayout>
     </>
   );
 };
 
-export default Home;
+export default Root;

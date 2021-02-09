@@ -11,7 +11,7 @@ import { fetchProfileBooksRequest, expressInterestStart } from 'redux/actions/bo
 
 const UserPage: NextPage = (): JSX.Element => {
   const dispatch = useDispatch();
-  const { socketInterest } = useContext(SocketIoContext);
+  const { socketIo } = useContext(SocketIoContext);
 
   const { profileName, profileLoading } = useSelector(
     (store: RootState) => store.profile,
@@ -54,15 +54,16 @@ const UserPage: NextPage = (): JSX.Element => {
         bookOwnerId: string,
         bookOwnerName: string,
       ) => {
-        if (socketInterest != undefined && userName) {
+        if (socketIo != undefined && userName) {
           dispatch(
             expressInterestStart(
-              socketInterest,
+              socketIo,
               userName,
               bookId,
               bookName,
               bookOwnerId,
               bookOwnerName,
+              false,
             ),
           );
         }
