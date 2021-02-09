@@ -55,7 +55,7 @@ export const User = ({
           bookName={bookName}
           bookAuthor={bookAuthor}
           bookOwnerName={bookOwnerName}
-          imgUrl={`${process.env.NEXT_PUBLIC_IMAGE_URL}${bookPicturePath}`}
+          imgUrl={`${process.env.NEXT_PUBLIC_BASE_URL}${bookPicturePath}`}
           isInterested={userIsInterested}
           key={bookId}
           // todo availableIn ??? really? Let's remove this soon

@@ -98,7 +98,7 @@ export const Posts = (): JSX.Element => {
             bookName={bookName}
             bookAuthor={bookAuthor}
             bookOwnerName={bookOwnerName}
-            imgUrl={`${process.env.NEXT_PUBLIC_IMAGE_URL}${bookPicturePath}`}
+            imgUrl={`${process.env.NEXT_PUBLIC_BASE_URL}${bookPicturePath}`}
             onInterestButtonClick={() => {
               if (isSignedIn && socketIo !== undefined && userName) {
                 dispatch(

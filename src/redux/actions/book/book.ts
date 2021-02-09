@@ -158,7 +158,7 @@ export const fetchProfileBooksRequest = (profileId: string) => {
           };
         });
         // TODO This should be changed when I fix the user page
-        dispatch(fetchBooksSuccess(booksStructured));
+        //dispatch(fetchBooksSuccess(booksStructured));
       })
       .catch(err => {
         // todo need to check what kind of possible errors we can get???

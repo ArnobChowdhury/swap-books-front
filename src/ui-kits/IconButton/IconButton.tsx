@@ -8,7 +8,7 @@ export interface IconButtonProps {
   buttonText?: string;
   fontSize?: number;
   disabled?: boolean;
-  requestOngoing: boolean;
+  requestOngoing?: boolean;
 }
 
 export const IconButton: React.FC<IconButtonProps> = ({
