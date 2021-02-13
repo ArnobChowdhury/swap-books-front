@@ -6,9 +6,9 @@ export const LayoutWrapper = styled.div`
   justify-content: center;
 `;
 
-export const PageContainer = styled.div`
+export const PageContainer = styled.div<{ largeTopMargin?: boolean }>`
   max-width: 600px;
-  margin-top: 103px;
+  margin-top: ${({ largeTopMargin }) => (largeTopMargin ? '103px' : '60px')};
   margin-bottom: 70px;
   width: 100%;
 

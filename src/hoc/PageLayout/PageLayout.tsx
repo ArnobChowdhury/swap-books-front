@@ -2,12 +2,16 @@ import { LayoutWrapper, PageContainer } from './PageLayout.styles';
 
 interface PageLayoutProps {
   children?: React.ReactNode;
+  largeTopMargin?: boolean;
 }
 
-export const PageLayout = ({ children }: PageLayoutProps): JSX.Element => {
+export const PageLayout = ({
+  children,
+  largeTopMargin,
+}: PageLayoutProps): JSX.Element => {
   return (
     <LayoutWrapper>
-      <PageContainer>{children}</PageContainer>
+      <PageContainer largeTopMargin={largeTopMargin}>{children}</PageContainer>
     </LayoutWrapper>
   );
 };

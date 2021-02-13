@@ -8,7 +8,7 @@ import { NavBar } from 'widgets/NavBar';
 import { Notifications } from 'widgets/Notifications';
 import { Message } from 'widgets/Message';
 import { useWindowSize } from 'hooks';
-import { largeScreen } from 'mediaConfig';
+import { largeScreen, mediumScreen } from 'mediaConfig';
 import { useSelector } from 'react-redux';
 import { RootState } from 'redux/reducers';
 import { PageLayout } from 'hoc/PageLayout';
@@ -27,12 +27,14 @@ const Root: NextPage = (): JSX.Element => {
       <TopBar
         navBar={width >= largeScreen && <NavBar />}
         // activityBar={width >= mediumScreen && <ActivityBar />}
-        activityBar={<ActivityBar />}
+        activityBar={
+          (width >= mediumScreen || contentType === 'Posts') && <ActivityBar />
+        }
       />
       {/* {width < mediumScreen && <ActivityBar />} */}
       {isSignedIn && width < largeScreen && <NavBar />}
 
-      <PageLayout>
+      <PageLayout largeTopMargin={contentType === 'Posts'}>
         {(width >= largeScreen || contentType === 'Posts') && <Posts />}
         {width < largeScreen && contentType === 'Notifications' && <Notifications />}
         {width < largeScreen && contentType === 'Messages' && <Message />}

@@ -1,17 +1,18 @@
 import styled from 'styled-components';
 import { largeScreen } from 'mediaConfig';
 
-export const MessageBoxContainer = styled.div<{ hasBoxShadow: boolean }>`
+export const MessageBoxContainer = styled.div<{ messageBoxIsOpen: boolean }>`
   margin-top: ${({ theme }) => theme.spaceFive};
   width: 100%;
-  height: 100%;
-  box-shadow: ${({ theme, hasBoxShadow }) => hasBoxShadow && theme.boxShadow};
+  box-shadow: ${({ theme }) => theme.boxShadow};
   position: relative;
   overflow: hidden;
+  height: ${({ messageBoxIsOpen }) =>
+    messageBoxIsOpen ? 'calc(100vh - 140px)' : 'auto'};
 
   @media (min-width: ${largeScreen}px) {
     margin-top: 0;
-    height: 480px;
+    max-height: 480px;
   }
 `;
 
@@ -70,7 +71,7 @@ export const MessageBox = styled.div<{ show: boolean }>`
 `;
 
 export const MessageContent = styled.div`
-  height: 88%;
+  height: calc(100% - 70px);
   width: 100%;
   position: relative;
   display: flex;
@@ -148,17 +149,15 @@ export const MessageContentMain = styled.div`
 `;
 
 export const MessageInputWrapper = styled.div`
-  height: 12%;
+  height: 70px;
   width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
   position: relative;
-  padding: ${({ theme }) => `0 ${theme.spaceTen} ${theme.spaceTen}`};
+  padding: ${({ theme }) =>
+    `${theme.spaceEight} ${theme.spaceTen} ${theme.spaceEight}`};
 `;
 
 export const MessageInput = styled.input`
-  height: 36px;
+  height: 100%;
   width: 100%;
   border: 2px solid #6f7992;
   padding: ${({ theme }) => theme.spaceFive};
@@ -177,7 +176,7 @@ export const MessageInput = styled.input`
 
 export const SendIconWrapper = styled.button`
   position: absolute;
-  top: 35%;
+  top: 50%;
   right: 28px;
   transform: translateY(-50%);
   cursor: pointer;
@@ -191,10 +190,6 @@ export const SendIconWrapper = styled.button`
 
   &:disabled {
     opacity: 0.5;
-  }
-
-  @media (min-width: ${largeScreen}px) {
-    top: 32%;
   }
 `;
 

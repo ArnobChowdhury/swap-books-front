@@ -166,7 +166,7 @@ export const Message = () => {
 
   return (
     <>
-      <MessageBoxContainer hasBoxShadow={messageBoxIsOpen}>
+      <MessageBoxContainer messageBoxIsOpen={messageBoxIsOpen}>
         <MessageListContainer>
           <SideMargin>
             <Header marginBelow={spaceThree}>Chats</Header>
