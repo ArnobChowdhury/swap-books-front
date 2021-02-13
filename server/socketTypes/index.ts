@@ -7,6 +7,8 @@ export const RECEIVE_INTEREST = 'receive interest';
 export const EXPRESS_INTEREST = 'express interest';
 
 export const JOIN_ALL_ROOMS = 'join all rooms';
+export const JOIN_SINGLE_ROOM = 'join single room';
+export const LEAVE_SINGLE_ROOM = 'leave single room';
 export const SEND_MSG = 'send msg';
 export const RECEIVE_MSG = 'receive msg';
 export const INIT_MSGS = 'init msgs';

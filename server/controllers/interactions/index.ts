@@ -1,1 +1,8 @@
-export { interactionController } from './interactions.controller';
+export {
+  initSocket,
+  initMsgs,
+  expressInterest,
+  joinAllRooms,
+  sendMsg,
+  socketDisconnect,
+} from './interactions.controller';

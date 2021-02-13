@@ -1,13 +1,17 @@
 import { useEffect } from 'react';
 import { createContext } from 'react';
-import io from 'socket.io-client';
+import { io, Socket } from 'socket.io-client';
 import { RootState } from 'redux/reducers';
 import { NotificationResponseShape } from 'redux/reducers/notifications';
-import { MessageResponseProps } from 'redux/reducers/message';
+import { MessageResponseProps, ActiveRoomsResponse } from 'redux/reducers/message';
 import { useSelector } from 'react-redux';
 import { expressInterestSuccess } from 'redux/actions/book';
 import { addLatestNotification } from 'redux/actions/notifications';
-import { fetchCurrentRoomMsgsSuccess } from 'redux/actions/message';
+import {
+  fetchCurrentRoomMsgsSuccess,
+  joinSingleRoom,
+  leaveSingleRoom,
+} from 'redux/actions/message';
 import { fetchActiveRoomsReq } from 'redux/actions/message';
 import { useDispatch } from 'react-redux';
 import {
@@ -16,10 +20,12 @@ import {
   SOCKET_INIT_SOCKET,
   SOCKET_RECEIVE_MSG,
   SOCKET_RECEIVE_LATEST_NOTIFICATION,
+  SOCKET_JOIN_SINGLE_ROOM,
+  SOCKET_LEAVE_SINGLE_ROOM,
 } from 'socketTypes';
 
 interface SocketIoInterestContextProps {
-  socketIo: SocketIOClient.Socket | undefined;
+  socketIo: Socket | undefined;
 }
 
 const SocketInitialValue: SocketIoInterestContextProps = {
@@ -38,12 +44,14 @@ export const SocketIO = ({ children }: SocketIOInterestInterface) => {
 
   const dispatch = useDispatch();
 
-  let socketIo: SocketIOClient.Socket | undefined = undefined;
+  let socketIo: Socket | undefined = undefined;
 
   if (isSignedIn) {
     // interest socket
-    socketIo = io(`${process.env.SOCKET_URL}`, {
-      query: `token=${accessToken}`,
+    socketIo = io(`${process.env.NEXT_PUBLIC_SOCKET_URL}`, {
+      extraHeaders: {
+        Authorization: `Bearer ${accessToken}`,
+      },
     });
 
     socketIo.on(
@@ -67,6 +75,15 @@ export const SocketIO = ({ children }: SocketIOInterestInterface) => {
 
     socketIo.on(SOCKET_RECEIVE_MSG, (messages: MessageResponseProps[]) => {
       dispatch(fetchCurrentRoomMsgsSuccess(messages));
+    });
+
+    socketIo.on(SOCKET_JOIN_SINGLE_ROOM, (room: ActiveRoomsResponse) => {
+      dispatch(joinSingleRoom(room));
+    });
+
+    socketIo.on(SOCKET_LEAVE_SINGLE_ROOM, (leaveRoomId: string) => {
+      console.log('leaveRoomId', leaveRoomId);
+      dispatch(leaveSingleRoom(leaveRoomId));
     });
   }
 

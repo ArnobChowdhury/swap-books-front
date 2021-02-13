@@ -11,4 +11,6 @@ export {
   fetchCurrentRoomMsgsFail,
   sendMsgToRoom,
   setCurrentRoom,
+  joinSingleRoom,
+  leaveSingleRoom,
 } from './message';

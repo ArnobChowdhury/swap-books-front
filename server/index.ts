@@ -3,19 +3,34 @@ import path from 'path';
 import cors from 'cors';
 import express, { Request, Response, NextFunction, Express } from 'express';
 import bodyParser from 'body-parser';
-import scktio from 'socket.io';
+import { Server } from 'socket.io';
 import { createServer } from 'http';
-import { HttpException } from './interface';
+import { HttpException, SocketDecoded } from './interface';
 import multer from 'multer';
 import morgan from 'morgan';
 import socketioJwt from 'socketio-jwt';
 import authRoutes from './routes/auth.route';
 import booksRoutes from './routes/books.route';
 import userRoutes from './routes/user.route';
-import { interactionController } from './controllers/interactions';
+import {
+  initSocket,
+  expressInterest,
+  joinAllRooms,
+  sendMsg,
+  initMsgs,
+  socketDisconnect,
+} from './controllers/interactions';
 import { mongoConnect, closeDb } from './utils/database';
 import { client as redisClient } from './utils/redis';
-import { CONNECT } from './socketTypes';
+import {
+  CONNECT,
+  INIT_SOCKET,
+  EXPRESS_INTEREST,
+  JOIN_ALL_ROOMS,
+  SEND_MSG,
+  INIT_MSGS,
+  DISCONNECT,
+} from './socketTypes';
 import { jwtVerify } from './middlewares/jwtVerify';
 
 const port = parseInt(process.env.PORT as string, 10) || 3000; // We might want to change it later
@@ -24,11 +39,18 @@ const app = next({ dev });
 const handle = app.getRequestHandler();
 
 const server = express();
+// const executeLater = (isocket: Server) => {
+//   setTimeout(() => {
+//     const m = isocket.sockets.sockets;
+//     console.log(m);
+//   }, 5000);
+// };
+
 app.prepare().then(() => {
   server.use(morgan('dev'));
   const HTTPServer = createServer(server);
-  // more sane options can be added
-  const io = scktio(HTTPServer, { maxHttpBufferSize: 10e5 }); // TODO update maxHttpBufferSize
+  // more sane options can be added to io server
+  const io = new Server(HTTPServer);
 
   io.use(
     socketioJwt.authorize({
@@ -36,8 +58,41 @@ app.prepare().then(() => {
       handshake: true,
     }),
   );
-  io.on(CONNECT, interactionController);
 
+  // io.on(CONNECT, interactionController);
+  io.on(CONNECT, (socket: SocketDecoded) => {
+    socket.on(INIT_SOCKET, async () => {
+      await initSocket(socket);
+      // todo add catch block
+    });
+
+    socket.on(EXPRESS_INTEREST, async bookInfo => {
+      await expressInterest(io, socket, bookInfo);
+      // todo add catch block
+    });
+
+    socket.on(JOIN_ALL_ROOMS, async cb => {
+      await joinAllRooms(socket, cb);
+      // todo add catch block
+    });
+
+    socket.on(SEND_MSG, async (msgInfo, cb) => {
+      await sendMsg(socket, msgInfo, cb);
+      // todo add catch block
+    });
+
+    socket.on(INIT_MSGS, async (room, cb) => {
+      await initMsgs(room, cb);
+      // todo add catch block
+    });
+
+    socket.on(DISCONNECT, async () => {
+      await socketDisconnect(socket);
+      // todo add catch block
+    });
+  });
+
+  // executeLater(io);
   // TODO Just in case we want to disconnect the user when logging out
   // io.sockets.connected['socketId'].disconnect()
 
@@ -84,10 +139,10 @@ app.prepare().then(() => {
   server.use('/books', booksRoutes);
   server.use('/user', userRoutes);
 
-  server.get('/newhome', (req, res) => {
-    // @ts-ignore
-    return app.render(req, res, '/newhome', req.query);
-  });
+  // server.get('/newhome', (req, res) => {
+  //   // @ts-ignore
+  //   return app.render(req, res, '/newhome', req.query);
+  // });
 
   server.all('*', (req, res) => {
     return handle(req, res);

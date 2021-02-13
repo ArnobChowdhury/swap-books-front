@@ -3,7 +3,7 @@ import { getDb, getDbClient } from '../../utils/database';
 import { sortMongoCollectionByTimeStamp } from '../../utils/general';
 
 const { ObjectId } = mongodb;
-interface MessageWithId extends Message {
+export interface MessageWithId extends Message {
   _id: mongodb.ObjectId;
 }
 
@@ -18,7 +18,13 @@ export default class Message {
 
   seen: boolean;
 
-  constructor(roomId: string, msg: string, fromId: string, toId: string, seen: boolean) {
+  constructor(
+    roomId: string,
+    msg: string,
+    fromId: string,
+    toId: string,
+    seen: boolean,
+  ) {
     this.roomId = new ObjectId(roomId);
     this.msg = msg;
     this.fromId = fromId;
@@ -53,7 +59,9 @@ export default class Message {
         session.abortTransaction();
       }
 
-      const recentSortedMessages = sortMongoCollectionByTimeStamp(recentMessagesFromDb);
+      const recentSortedMessages = sortMongoCollectionByTimeStamp(
+        recentMessagesFromDb,
+      );
       await session.commitTransaction();
       session.endSession();
       msgs = recentSortedMessages;
@@ -74,7 +82,9 @@ export default class Message {
       .toArray();
 
     // TODO the below function should be re-written since we're using it twice
-    const recentSortedMessages = sortMongoCollectionByTimeStamp(recentMessagesFromDb);
+    const recentSortedMessages = sortMongoCollectionByTimeStamp(
+      recentMessagesFromDb,
+    );
     return recentSortedMessages;
   }
 }

@@ -5,7 +5,7 @@ interface MongoCollection {
   _id: mongo.ObjectID;
 }
 
-interface Timestamp {
+export interface Timestamp {
   timestamp: number;
 }
 
@@ -37,4 +37,21 @@ export const isAMatchedRoom = (room: RoomWithLastModifiedAndID): boolean => {
     return true;
   }
   return false;
+};
+
+export const processRoomForUser = (
+  room: RoomWithLastModifiedAndID,
+  userId: string,
+) => {
+  const roomMateIndex = room.participants.findIndex(
+    participant => participant.userId.toHexString() !== userId,
+  );
+  const userIndex = roomMateIndex === 0 ? 1 : 0;
+  return {
+    roomId: room._id,
+    roomMateName: room.participants[roomMateIndex].userName,
+    roomMateId: room.participants[roomMateIndex].userId.toHexString(),
+    roomMateInterests: room.participants[userIndex].interests,
+    userInterests: room.participants[roomMateIndex].interests,
+  };
 };

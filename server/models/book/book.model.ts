@@ -109,7 +109,7 @@ export default class Book {
     bookOwnerName: string,
     userId: string,
     userName: string,
-  ): Promise<RoomWithLastModifiedAndID | undefined> {
+  ): Promise<RoomWithLastModifiedAndID> {
     const client = getDbClient();
     const usersCollection = client.db().collection('users');
     const booksCollection = client.db().collection('books');
@@ -117,7 +117,7 @@ export default class Book {
     const session = client.startSession();
 
     // todo skipping "transaction options" for now. Study later
-    let result;
+    let result: RoomWithLastModifiedAndID;
 
     try {
       await session.withTransaction(async () => {
@@ -198,6 +198,7 @@ export default class Book {
     } finally {
       session.endSession();
     }
+    // @ts-ignore
     return result;
   }
 
@@ -206,7 +207,7 @@ export default class Book {
     bookName: string,
     bookOwnerId: string,
     userId: string,
-  ): Promise<RoomWithLastModifiedAndID | undefined> {
+  ): Promise<RoomWithLastModifiedAndID> {
     const client = getDbClient();
     const usersCollection = client.db().collection('users');
     const booksCollection = client.db().collection('books');
@@ -216,7 +217,7 @@ export default class Book {
     const userIdAsMongoId = new ObjectId(userId);
     const bookOwnerIdAsMongoId = new ObjectId(bookOwnerId);
     const bookIdAsMongoId = new ObjectId(bookId);
-    let result;
+    let result: RoomWithLastModifiedAndID;
 
     try {
       await session.withTransaction(async () => {
@@ -251,6 +252,7 @@ export default class Book {
               lastModified: true,
             },
           },
+          { returnOriginal: false },
         );
         const { value } = updatedDoc;
         result = value;
@@ -258,6 +260,7 @@ export default class Book {
     } finally {
       session.endSession();
     }
+    // @ts-ignore
     return result;
   }
 

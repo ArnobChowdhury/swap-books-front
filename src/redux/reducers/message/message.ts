@@ -12,6 +12,8 @@ import {
   OPEN_MESSAGE_BOX,
   CLOSE_MESSAGE_BOX,
   SET_MESSAGE_BOX,
+  JOIN_SINGLE_ROOM,
+  LEAVE_SINGLE_ROOM,
 } from '../../actions/actionTypes';
 
 export interface MessageResponseProps {
@@ -72,7 +74,10 @@ const reducer = (state = initialState, action: AnyAction): MessageProps => {
     roomMateId,
     roomMateInterests,
     userInterests,
+    singleRoom,
+    leaveRoomId,
   } = action;
+
   switch (action.type) {
     case HYDRATE:
       return { ...state };
@@ -121,6 +126,31 @@ const reducer = (state = initialState, action: AnyAction): MessageProps => {
         ...state,
         messageBoxIsOpen: false,
       };
+
+    case JOIN_SINGLE_ROOM:
+      let newActiveRooms: ActiveRoomsResponse[] = [singleRoom];
+      if (state.activeRooms) {
+        newActiveRooms = newActiveRooms.concat(state.activeRooms);
+      }
+
+      return {
+        ...state,
+        activeRooms: newActiveRooms,
+      };
+
+    case LEAVE_SINGLE_ROOM:
+      const { activeRooms: actRooms } = state;
+      let newRooms: ActiveRoomsResponse[] = [];
+      if (actRooms) {
+        const existingRooms = [...actRooms];
+        newRooms = existingRooms.filter(room => room.roomId !== leaveRoomId);
+      }
+
+      return {
+        ...state,
+        activeRooms: newRooms,
+      };
+
     default:
       return state;
   }

@@ -4,7 +4,6 @@ import { mediumScreen, largeScreen } from 'mediaConfig';
 export const LayoutWrapper = styled.div`
   display: flex;
   justify-content: center;
-  height: 100vh;
 `;
 
 export const PageContainer = styled.div`

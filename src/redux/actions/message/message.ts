@@ -3,10 +3,12 @@ import {
   SOCKET_JOIN_ALL_ROOMS,
   SOCKET_SEND_MSG,
   SOCKET_INIT_MSGS,
+  SOCKET_JOIN_SINGLE_ROOM,
 } from '../../../socketTypes';
 import { Dispatch } from 'redux';
 import { MessageResponseProps } from '../../reducers/message';
 import { NotificationBookShape } from 'redux/reducers/notifications';
+import { Socket } from 'socket.io-client';
 
 import {
   FETCH_ROOM_MESSAGE_START,
@@ -18,6 +20,8 @@ import {
   OPEN_MESSAGE_BOX,
   CLOSE_MESSAGE_BOX,
   SET_MESSAGE_BOX,
+  JOIN_SINGLE_ROOM,
+  LEAVE_SINGLE_ROOM,
 } from './../actionTypes';
 
 export const fetchActiveRoomsStart = () => {
@@ -57,9 +61,7 @@ export const setCurrentRoom = (
   };
 };
 
-export const fetchActiveRoomsReq = (socket: SocketIOClient.Socket) => (
-  dispatch: Dispatch,
-) => {
+export const fetchActiveRoomsReq = (socket: Socket) => (dispatch: Dispatch) => {
   dispatch(fetchActiveRoomsStart());
   return socket.emit(SOCKET_JOIN_ALL_ROOMS, (activeRooms: ActiveRoomsResponse[]) => {
     dispatch(fetchActiveRoomsSuccess(activeRooms));
@@ -116,10 +118,7 @@ export const fetchCurrentRoomMsgsSuccess = (messages: MessageResponseProps[]) =>
   };
 };
 
-export const fetchCurrentRoomMsgsReq = (
-  socket: SocketIOClient.Socket,
-  roomId: string,
-) => {
+export const fetchCurrentRoomMsgsReq = (socket: Socket, roomId: string) => {
   return (dispatch: Dispatch) => {
     socket.emit(SOCKET_INIT_MSGS, roomId, (messages: MessageResponseProps[]) => {
       dispatch(fetchCurrentRoomMsgsSuccess(messages));
@@ -130,7 +129,7 @@ export const fetchCurrentRoomMsgsReq = (
 // sendMsg Start, success, failure this are not here
 
 export const sendMsgToRoom = (
-  socket: SocketIOClient.Socket,
+  socket: Socket,
   room: string,
   msg: string,
   userId: string,
@@ -145,5 +144,19 @@ export const sendMsgToRoom = (
         dispatch(fetchCurrentRoomMsgsSuccess(messages));
       },
     );
+  };
+};
+
+export const joinSingleRoom = (singleRoom: ActiveRoomsResponse) => {
+  return {
+    type: JOIN_SINGLE_ROOM,
+    singleRoom,
+  };
+};
+
+export const leaveSingleRoom = (leaveRoomId: string) => {
+  return {
+    type: LEAVE_SINGLE_ROOM,
+    leaveRoomId,
   };
 };
