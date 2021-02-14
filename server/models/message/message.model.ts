@@ -1,8 +1,8 @@
-import mongodb from 'mongodb';
+import mongodb, { ObjectId, InsertOneWriteOpResult } from 'mongodb';
 import { getDb, getDbClient } from '../../utils/database';
 import { sortMongoCollectionByTimeStamp } from '../../utils/general';
 
-const { ObjectId } = mongodb;
+// const { ObjectId } = mongodb;
 export interface MessageWithId extends Message {
   _id: mongodb.ObjectId;
 }
@@ -18,18 +18,22 @@ export default class Message {
 
   seen: boolean;
 
+  _id: ObjectId;
+
   constructor(
     roomId: string,
     msg: string,
     fromId: string,
     toId: string,
     seen: boolean,
+    id: string,
   ) {
     this.roomId = new ObjectId(roomId);
     this.msg = msg;
     this.fromId = fromId;
     this.toId = toId;
     this.seen = seen;
+    this._id = new ObjectId(id);
   }
 
   // TODO this method is unused and should be removed later
@@ -38,38 +42,9 @@ export default class Message {
     return db.collection('messages').insertOne(this);
   }
 
-  async saveMsgAndReturnLatest(): Promise<MessageWithId[] | undefined> {
-    const messageCollection = getDb().collection('messages');
-    const session = getDbClient().startSession();
-    session.startTransaction();
-
-    let msgs: MessageWithId[] = [];
-    try {
-      const { insertedCount } = await messageCollection.insertOne(this);
-      if (insertedCount !== 1) {
-        session.abortTransaction();
-      }
-
-      const recentMessagesFromDb = await messageCollection
-        .find<MessageWithId>({ roomId: this.roomId })
-        .sort({ _id: -1 })
-        .limit(20)
-        .toArray();
-      if (recentMessagesFromDb.length === 0) {
-        session.abortTransaction();
-      }
-
-      const recentSortedMessages = sortMongoCollectionByTimeStamp(
-        recentMessagesFromDb,
-      );
-      await session.commitTransaction();
-      session.endSession();
-      msgs = recentSortedMessages;
-    } catch (err) {
-      // eslint-disable-next-line
-      console.log(err);
-    }
-    return msgs;
+  async saveMsgAndReturn(): Promise<InsertOneWriteOpResult<Message>> {
+    const db = getDb();
+    return db.collection('messages').insertOne(this);
   }
 
   static async returnLatestMsgs(roomId: string): Promise<MessageWithId[]> {

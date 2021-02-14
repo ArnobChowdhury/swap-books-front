@@ -1,4 +1,5 @@
-import { ActiveRoomsResponse } from 'redux/reducers/message';
+import { ActiveRoomsResponse, MessageProps } from 'redux/reducers/message';
+import ObjectId from 'bson-objectid';
 import {
   SOCKET_JOIN_ALL_ROOMS,
   SOCKET_SEND_MSG,
@@ -22,6 +23,7 @@ import {
   SET_MESSAGE_BOX,
   JOIN_SINGLE_ROOM,
   LEAVE_SINGLE_ROOM,
+  ADD_ROOM_MESSAGE,
 } from './../actionTypes';
 
 export const fetchActiveRoomsStart = () => {
@@ -127,6 +129,13 @@ export const fetchCurrentRoomMsgsReq = (socket: Socket, roomId: string) => {
 };
 
 // sendMsg Start, success, failure this are not here
+export const addNewMsgToRoom = (newMsg: MessageResponseProps) => {
+  console.count('Got called');
+  return {
+    type: ADD_ROOM_MESSAGE,
+    newMsg,
+  };
+};
 
 export const sendMsgToRoom = (
   socket: Socket,
@@ -137,11 +146,13 @@ export const sendMsgToRoom = (
 ) => {
   return (dispatch: Dispatch) => {
     // TODO how to use dispatch we can do loading state that a msg is being sent
+    const msgId = new ObjectId().str;
     socket.emit(
       SOCKET_SEND_MSG,
-      { room, msg, userId, roomMateId },
-      (messages: MessageResponseProps[]) => {
-        dispatch(fetchCurrentRoomMsgsSuccess(messages));
+      { room, msg, userId, roomMateId, msgId },
+      (message: MessageResponseProps) => {
+        console.log('received msg', message);
+        dispatch(addNewMsgToRoom(message));
       },
     );
   };

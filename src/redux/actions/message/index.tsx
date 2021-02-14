@@ -13,4 +13,5 @@ export {
   setCurrentRoom,
   joinSingleRoom,
   leaveSingleRoom,
+  addNewMsgToRoom,
 } from './message';

@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { createContext } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { RootState } from 'redux/reducers';
@@ -8,7 +8,7 @@ import { useSelector } from 'react-redux';
 import { expressInterestSuccess } from 'redux/actions/book';
 import { addLatestNotification } from 'redux/actions/notifications';
 import {
-  fetchCurrentRoomMsgsSuccess,
+  addNewMsgToRoom,
   joinSingleRoom,
   leaveSingleRoom,
 } from 'redux/actions/message';
@@ -18,7 +18,7 @@ import {
   SOCKET_RECEIVE_INTEREST,
   SOCKET_DISCONNECT,
   SOCKET_INIT_SOCKET,
-  SOCKET_RECEIVE_MSG,
+  SOCKET_RECEIVE_NEW_MSG,
   SOCKET_RECEIVE_LATEST_NOTIFICATION,
   SOCKET_JOIN_SINGLE_ROOM,
   SOCKET_LEAVE_SINGLE_ROOM,
@@ -44,48 +44,58 @@ export const SocketIO = ({ children }: SocketIOInterestInterface) => {
 
   const dispatch = useDispatch();
 
-  let socketIo: Socket | undefined = undefined;
+  const [socketIo, setSocketIo] = useState<Socket | undefined>();
 
-  if (isSignedIn) {
-    // interest socket
-    socketIo = io(`${process.env.NEXT_PUBLIC_SOCKET_URL}`, {
-      extraHeaders: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
+  useEffect(() => {
+    if (isSignedIn) {
+      setSocketIo(
+        io(`${process.env.NEXT_PUBLIC_SOCKET_URL}`, {
+          extraHeaders: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }),
+      );
+    }
+    if (!isSignedIn && socketIo) {
+      socketIo.disconnect();
+    }
+  }, [isSignedIn]);
 
-    socketIo.on(
-      SOCKET_RECEIVE_LATEST_NOTIFICATION,
-      (notification: NotificationResponseShape) => {
-        dispatch(addLatestNotification(notification));
-      },
-    );
+  useEffect(() => {
+    if (socketIo) {
+      socketIo.on(
+        SOCKET_RECEIVE_LATEST_NOTIFICATION,
+        (notification: NotificationResponseShape) => {
+          dispatch(addLatestNotification(notification));
+        },
+      );
 
-    socketIo.on(
-      SOCKET_RECEIVE_INTEREST,
-      ({ bookId, isInterested }: { bookId: string; isInterested: boolean }) => {
-        dispatch(expressInterestSuccess(bookId, isInterested));
-      },
-    );
+      socketIo.on(
+        SOCKET_RECEIVE_INTEREST,
+        ({ bookId, isInterested }: { bookId: string; isInterested: boolean }) => {
+          dispatch(expressInterestSuccess(bookId, isInterested));
+        },
+      );
 
-    socketIo.on(SOCKET_DISCONNECT, () => {
-      // eslint-disable-next-line
-      console.log('disconnecting, do something');
-    });
+      socketIo.on(SOCKET_DISCONNECT, () => {
+        // eslint-disable-next-line
+        console.log('disconnecting, do something');
+      });
 
-    socketIo.on(SOCKET_RECEIVE_MSG, (messages: MessageResponseProps[]) => {
-      dispatch(fetchCurrentRoomMsgsSuccess(messages));
-    });
+      socketIo.on(SOCKET_RECEIVE_NEW_MSG, (message: MessageResponseProps) => {
+        dispatch(addNewMsgToRoom(message));
+      });
 
-    socketIo.on(SOCKET_JOIN_SINGLE_ROOM, (room: ActiveRoomsResponse) => {
-      dispatch(joinSingleRoom(room));
-    });
+      socketIo.on(SOCKET_JOIN_SINGLE_ROOM, (room: ActiveRoomsResponse) => {
+        dispatch(joinSingleRoom(room));
+      });
 
-    socketIo.on(SOCKET_LEAVE_SINGLE_ROOM, (leaveRoomId: string) => {
-      console.log('leaveRoomId', leaveRoomId);
-      dispatch(leaveSingleRoom(leaveRoomId));
-    });
-  }
+      socketIo.on(SOCKET_LEAVE_SINGLE_ROOM, (leaveRoomId: string) => {
+        console.log('leaveRoomId', leaveRoomId);
+        dispatch(leaveSingleRoom(leaveRoomId));
+      });
+    }
+  }, [socketIo]);
 
   useEffect(() => {
     if (isSignedIn && socketIo && userId) {

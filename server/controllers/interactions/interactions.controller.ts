@@ -5,7 +5,7 @@ import Room from '../../models/room';
 import {
   RECEIVE_LATEST_NOTIFICATION,
   RECEIVE_INTEREST,
-  RECEIVE_MSG,
+  RECEIVE_NEW_MSG,
   JOIN_SINGLE_ROOM,
   LEAVE_SINGLE_ROOM,
 } from '../../socketTypes';
@@ -204,26 +204,25 @@ interface SendMsgShape {
   msg: string;
   userId: string;
   roomMateId: string;
+  msgId: string;
 }
 
 export const sendMsg = async (
   socket: SocketDecoded,
-  { room, msg, userId, roomMateId }: SendMsgShape,
-  cb: (msgs: (MessageWithId & Timestamp)[] | undefined) => void,
+  { room, msg, userId, roomMateId, msgId }: SendMsgShape,
+  cb: (msgs: Message & Timestamp) => void,
 ) => {
-  const message = new Message(room, msg, userId, roomMateId, false);
+  const message = new Message(room, msg, userId, roomMateId, false, id);
   // TODO before storing a message in a room we need to store the latest message time to our Room db
-  const latestMsgsFromDb = await message.saveMsgAndReturnLatest();
+  const { ops } = await message.saveMsgAndReturn();
+  const [insertedDocument] = ops;
 
-  let latestMsgsWithTimeStamp;
-  if (latestMsgsFromDb !== undefined) {
-    latestMsgsWithTimeStamp = addTimestampToMongoCollection(latestMsgsFromDb);
-  }
+  const msgsWithTimeStamp = addTimestampToMongoCollection(insertedDocument);
 
-  socket.to(room).emit(RECEIVE_MSG, latestMsgsWithTimeStamp);
-  // FIXME error handling
+  socket.to(room).emit(RECEIVE_NEW_MSG, msgsWithTimeStamp);
+  // TODO error handling
 
-  cb(latestMsgsWithTimeStamp);
+  cb(msgsWithTimeStamp);
 };
 
 // Todo we might think of moving it to a GET method using Axios
@@ -235,7 +234,7 @@ export const initMsgs = async (
 
   let latestMsgsWithTimeStamp;
   if (latestMsgsFromDb !== undefined) {
-    latestMsgsWithTimeStamp = addTimestampToMongoCollection(latestMsgsFromDb);
+    latestMsgsWithTimeStamp = latestMsgsFromDb.map(addTimestampToMongoCollection);
   }
 
   cb(latestMsgsWithTimeStamp);

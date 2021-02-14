@@ -14,6 +14,7 @@ import {
   SET_MESSAGE_BOX,
   JOIN_SINGLE_ROOM,
   LEAVE_SINGLE_ROOM,
+  ADD_ROOM_MESSAGE,
 } from '../../actions/actionTypes';
 
 export interface MessageResponseProps {
@@ -76,6 +77,7 @@ const reducer = (state = initialState, action: AnyAction): MessageProps => {
     userInterests,
     singleRoom,
     leaveRoomId,
+    newMsg,
   } = action;
 
   switch (action.type) {
@@ -150,6 +152,14 @@ const reducer = (state = initialState, action: AnyAction): MessageProps => {
         ...state,
         activeRooms: newRooms,
       };
+
+    case ADD_ROOM_MESSAGE:
+      const { roomId: activeRoomId, messages: existingMessages } = state;
+      if (activeRoomId === newMsg.roomId) {
+        const newMessages = existingMessages === null ? [] : [...existingMessages];
+        newMessages.push(newMsg);
+        return { ...state, messages: newMessages };
+      }
 
     default:
       return state;

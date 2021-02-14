@@ -10,14 +10,10 @@ export interface Timestamp {
 }
 
 export const addTimestampToMongoCollection = <T extends MongoCollection>(
-  collections: T[],
-): (T & Timestamp)[] => {
-  const timestampAddedCollection = collections.map(collection => {
-    const timestamp = collection._id.getTimestamp().getTime();
-    return { ...collection, timestamp };
-  });
-
-  return timestampAddedCollection;
+  collection: T,
+): T & Timestamp => {
+  const timestamp = collection._id.getTimestamp().getTime();
+  return { ...collection, timestamp };
 };
 
 export const sortMongoCollectionByTimeStamp = <T extends MongoCollection>(
