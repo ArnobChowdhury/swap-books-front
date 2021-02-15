@@ -16,6 +16,8 @@ export default class Message {
 
   toId: string;
 
+  registered: boolean;
+
   seen: boolean;
 
   _id: ObjectId;
@@ -32,6 +34,7 @@ export default class Message {
     this.msg = msg;
     this.fromId = fromId;
     this.toId = toId;
+    this.registered = true;
     this.seen = seen;
     this._id = new ObjectId(id);
   }
@@ -62,4 +65,10 @@ export default class Message {
     );
     return recentSortedMessages;
   }
+
+  static setMsgAsSeen = (msgId: string) => {
+    const db = getDb();
+    const _id = new ObjectId(msgId);
+    return db.collection('messages').updateOne({ _id }, { $set: { seen: true } });
+  };
 }

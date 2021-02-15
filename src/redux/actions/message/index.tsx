@@ -14,4 +14,6 @@ export {
   joinSingleRoom,
   leaveSingleRoom,
   addNewMsgToRoom,
+  setAsSeenRequest,
+  setAsSeenSuccess,
 } from './message';

@@ -14,15 +14,19 @@ import {
   SET_MESSAGE_BOX,
   JOIN_SINGLE_ROOM,
   LEAVE_SINGLE_ROOM,
-  ADD_ROOM_MESSAGE,
+  ADD_ROOM_MESSAGE_PENDING,
+  ADD_ROOM_MESSAGE_SUCCESS,
+  SET_MESSAGE_AS_SEEN_SUCCESS,
 } from '../../actions/actionTypes';
 
 export interface MessageResponseProps {
   _id: string;
+  roomId: string;
   msg: string;
   fromId: string;
   toId: string;
-  timestamp: string;
+  timestamp: number;
+  registered: boolean;
   seen: boolean;
 }
 
@@ -78,6 +82,11 @@ const reducer = (state = initialState, action: AnyAction): MessageProps => {
     singleRoom,
     leaveRoomId,
     newMsg,
+    registeredMsgRoomId,
+    registeredMsgId,
+    registeredMsgTimestamp,
+    seenMsgRoomId,
+    seenMsgId,
   } = action;
 
   switch (action.type) {
@@ -153,12 +162,43 @@ const reducer = (state = initialState, action: AnyAction): MessageProps => {
         activeRooms: newRooms,
       };
 
-    case ADD_ROOM_MESSAGE:
+    case ADD_ROOM_MESSAGE_PENDING:
       const { roomId: activeRoomId, messages: existingMessages } = state;
       if (activeRoomId === newMsg.roomId) {
         const newMessages = existingMessages === null ? [] : [...existingMessages];
         newMessages.push(newMsg);
         return { ...state, messages: newMessages };
+      }
+
+    case ADD_ROOM_MESSAGE_SUCCESS:
+      const {
+        roomId: currentActiveRoomId,
+        messages: currentExistingMessages,
+      } = state;
+      if (currentActiveRoomId === registeredMsgRoomId) {
+        const newMessages =
+          currentExistingMessages === null ? [] : [...currentExistingMessages];
+        const l = newMessages.length;
+        for (let i = l - 1; i >= 0; i--) {
+          if (newMessages[i]._id === registeredMsgId) {
+            newMessages[i].registered = true;
+            newMessages[i].timestamp = registeredMsgTimestamp;
+            break;
+          }
+        }
+        return { ...state, messages: newMessages };
+      }
+
+    case SET_MESSAGE_AS_SEEN_SUCCESS:
+      const { roomId: msgOfTheRoomToBeSeen, messages: allMessages } = state;
+      if (msgOfTheRoomToBeSeen === seenMsgRoomId && allMessages) {
+        const transFormedMessages = allMessages.map(msg => {
+          if (msg._id === seenMsgId) {
+            msg.seen = true;
+          }
+          return msg;
+        });
+        return { ...state, messages: transFormedMessages };
       }
 
     default:

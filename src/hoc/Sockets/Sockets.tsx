@@ -11,6 +11,7 @@ import {
   addNewMsgToRoom,
   joinSingleRoom,
   leaveSingleRoom,
+  setAsSeenSuccess,
 } from 'redux/actions/message';
 import { fetchActiveRoomsReq } from 'redux/actions/message';
 import { useDispatch } from 'react-redux';
@@ -22,6 +23,7 @@ import {
   SOCKET_RECEIVE_LATEST_NOTIFICATION,
   SOCKET_JOIN_SINGLE_ROOM,
   SOCKET_LEAVE_SINGLE_ROOM,
+  SOCKET_SET_MSG_AS_SEEN,
 } from 'socketTypes';
 
 interface SocketIoInterestContextProps {
@@ -56,9 +58,17 @@ export const SocketIO = ({ children }: SocketIOInterestInterface) => {
         }),
       );
     }
+
     if (!isSignedIn && socketIo) {
       socketIo.disconnect();
     }
+    return () => {
+      console.log('Running clean up');
+      console.log('another test', socketIo);
+      if (socketIo) {
+        socketIo.disconnect();
+      }
+    };
   }, [isSignedIn]);
 
   useEffect(() => {
@@ -91,8 +101,11 @@ export const SocketIO = ({ children }: SocketIOInterestInterface) => {
       });
 
       socketIo.on(SOCKET_LEAVE_SINGLE_ROOM, (leaveRoomId: string) => {
-        console.log('leaveRoomId', leaveRoomId);
         dispatch(leaveSingleRoom(leaveRoomId));
+      });
+
+      socketIo.on(SOCKET_SET_MSG_AS_SEEN, (roomId: string, msgId: string) => {
+        dispatch(setAsSeenSuccess(roomId, msgId));
       });
     }
   }, [socketIo]);

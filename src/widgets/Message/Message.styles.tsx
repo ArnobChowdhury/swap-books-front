@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { largeScreen } from 'mediaConfig';
+import { largeScreen, mediumScreen } from 'mediaConfig';
 
 export const MessageBoxContainer = styled.div<{ messageBoxIsOpen: boolean }>`
   margin-top: ${({ theme }) => theme.spaceFive};
@@ -143,9 +143,9 @@ export const MessageContentMain = styled.div`
   width: 100%;
   padding: ${({ theme }) => `${theme.spaceFive} ${theme.spaceTen}`};
   display: flex;
-  flex-direction: column;
   overflow-y: auto;
   height: 100%;
+  flex-wrap: wrap;
 `;
 
 export const MessageInputWrapper = styled.div`
@@ -159,7 +159,7 @@ export const MessageInputWrapper = styled.div`
 export const MessageInput = styled.input`
   height: 100%;
   width: 100%;
-  border: 2px solid #6f7992;
+  border: 2px solid #9198a8;
   padding: ${({ theme }) => theme.spaceFive};
   border-radius: 3px;
   font-family: inherit;
@@ -194,17 +194,31 @@ export const SendIconWrapper = styled.button`
 `;
 
 export const SingleChat = styled.div<{ own: boolean }>`
-  padding: ${({ theme }) => theme.spaceFour};
-  background: ${({ theme, own }) => (own ? theme.colorBG : theme.colorTextPrimary)};
-  font-size: ${({ theme }) => theme.fontSmall};
-  color: ${({ theme, own }) => (own ? theme.colorTextPrimary : theme.colorWhite)};
-  font-weight: 400;
-  align-self: ${({ own }) => (own ? 'flex-end' : 'flex-start')};
-  border-radius: ${({ theme }) => theme.borderRadius};
-  max-width: 240px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-
+  flex-basis: 100%;
+  display: flex;
+  justify-content: ${({ own }) => (own ? 'flex-end' : 'flex-start')};
+  align-items: center;
   &:not(:last-child) {
     margin-bottom: ${({ theme }) => theme.spaceFive};
   }
+`;
+
+export const SingleChatText = styled.div<{ own: boolean }>`
+  color: ${({ theme, own }) => (own ? theme.colorTextPrimary : theme.colorWhite)};
+  background: ${({ theme, own }) => (own ? theme.colorBG : theme.colorTextPrimary)};
+  font-size: ${({ theme }) => theme.fontSmall};
+  font-weight: 400;
+  padding: ${({ theme }) => `${theme.spaceFour} ${theme.spaceEight}`};
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  border-radius: ${({ theme }) => theme.borderRadius};
+  max-width: 260px;
+
+  @media (min-width: ${mediumScreen}px) {
+    max-width: 400px;
+  }
+
+  @media (min-width: ${largeScreen}px) {
+    max-width: 240px;
+  }
+  ${({ own, theme }) => own && `margin-left: ${theme.spaceFour}`}
 `;

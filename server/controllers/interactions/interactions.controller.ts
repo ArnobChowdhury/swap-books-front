@@ -1,4 +1,4 @@
-import { Server, Socket } from 'socket.io';
+import { Server } from 'socket.io';
 import { SocketDecoded } from '../../interface';
 import Book from '../../models/book';
 import Room from '../../models/room';
@@ -8,6 +8,7 @@ import {
   RECEIVE_NEW_MSG,
   JOIN_SINGLE_ROOM,
   LEAVE_SINGLE_ROOM,
+  SET_MSG_AS_SEEN,
 } from '../../socketTypes';
 import Message, { MessageWithId } from '../../models/message';
 import { Timestamp } from '../../utils/general';
@@ -210,9 +211,9 @@ interface SendMsgShape {
 export const sendMsg = async (
   socket: SocketDecoded,
   { room, msg, userId, roomMateId, msgId }: SendMsgShape,
-  cb: (msgs: Message & Timestamp) => void,
+  cb: (registeredMsg: { _id: string; timestamp: number }) => void,
 ) => {
-  const message = new Message(room, msg, userId, roomMateId, false, id);
+  const message = new Message(room, msg, userId, roomMateId, false, msgId);
   // TODO before storing a message in a room we need to store the latest message time to our Room db
   const { ops } = await message.saveMsgAndReturn();
   const [insertedDocument] = ops;
@@ -222,7 +223,10 @@ export const sendMsg = async (
   socket.to(room).emit(RECEIVE_NEW_MSG, msgsWithTimeStamp);
   // TODO error handling
 
-  cb(msgsWithTimeStamp);
+  cb({
+    _id: insertedDocument._id.toHexString(),
+    timestamp: msgsWithTimeStamp.timestamp,
+  });
 };
 
 // Todo we might think of moving it to a GET method using Axios
@@ -245,4 +249,15 @@ export const socketDisconnect = async (socket: SocketDecoded) => {
     decoded_token: { aud },
   } = socket;
   await delSocketIdFromRedis(aud);
+};
+
+export const setMsgAsSeen = async (
+  socket: SocketDecoded,
+  roomId: string,
+  msgId: string,
+  cb: () => void,
+) => {
+  await Message.setMsgAsSeen(msgId);
+  socket.to(roomId).emit(SET_MSG_AS_SEEN, roomId, msgId);
+  cb();
 };

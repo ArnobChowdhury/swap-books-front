@@ -23,10 +23,12 @@ import {
   MessageContentMain,
   SendIconWrapper,
   SingleChat,
+  SingleChatText,
 } from './Message.styles';
 import { SendIcon } from 'assets/SendIcon';
 import { LeftArrow } from 'assets/LeftArrow';
 import { DownArrow } from 'assets/DownArrow';
+import { SingleChatStatusIcon } from 'assets/SingleChatStatusIcon';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   openMessageBox,
@@ -34,6 +36,7 @@ import {
   fetchCurrentRoomMsgsReq,
   sendMsgToRoom,
   setCurrentRoom,
+  setAsSeenRequest,
 } from 'redux/actions/message';
 import { RootState } from 'redux/reducers';
 import { SocketIoContext } from 'hoc/Sockets';
@@ -119,10 +122,22 @@ export const Message = () => {
   let messagesList: JSX.Element[] = [];
   if (messages && messages.length > 0) {
     messagesList = messages.map((message: MessageResponseProps) => {
-      const { msg, fromId, _id } = message;
+      const { msg, fromId, _id, registered, seen } = message;
+      const own = fromId === userId;
       return (
-        <SingleChat own={fromId === userId} key={_id}>
-          {msg}
+        <SingleChat
+          own={own}
+          key={_id}
+          {...(!own && !seen && { 'data-msgid': _id })}
+        >
+          {own && (
+            <SingleChatStatusIcon
+              width="18"
+              height="18"
+              status={seen ? 'seen' : registered ? 'registered' : 'sending'}
+            />
+          )}
+          <SingleChatText own={fromId === userId}>{msg}</SingleChatText>
         </SingleChat>
       );
     });
@@ -164,70 +179,120 @@ export const Message = () => {
     .map(interest => interest.bookName)
     .join(', ');
 
+  const inputRef = useRef<HTMLInputElement | null>(null);
+  const [inputHasFocus, setInputHasFocus] = useState<boolean>(false);
+  useEffect(() => {
+    if (inputRef.current && messageBoxIsOpen) {
+      inputRef.current.focus();
+      setInputHasFocus(true);
+    }
+  }, [messageBoxIsOpen]);
+
+  const msgBoxRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    if (msgBoxRef.current) {
+      const nodes = document.querySelectorAll('div[data-msgid]');
+      const intersectionObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+          if (
+            entry.isIntersecting &&
+            msgBoxRef.current?.contains(document.activeElement)
+          ) {
+            const msgId = (entry.target as HTMLElement).dataset.msgid;
+            console.log(msgId);
+            // @ts-ignore
+            if (window.requestIdleCallback) {
+              // @ts-ignore
+              window.requestIdleCallback(() => {
+                if (socketIo && roomId && msgId) {
+                  dispatch(setAsSeenRequest(socketIo, roomId, msgId));
+                }
+              });
+            } else {
+              if (socketIo && roomId && msgId) {
+                dispatch(setAsSeenRequest(socketIo, roomId, msgId));
+              }
+            }
+            // dispatch a request
+            observer.unobserve(entry.target);
+          }
+        });
+      });
+      nodes.forEach(node => {
+        intersectionObserver.observe(node);
+      });
+
+      return () => {
+        intersectionObserver.disconnect();
+      };
+    }
+  }, [messages]);
+
   return (
-    <>
-      <MessageBoxContainer messageBoxIsOpen={messageBoxIsOpen}>
-        <MessageListContainer>
-          <SideMargin>
-            <Header marginBelow={spaceThree}>Chats</Header>
-          </SideMargin>
-          <MessageListUL>{matchesList}</MessageListUL>
-        </MessageListContainer>
-        <MessageBox show={messageBoxIsOpen}>
-          <MessageContent>
-            <MessageContentTop>
-              <IconOnlyButton size={32} onClick={() => dispatch(closeMessageBox())}>
-                <LeftArrow />
-              </IconOnlyButton>
-              <MsgPartnerInfo>
-                <MsgPartnerName>
-                  <UserIcon hasRightMargin userName={activeRoomMateName || ''} />
-                  {activeRoomMateName}
-                </MsgPartnerName>
-                <MutualInterests showBottomMargin={showInterestForThisRoom}>
-                  Mutual Interests
-                  <ShowInterestsButton
-                    rotateOneEighty={showInterestForThisRoom}
-                    onClick={() =>
-                      setShowInterestForThisRoom(!showInterestForThisRoom)
-                    }
-                  >
-                    <DownArrow width="10" height="10" />
-                  </ShowInterestsButton>
-                </MutualInterests>
-                <InterestContainer show={showInterestForThisRoom}>
-                  <Paragraph
-                    fontSize="superSmall"
-                    fontWeight="regular"
-                    marginBelow={spaceThree}
-                  >
-                    <strong>Your interests:</strong> {userInterestsAsString}{' '}
-                  </Paragraph>
-                  <Paragraph fontSize="superSmall" fontWeight="regular">
-                    <strong>{activeRoomMateName}&apos;s interests:</strong>{' '}
-                    {roomMateInterestsAsString}
-                  </Paragraph>
-                </InterestContainer>
-              </MsgPartnerInfo>
-            </MessageContentTop>
-            <MessageContentMain ref={msgsBoxRef}>
-              {messagesList && messagesList.length > 0 && messagesList}
-              {(!messagesList || messagesList.length === 0) && 'Jare jare ja'}
-            </MessageContentMain>
-          </MessageContent>
-          <MessageInputWrapper>
-            <MessageInput
-              type="text"
-              value={msg}
-              onChange={e => setMsg(e.currentTarget.value)}
-              onKeyUp={e => handleMsgEnter(e)}
-            />
-            <SendIconWrapper disabled={msg === ''} onClick={handleMsgEnter}>
-              <SendIcon width="25" height="50" />
-            </SendIconWrapper>
-          </MessageInputWrapper>
-        </MessageBox>
-      </MessageBoxContainer>
-    </>
+    <MessageBoxContainer messageBoxIsOpen={messageBoxIsOpen}>
+      <MessageListContainer>
+        <SideMargin>
+          <Header marginBelow={spaceThree}>Chats</Header>
+        </SideMargin>
+        <MessageListUL>{matchesList}</MessageListUL>
+      </MessageListContainer>
+      {/**
+        @ts-ignore*/}
+      <MessageBox show={messageBoxIsOpen} tabIndex="0" ref={msgBoxRef}>
+        <MessageContent>
+          <MessageContentTop>
+            <IconOnlyButton size={32} onClick={() => dispatch(closeMessageBox())}>
+              <LeftArrow />
+            </IconOnlyButton>
+            <MsgPartnerInfo>
+              <MsgPartnerName>
+                <UserIcon hasRightMargin userName={activeRoomMateName || ''} />
+                {activeRoomMateName}
+              </MsgPartnerName>
+              <MutualInterests showBottomMargin={showInterestForThisRoom}>
+                Mutual Interests
+                <ShowInterestsButton
+                  rotateOneEighty={showInterestForThisRoom}
+                  onClick={() =>
+                    setShowInterestForThisRoom(!showInterestForThisRoom)
+                  }
+                >
+                  <DownArrow width="10" height="10" />
+                </ShowInterestsButton>
+              </MutualInterests>
+              <InterestContainer show={showInterestForThisRoom}>
+                <Paragraph
+                  fontSize="superSmall"
+                  fontWeight="regular"
+                  marginBelow={spaceThree}
+                >
+                  <strong>Your interests:</strong> {userInterestsAsString}{' '}
+                </Paragraph>
+                <Paragraph fontSize="superSmall" fontWeight="regular">
+                  <strong>{activeRoomMateName}&apos;s interests:</strong>{' '}
+                  {roomMateInterestsAsString}
+                </Paragraph>
+              </InterestContainer>
+            </MsgPartnerInfo>
+          </MessageContentTop>
+          <MessageContentMain ref={msgsBoxRef}>
+            {messagesList && messagesList.length > 0 && messagesList}
+            {(!messagesList || messagesList.length === 0) && 'Jare jare ja'}
+          </MessageContentMain>
+        </MessageContent>
+        <MessageInputWrapper>
+          <MessageInput
+            type="text"
+            value={msg}
+            onChange={e => setMsg(e.currentTarget.value)}
+            onKeyUp={e => handleMsgEnter(e)}
+            ref={inputRef}
+          />
+          <SendIconWrapper disabled={msg === ''} onClick={handleMsgEnter}>
+            <SendIcon width="25" height="50" />
+          </SendIconWrapper>
+        </MessageInputWrapper>
+      </MessageBox>
+    </MessageBoxContainer>
   );
 };

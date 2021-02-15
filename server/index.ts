@@ -19,6 +19,7 @@ import {
   sendMsg,
   initMsgs,
   socketDisconnect,
+  setMsgAsSeen,
 } from './controllers/interactions';
 import { mongoConnect, closeDb } from './utils/database';
 import { client as redisClient } from './utils/redis';
@@ -29,6 +30,7 @@ import {
   JOIN_ALL_ROOMS,
   SEND_MSG,
   INIT_MSGS,
+  SET_MSG_AS_SEEN,
   DISCONNECT,
 } from './socketTypes';
 import { jwtVerify } from './middlewares/jwtVerify';
@@ -83,6 +85,11 @@ app.prepare().then(() => {
 
     socket.on(INIT_MSGS, async (room, cb) => {
       await initMsgs(room, cb);
+      // todo add catch block
+    });
+
+    socket.on(SET_MSG_AS_SEEN, async (roomId, msgId, cb) => {
+      await setMsgAsSeen(socket, roomId, msgId, cb);
       // todo add catch block
     });
 

@@ -5,4 +5,5 @@ export {
   joinAllRooms,
   sendMsg,
   socketDisconnect,
+  setMsgAsSeen,
 } from './interactions.controller';

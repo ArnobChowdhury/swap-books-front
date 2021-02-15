@@ -4,7 +4,7 @@ import {
   SOCKET_JOIN_ALL_ROOMS,
   SOCKET_SEND_MSG,
   SOCKET_INIT_MSGS,
-  SOCKET_JOIN_SINGLE_ROOM,
+  SOCKET_SET_MSG_AS_SEEN,
 } from '../../../socketTypes';
 import { Dispatch } from 'redux';
 import { MessageResponseProps } from '../../reducers/message';
@@ -23,7 +23,9 @@ import {
   SET_MESSAGE_BOX,
   JOIN_SINGLE_ROOM,
   LEAVE_SINGLE_ROOM,
-  ADD_ROOM_MESSAGE,
+  ADD_ROOM_MESSAGE_PENDING,
+  ADD_ROOM_MESSAGE_SUCCESS,
+  SET_MESSAGE_AS_SEEN_SUCCESS,
 } from './../actionTypes';
 
 export const fetchActiveRoomsStart = () => {
@@ -130,10 +132,22 @@ export const fetchCurrentRoomMsgsReq = (socket: Socket, roomId: string) => {
 
 // sendMsg Start, success, failure this are not here
 export const addNewMsgToRoom = (newMsg: MessageResponseProps) => {
-  console.count('Got called');
   return {
-    type: ADD_ROOM_MESSAGE,
+    type: ADD_ROOM_MESSAGE_PENDING,
     newMsg,
+  };
+};
+
+export const addNewMsgToRoomSuccess = (
+  registeredMsgRoomId: string,
+  registeredMsgId: string,
+  registeredMsgTimestamp: number,
+) => {
+  return {
+    type: ADD_ROOM_MESSAGE_SUCCESS,
+    registeredMsgRoomId,
+    registeredMsgId,
+    registeredMsgTimestamp,
   };
 };
 
@@ -146,13 +160,26 @@ export const sendMsgToRoom = (
 ) => {
   return (dispatch: Dispatch) => {
     // TODO how to use dispatch we can do loading state that a msg is being sent
-    const msgId = new ObjectId().str;
+    const msgObjectId = new ObjectId();
+    const msgId = msgObjectId.str;
+    dispatch(
+      addNewMsgToRoom({
+        _id: msgId,
+        msg,
+        fromId: userId,
+        toId: roomMateId,
+        timestamp: new Date().getTime(),
+        registered: false,
+        seen: false,
+        roomId: room,
+      }),
+    );
     socket.emit(
       SOCKET_SEND_MSG,
       { room, msg, userId, roomMateId, msgId },
-      (message: MessageResponseProps) => {
-        console.log('received msg', message);
-        dispatch(addNewMsgToRoom(message));
+      (registeredMsg: { _id: string; timestamp: number }) => {
+        const { _id, timestamp } = registeredMsg;
+        dispatch(addNewMsgToRoomSuccess(room, _id, timestamp));
       },
     );
   };
@@ -170,4 +197,20 @@ export const leaveSingleRoom = (leaveRoomId: string) => {
     type: LEAVE_SINGLE_ROOM,
     leaveRoomId,
   };
+};
+
+export const setAsSeenSuccess = (seenMsgRoomId: string, seenMsgId: string) => {
+  return {
+    type: SET_MESSAGE_AS_SEEN_SUCCESS,
+    seenMsgRoomId,
+    seenMsgId,
+  };
+};
+
+export const setAsSeenRequest = (socket: Socket, roomId: string, msgId: string) => (
+  dispatch: Dispatch,
+) => {
+  socket.emit(SOCKET_SET_MSG_AS_SEEN, roomId, msgId, () => {
+    dispatch(setAsSeenSuccess(roomId, msgId));
+  });
 };

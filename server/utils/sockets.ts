@@ -6,6 +6,11 @@ export const setSocketIdToRedis = (
   userId: string,
 ): Promise<unknown> => {
   return new Promise((resolve, reject) => {
+    /**
+     * TODO for socket
+     * For multiple device sign-in we need to keep socketIds in a set.
+     * We will iterate through the set and delete the socket that has been logging out
+     */
     redisClient.SET(`socket:${userId}`, socketId, (err, reply) => {
       redis.print(err, reply);
       if (err) {
