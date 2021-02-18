@@ -62,23 +62,15 @@ export const Message = () => {
 
   const { userId } = useSelector((store: RootState) => store.auth);
 
-  const handleMsgItemClick = (
-    roomId: string,
-    roomMateId: string,
-    roomMateName: string,
-    roomMateInterests: NotificationBookShape[],
-    userInterests: NotificationBookShape[],
-  ) => {
+  const handleMsgItemClick = (room: {
+    roomId: string;
+    roomMateId: string;
+    roomMateName: string;
+    roomMateInterests: NotificationBookShape[];
+    userInterests: NotificationBookShape[];
+  }) => {
     dispatch(openMessageBox());
-    dispatch(
-      setCurrentRoom(
-        roomId,
-        roomMateName,
-        roomMateId,
-        roomMateInterests,
-        userInterests,
-      ),
-    );
+    dispatch(setCurrentRoom(room));
   };
 
   useEffect(() => {
@@ -103,13 +95,13 @@ export const Message = () => {
       return (
         <MessageListItem
           onClick={() =>
-            handleMsgItemClick(
+            handleMsgItemClick({
               roomId,
               roomMateId,
               roomMateName,
               roomMateInterests,
               userInterests,
-            )
+            })
           }
           key={roomMateId}
         >

@@ -63,6 +63,7 @@ export const NavBar = (): JSX.Element => {
           !dropDownRef.current?.contains(e.target as Node) &&
           !messageButtonRef.current?.contains(e.target as Node) &&
           !notificationButtonRef.current?.contains(e.target as Node) &&
+          !(e.target as HTMLElement).classList.contains('chat-button') &&
           contentType !== 'Posts'
         ) {
           setContentType('Posts');

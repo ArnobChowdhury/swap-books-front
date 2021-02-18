@@ -49,13 +49,19 @@ export const fetchActiveRoomsFail = (activeRoomsError: Error) => {
   };
 };
 
-export const setCurrentRoom = (
-  roomId: string,
-  roomMateName: string,
-  roomMateId: string,
-  roomMateInterests: NotificationBookShape[],
-  userInterests: NotificationBookShape[],
-) => {
+export const setCurrentRoom = ({
+  roomId,
+  roomMateId,
+  roomMateInterests,
+  roomMateName,
+  userInterests,
+}: {
+  roomId: string;
+  roomMateName: string;
+  roomMateId: string;
+  roomMateInterests: NotificationBookShape[];
+  userInterests: NotificationBookShape[];
+}) => {
   return {
     type: SET_MESSAGE_BOX,
     roomId,

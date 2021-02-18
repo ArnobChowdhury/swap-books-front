@@ -80,6 +80,7 @@ export const MessageBox = styled.div<{ show: boolean }>`
   top: 0;
   left: ${({ show }) => (show ? '0' : '105%')};
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  outline: none;
 `;
 
 export const MessageContent = styled.div`

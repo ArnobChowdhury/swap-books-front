@@ -19,8 +19,11 @@ export interface NotificationChildProps {
   type: 'interest' | 'match' | 'notice';
   noticeText?: string;
   otherProps?: HTMLAttributes<HTMLDivElement>;
-  onChatButtonClick?: (fromId: string) => void;
-  roomLink: string;
+  onChatButtonClick?: (
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+    roomId: string,
+  ) => void;
+  roomId: string;
   lastModified: string;
 }
 
@@ -34,7 +37,7 @@ export const NotificationChild = ({
   noticeText,
   otherProps,
   onChatButtonClick,
-  roomLink,
+  roomId,
   lastModified,
 }: NotificationChildProps): JSX.Element => {
   const bookNamesArePlural = bookNames && bookNames.length > 1;
@@ -46,18 +49,12 @@ export const NotificationChild = ({
 
   const ownersInterests = ownersBookInterests?.join(', ');
 
-  const handleChatButtonClick = () => {
-    if (onChatButtonClick) {
-      onChatButtonClick(roomLink);
-    }
-  };
-
   const LastModified = React.useCallback(() => {
     return <LastModifiedStyled> &#8210; {lastModified}</LastModifiedStyled>;
   }, [lastModified]);
 
   return (
-    <Wrapper seen={seen} {...otherProps} data-roomid={roomLink}>
+    <Wrapper seen={seen} {...otherProps} data-roomid={roomId}>
       <IconWrapper>
         {type === 'interest' && <InterestNotificationIcon />}
         {type === 'match' && <MatchIcon />}
@@ -85,8 +82,13 @@ export const NotificationChild = ({
           is interested in your {bookNamesArePlural ? 'books' : 'book'}{' '}
           <i>{books}</i>. You are interested in {interestedUserName}&apos;s -{' '}
           <i>{ownersInterests}.</i>{' '}
-          <ChatButton onClick={handleChatButtonClick}>Chat</ChatButton> with him to
-          make a swap deal. <LastModified />
+          <ChatButton
+            onClick={e => onChatButtonClick && onChatButtonClick(e, roomId)}
+            className="chat-button"
+          >
+            Chat
+          </ChatButton>{' '}
+          with him to make a swap deal. <LastModified />
         </span>
       )}
 

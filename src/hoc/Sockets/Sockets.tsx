@@ -53,8 +53,6 @@ export const SocketIO = ({ children }: SocketIOInterestInterface) => {
   // TODO: ADD SOCKETIO AS DEPENDENCY AND ONLY RE-CONNECT IN CASE IT IS NOT DEFINED
   useEffect(() => {
     if (isSignedIn && socketIo === undefined) {
-      console.count('this block ran');
-      console.log('useless console');
       setSocketIo(
         io(`${process.env.NEXT_PUBLIC_SOCKET_URL}`, {
           extraHeaders: {

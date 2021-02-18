@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useContext } from 'react';
 import { useOnScreen } from 'hooks';
 import {
   Wrapper,
@@ -14,19 +14,24 @@ import {
   setNotificationAsSeenRequest,
   getNotificationsRequest,
 } from 'redux/actions/notifications';
+import { openMessageBox, setCurrentRoom } from 'redux/actions/message';
 import { Header } from 'ui-kits/Header';
 import theme from 'theme';
 import { formatDistanceToNow } from 'date-fns';
+import { RootContext, RootContextProps } from 'contexts/RootContext';
 
 export interface NotificationProps {
   notifications: NotificationShape[];
 }
 
 export const Notifications = (): JSX.Element => {
+  const rootContext = useContext(RootContext);
+  const { contentType, setContentType } = rootContext as RootContextProps;
   const { notifications, hasMoreNotifications } = useSelector(
     (s: RootState) => s.notifications,
   );
   const { userId } = useSelector((s: RootState) => s.auth);
+  const { activeRooms } = useSelector((s: RootState) => s.message);
   const dispatch = useDispatch();
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const loaderRef = useRef<HTMLDivElement | null>(null);
@@ -84,6 +89,19 @@ export const Notifications = (): JSX.Element => {
     };
   }, [notifications]);
 
+  const handleChatButtonClick = (
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+    roomId: string,
+  ) => {
+    event.preventDefault();
+    setContentType('Messages');
+    dispatch(openMessageBox());
+    const roomToOpen = activeRooms.find(room => room.roomId === roomId);
+    if (roomToOpen) {
+      dispatch(setCurrentRoom(roomToOpen));
+    }
+  };
+
   const notificationsChildren = notifications.map(
     ({
       _id,
@@ -118,8 +136,8 @@ export const Notifications = (): JSX.Element => {
           fromName={interestedUserName}
           type={notificationType}
           ownersBookInterests={ownersBookInterests}
-          // onChatButtonClick={}
-          roomLink={_id}
+          onChatButtonClick={handleChatButtonClick}
+          roomId={_id}
           lastModified={formatDistanceToNow(new Date(lastModified))}
         />
       );
