@@ -13,6 +13,7 @@ interface ParticipatntsProps {
   userName: string;
   interests: InterestProps[];
   interestSeen: boolean;
+  unreadMsgs: boolean;
 }
 
 export interface RoomWithLastModifiedAndID extends Room {
@@ -29,9 +30,9 @@ export default class Room {
       userName: string;
       interests: InterestProps[];
       interestSeen: boolean;
-    }[]
+    }[],
   ) {
-    const participantsWithObjectId = participants.map((participant) => {
+    const participantsWithObjectId = participants.map(participant => {
       const { userId, userName, interests, interestSeen } = participant;
       const userIdAsObjectId = new ObjectId(userId);
       const newParticipantObject: ParticipatntsProps = {
@@ -39,6 +40,7 @@ export default class Room {
         userId: userIdAsObjectId,
         interests,
         interestSeen,
+        unreadMsgs: false,
       };
       return newParticipantObject;
     });
@@ -54,7 +56,7 @@ export default class Room {
     ...participants: string[]
   ): Promise<RoomWithLastModifiedAndID | null> {
     const db = getDb();
-    const arrayOfParticipants = participants.map((participant) => {
+    const arrayOfParticipants = participants.map(participant => {
       return new ObjectId(participant);
     });
     try {
@@ -73,7 +75,14 @@ export default class Room {
     }
   }
 
-  static async findAllRoomsByUserId(userId: string): Promise<RoomWithLastModifiedAndID[]> {
+  /**
+   * TODO for findAllRoomsByUserId
+   * 1. Limit number of responses
+   * 2. Paginate
+   */
+  static async findAllRoomsByUserId(
+    userId: string,
+  ): Promise<RoomWithLastModifiedAndID[]> {
     const db = getDb();
     try {
       const room = await db
@@ -89,7 +98,7 @@ export default class Room {
 
   static async getNotificationForUser(
     userId: string,
-    skip: number
+    skip: number,
   ): Promise<RoomWithLastModifiedAndID[]> {
     const userIdAsMongoId = new ObjectId(userId);
     const db = getDb();
@@ -98,7 +107,10 @@ export default class Room {
       .collection('rooms')
       .find<RoomWithLastModifiedAndID>({
         participants: {
-          $elemMatch: { userId: userIdAsMongoId, interests: { $type: 'array', $ne: [] } },
+          $elemMatch: {
+            userId: userIdAsMongoId,
+            interests: { $type: 'array', $ne: [] },
+          },
         },
       })
       .sort({ lastModified: -1, _id: -1 })
@@ -109,7 +121,9 @@ export default class Room {
     return notifications;
   }
 
-  static async getCountOfUnseenNotification(userIdAsString: string): Promise<number> {
+  static async getCountOfUnseenNotification(
+    userIdAsString: string,
+  ): Promise<number> {
     const db = getDb();
     const userId = new ObjectId(userIdAsString);
 
@@ -129,7 +143,7 @@ export default class Room {
 
   static async setNotificationAsSeen(
     roomId: string,
-    userIdAsString: string
+    userIdAsString: string,
   ): Promise<mongodb.UpdateWriteOpResult> {
     const db = getDb();
     const _id = new ObjectId(roomId);
@@ -138,12 +152,12 @@ export default class Room {
       .collection('rooms')
       .updateOne(
         { _id, 'participants.userId': userId },
-        { $set: { 'participants.$.interestSeen': true } }
+        { $set: { 'participants.$.interestSeen': true } },
       );
   }
 
   static async getNotificationByRoomId(
-    _id: mongodb.ObjectId
+    _id: mongodb.ObjectId,
   ): Promise<RoomWithLastModifiedAndID | null> {
     const db = getDb();
     return db.collection('rooms').findOne({ _id });

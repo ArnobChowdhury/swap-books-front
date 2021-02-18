@@ -45,9 +45,31 @@ export default class Message {
     return db.collection('messages').insertOne(this);
   }
 
-  async saveMsgAndReturn(): Promise<InsertOneWriteOpResult<Message>> {
-    const db = getDb();
-    return db.collection('messages').insertOne(this);
+  async saveMsgAndReturn(): Promise<mongodb.InsertOneWriteOpResult<Message>> {
+    const client = getDbClient();
+    const messagesCollection = client.db().collection('messages');
+    const roomsCollection = client.db().collection('rooms');
+    const session = client.startSession();
+
+    let msgCreationOpResult: mongodb.InsertOneWriteOpResult<Message>;
+    try {
+      await session.withTransaction(async () => {
+        msgCreationOpResult = await messagesCollection.insertOne(this);
+        const roomIdAsObjectId = new ObjectId(this.roomId);
+        const userIdAsObjectId = new ObjectId(this.toId);
+        await roomsCollection.updateOne(
+          { _id: roomIdAsObjectId, 'participants.userId': userIdAsObjectId },
+          {
+            $set: { 'participants.$.unreadMsgs': true },
+            $currentDate: { lastModified: true },
+          },
+        );
+      });
+    } finally {
+      session.endSession();
+    }
+    // @ts-ignore
+    return msgCreationOpResult;
   }
 
   static async returnLatestMsgs(roomId: string): Promise<MessageWithId[]> {
@@ -66,9 +88,41 @@ export default class Message {
     return recentSortedMessages;
   }
 
-  static setMsgAsSeen = (msgId: string) => {
-    const db = getDb();
-    const _id = new ObjectId(msgId);
-    return db.collection('messages').updateOne({ _id }, { $set: { seen: true } });
-  };
+  /**
+   * TODO for later
+   * Right now we are calling this function every time we want to set a message as seen,
+   * Let's think of changing that behavior and set unreadMsgs as false only when
+   * the user opens a chatroom
+   * And then we mark other messages as seen separately
+   */
+  static async setMsgAsSeen(roomId: string, userId: string, msgId: string) {
+    const client = getDbClient();
+    const messagesCollection = client.db().collection('messages');
+    const roomsCollection = client.db().collection('rooms');
+    const session = client.startSession();
+    const msgIdAsObjectId = new ObjectId(msgId);
+    const roomIdAsObjectId = new ObjectId(roomId);
+    const userIdAsObjectId = new ObjectId(userId);
+    try {
+      await session.withTransaction(async () => {
+        await messagesCollection.updateOne(
+          { _id: msgIdAsObjectId },
+          { $set: { seen: true } },
+        );
+        await roomsCollection.updateOne(
+          {
+            _id: roomIdAsObjectId,
+            'participants.userId': userIdAsObjectId,
+          },
+          {
+            $set: {
+              'participants.$.unreadMsgs': false,
+            },
+          },
+        );
+      });
+    } finally {
+      session.endSession();
+    }
+  }
 }

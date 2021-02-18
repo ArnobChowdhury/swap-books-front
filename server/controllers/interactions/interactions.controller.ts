@@ -257,7 +257,10 @@ export const setMsgAsSeen = async (
   msgId: string,
   cb: () => void,
 ) => {
-  await Message.setMsgAsSeen(msgId);
+  const {
+    decoded_token: { aud },
+  } = socket;
+  await Message.setMsgAsSeen(roomId, aud, msgId);
   socket.to(roomId).emit(SET_MSG_AS_SEEN, roomId, msgId);
   cb();
 };

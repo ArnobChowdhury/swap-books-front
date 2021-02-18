@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { createContext } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { RootState } from 'redux/reducers';
@@ -12,6 +12,7 @@ import {
   joinSingleRoom,
   leaveSingleRoom,
   setAsSeenSuccess,
+  addUnreadMsgsNotification,
 } from 'redux/actions/message';
 import { fetchActiveRoomsReq } from 'redux/actions/message';
 import { useDispatch } from 'react-redux';
@@ -42,14 +43,18 @@ interface SocketIOInterestInterface {
 
 export const SocketIO = ({ children }: SocketIOInterestInterface) => {
   const { userId, accessToken } = useSelector((s: RootState) => s.auth);
+  const { roomId, messageBoxIsOpen } = useSelector((s: RootState) => s.message);
   const isSignedIn = Boolean(accessToken);
 
   const dispatch = useDispatch();
 
   const [socketIo, setSocketIo] = useState<Socket | undefined>();
 
+  // TODO: ADD SOCKETIO AS DEPENDENCY AND ONLY RE-CONNECT IN CASE IT IS NOT DEFINED
   useEffect(() => {
-    if (isSignedIn) {
+    if (isSignedIn && socketIo === undefined) {
+      console.count('this block ran');
+      console.log('useless console');
       setSocketIo(
         io(`${process.env.NEXT_PUBLIC_SOCKET_URL}`, {
           extraHeaders: {
@@ -63,13 +68,11 @@ export const SocketIO = ({ children }: SocketIOInterestInterface) => {
       socketIo.disconnect();
     }
     return () => {
-      console.log('Running clean up');
-      console.log('another test', socketIo);
       if (socketIo) {
         socketIo.disconnect();
       }
     };
-  }, [isSignedIn]);
+  }, [isSignedIn, socketIo]);
 
   useEffect(() => {
     if (socketIo) {
@@ -93,7 +96,11 @@ export const SocketIO = ({ children }: SocketIOInterestInterface) => {
       });
 
       socketIo.on(SOCKET_RECEIVE_NEW_MSG, (message: MessageResponseProps) => {
-        dispatch(addNewMsgToRoom(message));
+        if (roomId && roomId === message.roomId && messageBoxIsOpen) {
+          dispatch(addNewMsgToRoom(message));
+        } else {
+          dispatch(addUnreadMsgsNotification(message.roomId));
+        }
       });
 
       socketIo.on(SOCKET_JOIN_SINGLE_ROOM, (room: ActiveRoomsResponse) => {
@@ -107,18 +114,21 @@ export const SocketIO = ({ children }: SocketIOInterestInterface) => {
       socketIo.on(SOCKET_SET_MSG_AS_SEEN, (roomId: string, msgId: string) => {
         dispatch(setAsSeenSuccess(roomId, msgId));
       });
+      return () => {
+        socketIo.off();
+      };
     }
-  }, [socketIo]);
+  }, [socketIo, roomId, messageBoxIsOpen]);
 
   useEffect(() => {
-    if (isSignedIn && socketIo && userId) {
-      // TODO: Can be got rid of once interest expression is also through rooms
+    if (socketIo !== undefined) {
+      // TODO: GET RID OF THIS AND INIT IT EVERYTIME WE CONNECT AUTOMATICALLY
       socketIo.emit(SOCKET_INIT_SOCKET);
-    }
-    if (isSignedIn && socketIo && userId) {
+      //TODO: INSTEAD OF DOING THIS FROM THE FRONT END WE CAN JUST SEND IT FROM THE
+      // BACKEND EVERYTIME WE CONNECT AND THEN WE CAN GET RID OF THIS USEEFFECT
       dispatch(fetchActiveRoomsReq(socketIo));
     }
-  });
+  }, [socketIo]);
 
   const { Provider: SocketIoProvider } = SocketIoContext;
 

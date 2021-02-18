@@ -23,8 +23,9 @@ import {
   SET_MESSAGE_BOX,
   JOIN_SINGLE_ROOM,
   LEAVE_SINGLE_ROOM,
-  ADD_ROOM_MESSAGE_PENDING,
   ADD_ROOM_MESSAGE_SUCCESS,
+  REGISTER_SENT_MESSAGE_SUCCESS,
+  ADD_NONACTIVE_ROOM_UNREAD_MSG_NOTIFICATION,
   SET_MESSAGE_AS_SEEN_SUCCESS,
 } from './../actionTypes';
 
@@ -69,24 +70,6 @@ export const fetchActiveRoomsReq = (socket: Socket) => (dispatch: Dispatch) => {
   dispatch(fetchActiveRoomsStart());
   return socket.emit(SOCKET_JOIN_ALL_ROOMS, (activeRooms: ActiveRoomsResponse[]) => {
     dispatch(fetchActiveRoomsSuccess(activeRooms));
-    if (activeRooms.length) {
-      const {
-        roomId: mostCurrentRoomId,
-        roomMateName: mostCurrentRoomMateName,
-        roomMateId: mostCurrentRoomMateId,
-        roomMateInterests: mostCurrentRoomMateInterests,
-        userInterests: userInterestsAgainstRoomMate,
-      } = activeRooms[0];
-      dispatch(
-        setCurrentRoom(
-          mostCurrentRoomId,
-          mostCurrentRoomMateName,
-          mostCurrentRoomMateId,
-          mostCurrentRoomMateInterests,
-          userInterestsAgainstRoomMate,
-        ),
-      );
-    }
   });
 };
 
@@ -130,21 +113,28 @@ export const fetchCurrentRoomMsgsReq = (socket: Socket, roomId: string) => {
   };
 };
 
+export const addUnreadMsgsNotification = (unreadMsgInRoom: string) => {
+  return {
+    type: ADD_NONACTIVE_ROOM_UNREAD_MSG_NOTIFICATION,
+    unreadMsgInRoom,
+  };
+};
+
 // sendMsg Start, success, failure this are not here
 export const addNewMsgToRoom = (newMsg: MessageResponseProps) => {
   return {
-    type: ADD_ROOM_MESSAGE_PENDING,
+    type: ADD_ROOM_MESSAGE_SUCCESS,
     newMsg,
   };
 };
 
-export const addNewMsgToRoomSuccess = (
+export const registerNewMsgToRoomSuccess = (
   registeredMsgRoomId: string,
   registeredMsgId: string,
   registeredMsgTimestamp: number,
 ) => {
   return {
-    type: ADD_ROOM_MESSAGE_SUCCESS,
+    type: REGISTER_SENT_MESSAGE_SUCCESS,
     registeredMsgRoomId,
     registeredMsgId,
     registeredMsgTimestamp,
@@ -179,7 +169,7 @@ export const sendMsgToRoom = (
       { room, msg, userId, roomMateId, msgId },
       (registeredMsg: { _id: string; timestamp: number }) => {
         const { _id, timestamp } = registeredMsg;
-        dispatch(addNewMsgToRoomSuccess(room, _id, timestamp));
+        dispatch(registerNewMsgToRoomSuccess(room, _id, timestamp));
       },
     );
   };

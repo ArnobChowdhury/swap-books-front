@@ -1,4 +1,4 @@
-import { useRef, useEffect, useContext } from 'react';
+import { useRef, useEffect, useContext, useState } from 'react';
 import { UserIcon } from 'ui-kits/UserIcon';
 import {
   NavBarContainer,
@@ -25,7 +25,24 @@ import { largeScreen } from 'mediaConfig';
 export const NavBar = (): JSX.Element => {
   const dispatch = useDispatch();
   const userName = useSelector((s: RootState) => s.user.name);
-  const { totalUnseen } = useSelector((s: RootState) => s.notifications);
+  const { totalUnseen: totalUnseenNotification } = useSelector(
+    (s: RootState) => s.notifications,
+  );
+
+  const { activeRooms } = useSelector((s: RootState) => s.message);
+  const [totalUnseenMsgs, setTotalUnseenMsgs] = useState<number>(0);
+
+  useEffect(() => {
+    if (activeRooms) {
+      let unseenMsgs = 0;
+      activeRooms.forEach(room => {
+        if (room.unreadMsgs) {
+          unseenMsgs += 1;
+        }
+      });
+      setTotalUnseenMsgs(unseenMsgs);
+    }
+  }, [activeRooms]);
 
   const { width } = useWindowSize();
 
@@ -107,6 +124,9 @@ export const NavBar = (): JSX.Element => {
           ref={messageButtonRef}
           buttonType="Messages"
         >
+          {totalUnseenMsgs > 0 && (
+            <Count buttonType="Messages">{totalUnseenMsgs}</Count>
+          )}
           <ChatIcon hasBodyColor={contentType === 'Messages'} />
         </NavButton>
         <NavButton
@@ -115,8 +135,8 @@ export const NavBar = (): JSX.Element => {
           ref={notificationButtonRef}
           buttonType="Notifications"
         >
-          {totalUnseen !== null && totalUnseen > 0 && (
-            <Count buttonType="Notification">{totalUnseen}</Count>
+          {totalUnseenNotification !== null && totalUnseenNotification > 0 && (
+            <Count buttonType="Notification">{totalUnseenNotification}</Count>
           )}
           <NotificationIcon hasBodyColor={contentType === 'Notifications'} />
         </NavButton>

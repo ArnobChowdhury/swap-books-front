@@ -16,4 +16,5 @@ export {
   addNewMsgToRoom,
   setAsSeenRequest,
   setAsSeenSuccess,
+  addUnreadMsgsNotification,
 } from './message';

@@ -14,9 +14,10 @@ import {
   SET_MESSAGE_BOX,
   JOIN_SINGLE_ROOM,
   LEAVE_SINGLE_ROOM,
-  ADD_ROOM_MESSAGE_PENDING,
   ADD_ROOM_MESSAGE_SUCCESS,
+  REGISTER_SENT_MESSAGE_SUCCESS,
   SET_MESSAGE_AS_SEEN_SUCCESS,
+  ADD_NONACTIVE_ROOM_UNREAD_MSG_NOTIFICATION,
 } from '../../actions/actionTypes';
 
 export interface MessageResponseProps {
@@ -36,6 +37,7 @@ export interface ActiveRoomsResponse {
   roomMateId: string;
   roomMateInterests: NotificationBookShape[];
   userInterests: NotificationBookShape[];
+  unreadMsgs: boolean;
 }
 
 export interface MessageProps {
@@ -44,10 +46,10 @@ export interface MessageProps {
   roomMateId: string | null;
   roomMateInterests: NotificationBookShape[];
   userInterests: NotificationBookShape[];
-  messages: MessageResponseProps[] | null;
+  messages: MessageResponseProps[];
   messageLoading: boolean;
   messageError: Error | null;
-  activeRooms: ActiveRoomsResponse[] | null;
+  activeRooms: ActiveRoomsResponse[];
   activeRoomsLoading: boolean;
   activeRoomsError: Error | null;
   messageBoxIsOpen: boolean;
@@ -59,10 +61,10 @@ export const initialState: MessageProps = {
   roomMateId: null,
   roomMateInterests: [],
   userInterests: [],
-  messages: null,
+  messages: [],
   messageLoading: false,
   messageError: null,
-  activeRooms: null,
+  activeRooms: [],
   activeRoomsLoading: false,
   activeRoomsError: null,
   messageBoxIsOpen: false,
@@ -87,6 +89,7 @@ const reducer = (state = initialState, action: AnyAction): MessageProps => {
     registeredMsgTimestamp,
     seenMsgRoomId,
     seenMsgId,
+    unreadMsgInRoom,
   } = action;
 
   switch (action.type) {
@@ -136,6 +139,12 @@ const reducer = (state = initialState, action: AnyAction): MessageProps => {
       return {
         ...state,
         messageBoxIsOpen: false,
+        roomId: null,
+        roomMateId: null,
+        roomMateName: null,
+        roomMateInterests: [],
+        userInterests: [],
+        messages: [],
       };
 
     case JOIN_SINGLE_ROOM:
@@ -162,7 +171,7 @@ const reducer = (state = initialState, action: AnyAction): MessageProps => {
         activeRooms: newRooms,
       };
 
-    case ADD_ROOM_MESSAGE_PENDING:
+    case ADD_ROOM_MESSAGE_SUCCESS:
       const { roomId: activeRoomId, messages: existingMessages } = state;
       if (activeRoomId === newMsg.roomId) {
         const newMessages = existingMessages === null ? [] : [...existingMessages];
@@ -170,7 +179,7 @@ const reducer = (state = initialState, action: AnyAction): MessageProps => {
         return { ...state, messages: newMessages };
       }
 
-    case ADD_ROOM_MESSAGE_SUCCESS:
+    case REGISTER_SENT_MESSAGE_SUCCESS:
       const {
         roomId: currentActiveRoomId,
         messages: currentExistingMessages,
@@ -190,16 +199,53 @@ const reducer = (state = initialState, action: AnyAction): MessageProps => {
       }
 
     case SET_MESSAGE_AS_SEEN_SUCCESS:
-      const { roomId: msgOfTheRoomToBeSeen, messages: allMessages } = state;
-      if (msgOfTheRoomToBeSeen === seenMsgRoomId && allMessages) {
-        const transFormedMessages = allMessages.map(msg => {
+      const {
+        roomId: msgOfTheRoomToBeSeen,
+        messages: allMessages,
+        activeRooms: allActiveRooms,
+      } = state;
+
+      let transFormedMessages = allMessages !== null ? [...allMessages] : [];
+      if (msgOfTheRoomToBeSeen === seenMsgRoomId) {
+        transFormedMessages = transFormedMessages.map(msg => {
           if (msg._id === seenMsgId) {
             msg.seen = true;
           }
           return msg;
         });
-        return { ...state, messages: transFormedMessages };
       }
+
+      let activeRoomsAfterMarkingRead: ActiveRoomsResponse[] = [];
+      if (allActiveRooms) {
+        activeRoomsAfterMarkingRead = allActiveRooms.map(room => {
+          if (room.roomId === seenMsgRoomId && room.unreadMsgs) {
+            room.unreadMsgs = false;
+          }
+          return room;
+        });
+      }
+
+      return {
+        ...state,
+        messages: transFormedMessages,
+        activeRooms: activeRoomsAfterMarkingRead,
+      };
+
+    case ADD_NONACTIVE_ROOM_UNREAD_MSG_NOTIFICATION: {
+      const { activeRooms } = state;
+
+      const newActiveRooms = activeRooms.map(room => {
+        if (room.roomId === unreadMsgInRoom && !room.unreadMsgs) {
+          room.unreadMsgs = true;
+        }
+        return room;
+      });
+
+      return {
+        ...state,
+        activeRooms: newActiveRooms,
+      };
+    }
 
     default:
       return state;

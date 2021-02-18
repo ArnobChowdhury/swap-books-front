@@ -63,6 +63,11 @@ app.prepare().then(() => {
 
   // io.on(CONNECT, interactionController);
   io.on(CONNECT, (socket: SocketDecoded) => {
+    /**
+     * TODO FOR LATER
+     * GET RID OF INIT SOCKET EVENT ON BOTH THE FRONTEND AND BACKEND AND DO THIS RIGHT
+     */
+
     socket.on(INIT_SOCKET, async () => {
       await initSocket(socket);
       // todo add catch block
@@ -145,6 +150,12 @@ app.prepare().then(() => {
   server.use('/auth', authRoutes);
   server.use('/books', booksRoutes);
   server.use('/user', userRoutes);
+
+  // TODO: GET RID OF THIS
+  server.use('/special', (req, res, next) => {
+    console.log(io.sockets.adapter.rooms.get('60144ef21884463475b9e2de'));
+    res.status(200).json({ message: 'Ok' });
+  });
 
   // server.get('/newhome', (req, res) => {
   //   // @ts-ignore

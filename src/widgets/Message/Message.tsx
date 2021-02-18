@@ -8,7 +8,9 @@ import {
   MessageBoxContainer,
   MessageListUL,
   MessageListItem,
+  MessageSenderName,
   SideMargin,
+  UnreadMsgTxt,
   MessageBox,
   MessageListContainer,
   MsgPartnerInfo,
@@ -21,6 +23,7 @@ import {
   MessageInput,
   MessageContentTop,
   MessageContentMain,
+  MessagesWrapper,
   SendIconWrapper,
   SingleChat,
   SingleChatText,
@@ -41,7 +44,6 @@ import {
 import { RootState } from 'redux/reducers';
 import { SocketIoContext } from 'hoc/Sockets';
 import { MessageResponseProps } from 'redux/reducers/message';
-import { User } from 'components/User';
 import { NotificationBookShape } from 'redux/reducers/notifications';
 
 export const Message = () => {
@@ -88,7 +90,7 @@ export const Message = () => {
   const [msg, setMsg] = useState('');
 
   let matchesList;
-  if (activeRooms) {
+  if (activeRooms && activeRooms.length > 0) {
     matchesList = activeRooms.map(room => {
       const {
         roomId,
@@ -96,6 +98,7 @@ export const Message = () => {
         roomMateName,
         roomMateInterests,
         userInterests,
+        unreadMsgs,
       } = room;
       return (
         <MessageListItem
@@ -112,7 +115,10 @@ export const Message = () => {
         >
           <SideMargin hasTopBorder hasTopAndBottomPadding>
             <UserIcon userName={roomMateName} hasRightMargin></UserIcon>
-            {roomMateName}
+            <MessageSenderName hasUnreadMsgs={Boolean(unreadMsgs)}>
+              {roomMateName}
+            </MessageSenderName>
+            {unreadMsgs && <UnreadMsgTxt />}
           </SideMargin>
         </MessageListItem>
       );
@@ -180,11 +186,10 @@ export const Message = () => {
     .join(', ');
 
   const inputRef = useRef<HTMLInputElement | null>(null);
-  const [inputHasFocus, setInputHasFocus] = useState<boolean>(false);
+
   useEffect(() => {
     if (inputRef.current && messageBoxIsOpen) {
       inputRef.current.focus();
-      setInputHasFocus(true);
     }
   }, [messageBoxIsOpen]);
 
@@ -199,7 +204,6 @@ export const Message = () => {
             msgBoxRef.current?.contains(document.activeElement)
           ) {
             const msgId = (entry.target as HTMLElement).dataset.msgid;
-            console.log(msgId);
             // @ts-ignore
             if (window.requestIdleCallback) {
               // @ts-ignore
@@ -276,8 +280,11 @@ export const Message = () => {
             </MsgPartnerInfo>
           </MessageContentTop>
           <MessageContentMain ref={msgsBoxRef}>
-            {messagesList && messagesList.length > 0 && messagesList}
-            {(!messagesList || messagesList.length === 0) && 'Jare jare ja'}
+            <MessagesWrapper>
+              {messagesList && messagesList.length > 0 && messagesList}
+            </MessagesWrapper>
+            {(!messagesList || messagesList.length === 0) &&
+              'Beginning of your conversation'}
           </MessageContentMain>
         </MessageContent>
         <MessageInputWrapper>

@@ -49,6 +49,18 @@ export const SideMargin = styled.div<{
   }
 `;
 
+export const MessageSenderName = styled.div<{ hasUnreadMsgs?: boolean }>`
+  font-weight: ${({ hasUnreadMsgs }) => hasUnreadMsgs && '500'};
+`;
+
+export const UnreadMsgTxt = styled.div`
+  width: ${({ theme }) => theme.spaceEight};
+  height: ${({ theme }) => theme.spaceEight};
+  border-radius: 100%;
+  background: ${({ theme }) => theme.colorTextPrimary};
+  margin-left: auto;
+`;
+
 export const MessageListItem = styled.li`
   font-size: ${({ theme }) => theme.fontSmall};
   cursor: pointer;
@@ -141,11 +153,15 @@ export const InterestContainer = styled.div<{ show: boolean }>`
 
 export const MessageContentMain = styled.div`
   width: 100%;
-  padding: ${({ theme }) => `${theme.spaceFive} ${theme.spaceTen}`};
   display: flex;
   overflow-y: auto;
   height: 100%;
-  flex-wrap: wrap;
+`;
+
+export const MessagesWrapper = styled.div`
+  padding: ${({ theme }) => `${theme.spaceFive} ${theme.spaceTen}`};
+  width: 100%;
+  margin-top: auto;
 `;
 
 export const MessageInputWrapper = styled.div`
@@ -193,23 +209,23 @@ export const SendIconWrapper = styled.button`
   }
 `;
 
+// flex-basis: 100%;
 export const SingleChat = styled.div<{ own: boolean }>`
-  flex-basis: 100%;
   display: flex;
   justify-content: ${({ own }) => (own ? 'flex-end' : 'flex-start')};
   align-items: center;
   &:not(:last-child) {
-    margin-bottom: ${({ theme }) => theme.spaceFive};
+    margin-bottom: ${({ theme }) => theme.spaceTwo};
   }
 `;
 
 export const SingleChatText = styled.div<{ own: boolean }>`
   color: ${({ theme, own }) => (own ? theme.colorTextPrimary : theme.colorWhite)};
-  background: ${({ theme, own }) => (own ? theme.colorBG : theme.colorTextPrimary)};
+  background: ${({ theme, own }) =>
+    own ? theme.colorSeparator : theme.colorTextPrimary};
   font-size: ${({ theme }) => theme.fontSmall};
   font-weight: 400;
   padding: ${({ theme }) => `${theme.spaceFour} ${theme.spaceEight}`};
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   border-radius: ${({ theme }) => theme.borderRadius};
   max-width: 260px;
 
