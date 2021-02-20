@@ -9,6 +9,7 @@ import {
 } from './NavBar.styles';
 import { Notifications } from 'widgets/Notifications';
 import { Message } from 'widgets/Message';
+import { UserNav } from 'widgets/UserNav';
 import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
 import { HomeIcon } from 'assets/HomeIcon';
@@ -54,6 +55,7 @@ export const NavBar = (): JSX.Element => {
   const navigationRef = useRef<HTMLDivElement | null>(null);
   const messageButtonRef = useRef<HTMLButtonElement | null>(null);
   const notificationButtonRef = useRef<HTMLButtonElement | null>(null);
+  const userButtonRef = useRef<HTMLButtonElement | null>(null);
 
   // close modal on click outside the dropDown and on escape key anywhere
   useEffect(() => {
@@ -63,6 +65,7 @@ export const NavBar = (): JSX.Element => {
           !dropDownRef.current?.contains(e.target as Node) &&
           !messageButtonRef.current?.contains(e.target as Node) &&
           !notificationButtonRef.current?.contains(e.target as Node) &&
+          !userButtonRef.current?.contains(e.target as Node) &&
           !(e.target as HTMLElement).classList.contains('chat-button') &&
           contentType !== 'Posts'
         ) {
@@ -107,6 +110,9 @@ export const NavBar = (): JSX.Element => {
         <DropDown isSelected={contentType !== 'Posts'} ref={dropDownRef}>
           {contentType === 'Notifications' && <Notifications />}
           {contentType === 'Messages' && <Message />}
+          {contentType === 'User' && (
+            <UserNav onLogoutButtonClick={() => dispatch(authLogout())} />
+          )}
         </DropDown>
       )}
       <NavBarWrapper>
@@ -144,9 +150,8 @@ export const NavBar = (): JSX.Element => {
         <NavButton
           borderBottom={contentType === 'User'}
           buttonType="User"
-          onClick={() => {
-            dispatch(authLogout());
-          }}
+          onClick={e => handleNavButtonClick(e, 'User')}
+          ref={userButtonRef}
         >
           <UserIcon userName={userName ? userName : ''} />
         </NavButton>

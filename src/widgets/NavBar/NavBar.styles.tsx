@@ -94,7 +94,7 @@ export const NavButton = styled.button<{
       } else if (buttonType === 'Posts') {
         color = theme.colorPurple;
       } else {
-        color = theme.colorLogo;
+        color = theme.colorTextPrimary;
       }
       return `4px solid ${borderBottom ? color : 'transparent'}`;
     }};
@@ -108,7 +108,7 @@ export const NavButton = styled.button<{
 export const DropDown = styled.div<{ isSelected: boolean }>`
   position: absolute;
   top: 70px;
-  right: ${({ theme }) => theme.spaceSix};
+  right: 0;
   display: ${({ isSelected }) => (isSelected ? 'block' : 'none')};
   width: 400px;
   background: ${({ theme }) => theme.colorWhite};
