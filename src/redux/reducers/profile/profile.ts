@@ -13,18 +13,20 @@ export interface ProfileReqResponse {
 
 export interface ProfileState {
   profileName: string | null;
+  numberOfbooksAvailable: number;
   profileLoading: boolean;
   profileError: Error | null;
 }
 
 export const initialState: ProfileState = {
   profileName: null,
+  numberOfbooksAvailable: 0,
   profileLoading: false,
   profileError: null,
 };
 
 const reducer = (state = initialState, action: AnyAction) => {
-  const { userInfo, error } = action;
+  const { profileName, numberOfbooksAvailable, error } = action;
   switch (action.type) {
     case HYDRATE:
       return { ...state };
@@ -34,11 +36,11 @@ const reducer = (state = initialState, action: AnyAction) => {
         profileLoading: true,
       };
     case FETCH_PROFILE_SUCCESS:
-      const { name } = userInfo;
       return {
         ...state,
+        profileName,
+        numberOfbooksAvailable,
         profileLoading: false,
-        profileName: name,
       };
     case FETCH_PROFILE_FAIL:
       return {

@@ -6,6 +6,7 @@ import {
 } from './UserNav.styles';
 import { useSelector } from 'react-redux';
 import { RootState } from 'redux/reducers';
+import Link from 'next/link';
 
 interface UserNavProps {
   onLogoutButtonClick: () => void;
@@ -17,7 +18,9 @@ export const UserNav = ({ onLogoutButtonClick }: UserNavProps) => {
   return (
     <UserNavLinkContainer>
       <UserNavOptionWrapper>
-        <UserNavLink href={`/user/${userId}`}>Your Profile</UserNavLink>
+        <Link href={`/user/[id]`} as={`/user/${userId}`} passHref>
+          <UserNavLink>Your Profile</UserNavLink>
+        </Link>
       </UserNavOptionWrapper>
       <UserNavOptionWrapper>
         <UserNavLink href="/how-to">How it Works</UserNavLink>

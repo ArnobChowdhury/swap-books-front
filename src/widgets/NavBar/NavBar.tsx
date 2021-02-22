@@ -21,6 +21,7 @@ import { getNotificationsRequest } from 'redux/actions/notifications';
 import { RootContext, RootContextProps, ContentType } from 'contexts/RootContext';
 import { useWindowSize } from 'hooks/useWindowSize';
 import { largeScreen } from 'mediaConfig';
+import { useRouter } from 'next/router';
 
 // todo there should be not be any default arguments
 export const NavBar = (): JSX.Element => {
@@ -32,6 +33,7 @@ export const NavBar = (): JSX.Element => {
 
   const { activeRooms } = useSelector((s: RootState) => s.message);
   const [totalUnseenMsgs, setTotalUnseenMsgs] = useState<number>(0);
+  const router = useRouter();
 
   useEffect(() => {
     if (activeRooms) {

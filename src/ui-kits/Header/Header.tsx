@@ -3,8 +3,17 @@ import { HOne } from './Header.styles';
 export interface HeaderProps {
   children: ReactNode;
   marginBelow?: string;
+  largeFont?: boolean;
 }
 
-export const Header = ({ children, marginBelow }: HeaderProps): JSX.Element => {
-  return <HOne marginBelow={marginBelow}>{children}</HOne>;
+export const Header = ({
+  children,
+  marginBelow,
+  largeFont = false,
+}: HeaderProps): JSX.Element => {
+  return (
+    <HOne largeFont={largeFont} marginBelow={marginBelow}>
+      {children}
+    </HOne>
+  );
 };

@@ -1,5 +1,5 @@
 import mongodb from 'mongodb';
-import { getDb } from '../../utils/database';
+import { getDb, getDbClient } from '../../utils/database';
 
 const { ObjectId } = mongodb;
 
@@ -30,7 +30,7 @@ export default class User {
     email: string,
     password: string,
     ageConfirmation: boolean,
-    termsConfirmation: boolean
+    termsConfirmation: boolean,
   ) {
     this.name = name;
     this.email = email;
@@ -58,16 +58,19 @@ export default class User {
   static async updateLocation(
     userId: string,
     lon: number,
-    lat: number
+    lat: number,
   ): Promise<mongodb.UpdateWriteOpResult> {
     const db = getDb();
     try {
-      return db
-        .collection('users')
-        .updateOne(
-          { _id: new ObjectId(userId) },
-          { $set: { 'locationObj.coordinates': [lon, lat], 'locationObj.type': 'Point' } }
-        );
+      return db.collection('users').updateOne(
+        { _id: new ObjectId(userId) },
+        {
+          $set: {
+            'locationObj.coordinates': [lon, lat],
+            'locationObj.type': 'Point',
+          },
+        },
+      );
     } catch {
       throw new Error('Something went wrong! Could not update.');
     }
@@ -76,7 +79,9 @@ export default class User {
   static async findById(userId: string): Promise<UserWithId> {
     const db = getDb();
     try {
-      const user = await db.collection('users').findOne({ _id: new ObjectId(userId) });
+      const user = await db
+        .collection('users')
+        .findOne({ _id: new ObjectId(userId) });
       return user;
     } catch {
       // todo is it the right way to catch an error
@@ -84,20 +89,42 @@ export default class User {
     }
   }
 
-  static async getProfileInfo(userId: string): Promise<UserWithId | null> {
-    const db = getDb();
+  static async getProfileInfo(userId: string) {
+    // const db = getDb();
+    const client = getDbClient();
+    const userCollection = client.db().collection('users');
+    const booksCollection = client.db().collection('books');
+    const session = client.startSession();
+    const userIdAsMongoId = new ObjectId(userId);
+    let userName: string = '';
+    let numberOfbooksAvailable: number = 0;
+
     try {
-      const user = await db.collection('users').findOne<UserWithId>(
-        {
-          _id: new ObjectId(userId),
-        },
-        { projection: { _id: 0, name: 1 } }
-      );
-      return user;
+      await session.withTransaction(async () => {
+        const userDoc = await userCollection.findOne<UserWithId>(
+          {
+            _id: userIdAsMongoId,
+          },
+          { projection: { _id: 0, name: 1 } },
+        );
+        if (userDoc) {
+          userName = userDoc.name;
+        }
+
+        numberOfbooksAvailable = await booksCollection.countDocuments({
+          userId: userIdAsMongoId,
+        });
+        /**
+         * TODO: Later
+         * When the user is able to mark a book as swapped we need to return the number of
+         * books user has swapped till now.
+         */
+      });
     } catch {
       // todo is it the right way to catch an error
       throw new Error('Could not retrieve user');
     }
+    return { userName, numberOfbooksAvailable };
   }
 
   static async toggleInterest(bookId: string, userId: string): Promise<void> {
@@ -105,21 +132,24 @@ export default class User {
     try {
       const userAlreadyInterested = await db
         .collection('users')
-        .find({ _id: new ObjectId(userId), currentInterests: { $in: [new ObjectId(bookId)] } })
+        .find({
+          _id: new ObjectId(userId),
+          currentInterests: { $in: [new ObjectId(bookId)] },
+        })
         .toArray();
       if (userAlreadyInterested.length > 0) {
         await db
           .collection('users')
           .updateOne(
             { _id: new ObjectId(userId) },
-            { $pull: { currentInterests: new ObjectId(bookId) } }
+            { $pull: { currentInterests: new ObjectId(bookId) } },
           );
       } else {
         await db
           .collection('users')
           .updateOne(
             { _id: new ObjectId(userId) },
-            { $push: { currentInterests: new ObjectId(bookId) } }
+            { $push: { currentInterests: new ObjectId(bookId) } },
           );
       }
     } catch {

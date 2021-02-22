@@ -102,10 +102,16 @@ export const getNotificationsRequest = (skip = 0) => (dispatch: Dispatch) => {
 export const setNotificationAsSeenRequest = (roomId: string) => (
   dispatch: Dispatch,
 ) => {
-  return axios.put('user/notifications', { roomId }).then(res => {
-    const { message } = res.data;
-    dispatch({ type: SET_NOTIFICATION_AS_SEEN, seenNotificationId: roomId });
-  });
+  return axios
+    .put('/user/notifications', { roomId })
+    .then(res => {
+      const { message } = res.data;
+      dispatch({ type: SET_NOTIFICATION_AS_SEEN, seenNotificationId: roomId });
+    })
+    .catch(err => {
+      // TODO: ERROR HANDLING
+      console.log(err);
+    });
 };
 
 export const addLatestNotification = (notification: NotificationResponseShape) => {

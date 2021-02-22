@@ -9,6 +9,7 @@ import {
 import { InterestNotificationIcon } from 'assets/InterestNotificationIcon';
 import { MatchIcon } from 'assets/MatchIcon';
 import { HTMLAttributes } from 'react';
+import Link from 'next/link';
 
 export interface NotificationChildProps {
   seen: boolean;
@@ -66,9 +67,9 @@ export const NotificationChild = ({
           {interestedUserName} is interested in your{' '}
           {bookNamesArePlural ? 'books' : 'book'} <i>{books}</i>. Check books you can
           swap with
-          <InterestedUserLink href={`/user/${interestedUserId}`}>
-            {` ${interestedUserName}.`}
-          </InterestedUserLink>{' '}
+          <Link href={`/user/[id]`} as={`/user/${interestedUserId}`} passHref>
+            <InterestedUserLink>{` ${interestedUserName}.`}</InterestedUserLink>
+          </Link>{' '}
           <LastModified />
         </span>
       )}
@@ -76,9 +77,11 @@ export const NotificationChild = ({
       {type === 'match' && (
         <span>
           <strong>Time to Swap: </strong>
-          <InterestedUserLink href={`/user/${interestedUserId}`}>
-            {interestedUserName}
-          </InterestedUserLink>{' '}
+          <Link href={`/user/[id]`} as={`/user/${interestedUserId}`} passHref>
+            <InterestedUserLink href={`/user/${interestedUserId}`}>
+              {interestedUserName}
+            </InterestedUserLink>
+          </Link>{' '}
           is interested in your {bookNamesArePlural ? 'books' : 'book'}{' '}
           <i>{books}</i>. You are interested in {interestedUserName}&apos;s -{' '}
           <i>{ownersInterests}.</i>{' '}

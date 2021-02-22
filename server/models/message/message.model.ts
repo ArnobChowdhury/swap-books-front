@@ -1,4 +1,4 @@
-import mongodb, { ObjectId, InsertOneWriteOpResult } from 'mongodb';
+import mongodb, { ObjectId } from 'mongodb';
 import { getDb, getDbClient } from '../../utils/database';
 import { sortMongoCollectionByTimeStamp } from '../../utils/general';
 

@@ -1,5 +1,6 @@
 import mongo from 'mongodb';
 import { RoomWithLastModifiedAndID } from '../models/room';
+import { BookWithoutLocationProp } from '../models/book';
 
 interface MongoCollection {
   _id: mongo.ObjectID;
@@ -51,4 +52,14 @@ export const processRoomForUser = (
     userInterests: room.participants[roomMateIndex].interests,
     unreadMsgs: room.participants[userIndex].unreadMsgs,
   };
+};
+
+export const processBookForUser = (
+  book: BookWithoutLocationProp,
+  userId: string,
+) => {
+  const ind = book.interestedUsers.find(el => el.toString() === userId);
+  const bookWithInterestedField = { ...book, isInterested: ind !== undefined };
+  delete bookWithInterestedField.interestedUsers;
+  return bookWithInterestedField;
 };

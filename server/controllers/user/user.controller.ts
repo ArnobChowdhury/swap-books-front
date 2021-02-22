@@ -9,15 +9,10 @@ export const getUserInfo = async (
   next: NextFunction,
 ): Promise<void> => {
   const { userId } = req.query;
-
   try {
-    let userInfo;
-
-    if (typeof userId === 'string') {
-      userInfo = await User.getProfileInfo(userId);
-    }
-    // todo if we cannot find user we might want throw an error
-    res.status(201).json({ userInfo });
+    const userInfo = await User.getProfileInfo(userId as string);
+    // TODO: if we cannot find user we want to throw an error
+    res.status(201).json(userInfo);
   } catch (err) {
     if (!err.statusCode) {
       err.statusCode = 500;

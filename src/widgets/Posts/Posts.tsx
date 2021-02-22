@@ -1,6 +1,10 @@
 import React, { useContext, useEffect, useRef, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchBooksRequest, expressInterestStart } from 'redux/actions/book';
+import {
+  fetchBooksRequest,
+  fetchProfileBooksRequest,
+  expressInterestStart,
+} from 'redux/actions/book';
 import { RootState } from 'redux/reducers';
 import { SocketIoContext } from 'hoc/Sockets';
 import { Post, PostShimmer } from 'modules/Post';
@@ -9,6 +13,7 @@ import { FlexItem } from 'ui-kits/FlexItem';
 import { RootContext, RootContextProps } from 'contexts/RootContext';
 import { mediumScreen } from 'mediaConfig';
 import { useOnScreen, useWindowSize } from 'hooks';
+import profile from 'redux/reducers/profile';
 
 const PostShimmerComponent = React.forwardRef(
   (_props, ref: React.Ref<HTMLDivElement>) => {
@@ -41,7 +46,11 @@ const PostShimmerComponent = React.forwardRef(
 
 PostShimmerComponent.displayName = 'PostShimmerComponent';
 
-export const Posts = (): JSX.Element => {
+interface PostProps {
+  profileId?: string;
+}
+
+export const Posts = ({ profileId }: PostProps): JSX.Element => {
   const dispatch = useDispatch();
   const { socketIo } = useContext(SocketIoContext);
   const { setPopupType, setShowModal } = useContext(RootContext) as RootContextProps;
@@ -55,20 +64,40 @@ export const Posts = (): JSX.Element => {
     (store: RootState) => store.user,
   );
 
-  const handleAdditionalBookFetch = useCallback(() => {
+  const handleAdditionalBookFetchForHome = useCallback(() => {
     if (process.browser && userLon && userLat) {
       dispatch(fetchBooksRequest(userLon, userLat, page + 1));
     }
   }, [books, userLon, userLat, page]);
 
-  useOnScreen(shimmerRef, undefined, books, handleAdditionalBookFetch, true);
+  const handleAdditionalBookFetchForProfile = useCallback(() => {
+    if (process.browser && profileId) {
+      dispatch(fetchProfileBooksRequest(profileId, page + 1));
+    }
+  }, [books, profileId, page]);
+
+  useOnScreen(
+    shimmerRef,
+    undefined,
+    books,
+    profileId
+      ? handleAdditionalBookFetchForProfile
+      : handleAdditionalBookFetchForHome,
+    true,
+  );
 
   const { accessToken, userId } = useSelector((s: RootState) => s.auth);
   useEffect(() => {
-    if (process.browser && userLon && userLat) {
+    if (!profileId && process.browser && userLon && userLat) {
       dispatch(fetchBooksRequest(userLon, userLat, 1));
     }
-  }, [userLon, userLat]);
+  }, [userLon, userLat, profileId]);
+
+  useEffect(() => {
+    if (profileId) {
+      dispatch(fetchProfileBooksRequest(profileId, 1));
+    }
+  }, [profileId]);
 
   const isSignedIn = Boolean(accessToken);
 

@@ -4,6 +4,7 @@ import createError from 'http-errors';
 import Book from '../../models/book';
 import User from '../../models/user';
 import { ModifiedRequest } from '../../interface';
+import { processBookForUser } from '../../utils/general';
 
 const { ObjectId } = mongodb;
 
@@ -60,10 +61,7 @@ export const getHomeFeedBooks = async (
     );
 
     const books = booksWithoutInterestedUserFields.map(book => {
-      const ind = book.interestedUsers.find(el => el.toString() === userId);
-      const bookWithInterestedField = { ...book, isInterested: ind !== undefined };
-      delete bookWithInterestedField.interestedUsers;
-      return bookWithInterestedField;
+      return processBookForUser(book, userId as string);
     });
     res.status(200).json({
       message: 'Fetched books details successfully',
@@ -83,22 +81,20 @@ export const getProfileBooks = async (
   next: NextFunction,
 ): Promise<void> => {
   const { profileId } = req.params;
-  const { userId } = req.query;
+  const { userId, page } = req.query;
 
   try {
-    let books;
-
     if (typeof profileId === 'string') {
-      const booksWithoutInterestedUserFields = await Book.getUserBooks(profileId);
-      // todo make this a single utility function since it is also being used in the home feed function
-      books = booksWithoutInterestedUserFields.map(book => {
-        const ind = book.interestedUsers.find(el => el.toString() === userId);
-        const bookWithInterestedField = { ...book, isInterested: ind !== undefined };
-        delete bookWithInterestedField.interestedUsers;
-        return bookWithInterestedField;
+      const booksWithoutInterestedUserFields = await Book.getUserBooks(
+        profileId,
+        Number(page),
+      );
+
+      const books = booksWithoutInterestedUserFields.map(book => {
+        return processBookForUser(book, userId as string);
       });
+      res.status(201).json({ books });
     }
-    res.status(201).json({ books });
   } catch (err) {
     if (!err.statusCode) {
       err.statusCode = 500;

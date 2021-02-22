@@ -16,6 +16,7 @@ const sharedStyles = css`
   display: flex;
   align-items: center;
   width: 100%;
+  cursor: pointer;
   height: 100%;
 `;
 
@@ -49,7 +50,7 @@ export const UserLogout = styled.button`
   width: 100%;
   text-align: left;
   border: none;
-  cursor: pointer;
+
   background: transparent;
   ${sharedStyles};
 `;

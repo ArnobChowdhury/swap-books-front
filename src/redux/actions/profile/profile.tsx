@@ -12,10 +12,14 @@ export const fetchProfileStart = () => {
   };
 };
 
-export const fetchProfileSuccess = (userInfo: any) => {
+export const fetchProfileSuccess = (
+  profileName: string,
+  numberOfbooksAvailable: number,
+) => {
   return {
     type: FETCH_PROFILE_SUCCESS,
-    userInfo,
+    profileName,
+    numberOfbooksAvailable,
   };
 };
 
@@ -31,12 +35,15 @@ export const fetchProfileReq = (userId: string) => {
     dispatch(fetchProfileStart());
 
     return axios
-      .get(`/user/${userId}`, { params: { userId } })
+      .get(`/user`, { params: { userId } })
       .then(response => {
-        const { userInfo } = response.data;
-        dispatch(fetchProfileSuccess(userInfo));
+        const { userName, numberOfbooksAvailable } = response.data;
+        console.log(response);
+        dispatch(fetchProfileSuccess(userName, numberOfbooksAvailable));
       })
       .catch(error => {
+        // TODO: ERROR HANDLING
+        console.log(error);
         dispatch(fetchProfileFail(error));
       });
   };

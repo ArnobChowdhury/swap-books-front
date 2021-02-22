@@ -2,6 +2,7 @@ import axios from '../../../axiosInstance';
 import { SOCKET_EXPRESS_INTEREST } from '../../../socketTypes';
 import { BookShape } from '../../reducers/books';
 import { Dispatch } from 'redux';
+import { Socket } from 'socket.io-client';
 
 import {
   ADD_A_BOOK_START,
@@ -90,36 +91,48 @@ export const fetchBooksFail = (error: any) => {
   return { type: FETCH_BOOKS_FAIL, error: error };
 };
 
+/**
+ * TODO: For later
+ * This Book interface can be combined with the interface of the backend
+ * when we are sending the data
+ */
+const processBooks = (book: {
+  _id: string;
+  bookName: string;
+  bookAuthor: string;
+  bookPicturePath: string;
+  userId: string;
+  bookOwnerName: string;
+  isInterested: string;
+}) => {
+  return {
+    bookId: book._id,
+    bookName: book.bookName,
+    bookAuthor: book.bookAuthor,
+    bookPicturePath: book.bookPicturePath,
+    bookOwnerId: book.userId,
+    bookOwnerName: book.bookOwnerName,
+    userIsInterested: book.isInterested,
+    interestOnGoing: false,
+    interestReqError: null,
+  };
+};
+
 export const fetchBooksRequest = (
   userLon: number,
   userLat: number,
   page: number,
 ) => {
   return async (dispatch: Dispatch) => {
-    // todo need to have state that the request has started. skipped for now
     dispatch(fetchBooksStart());
-
     const userId = localStorage.getItem('userId');
-
     const path = '/books';
+
     return axios
       .get(path, { params: { userLon, userLat, userId, page } })
       .then(response => {
         const { message, books } = response.data;
-        const booksStructured: BookShape[] = books.map((book: any) => {
-          // todo - missing properties in below object
-          return {
-            bookId: book._id,
-            bookName: book.bookName,
-            bookAuthor: book.bookAuthor,
-            bookPicturePath: book.bookPicturePath,
-            bookOwnerId: book.userId,
-            bookOwnerName: book.bookOwnerName,
-            userIsInterested: book.isInterested,
-            interestOnGoing: false,
-            interestReqError: null,
-          };
-        });
+        const booksStructured: BookShape[] = books.map(processBooks);
         const type = page === 1 ? FETCH_BOOKS_SUCCESS : FETCH_MORE_BOOKS_SUCCESS;
         dispatch(fetchBooksSuccess(booksStructured, type, page));
       })
@@ -129,36 +142,21 @@ export const fetchBooksRequest = (
       });
   };
 };
-// TODO Fix this when we fix USER page
-export const fetchProfileBooksRequest = (profileId: string) => {
+
+export const fetchProfileBooksRequest = (profileId: string, page: number) => {
   return async (dispatch: Dispatch) => {
-    // todo need to have state that the request has started. skipped for now
     dispatch(fetchBooksStart());
-
     const userId = localStorage.getItem('userId');
-
     const path = `/books/${profileId}`;
+
     return axios
-      .get(path, { params: { userId } })
+      .get(path, { params: { userId, page } })
       .then(response => {
         const { books } = response.data;
-        const booksStructured: BookShape[] = books.map((book: any) => {
-          // todo - missing properties in below object
-          // todo make an utility function for below code since this is getting re-used
-          return {
-            bookId: book._id,
-            bookName: book.bookName,
-            bookAuthor: book.bookAuthor,
-            bookPicturePath: book.bookPicturePath,
-            bookOwnerId: book.userId,
-            bookOwnerName: book.bookOwnerName,
-            userIsInterested: book.isInterested,
-            interestOnGoing: false,
-            interestReqError: null,
-          };
-        });
-        // TODO This should be changed when I fix the user page
-        //dispatch(fetchBooksSuccess(booksStructured));
+        const booksStructured: BookShape[] = books.map(processBooks);
+
+        const type = page === 1 ? FETCH_BOOKS_SUCCESS : FETCH_MORE_BOOKS_SUCCESS;
+        dispatch(fetchBooksSuccess(booksStructured, type, page));
       })
       .catch(err => {
         // todo need to check what kind of possible errors we can get???
@@ -170,7 +168,7 @@ export const fetchProfileBooksRequest = (profileId: string) => {
 // todo write tests for expressInterest related functions
 
 export const expressInterestStart = (
-  socket: SocketIOClient.Socket,
+  socket: Socket,
   userName: string,
   bookId: string,
   bookName: string,
