@@ -17,6 +17,7 @@ import { Logo } from 'assets/Logo';
 import { useSelector } from 'react-redux';
 import { RootState } from 'redux/reducers';
 import { RootContext, RootContextProps } from 'contexts/RootContext';
+import Link from 'next/link';
 
 // todo there should be not be any default arguments
 export interface TopBarProps {
@@ -52,9 +53,9 @@ export const TopBar = ({ activityBar, navBar }: TopBarProps): JSX.Element => {
               <Button onClick={handleLoginButtonClick} asButtonTag color="white">
                 Log in
               </Button>
-              <Button href="/signup" color="pink">
-                Sign up
-              </Button>
+              <Link href="/signup" passHref>
+                <Button color="pink">Sign up</Button>
+              </Link>
             </ButtonWrapper>
           </ItemWrapper>
         )}

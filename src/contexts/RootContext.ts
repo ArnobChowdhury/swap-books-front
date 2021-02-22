@@ -3,7 +3,6 @@ import { createContext, Dispatch, SetStateAction } from 'react';
 export type PopupType =
   | 'requireLoginOrSignup'
   | 'login'
-  | 'signup'
   | 'addABook'
   | 'location'
   | null;

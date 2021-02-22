@@ -3,16 +3,13 @@ import { Paragraph } from 'ui-kits/Paragraph';
 import { Button } from 'ui-kits/Button';
 import { RootContext, RootContextProps } from 'contexts/RootContext';
 import { ButtonWrapper } from './NeedAuth.styles';
+import Link from 'next/link';
 
 export const NeedAuth = (): JSX.Element => {
   const { setPopupType } = useContext(RootContext) as RootContextProps;
 
   const handleLoginButtonClick = () => {
     setPopupType('login');
-  };
-
-  const handleSignupButtonClick = () => {
-    setPopupType('signup');
   };
 
   return (
@@ -25,9 +22,9 @@ export const NeedAuth = (): JSX.Element => {
         <Button onClick={handleLoginButtonClick} asButtonTag color="white">
           Log in
         </Button>
-        <Button onClick={handleSignupButtonClick} asButtonTag color="pink">
-          Sign up
-        </Button>
+        <Link href="/signup" passHref>
+          <Button color="pink">Sign up</Button>
+        </Link>
       </ButtonWrapper>
     </>
   );
