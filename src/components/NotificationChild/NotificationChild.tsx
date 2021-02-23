@@ -67,7 +67,7 @@ export const NotificationChild = ({
           {interestedUserName} is interested in your{' '}
           {bookNamesArePlural ? 'books' : 'book'} <i>{books}</i>. Check books you can
           swap with
-          <Link href={`/user/[id]`} as={`/user/${interestedUserId}`} passHref>
+          <Link href={`/user/${interestedUserId}`} passHref>
             <InterestedUserLink>{` ${interestedUserName}.`}</InterestedUserLink>
           </Link>{' '}
           <LastModified />
@@ -77,7 +77,7 @@ export const NotificationChild = ({
       {type === 'match' && (
         <span>
           <strong>Time to Swap: </strong>
-          <Link href={`/user/[id]`} as={`/user/${interestedUserId}`} passHref>
+          <Link href={`/user/${interestedUserId}`} passHref>
             <InterestedUserLink href={`/user/${interestedUserId}`}>
               {interestedUserName}
             </InterestedUserLink>

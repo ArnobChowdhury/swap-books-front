@@ -18,7 +18,7 @@ export const UserNav = ({ onLogoutButtonClick }: UserNavProps) => {
   return (
     <UserNavLinkContainer>
       <UserNavOptionWrapper>
-        <Link href={`/user/[id]`} as={`/user/${userId}`} passHref>
+        <Link href={`/user/${userId}`} passHref>
           <UserNavLink>Your Profile</UserNavLink>
         </Link>
       </UserNavOptionWrapper>
