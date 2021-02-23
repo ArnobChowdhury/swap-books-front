@@ -4,6 +4,7 @@ import {
   NavBarContainer,
   NavBarWrapper,
   NavButton,
+  NavButtonAsATag,
   DropDown,
   Count,
 } from './NavBar.styles';
@@ -22,6 +23,7 @@ import { RootContext, RootContextProps, ContentType } from 'contexts/RootContext
 import { useWindowSize } from 'hooks/useWindowSize';
 import { largeScreen } from 'mediaConfig';
 import { useRouter } from 'next/router';
+import Link from 'next/link';
 
 // todo there should be not be any default arguments
 export const NavBar = (): JSX.Element => {
@@ -118,13 +120,11 @@ export const NavBar = (): JSX.Element => {
         </DropDown>
       )}
       <NavBarWrapper>
-        <NavButton
-          borderBottom={contentType === 'Posts'}
-          buttonType="Posts"
-          onClick={e => handleNavButtonClick(e, 'Posts')}
-        >
-          <HomeIcon hasBodyColor={contentType === 'Posts'} />
-        </NavButton>
+        <Link href="/" passHref>
+          <NavButtonAsATag borderBottom={contentType === 'Posts'} buttonType="Posts">
+            <HomeIcon hasBodyColor={contentType === 'Posts'} />
+          </NavButtonAsATag>
+        </Link>
         <NavButton
           borderBottom={contentType === 'Messages'}
           onClick={e => {

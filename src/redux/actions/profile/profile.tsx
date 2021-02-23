@@ -38,12 +38,10 @@ export const fetchProfileReq = (userId: string) => {
       .get(`/user`, { params: { userId } })
       .then(response => {
         const { userName, numberOfbooksAvailable } = response.data;
-        console.log(response);
         dispatch(fetchProfileSuccess(userName, numberOfbooksAvailable));
       })
       .catch(error => {
         // TODO: ERROR HANDLING
-        console.log(error);
         dispatch(fetchProfileFail(error));
       });
   };

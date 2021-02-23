@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { largeScreen } from 'mediaConfig';
 
 export const NavBarContainer = styled.div`
@@ -52,10 +52,12 @@ export const NavBarLinkWrapper = styled.li<{ isSelected: boolean }>`
   }
 `;
 
-export const NavButton = styled.button<{
+interface NavButtonProps {
   borderBottom: boolean;
   buttonType: 'Messages' | 'Notifications' | 'Posts' | 'User';
-}>`
+}
+
+const NavButtonCSS = css<NavButtonProps>`
   position: relative;
   text-decoration: none;
   height: 100%;
@@ -103,6 +105,14 @@ export const NavButton = styled.button<{
   &:hover {
     background: ${({ theme }) => theme.colorBG};
   }
+`;
+
+export const NavButton = styled.button<NavButtonProps>`
+  ${NavButtonCSS}
+`;
+
+export const NavButtonAsATag = styled.a<NavButtonProps>`
+  ${NavButtonCSS}
 `;
 
 export const DropDown = styled.div<{ isSelected: boolean }>`
