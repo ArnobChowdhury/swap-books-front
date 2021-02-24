@@ -87,7 +87,7 @@ export const NotificationChild = ({
           <i>{ownersInterests}.</i>{' '}
           <ChatButton
             onClick={e => onChatButtonClick && onChatButtonClick(e, roomId)}
-            className="chat-button"
+            className="dropdown-element"
           >
             Chat
           </ChatButton>{' '}

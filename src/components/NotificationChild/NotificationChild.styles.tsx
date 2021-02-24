@@ -17,6 +17,7 @@ export const Wrapper = styled.div.attrs(({ dataRoomLink }: WrapperProps) => ({
   align-items: flex-start;
   justify-content: flex-start;
   border-top: 1px solid ${({ theme }) => theme.colorSeparator};
+  line-height: 25px;
 `;
 
 export const InterestedUserLink = styled.a`

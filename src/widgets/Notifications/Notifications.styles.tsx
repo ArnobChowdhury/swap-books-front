@@ -1,21 +1,24 @@
 import styled, { keyframes } from 'styled-components';
-import { largeScreen } from 'mediaConfig';
+import { largeScreen, mediumScreen } from 'mediaConfig';
 
-export const Wrapper = styled.div`
+export const Wrapper = styled.div<{ isNotificationsPage: boolean }>`
   width: 100%;
-  overflow-y: scroll;
+  overflow-y: auto;
   background: ${({ theme }) => theme.colorWhite};
   padding: ${({ theme }) =>
     `${theme.spaceEight} ${theme.spaceEight} ${theme.spaceFour} ${theme.spaceEight}`};
-  margin-top: ${({ theme }) => theme.spaceFive};
   box-shadow: ${({ theme }) => theme.boxShadow};
+
+  @media (min-width: ${mediumScreen}px) {
+    margin-top: ${({ isNotificationsPage, theme }) =>
+      isNotificationsPage ? theme.spaceFive : '0'};
+    box-shadow: ${({ isNotificationsPage }) => !isNotificationsPage && 'none'};
+  }
 
   @media (min-width: ${largeScreen}px) {
     max-height: 345px;
     padding: ${({ theme }) =>
       `${theme.spaceSix} ${theme.spaceSix} 0 ${theme.spaceSix}`};
-    margin-top: 0;
-    box-shadow: none;
   }
 `;
 

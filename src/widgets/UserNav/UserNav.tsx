@@ -19,17 +19,23 @@ export const UserNav = ({ onLogoutButtonClick }: UserNavProps) => {
     <UserNavLinkContainer>
       <UserNavOptionWrapper>
         <Link href={`/user/${userId}`} passHref>
-          <UserNavLink>Your Profile</UserNavLink>
+          <UserNavLink className="dropdown-element">Your Profile</UserNavLink>
         </Link>
       </UserNavOptionWrapper>
       <UserNavOptionWrapper>
-        <UserNavLink href="/how-to">How it Works</UserNavLink>
+        <UserNavLink href="/how-to" className="dropdown-element">
+          How it Works
+        </UserNavLink>
       </UserNavOptionWrapper>
       <UserNavOptionWrapper>
-        <UserNavLink href="/about-us">About Us</UserNavLink>
+        <UserNavLink href="/about-us" className="dropdown-element">
+          About Us
+        </UserNavLink>
       </UserNavOptionWrapper>
       <UserNavOptionWrapper>
-        <UserNavLink href="/terms">Terms and Conditions</UserNavLink>
+        <UserNavLink href="/terms" className="dropdown-element">
+          Terms and Conditions
+        </UserNavLink>
       </UserNavOptionWrapper>
       <UserNavOptionWrapper marginTopAuto>
         <UserLogout onClick={onLogoutButtonClick}>Logout</UserLogout>

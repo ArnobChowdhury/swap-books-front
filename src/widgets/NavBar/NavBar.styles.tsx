@@ -11,7 +11,7 @@ export const NavBarContainer = styled.div`
   border-bottom: ${({ theme }) => `1px solid ${theme.colorSeparator}`};
   z-index: 1000;
   width: 100vw;
-  box-shadow: 0 -1px 2px rgb(0, 0, 0, 0.2);
+  border-top: ${({ theme }) => `1px solid ${theme.colorSeparator}`};
 
   @media (min-width: ${largeScreen}px) {
     position: relative;
@@ -57,7 +57,7 @@ interface NavButtonProps {
   buttonType: 'Messages' | 'Notifications' | 'Posts' | 'User';
 }
 
-const NavButtonCSS = css<NavButtonProps>`
+export const NavButton = styled.button<NavButtonProps>`
   position: relative;
   text-decoration: none;
   height: 100%;
@@ -79,7 +79,7 @@ const NavButtonCSS = css<NavButtonProps>`
     } else if (buttonType === 'Posts') {
       color = theme.colorPurple;
     } else {
-      color = theme.colorLogo;
+      color = theme.colorTextPrimary;
     }
     return `4px solid ${borderBottom ? color : 'transparent'}`;
   }};
@@ -105,14 +105,6 @@ const NavButtonCSS = css<NavButtonProps>`
   &:hover {
     background: ${({ theme }) => theme.colorBG};
   }
-`;
-
-export const NavButton = styled.button<NavButtonProps>`
-  ${NavButtonCSS}
-`;
-
-export const NavButtonAsATag = styled.a<NavButtonProps>`
-  ${NavButtonCSS}
 `;
 
 export const DropDown = styled.div<{ isSelected: boolean }>`

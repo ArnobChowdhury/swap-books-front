@@ -1,18 +1,26 @@
 import styled from 'styled-components';
 import { largeScreen, mediumScreen } from 'mediaConfig';
 
-export const MessageBoxContainer = styled.div<{ messageBoxIsOpen: boolean }>`
-  margin-top: ${({ theme }) => theme.spaceFive};
+export const MessageBoxContainer = styled.div<{
+  messageBoxIsOpen: boolean;
+  isMessagePage: boolean;
+}>`
   width: 100%;
   box-shadow: ${({ theme }) => theme.boxShadow};
   position: relative;
   overflow: hidden;
   height: ${({ messageBoxIsOpen }) =>
-    messageBoxIsOpen ? 'calc(100vh - 140px)' : 'auto'};
+    messageBoxIsOpen ? 'calc(100vh - 130px)' : 'auto'};
+
+  @media (min-width: ${mediumScreen}px) {
+    margin-top: ${({ theme }) => theme.spaceFive};
+    height: ${({ messageBoxIsOpen }) =>
+      messageBoxIsOpen ? 'calc(100vh - 140px)' : 'auto'};
+  }
 
   @media (min-width: ${largeScreen}px) {
-    margin-top: 0;
-    max-height: 480px;
+    margin-top: ${({ isMessagePage }) => !isMessagePage && '0'};
+    max-height: ${({ isMessagePage }) => !isMessagePage && '480px'};
   }
 `;
 
@@ -221,9 +229,9 @@ export const SingleChat = styled.div<{ own: boolean }>`
 `;
 
 export const SingleChatText = styled.div<{ own: boolean }>`
-  color: ${({ theme, own }) => (own ? theme.colorTextPrimary : theme.colorWhite)};
+  color: ${({ theme, own }) => (own ? theme.colorWhite : theme.colorTextPrimary)};
   background: ${({ theme, own }) =>
-    own ? theme.colorSeparator : theme.colorTextPrimary};
+    own ? theme.colorTextPrimary : theme.colorSeparator};
   font-size: ${({ theme }) => theme.fontSmall};
   font-weight: 400;
   padding: ${({ theme }) => `${theme.spaceFour} ${theme.spaceEight}`};

@@ -1,12 +1,10 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { NextPage } from 'next';
 import { TopBar } from 'widgets/TopBar';
 import { ActivityBar } from 'widgets/ActivityBar';
 import { ModalManager } from 'widgets/ModalManager';
 import { Posts } from 'widgets/Posts';
 import { NavBar } from 'widgets/NavBar';
-import { Notifications } from 'widgets/Notifications';
-import { Message } from 'widgets/Message';
 import { useWindowSize } from 'hooks';
 import { largeScreen, mediumScreen } from 'mediaConfig';
 import { useSelector } from 'react-redux';
@@ -16,11 +14,14 @@ import { RootContext, RootContextProps } from 'contexts/RootContext';
 
 const Root: NextPage = (): JSX.Element => {
   const rootContext = useContext(RootContext);
-  const { contentType } = rootContext as RootContextProps;
+  const { contentType, setContentType } = rootContext as RootContextProps;
   const { width } = useWindowSize();
   const { accessToken } = useSelector((s: RootState) => s.auth);
   const isSignedIn = Boolean(accessToken);
 
+  useEffect(() => {
+    setContentType('Posts');
+  }, []);
   return (
     <>
       <ModalManager />
@@ -35,9 +36,7 @@ const Root: NextPage = (): JSX.Element => {
       {isSignedIn && width < largeScreen && <NavBar />}
 
       <PageLayout largeTopMargin={contentType === 'Posts'}>
-        {(width >= largeScreen || contentType === 'Posts') && <Posts />}
-        {width < largeScreen && contentType === 'Notifications' && <Notifications />}
-        {width < largeScreen && contentType === 'Messages' && <Message />}
+        <Posts />
       </PageLayout>
     </>
   );

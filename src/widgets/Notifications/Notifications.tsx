@@ -19,6 +19,7 @@ import { Header } from 'ui-kits/Header';
 import theme from 'theme';
 import { formatDistanceToNow } from 'date-fns';
 import { RootContext, RootContextProps } from 'contexts/RootContext';
+import { useRouter } from 'next/router';
 
 export interface NotificationProps {
   notifications: NotificationShape[];
@@ -35,6 +36,8 @@ export const Notifications = (): JSX.Element => {
   const dispatch = useDispatch();
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const loaderRef = useRef<HTMLDivElement | null>(null);
+  const { pathname } = useRouter();
+  const isNotificationsPage = pathname === '/notifications';
 
   const handleNotificationIsSeen = (roomId: string) => {
     dispatch(setNotificationAsSeenRequest(roomId));
@@ -147,7 +150,7 @@ export const Notifications = (): JSX.Element => {
   const { spaceThree } = theme;
 
   return (
-    <Wrapper ref={wrapperRef}>
+    <Wrapper isNotificationsPage={isNotificationsPage} ref={wrapperRef}>
       <Header marginBelow={spaceThree}>Notifications</Header>
       {notifications.length > 0 && (
         <>

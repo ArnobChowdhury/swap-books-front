@@ -4,7 +4,6 @@ import {
   NavBarContainer,
   NavBarWrapper,
   NavButton,
-  NavButtonAsATag,
   DropDown,
   Count,
 } from './NavBar.styles';
@@ -28,7 +27,8 @@ import Link from 'next/link';
 // todo there should be not be any default arguments
 export const NavBar = (): JSX.Element => {
   const dispatch = useDispatch();
-  const userName = useSelector((s: RootState) => s.user.name);
+  const { name: userName } = useSelector((s: RootState) => s.user);
+  const { userId } = useSelector((s: RootState) => s.auth);
   const { totalUnseen: totalUnseenNotification } = useSelector(
     (s: RootState) => s.notifications,
   );
@@ -36,6 +36,7 @@ export const NavBar = (): JSX.Element => {
   const { activeRooms } = useSelector((s: RootState) => s.message);
   const [totalUnseenMsgs, setTotalUnseenMsgs] = useState<number>(0);
   const router = useRouter();
+  const { pathname, push: routerPush, asPath } = router;
 
   useEffect(() => {
     if (activeRooms) {
@@ -70,10 +71,25 @@ export const NavBar = (): JSX.Element => {
           !messageButtonRef.current?.contains(e.target as Node) &&
           !notificationButtonRef.current?.contains(e.target as Node) &&
           !userButtonRef.current?.contains(e.target as Node) &&
-          !(e.target as HTMLElement).classList.contains('chat-button') &&
+          !(e.target as HTMLElement).classList.contains('dropdown-element') &&
           contentType !== 'Posts'
         ) {
-          setContentType('Posts');
+          switch (pathname) {
+            case '/':
+              setContentType('Posts');
+              break;
+            case '/messages':
+              setContentType('Messages');
+              break;
+            case '/notifications':
+              console.log('This block got executed');
+              setContentType('Notifications');
+              break;
+            case '/user/[id]':
+              setContentType('User');
+              break;
+          }
+          setShowDropDown(false);
         }
       };
 
@@ -96,21 +112,110 @@ export const NavBar = (): JSX.Element => {
     dispatch(getNotificationsRequest());
   }, []);
 
-  const handleNavButtonClick = (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-    button: ContentType,
+  // TODO Consider moving this to context
+  const [showDropDown, setShowDropDown] = useState<boolean>(false);
+
+  const handleMsgButtonClick = (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
   ) => {
-    event.preventDefault();
-    if (contentType === button) {
-      setContentType('Posts');
+    e.preventDefault();
+    if (contentType === 'Messages') {
+      if (width >= largeScreen) {
+        if (pathname === '/') {
+          setContentType('Posts');
+        } else if (pathname === '/notifications') {
+          setContentType('Notifications');
+        } else if (pathname === '/user/[id]') {
+          setContentType('User');
+        } else {
+          routerPush('/messages');
+        }
+      } else {
+        routerPush('/messages');
+      }
+      setShowDropDown(false);
     } else {
-      setContentType(button);
+      setContentType('Messages');
+      if (width >= largeScreen) {
+        setShowDropDown(true);
+      } else {
+        routerPush('/messages');
+      }
     }
+  };
+
+  const handleNotificationButtonClick = (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+  ) => {
+    e.preventDefault();
+    if (contentType === 'Notifications') {
+      if (width >= largeScreen) {
+        if (pathname === '/') {
+          setContentType('Posts');
+        } else if (pathname === '/messages') {
+          setContentType('Messages');
+        } else if (pathname === '/user/[id]') {
+          setContentType('User');
+        } else {
+          routerPush('/notifications');
+        }
+      } else {
+        routerPush('/notifications');
+      }
+      setShowDropDown(false);
+    } else {
+      setContentType('Notifications');
+      if (width >= largeScreen) {
+        setShowDropDown(true);
+      } else {
+        routerPush('/notifications');
+      }
+    }
+  };
+
+  const handleUserButtonClick = (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+  ) => {
+    e.preventDefault();
+    if (contentType === 'User') {
+      if (width >= largeScreen) {
+        if (pathname === '/user/[id]') {
+          setShowDropDown(!showDropDown);
+        } else {
+          if (pathname === '/') {
+            setContentType('Posts');
+          } else if (pathname === '/messages') {
+            setContentType('Messages');
+          } else if (pathname === '/notifications') {
+            setContentType('Notifications');
+          }
+          setShowDropDown(false);
+        }
+      } else {
+        routerPush(asPath);
+      }
+    } else {
+      setContentType('User');
+      if (width >= largeScreen) {
+        setShowDropDown(true);
+      } else {
+        routerPush(`/user/${userId}`);
+      }
+    }
+  };
+
+  const handleHomeButtonClick = (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+  ) => {
+    e.preventDefault();
+    routerPush('/');
+    setContentType('Posts');
+    setShowDropDown(false);
   };
 
   return (
     <NavBarContainer ref={navigationRef}>
-      {width >= largeScreen && (
+      {width >= largeScreen && showDropDown && (
         <DropDown isSelected={contentType !== 'Posts'} ref={dropDownRef}>
           {contentType === 'Notifications' && <Notifications />}
           {contentType === 'Messages' && <Message />}
@@ -120,16 +225,16 @@ export const NavBar = (): JSX.Element => {
         </DropDown>
       )}
       <NavBarWrapper>
-        <Link href="/" passHref>
-          <NavButtonAsATag borderBottom={contentType === 'Posts'} buttonType="Posts">
-            <HomeIcon hasBodyColor={contentType === 'Posts'} />
-          </NavButtonAsATag>
-        </Link>
+        <NavButton
+          borderBottom={contentType === 'Posts'}
+          buttonType="Posts"
+          onClick={handleHomeButtonClick}
+        >
+          <HomeIcon hasBodyColor={contentType === 'Posts'} />
+        </NavButton>
         <NavButton
           borderBottom={contentType === 'Messages'}
-          onClick={e => {
-            handleNavButtonClick(e, 'Messages');
-          }}
+          onClick={handleMsgButtonClick}
           ref={messageButtonRef}
           buttonType="Messages"
         >
@@ -140,7 +245,7 @@ export const NavBar = (): JSX.Element => {
         </NavButton>
         <NavButton
           borderBottom={contentType === 'Notifications'}
-          onClick={e => handleNavButtonClick(e, 'Notifications')}
+          onClick={handleNotificationButtonClick}
           ref={notificationButtonRef}
           buttonType="Notifications"
         >
@@ -152,7 +257,7 @@ export const NavBar = (): JSX.Element => {
         <NavButton
           borderBottom={contentType === 'User'}
           buttonType="User"
-          onClick={e => handleNavButtonClick(e, 'User')}
+          onClick={handleUserButtonClick}
           ref={userButtonRef}
         >
           <UserIcon userName={userName ? userName : ''} />

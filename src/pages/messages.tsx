@@ -1,32 +1,26 @@
-import { useContext, useEffect } from 'react';
-import { useRouter } from 'next/router';
+import React, { useContext, useEffect } from 'react';
 import { NextPage } from 'next';
-import { User } from 'widgets/User';
-import { useSelector } from 'react-redux';
-import { RootState } from 'redux/reducers';
 import { TopBar } from 'widgets/TopBar';
 import { ActivityBar } from 'widgets/ActivityBar';
 import { ModalManager } from 'widgets/ModalManager';
-import { Posts } from 'widgets/Posts';
 import { NavBar } from 'widgets/NavBar';
+import { Message } from 'widgets/Message';
 import { useWindowSize } from 'hooks';
 import { largeScreen, mediumScreen } from 'mediaConfig';
+import { useSelector } from 'react-redux';
+import { RootState } from 'redux/reducers';
 import { PageLayout } from 'hoc/PageLayout';
 import { RootContext, RootContextProps } from 'contexts/RootContext';
 
-const UserPage: NextPage = (): JSX.Element => {
-  const { accessToken } = useSelector((store: RootState) => store.auth);
-  const isSignedIn = Boolean(accessToken);
-
-  const router = useRouter();
-  const { id: profileId } = router.query;
-
+const Root: NextPage = (): JSX.Element => {
   const rootContext = useContext(RootContext);
   const { contentType, setContentType } = rootContext as RootContextProps;
   const { width } = useWindowSize();
+  const { accessToken } = useSelector((s: RootState) => s.auth);
+  const isSignedIn = Boolean(accessToken);
 
   useEffect(() => {
-    setContentType('User');
+    setContentType('Messages');
   }, []);
 
   return (
@@ -34,22 +28,16 @@ const UserPage: NextPage = (): JSX.Element => {
       <ModalManager />
       <TopBar
         navBar={width >= largeScreen && <NavBar />}
-        // activityBar={width >= mediumScreen && <ActivityBar />}
         activityBar={
           (width >= mediumScreen || contentType === 'Posts') && <ActivityBar />
         }
       />
-      {/* {width < mediumScreen && <ActivityBar />} */}
       {isSignedIn && width < largeScreen && <NavBar />}
-
       <PageLayout>
-        <>
-          <User profileId={profileId as string} />
-          <Posts profileId={profileId as string} />
-        </>
+        <Message />
       </PageLayout>
     </>
   );
 };
 
-export default UserPage;
+export default Root;

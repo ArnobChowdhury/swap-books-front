@@ -12,10 +12,7 @@ import {
 } from '../../actions/actionTypes';
 
 export interface UserState {
-  _id: string | null;
   name: string | null;
-  dob: string | null;
-  sex: string | null;
   userCreationOnGoing: boolean;
   userCreationSuccessful: boolean;
   locationUpdatetOnGoing: boolean;
@@ -25,10 +22,7 @@ export interface UserState {
 }
 
 export const initialState: UserState = {
-  _id: null,
   name: null,
-  dob: null,
-  sex: null,
   userCreationOnGoing: false,
   userCreationSuccessful: false,
   locationUpdatetOnGoing: false,

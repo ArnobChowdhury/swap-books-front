@@ -45,8 +45,11 @@ import { RootState } from 'redux/reducers';
 import { SocketIoContext } from 'hoc/Sockets';
 import { MessageResponseProps } from 'redux/reducers/message';
 import { NotificationBookShape } from 'redux/reducers/notifications';
+import { useRouter } from 'next/router';
 
 export const Message = () => {
+  const { pathname } = useRouter();
+  const isMessagePage = pathname === '/messages';
   const { socketIo } = useContext(SocketIoContext);
   const dispatch = useDispatch();
   const {
@@ -225,7 +228,10 @@ export const Message = () => {
   }, [messages]);
 
   return (
-    <MessageBoxContainer messageBoxIsOpen={messageBoxIsOpen}>
+    <MessageBoxContainer
+      messageBoxIsOpen={messageBoxIsOpen}
+      isMessagePage={isMessagePage}
+    >
       <MessageListContainer>
         <SideMargin>
           <Header marginBelow={spaceThree}>Chats</Header>
