@@ -22,7 +22,12 @@ import { RootContext, RootContextProps, ContentType } from 'contexts/RootContext
 import { useWindowSize } from 'hooks/useWindowSize';
 import { largeScreen } from 'mediaConfig';
 import { useRouter } from 'next/router';
-import Link from 'next/link';
+import {
+  HOME_ROUTE,
+  MESSAGES_ROUTE,
+  NOTIFICATIONS_ROUTE,
+  USER_ROUTE,
+} from 'frontEndRoutes';
 
 // todo there should be not be any default arguments
 export const NavBar = (): JSX.Element => {
@@ -75,17 +80,16 @@ export const NavBar = (): JSX.Element => {
           contentType !== 'Posts'
         ) {
           switch (pathname) {
-            case '/':
+            case HOME_ROUTE:
               setContentType('Posts');
               break;
-            case '/messages':
+            case MESSAGES_ROUTE:
               setContentType('Messages');
               break;
-            case '/notifications':
-              console.log('This block got executed');
+            case NOTIFICATIONS_ROUTE:
               setContentType('Notifications');
               break;
-            case '/user/[id]':
+            case USER_ROUTE:
               setContentType('User');
               break;
           }
@@ -121,17 +125,17 @@ export const NavBar = (): JSX.Element => {
     e.preventDefault();
     if (contentType === 'Messages') {
       if (width >= largeScreen) {
-        if (pathname === '/') {
+        if (pathname === HOME_ROUTE) {
           setContentType('Posts');
-        } else if (pathname === '/notifications') {
+        } else if (pathname === NOTIFICATIONS_ROUTE) {
           setContentType('Notifications');
-        } else if (pathname === '/user/[id]') {
+        } else if (pathname === USER_ROUTE) {
           setContentType('User');
         } else {
-          routerPush('/messages');
+          routerPush(MESSAGES_ROUTE);
         }
       } else {
-        routerPush('/messages');
+        routerPush(MESSAGES_ROUTE);
       }
       setShowDropDown(false);
     } else {
@@ -139,7 +143,7 @@ export const NavBar = (): JSX.Element => {
       if (width >= largeScreen) {
         setShowDropDown(true);
       } else {
-        routerPush('/messages');
+        routerPush(MESSAGES_ROUTE);
       }
     }
   };
@@ -150,17 +154,17 @@ export const NavBar = (): JSX.Element => {
     e.preventDefault();
     if (contentType === 'Notifications') {
       if (width >= largeScreen) {
-        if (pathname === '/') {
+        if (pathname === HOME_ROUTE) {
           setContentType('Posts');
-        } else if (pathname === '/messages') {
+        } else if (pathname === MESSAGES_ROUTE) {
           setContentType('Messages');
-        } else if (pathname === '/user/[id]') {
+        } else if (pathname === USER_ROUTE) {
           setContentType('User');
         } else {
-          routerPush('/notifications');
+          routerPush(NOTIFICATIONS_ROUTE);
         }
       } else {
-        routerPush('/notifications');
+        routerPush(NOTIFICATIONS_ROUTE);
       }
       setShowDropDown(false);
     } else {
@@ -168,7 +172,7 @@ export const NavBar = (): JSX.Element => {
       if (width >= largeScreen) {
         setShowDropDown(true);
       } else {
-        routerPush('/notifications');
+        routerPush(NOTIFICATIONS_ROUTE);
       }
     }
   };
@@ -179,14 +183,14 @@ export const NavBar = (): JSX.Element => {
     e.preventDefault();
     if (contentType === 'User') {
       if (width >= largeScreen) {
-        if (pathname === '/user/[id]') {
+        if (pathname === USER_ROUTE) {
           setShowDropDown(!showDropDown);
         } else {
-          if (pathname === '/') {
+          if (pathname === HOME_ROUTE) {
             setContentType('Posts');
-          } else if (pathname === '/messages') {
+          } else if (pathname === MESSAGES_ROUTE) {
             setContentType('Messages');
-          } else if (pathname === '/notifications') {
+          } else if (pathname === NOTIFICATIONS_ROUTE) {
             setContentType('Notifications');
           }
           setShowDropDown(false);
@@ -208,7 +212,7 @@ export const NavBar = (): JSX.Element => {
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
   ) => {
     e.preventDefault();
-    routerPush('/');
+    routerPush(HOME_ROUTE);
     setContentType('Posts');
     setShowDropDown(false);
   };

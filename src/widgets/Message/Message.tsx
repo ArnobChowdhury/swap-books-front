@@ -46,10 +46,11 @@ import { SocketIoContext } from 'hoc/Sockets';
 import { MessageResponseProps } from 'redux/reducers/message';
 import { NotificationBookShape } from 'redux/reducers/notifications';
 import { useRouter } from 'next/router';
+import { MESSAGES_ROUTE } from 'frontEndRoutes';
 
 export const Message = () => {
   const { pathname } = useRouter();
-  const isMessagePage = pathname === '/messages';
+  const isMessagePage = pathname === MESSAGES_ROUTE;
   const { socketIo } = useContext(SocketIoContext);
   const dispatch = useDispatch();
   const {

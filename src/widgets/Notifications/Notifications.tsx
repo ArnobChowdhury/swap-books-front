@@ -20,6 +20,7 @@ import theme from 'theme';
 import { formatDistanceToNow } from 'date-fns';
 import { RootContext, RootContextProps } from 'contexts/RootContext';
 import { useRouter } from 'next/router';
+import { NOTIFICATIONS_ROUTE } from 'frontEndRoutes';
 
 export interface NotificationProps {
   notifications: NotificationShape[];
@@ -37,7 +38,7 @@ export const Notifications = (): JSX.Element => {
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const loaderRef = useRef<HTMLDivElement | null>(null);
   const { pathname } = useRouter();
-  const isNotificationsPage = pathname === '/notifications';
+  const isNotificationsPage = pathname === NOTIFICATIONS_ROUTE;
 
   const handleNotificationIsSeen = (roomId: string) => {
     dispatch(setNotificationAsSeenRequest(roomId));

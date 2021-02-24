@@ -11,6 +11,12 @@ import { RootContext, PopupType, ContentType } from 'contexts/RootContext';
 import { useRouter } from 'next/router';
 import { useWindowSize } from 'hooks/useWindowSize';
 import { largeScreen } from 'mediaConfig';
+import {
+  HOME_ROUTE,
+  MESSAGES_ROUTE,
+  NOTIFICATIONS_ROUTE,
+  USER_ROUTE,
+} from 'frontEndRoutes';
 
 // todo
 // eslint-disable-next-line react/prop-types
@@ -26,13 +32,16 @@ const WrappedApp: FC<AppProps> = ({ Component, pageProps }) => {
 
   useEffect(() => {
     if (width < largeScreen) {
-      if (pathname === '/' && contentType !== 'Posts') {
+      if (pathname === HOME_ROUTE && contentType !== 'Posts') {
         setContentType('Posts');
-      } else if (pathname === '/messages' && contentType !== 'Messages') {
+      } else if (pathname === MESSAGES_ROUTE && contentType !== 'Messages') {
         setContentType('Messages');
-      } else if (pathname === '/notifications' && contentType !== 'Notifications') {
+      } else if (
+        pathname === NOTIFICATIONS_ROUTE &&
+        contentType !== 'Notifications'
+      ) {
         setContentType('Notifications');
-      } else if (pathname === '/user/[id]' && contentType !== 'User') {
+      } else if (pathname === USER_ROUTE && contentType !== 'User') {
         setContentType('User');
       }
     }
