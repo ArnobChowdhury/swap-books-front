@@ -6,4 +6,5 @@ export {
   authTokenRefresh,
   authSuccess,
   authLogout,
+  authRedirectSuccess,
 } from './auth';

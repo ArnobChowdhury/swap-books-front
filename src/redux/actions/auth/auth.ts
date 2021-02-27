@@ -9,6 +9,7 @@ import {
   AUTH_START,
   AUTH_LOGOUT,
   AUTH_TOKEN_REFRESH,
+  AUTH_REDIRECT_SUCCESS,
   UPDATE_USER_INFO,
 } from './../actionTypes';
 
@@ -132,6 +133,12 @@ export const authRequest = (
         // todo need to check what kind of possible errors we can get???
         dispatch(authFail(err));
       });
+  };
+};
+
+export const authRedirectSuccess = () => {
+  return {
+    type: AUTH_REDIRECT_SUCCESS,
   };
 };
 

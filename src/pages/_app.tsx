@@ -3,7 +3,9 @@ import { AppProps } from 'next/app';
 import { wrapper } from 'redux/store';
 import { ThemeProvider } from 'styled-components';
 import { PersistGate } from 'redux-persist/integration/react';
-import { useStore } from 'react-redux';
+import { useStore, useSelector, useDispatch } from 'react-redux';
+import { RootState } from 'redux/reducers';
+import { authRedirectSuccess } from 'redux/actions/auth';
 import { SocketIO } from 'hoc/Sockets';
 import GlobalStyles from '../components/GlobalStyles';
 import theme from '../theme';
@@ -22,13 +24,27 @@ import {
 // eslint-disable-next-line react/prop-types
 const WrappedApp: FC<AppProps> = ({ Component, pageProps }) => {
   const store = useStore();
+  const { authRedirectPath } = useSelector((s: RootState) => s.auth);
+  const dispatch = useDispatch();
 
   const [showModal, setShowModal] = useState<boolean>(false);
   const [popupType, setPopupType] = useState<PopupType | null>(null);
   const [contentType, setContentType] = useState<ContentType>('Posts');
 
-  const { pathname } = useRouter();
+  const { pathname, push: routerPush } = useRouter();
   const { width } = useWindowSize();
+
+  useEffect(() => {
+    if (
+      authRedirectPath &&
+      (pathname === MESSAGES_ROUTE ||
+        pathname === USER_ROUTE ||
+        pathname === NOTIFICATIONS_ROUTE)
+    ) {
+      routerPush(authRedirectPath);
+      dispatch(authRedirectSuccess());
+    }
+  }, [authRedirectPath]);
 
   useEffect(() => {
     if (width < largeScreen) {

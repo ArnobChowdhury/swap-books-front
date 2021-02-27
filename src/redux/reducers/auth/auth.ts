@@ -6,8 +6,8 @@ import {
   AUTH_LOGOUT,
   AUTH_START,
   AUTH_FAIL,
+  AUTH_REDIRECT_SUCCESS,
 } from '../../actions/actionTypes';
-import { refreshToken } from '../../../../server/controllers/auth';
 
 export interface AuthState {
   accessToken: string | null;
@@ -15,7 +15,7 @@ export interface AuthState {
   expirationDate: number;
   error: string | null | Error;
   loading: boolean;
-  authRedirectPath: string;
+  authRedirectPath: string | null;
 }
 
 export const initialState: AuthState = {
@@ -24,7 +24,7 @@ export const initialState: AuthState = {
   expirationDate: 0,
   error: null,
   loading: false,
-  authRedirectPath: '/',
+  authRedirectPath: null,
 };
 
 const reducer = (state = initialState, action: AnyAction) => {
@@ -47,8 +47,10 @@ const reducer = (state = initialState, action: AnyAction) => {
       return { ...state, accessToken, expirationDate };
     case AUTH_FAIL:
       return { ...state, error };
+    case AUTH_REDIRECT_SUCCESS:
+      return { ...state, authRedirectPath: null };
     case AUTH_LOGOUT:
-      return { ...state, userId: null, accessToken: null };
+      return { ...state, userId: null, accessToken: null, authRedirectPath: '/' };
     // todo not all actions of the original implementation of maximilan is handled here
     default:
       return state;
