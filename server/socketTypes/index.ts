@@ -1,6 +1,5 @@
 export const CONNECT = 'connect';
 
-export const INIT_SOCKET = 'init socket';
 export const RECEIVE_LATEST_NOTIFICATION = 'receive latest notification';
 
 export const RECEIVE_INTEREST = 'receive interest';

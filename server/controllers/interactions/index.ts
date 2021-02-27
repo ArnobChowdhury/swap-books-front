@@ -1,5 +1,5 @@
 export {
-  initSocket,
+  saveSocketToRedis,
   initMsgs,
   expressInterest,
   joinAllRooms,

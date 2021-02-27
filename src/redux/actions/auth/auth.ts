@@ -8,6 +8,7 @@ import {
   AUTH_FAIL,
   AUTH_START,
   AUTH_LOGOUT,
+  AUTH_TOKEN_REFRESH,
   UPDATE_USER_INFO,
 } from './../actionTypes';
 
@@ -17,18 +18,37 @@ export const authStart = () => {
   };
 };
 
-export const authSuccess = (accessToken: string, userId: string) => {
+export const authTokenRefresh = (
+  accessToken: string,
+  refreshToken: string,
+  expirationDate: number,
+) => {
+  localStorage.setItem('accessToken', accessToken);
+  localStorage.setItem('refreshToken', refreshToken);
+  localStorage.setItem('expirationDate', String(expirationDate));
+
+  return {
+    type: AUTH_TOKEN_REFRESH,
+    accessToken,
+    expirationDate,
+  };
+};
+
+export const authSuccess = (
+  accessToken: string,
+  userId: string,
+  expirationDate: number,
+) => {
   return {
     type: AUTH_SUCCESS,
     accessToken,
     userId,
+    expirationDate,
   };
 };
 
 export const updateUserInfo = (
   name: string | null,
-  dob: string | null,
-  sex: string | null,
   userCreationSuccessful: boolean,
   userLon: number | null,
   userLat: number | null,
@@ -36,8 +56,6 @@ export const updateUserInfo = (
   return {
     type: UPDATE_USER_INFO,
     name,
-    dob,
-    sex,
     userCreationSuccessful,
     userLon,
     userLat,
@@ -57,7 +75,7 @@ export const authLogout = () => {
     return axios
       .post('/auth/logout', { userId })
       .then(() => {
-        dispatch(updateUserInfo(null, null, null, false, null, null));
+        dispatch(updateUserInfo(null, false, null, null));
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
         localStorage.removeItem('userId');
@@ -68,15 +86,6 @@ export const authLogout = () => {
         // TODO Should we handle authLogout failed seperately from authLogin
         dispatch(authFail(err));
       });
-  };
-};
-
-export const checkAuthTimeout = (expirationTime: number) => {
-  return (dispatch: Dispatch) => {
-    setTimeout(() => {
-      // @ts-ignore
-      dispatch(authLogout());
-    }, expirationTime * 1000);
   };
 };
 
@@ -101,8 +110,6 @@ export const authRequest = (
         // todo how should we handle the message???
         const {
           name,
-          dob,
-          sex,
           userId,
           accessToken,
           refreshToken,
@@ -117,11 +124,8 @@ export const authRequest = (
         localStorage.setItem('refreshToken', refreshToken);
         localStorage.setItem('userId', userId);
         localStorage.setItem('expirationDate', `${expirationDate}`);
-        dispatch(authSuccess(accessToken, userId));
-        dispatch(updateUserInfo(name, dob, sex, true, userLon, userLat));
-
-        // @ts-ignore
-        dispatch(checkAuthTimeout(expiresIn)); // todo what is this and why should we implement this??? answer: we do not need to implement this. Get rid of this.
+        dispatch(authSuccess(accessToken, userId, expirationDate));
+        dispatch(updateUserInfo(name, true, userLon, userLat));
       })
       .catch(err => {
         formikSetSubmitting(false);
@@ -131,6 +135,11 @@ export const authRequest = (
   };
 };
 
+/**
+ * TODO Later:
+ * With this function dispatching at the root level of the application we probably can get rid of redux persist.
+ * And probably that is the right thing to do
+ */
 export const authCheckState = () => {
   return (dispatch: Dispatch) => {
     const accessToken = localStorage.getItem('accessToken');
@@ -147,7 +156,8 @@ export const authCheckState = () => {
       } else {
         //                                     below "|| ''" code is just for type assertion
         const userId = localStorage.getItem('userId') || '';
-        return dispatch(authSuccess(accessToken, userId));
+        const expirationDate = Number(localStorage.getItem('expirationDate'));
+        return dispatch(authSuccess(accessToken, userId, expirationDate));
       }
     }
   };

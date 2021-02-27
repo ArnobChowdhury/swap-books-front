@@ -3,7 +3,7 @@ export {
   authStart,
   authFail,
   authCheckState,
+  authTokenRefresh,
   authSuccess,
   authLogout,
-  checkAuthTimeout,
 } from './auth';

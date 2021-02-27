@@ -107,6 +107,7 @@ export const refreshToken = async (
     res.send({
       accessToken: generateJWT(userId, email, 'access'),
       refreshToken: generateJWT(userId, email, 'refresh'),
+      expiresIn: 3600,
     });
   } catch (err) {
     next(err);

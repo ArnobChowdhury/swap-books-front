@@ -13,7 +13,7 @@ import authRoutes from './routes/auth.route';
 import booksRoutes from './routes/books.route';
 import userRoutes from './routes/user.route';
 import {
-  initSocket,
+  saveSocketToRedis,
   expressInterest,
   joinAllRooms,
   sendMsg,
@@ -25,7 +25,6 @@ import { mongoConnect, closeDb } from './utils/database';
 import { client as redisClient } from './utils/redis';
 import {
   CONNECT,
-  INIT_SOCKET,
   EXPRESS_INTEREST,
   JOIN_ALL_ROOMS,
   SEND_MSG,
@@ -56,16 +55,13 @@ app.prepare().then(() => {
   );
 
   // io.on(CONNECT, interactionController);
-  io.on(CONNECT, (socket: SocketDecoded) => {
+  io.on(CONNECT, async (socket: SocketDecoded) => {
     /**
      * TODO FOR LATER
      * GET RID OF INIT SOCKET EVENT ON BOTH THE FRONTEND AND BACKEND AND DO THIS RIGHT
      */
 
-    socket.on(INIT_SOCKET, async () => {
-      await initSocket(socket);
-      // todo add catch block
-    });
+    await saveSocketToRedis(socket);
 
     socket.on(EXPRESS_INTEREST, async bookInfo => {
       await expressInterest(io, socket, bookInfo);

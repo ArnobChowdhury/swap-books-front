@@ -6,7 +6,6 @@ import {
   authSuccess,
   authLogout,
   authCheckState,
-  checkAuthTimeout,
 } from './auth';
 import axiosInstance from '../../../axiosInstance';
 import {
@@ -291,30 +290,6 @@ describe('Auth Action tests', () => {
   //expect(store.getActions()).toEqual(expectedActions);
   //expect(localStorage.getItem('userId')).toBeNull();
   //expect(localStorage.getItem('accessToken')).toBeNull();
-  //});
-  //});
-
-  //test('authTimeout should dispatch authLogout after specified time', () => {
-  //const store = mockStore();
-  //const expectedAction = [
-  //{
-  //type: UPDATE_USER_INFO,
-  //name: null,
-  //sex: null,
-  //dob: null,
-  //userCreationSuccessful: false,
-  //userLat: null,
-  //userLon: null,
-  //},
-  //{ type: AUTH_LOGOUT },
-  //];
-  //// @ts-ignore
-  //store.dispatch(checkAuthTimeout(1));
-  //return new Promise(resolve => {
-  //setTimeout(() => {
-  //expect(store.getActions()).toEqual(expectedAction);
-  //resolve();
-  //}, 2000);
   //});
   //});
 });

@@ -1,4 +1,3 @@
-export const SOCKET_INIT_SOCKET = 'init socket';
 export const SOCKET_RECEIVE_LATEST_NOTIFICATION = 'receive latest notification';
 
 export const SOCKET_RECEIVE_INTEREST = 'receive interest';

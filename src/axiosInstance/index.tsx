@@ -1,6 +1,6 @@
 import axios, { AxiosError } from 'axios';
 import { store } from '../redux/store';
-import { authLogout, authSuccess } from '../redux/actions/auth';
+import { authLogout, authTokenRefresh } from '../redux/actions/auth';
 
 const instance = axios.create({
   baseURL: process.env.BASE_URL,
@@ -16,6 +16,21 @@ instance.interceptors.request.use(config => {
   return config;
 });
 
+interface HaultedReqCb {
+  (newAccessToken: string): void;
+}
+
+let isRefreshing = false;
+let tokenSubscribers: HaultedReqCb[] = [];
+
+const onRefreshed = (newAccessToken: string) => {
+  tokenSubscribers.forEach(cb => cb(newAccessToken));
+};
+
+const subscribeTokenRefresh = (haultedReqCb: HaultedReqCb) => {
+  tokenSubscribers.push(haultedReqCb);
+};
+
 if (process.env.NODE_ENV !== 'test') {
   instance.interceptors.response.use(
     value => value,
@@ -26,24 +41,34 @@ if (process.env.NODE_ENV !== 'test') {
         errorResponse.status === 401 &&
         errorResponse.data.message === 'jwt expired'
       ) {
-        const refreshToken = localStorage.getItem('refreshToken');
-        return instance
-          .post('/auth/refresh-token', { refreshToken })
-          .then(res => {
-            const { accessToken, refreshToken } = res.data;
-            const userId = localStorage.getItem('userId');
-            localStorage.setItem('accessToken', accessToken);
-            localStorage.setItem('refreshToken', refreshToken);
-            store.dispatch(authSuccess(accessToken, userId as string));
-            originalReq.headers['Authorization'] = `Bearer ${accessToken}`;
+        if (!isRefreshing) {
+          const refreshToken = localStorage.getItem('refreshToken');
+          isRefreshing = true;
+          instance
+            .post('/auth/refresh-token', { refreshToken })
+            .then(res => {
+              const { accessToken, refreshToken, expiresIn } = res.data;
+              const expirationDate = new Date().getTime() + expiresIn * 1000;
 
-            return instance(originalReq);
-          })
-          .catch((err: AxiosError) => {
-            // @ts-ignore
-            store.dispatch(authLogout());
-            throw err;
+              store.dispatch(
+                authTokenRefresh(accessToken, refreshToken, expirationDate),
+              );
+              isRefreshing = false;
+              onRefreshed(accessToken);
+            })
+            .catch((err: AxiosError) => {
+              // @ts-ignore
+              store.dispatch(authLogout());
+              throw err;
+            });
+        }
+
+        return new Promise(resolve => {
+          subscribeTokenRefresh(accessToken => {
+            originalReq.headers.Authorization = `Bearer ${accessToken}`;
+            resolve(instance(originalReq));
           });
+        });
       }
       return Promise.reject(error);
     },

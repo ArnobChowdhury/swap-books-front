@@ -28,16 +28,19 @@ import { processRoomForUser } from '../../utils/general';
  * 2. Send single chats to front end instead of sending bulk msgs
  */
 
-export const initSocket = async (socket: SocketDecoded) => {
+export const saveSocketToRedis = async (socket: SocketDecoded) => {
   const {
-    decoded_token: { aud, email },
+    decoded_token: { aud },
     id: socketId,
   } = socket;
 
   try {
     await setSocketIdToRedis(socketId, aud);
   } catch {
-    // TODO emit an error to let the client know that something has went wrong
+    console.error(
+      `Failed to save socket id to redis, disconnecting socket - socket:${aud}`,
+    );
+    socket.disconnect();
   }
 };
 
