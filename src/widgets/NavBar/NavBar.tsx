@@ -28,6 +28,7 @@ import {
   NOTIFICATIONS_ROUTE,
   USER_ROUTE,
 } from 'frontEndRoutes';
+import { contentShouldOpenInThisPage } from 'utils';
 
 // todo there should be not be any default arguments
 export const NavBar = (): JSX.Element => {
@@ -58,7 +59,12 @@ export const NavBar = (): JSX.Element => {
   const { width } = useWindowSize();
 
   const rootContext = useContext(RootContext);
-  const { contentType, setContentType } = rootContext as RootContextProps;
+  const {
+    contentType,
+    setContentType,
+    showDropDown,
+    setShowDropDown,
+  } = rootContext as RootContextProps;
 
   // refs
   const dropDownRef = useRef<HTMLDivElement | null>(null);
@@ -115,9 +121,6 @@ export const NavBar = (): JSX.Element => {
   useEffect(() => {
     dispatch(getNotificationsRequest());
   }, []);
-
-  // TODO Consider moving this to context
-  const [showDropDown, setShowDropDown] = useState<boolean>(false);
 
   const handleMsgButtonClick = (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
@@ -217,17 +220,20 @@ export const NavBar = (): JSX.Element => {
     setShowDropDown(false);
   };
 
+  console.log('showDropDown', showDropDown);
   return (
     <NavBarContainer ref={navigationRef}>
-      {width >= largeScreen && showDropDown && (
-        <DropDown isSelected={contentType !== 'Posts'} ref={dropDownRef}>
-          {contentType === 'Notifications' && <Notifications />}
-          {contentType === 'Messages' && <Message />}
-          {contentType === 'User' && (
-            <UserNav onLogoutButtonClick={() => dispatch(authLogout())} />
-          )}
-        </DropDown>
-      )}
+      {width >= largeScreen &&
+        showDropDown &&
+        contentShouldOpenInThisPage(pathname, contentType) && (
+          <DropDown isSelected={contentType !== 'Posts'} ref={dropDownRef}>
+            {contentType === 'Notifications' && <Notifications />}
+            {contentType === 'Messages' && <Message />}
+            {contentType === 'User' && (
+              <UserNav onLogoutButtonClick={() => dispatch(authLogout())} />
+            )}
+          </DropDown>
+        )}
       <NavBarWrapper>
         <NavButton
           borderBottom={contentType === 'Posts'}

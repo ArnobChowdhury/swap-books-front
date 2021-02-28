@@ -28,7 +28,11 @@ export interface NotificationProps {
 
 export const Notifications = (): JSX.Element => {
   const rootContext = useContext(RootContext);
-  const { contentType, setContentType } = rootContext as RootContextProps;
+  const {
+    contentType,
+    setContentType,
+    setShowDropDown,
+  } = rootContext as RootContextProps;
   const { notifications, hasMoreNotifications } = useSelector(
     (s: RootState) => s.notifications,
   );
@@ -99,6 +103,7 @@ export const Notifications = (): JSX.Element => {
   ) => {
     event.preventDefault();
     setContentType('Messages');
+    setShowDropDown(true);
     dispatch(openMessageBox());
     const roomToOpen = activeRooms.find(room => room.roomId === roomId);
     if (roomToOpen) {

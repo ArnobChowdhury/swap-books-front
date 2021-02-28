@@ -16,6 +16,8 @@ export interface RootContextProps {
   setPopupType: Dispatch<SetStateAction<PopupType>>;
   contentType: ContentType;
   setContentType: Dispatch<SetStateAction<ContentType>>;
+  showDropDown: boolean;
+  setShowDropDown: Dispatch<SetStateAction<boolean>>;
 }
 
 export const RootContext = createContext<RootContextProps | null>(null);

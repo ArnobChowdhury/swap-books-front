@@ -30,6 +30,7 @@ const WrappedApp: FC<AppProps> = ({ Component, pageProps }) => {
   const [showModal, setShowModal] = useState<boolean>(false);
   const [popupType, setPopupType] = useState<PopupType | null>(null);
   const [contentType, setContentType] = useState<ContentType>('Posts');
+  const [showDropDown, setShowDropDown] = useState<boolean>(false);
 
   const { pathname, push: routerPush } = useRouter();
   const { width } = useWindowSize();
@@ -72,6 +73,8 @@ const WrappedApp: FC<AppProps> = ({ Component, pageProps }) => {
         setPopupType,
         contentType,
         setContentType,
+        showDropDown,
+        setShowDropDown,
       }}
     >
       <ThemeProvider theme={theme}>
