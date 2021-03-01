@@ -11,4 +11,5 @@ export {
   expressInterestStart,
   expressInterestFail,
   expressInterestSuccess,
+  makeUnavailableRequest,
 } from './book';

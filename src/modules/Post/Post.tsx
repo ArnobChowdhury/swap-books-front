@@ -16,7 +16,8 @@ import { UserIcon } from 'ui-kits/UserIcon';
 import { PostOption, PostOptionProps } from 'components/PostOption';
 import { BookNameIcon } from 'assets/BookNameIcon';
 import { BookAuthorIcon } from 'assets/BookAuthorIcon';
-import { InterestButtonSmall } from 'components/InterestButtonSmall';
+import { CloseIcon } from 'assets/CloseIcon';
+import { PostButtonSmall } from 'components/PostButtonSmall';
 import { useWindowSize } from 'hooks/useWindowSize';
 
 export interface PostProps {
@@ -26,10 +27,12 @@ export interface PostProps {
   bookOwnerName: string;
   isInterested: boolean;
   topMargin?: boolean;
-  interestReqOnGoing: boolean;
+  reqOnGoing: boolean;
   onInterestButtonClick?: (e: MouseEvent<HTMLButtonElement>) => void;
+  onUnavailableButtonClick?: (e: MouseEvent<HTMLButtonElement>) => void;
   isOwners: boolean;
   postOptions?: PostOptionProps['options'];
+  isUsersProfile: boolean;
 }
 
 export const Post = ({
@@ -38,15 +41,17 @@ export const Post = ({
   bookAuthor,
   bookOwnerName,
   topMargin,
-  interestReqOnGoing,
+  reqOnGoing,
   isInterested = false,
   onInterestButtonClick,
+  onUnavailableButtonClick,
   isOwners,
   postOptions,
+  isUsersProfile,
 }: PostProps): JSX.Element => {
   const { width } = useWindowSize();
   return (
-    <PostWrapper topMargin={topMargin}>
+    <PostWrapper requestOnGoing={reqOnGoing} topMargin={topMargin}>
       <PostOwner>
         <UserIcon userName={bookOwnerName} hasRightMargin />
         {bookOwnerName}
@@ -65,7 +70,7 @@ export const Post = ({
             <BookInfo>{bookAuthor}</BookInfo>
           </ContentContainer>
         </ContentWrapper>
-        {width >= 450 && (
+        {!isUsersProfile && width >= 450 && (
           <IconButton
             buttonText={isInterested ? 'Interested' : 'Show Interest'}
             icon={
@@ -73,16 +78,39 @@ export const Post = ({
             }
             onClick={onInterestButtonClick}
             disabled={isOwners}
-            requestOngoing={interestReqOnGoing}
+            requestOngoing={reqOnGoing}
             textColor="primary"
           />
         )}
-        {width < 450 && (
-          <InterestButtonSmall
+        {!isUsersProfile && width < 450 && (
+          <PostButtonSmall
             onClick={onInterestButtonClick}
-            isSelected={isInterested}
-            requestOnGoing={interestReqOnGoing}
+            requestOnGoing={reqOnGoing}
             disabled={isOwners}
+            icon={
+              <InterestIcon
+                lightBorder
+                hasBodyColor={isInterested}
+                width="40"
+                height="40"
+              />
+            }
+          />
+        )}
+        {isUsersProfile && width >= 450 && (
+          <IconButton
+            buttonText="Unavailable"
+            icon={<CloseIcon colorAlert width="25" height="25" />}
+            onClick={onUnavailableButtonClick}
+            requestOngoing={reqOnGoing}
+            textColor="primary"
+          />
+        )}
+        {isUsersProfile && width < 450 && (
+          <PostButtonSmall
+            onClick={onUnavailableButtonClick}
+            requestOnGoing={reqOnGoing}
+            icon={<CloseIcon colorAlert width="35" height="35" />}
           />
         )}
       </PostBottom>

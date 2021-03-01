@@ -220,7 +220,6 @@ export const NavBar = (): JSX.Element => {
     setShowDropDown(false);
   };
 
-  console.log('showDropDown', showDropDown);
   return (
     <NavBarContainer ref={navigationRef}>
       {width >= largeScreen &&

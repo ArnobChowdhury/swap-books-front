@@ -4,16 +4,14 @@ import {
   fetchBooksRequest,
   fetchProfileBooksRequest,
   expressInterestStart,
+  makeUnavailableRequest,
 } from 'redux/actions/book';
 import { RootState } from 'redux/reducers';
 import { SocketIoContext } from 'hoc/Sockets';
 import { Post, PostShimmer } from 'modules/Post';
-import { FlexContainer } from 'ui-kits/FlexContainer';
-import { FlexItem } from 'ui-kits/FlexItem';
 import { RootContext, RootContextProps } from 'contexts/RootContext';
-import { mediumScreen } from 'mediaConfig';
 import { useOnScreen, useWindowSize } from 'hooks';
-import profile from 'redux/reducers/profile';
+import { useRouter } from 'next/router';
 
 const PostShimmerComponent = React.forwardRef(
   (_props, ref: React.Ref<HTMLDivElement>) => {
@@ -39,6 +37,7 @@ export const Posts = ({ profileId }: PostProps): JSX.Element => {
   const { socketIo } = useContext(SocketIoContext);
   const { setPopupType, setShowModal } = useContext(RootContext) as RootContextProps;
   const shimmerRef = useRef<HTMLDivElement | null>(null);
+  const { asPath } = useRouter();
 
   const { books, loading, page, hasMorePages } = useSelector(
     (store: RootState) => store.books,
@@ -47,6 +46,9 @@ export const Posts = ({ profileId }: PostProps): JSX.Element => {
   const { name: userName, userLon, userLat } = useSelector(
     (store: RootState) => store.user,
   );
+  const { accessToken, userId } = useSelector((s: RootState) => s.auth);
+
+  const isUsersProfile = asPath === `/user/${userId}`;
 
   const handleAdditionalBookFetchForHome = useCallback(() => {
     if (process.browser && userLon && userLat) {
@@ -70,7 +72,6 @@ export const Posts = ({ profileId }: PostProps): JSX.Element => {
     true,
   );
 
-  const { accessToken, userId } = useSelector((s: RootState) => s.auth);
   useEffect(() => {
     if (!profileId && process.browser && userLon && userLat) {
       dispatch(fetchBooksRequest(userLon, userLat, 1));
@@ -101,7 +102,7 @@ export const Posts = ({ profileId }: PostProps): JSX.Element => {
         bookOwnerName,
         bookOwnerId,
         userIsInterested,
-        interestOnGoing,
+        reqOnGoing,
       } = el;
 
       // todo if the expressing interest network activity goes wrong what do we do???
@@ -128,10 +129,19 @@ export const Posts = ({ profileId }: PostProps): JSX.Element => {
               handleUnsignedInterest();
             }
           }}
+          onUnavailableButtonClick={() => {
+            if (isSignedIn) {
+              dispatch(makeUnavailableRequest(bookId));
+            } else {
+              handleUnsignedInterest();
+            }
+          }}
           isInterested={userIsInterested}
           topMargin
-          interestReqOnGoing={interestOnGoing}
+          reqOnGoing={reqOnGoing}
           isOwners={bookOwnerId === userId}
+          key={bookId}
+          isUsersProfile={isUsersProfile}
         />
       );
     });

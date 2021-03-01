@@ -15,6 +15,9 @@ import {
   EXPRESS_INTEREST_START,
   EXPRESS_INTEREST_SUCCESS,
   EXPRESS_INTEREST_FAIL,
+  MAKE_UNAVAILABLE_START,
+  MAKE_UNAVAILABLE_SUCCESS,
+  MAKE_UNAVAILABLE_FAIL,
 } from './../actionTypes';
 
 export const addABookStart = () => {
@@ -113,8 +116,8 @@ const processBooks = (book: {
     bookOwnerId: book.userId,
     bookOwnerName: book.bookOwnerName,
     userIsInterested: book.isInterested,
-    interestOnGoing: false,
-    interestReqError: null,
+    reqOnGoing: false,
+    reqError: null,
   };
 };
 
@@ -176,6 +179,7 @@ export const expressInterestStart = (
   bookOwnerName: string,
   isInterested: boolean,
 ) => {
+  // TODO Stop retrieving userId from localStorage // Since Our backend should already know from socket
   const userId = localStorage.getItem('userId');
   socket.emit(SOCKET_EXPRESS_INTEREST, {
     userId,
@@ -198,5 +202,42 @@ export const expressInterestSuccess = (bookId: string, isInterested: boolean) =>
   return {
     type: EXPRESS_INTEREST_SUCCESS,
     interestActivity: { bookId, isInterested },
+  };
+};
+
+const makeUnavailableStart = (bookId: string) => {
+  return {
+    type: MAKE_UNAVAILABLE_START,
+    unavilableBookId: bookId,
+  };
+};
+
+const makeUnavailableSuccess = (bookId: string) => {
+  return {
+    type: MAKE_UNAVAILABLE_SUCCESS,
+    unavilableBookId: bookId,
+  };
+};
+
+const makeUnavailableFail = (bookId: string, err: Error) => {
+  return {
+    type: MAKE_UNAVAILABLE_FAIL,
+    unavilableBookId: bookId,
+    unavilableErr: err,
+  };
+};
+
+export const makeUnavailableRequest = (bookId: string) => {
+  return async (dispatch: Dispatch) => {
+    dispatch(makeUnavailableStart(bookId));
+    const path = '/books/del';
+    return axios
+      .delete(path, { data: { bookId } })
+      .then(res => {
+        dispatch(makeUnavailableSuccess(bookId));
+      })
+      .catch(err => {
+        dispatch(makeUnavailableFail(bookId, err));
+      });
   };
 };

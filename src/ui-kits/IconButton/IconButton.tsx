@@ -26,7 +26,7 @@ export const IconButton: React.FC<IconButtonProps> = ({
       type="button"
       onClick={onClick}
       textColor={textColor}
-      disabled={disabled}
+      disabled={disabled || requestOngoing}
       requestOngoing={requestOngoing}
     >
       {icon}

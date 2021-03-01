@@ -1,6 +1,9 @@
 import styled, { keyframes } from 'styled-components';
 
-export const PostWrapper = styled.div<{ topMargin?: boolean }>`
+export const PostWrapper = styled.div<{
+  requestOnGoing: boolean;
+  topMargin?: boolean;
+}>`
   ${({ theme, topMargin }) => topMargin && `margin-top: ${theme.spaceFive}`};
   background: ${({ theme }) => theme.colorWhite};
   padding-top: ${({ theme }) => theme.spaceSeven};
@@ -12,6 +15,7 @@ export const PostWrapper = styled.div<{ topMargin?: boolean }>`
   background: ${({ theme }) => theme.colorWhite};
   margin-top: ${({ theme, topMargin }) => topMargin && theme.spaceFive};
   border-radius: ${({ theme }) => theme.borderRadius};
+  ${({ requestOnGoing }) => requestOnGoing && 'opacity: .5; cursor: wait;'}
 `;
 
 export const PostOwner = styled.div`

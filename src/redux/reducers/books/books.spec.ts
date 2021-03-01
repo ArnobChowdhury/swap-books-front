@@ -29,8 +29,8 @@ describe('Book reducer', () => {
         bookOwnerId: '1',
         bookOwnerName: 'Owner1',
         userIsInterested: false,
-        interestOnGoing: false,
-        interestReqError: null,
+        reqOnGoing: false,
+        reqError: null,
       },
       {
         bookName: 'Books Two',
@@ -40,8 +40,8 @@ describe('Book reducer', () => {
         bookOwnerId: '2',
         bookOwnerName: 'Owner2',
         userIsInterested: false,
-        interestOnGoing: false,
-        interestReqError: null,
+        reqOnGoing: false,
+        reqError: null,
       },
       {
         bookName: 'Books Three',
@@ -51,8 +51,8 @@ describe('Book reducer', () => {
         bookOwnerId: '3',
         bookOwnerName: 'Owner3',
         userIsInterested: false,
-        interestOnGoing: false,
-        interestReqError: null,
+        reqOnGoing: false,
+        reqError: null,
       },
     ];
     const expectedState: BooksState = { ...initialState, books };
@@ -70,8 +70,8 @@ describe('Book reducer', () => {
         bookId: '1',
         bookOwnerName: 'Owner1',
         userIsInterested: false,
-        interestOnGoing: false,
-        interestReqError: null,
+        reqOnGoing: false,
+        reqError: null,
       },
       {
         bookName: 'Books Two',
@@ -81,8 +81,8 @@ describe('Book reducer', () => {
         bookOwnerId: '2',
         bookOwnerName: 'Owner2',
         userIsInterested: false,
-        interestOnGoing: false,
-        interestReqError: null,
+        reqOnGoing: false,
+        reqError: null,
       },
       {
         bookName: 'Books Three',
@@ -92,8 +92,8 @@ describe('Book reducer', () => {
         bookOwnerId: '3',
         bookOwnerName: 'Owner3',
         userIsInterested: false,
-        interestOnGoing: false,
-        interestReqError: null,
+        reqOnGoing: false,
+        reqError: null,
       },
     ];
     const expectedState: BooksState = { ...initialState, books };

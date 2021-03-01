@@ -19,7 +19,7 @@ export const Button = styled.button<{ requestOnGoing?: boolean }>`
   }
 
   &:disabled {
+    pointer-events: ${({ requestOnGoing }) => !requestOnGoing && 'none'};
     opacity: 0.5;
-    pointer-events: none;
   }
 `;

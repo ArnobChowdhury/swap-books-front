@@ -28,7 +28,7 @@ export const StyledButton = styled.button<IconButtonStyledProps>`
   outline: none;
 
   &:disabled {
-    pointer-events: none;
+    pointer-events: ${({ requestOngoing }) => !requestOngoing && 'none'};
     opacity: 0.5;
   }
 

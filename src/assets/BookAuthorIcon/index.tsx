@@ -18,9 +18,9 @@ export const BookAuthorIcon = ({
       <path
         d="M5.0259 14.8964L15.2849 4.63741C16.1348 3.78753 17.5128 3.78753 18.3626 4.63741C19.2125 5.4873 19.2125 6.86523 18.3626 7.71511L8.1036 17.9741L4 19L5.0259 14.8964Z"
         stroke={colorTextPrimary}
-        stroke-width="1.5"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   );

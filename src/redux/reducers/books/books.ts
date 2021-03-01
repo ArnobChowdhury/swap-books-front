@@ -9,6 +9,9 @@ import {
   EXPRESS_INTEREST_START,
   EXPRESS_INTEREST_SUCCESS,
   EXPRESS_INTEREST_FAIL,
+  MAKE_UNAVAILABLE_START,
+  MAKE_UNAVAILABLE_SUCCESS,
+  MAKE_UNAVAILABLE_FAIL,
 } from '../../actions/actionTypes';
 
 export interface BookShape {
@@ -19,8 +22,8 @@ export interface BookShape {
   bookOwnerId: string;
   bookOwnerName: string;
   userIsInterested: boolean;
-  interestOnGoing: boolean;
-  interestReqError: string | null | Error;
+  reqOnGoing: boolean;
+  reqError: string | null | Error;
 }
 
 export interface BooksState {
@@ -42,7 +45,15 @@ export const initialState: BooksState = {
 
 // todo write tests for expressInterest related functions
 const reducer = (state = initialState, action: AnyAction) => {
-  const { books, error, interestActivity, page, hasMorePages } = action;
+  const {
+    books,
+    error,
+    interestActivity,
+    page,
+    hasMorePages,
+    unavilableBookId,
+    unavilableErr,
+  } = action;
   switch (action.type) {
     case HYDRATE:
       // our action do not return a property named payload
@@ -63,7 +74,7 @@ const reducer = (state = initialState, action: AnyAction) => {
         el => el.bookId === interestActivity.bookId,
       );
       if (interestStartedOn !== undefined) {
-        interestStartedOn.interestOnGoing = true;
+        interestStartedOn.reqOnGoing = true;
       }
       return { ...state, books: allBooks };
     case EXPRESS_INTEREST_SUCCESS:
@@ -73,7 +84,7 @@ const reducer = (state = initialState, action: AnyAction) => {
       );
       if (interestSucceedOn !== undefined) {
         interestSucceedOn.userIsInterested = interestActivity.isInterested;
-        interestSucceedOn.interestOnGoing = false;
+        interestSucceedOn.reqOnGoing = false;
       }
       return { ...state, books: existingBooks };
     case EXPRESS_INTEREST_FAIL:
@@ -82,10 +93,43 @@ const reducer = (state = initialState, action: AnyAction) => {
         el => el.bookId === interestActivity.bookId,
       );
       if (interestFailedOn !== undefined) {
-        interestFailedOn.interestOnGoing = false;
-        interestFailedOn.interestReqError = interestActivity.err;
+        interestFailedOn.reqOnGoing = false;
+        interestFailedOn.reqError = interestActivity.err;
       }
       return { ...state, books: currentBooks };
+
+    case MAKE_UNAVAILABLE_START: {
+      const { books } = state;
+      const currentBooks = [...books];
+      const bookMakingUnavailable = currentBooks.find(
+        book => book.bookId === unavilableBookId,
+      );
+      if (bookMakingUnavailable) {
+        bookMakingUnavailable.reqOnGoing = true;
+      }
+      return { ...state, books: currentBooks };
+    }
+
+    case MAKE_UNAVAILABLE_SUCCESS: {
+      const { books } = state;
+      const currentBooks = [...books];
+      const newBooks = currentBooks.filter(book => book.bookId !== unavilableBookId);
+      return { ...state, books: newBooks };
+    }
+
+    case MAKE_UNAVAILABLE_FAIL: {
+      const { books } = state;
+      const currentBooks = [...books];
+      const bookMakingUnavailable = currentBooks.find(
+        book => book.bookId === unavilableBookId,
+      );
+      if (bookMakingUnavailable) {
+        bookMakingUnavailable.reqOnGoing = false;
+        bookMakingUnavailable.reqError = unavilableErr;
+      }
+      return { ...state, books: currentBooks };
+    }
+
     default:
       return state;
   }
