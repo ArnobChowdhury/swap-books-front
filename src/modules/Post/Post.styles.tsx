@@ -12,10 +12,6 @@ export const PostWrapper = styled.div<{ topMargin?: boolean }>`
   background: ${({ theme }) => theme.colorWhite};
   margin-top: ${({ theme, topMargin }) => topMargin && theme.spaceFive};
   border-radius: ${({ theme }) => theme.borderRadius};
-
-  @media (min-width: 450px) {
-    width: 250px;
-  }
 `;
 
 export const PostOwner = styled.div`
@@ -41,7 +37,7 @@ export const Image = styled.img`
   height: 100%;
   width: 100%;
   object-fit: cover;
-  background: ${({ theme }) => theme.colorBG};
+  background: ${({ theme }) => theme.colorSeparator};
 
   @media (min-width: 450px) {
     object-fit: contain;
@@ -49,19 +45,24 @@ export const Image = styled.img`
 `;
 
 export const ContentWrapper = styled.div`
-  position: absolute;
-  bottom: 20px;
-  left: 0;
   display: flex;
-  align-items: flex-start;
   flex-direction: column;
+
+  @media (min-width: 450px) {
+    flex-basis: 50%;
+    border-right: ${({ theme }) => `1px solid ${theme.colorSeparator}`};
+  }
 `;
 
-export const ContentContainer = styled.div<{ isBookName?: boolean }>`
-  padding: ${({ theme }) => `${theme.spaceThree} ${theme.spaceSeven}`};
+export const ContentContainer = styled.div`
+  display: flex;
+  padding: ${({ theme }) => `${theme.spaceTwo} ${theme.spaceFour}`};
+`;
+
+export const BookInfo = styled.div<{ isBookName?: boolean }>`
   background: rgb(255, 255, 255);
-  box-shadow: ${({ theme }) => theme.boxShadow};
   color: ${({ theme }) => theme.colorTextPrimary};
+  margin-left: ${({ theme }) => theme.spaceFive};
   ${({ theme, isBookName }) =>
     isBookName &&
     `
@@ -71,17 +72,24 @@ export const ContentContainer = styled.div<{ isBookName?: boolean }>`
     `};
 `;
 
-export const InterestIconWrapper = styled.div`
-  padding: ${({ theme }) => theme.spaceThree};
+export const PostBottom = styled.div`
+  padding: ${({ theme }) =>
+    `${theme.spaceTen} ${theme.spaceTen} ${theme.spaceTen} ${theme.spaceSix}`};
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
 
-  & button {
-    width: 165px;
-    transition: 0.2s;
-    font-size: ${({ theme }) => theme.fontLarge};
-    padding-right: ${({ theme }) => theme.spaceSeven};
+  @media (min-width: 450px) {
+    align-items: stretch;
+    justify-content: flex-start;
+    padding: ${({ theme }) => theme.spaceThree};
+
+    & button {
+      flex-basis: 50%;
+      transition: 0.2s;
+      font-size: ${({ theme }) => theme.fontLarge};
+      min-width: 60px;
+    }
   }
 `;
 
@@ -112,10 +120,6 @@ export const PostShimmerWrapper = styled.div`
   background: ${({ theme }) => theme.colorWhite};
   box-shadow: ${({ theme }) => theme.boxShadow};
   padding: ${({ theme }) => `${theme.spaceSeven} 0 0 0`};
-
-  @media (min-width: 450px) {
-    width: 250px;
-  }
 
   & .gradient {
     animation-duration: 1.8s;
@@ -153,10 +157,6 @@ export const PostOwnerDummyImg = styled.div`
 export const DummyImage = styled.div`
   height: 100%;
   width: 100%;
-
-  @media (min-width: 450px) {
-    width: 250px;
-  }
 `;
 
 export const DummyContent = styled.div<{
@@ -172,7 +172,7 @@ export const DummyContent = styled.div<{
 export const PostShimmerLower = styled.div`
   flex-basis: 100%;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
-  padding: ${({ theme }) => theme.spaceFive};
+  padding: ${({ theme }) => theme.spaceTen};
 `;

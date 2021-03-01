@@ -21,24 +21,8 @@ const PostShimmerComponent = React.forwardRef(
 
     return (
       <>
-        <FlexItem isFlexAndCenter defaultSize={100} sm={50}>
-          <div ref={ref}>
-            <PostShimmer />
-          </div>
-        </FlexItem>
-        <FlexItem isFlexAndCenter defaultSize={100} sm={50}>
-          <PostShimmer />
-        </FlexItem>
-        {width >= mediumScreen && (
-          <>
-            <FlexItem isFlexAndCenter defaultSize={100} sm={50}>
-              <PostShimmer />
-            </FlexItem>
-            <FlexItem isFlexAndCenter defaultSize={100} sm={50}>
-              <PostShimmer />
-            </FlexItem>
-          </>
-        )}
+        <PostShimmer ref={ref} />
+        <PostShimmer />
       </>
     );
   },
@@ -122,41 +106,39 @@ export const Posts = ({ profileId }: PostProps): JSX.Element => {
 
       // todo if the expressing interest network activity goes wrong what do we do???
       return (
-        <FlexItem isFlexAndCenter key={bookId} defaultSize={100} sm={50}>
-          <Post
-            bookName={bookName}
-            bookAuthor={bookAuthor}
-            bookOwnerName={bookOwnerName}
-            imgUrl={`${process.env.NEXT_PUBLIC_BASE_URL}${bookPicturePath}`}
-            onInterestButtonClick={() => {
-              if (isSignedIn && socketIo !== undefined && userName) {
-                dispatch(
-                  expressInterestStart(
-                    socketIo,
-                    userName,
-                    bookId,
-                    bookName,
-                    bookOwnerId,
-                    bookOwnerName,
-                    !userIsInterested,
-                  ),
-                );
-              } else {
-                handleUnsignedInterest();
-              }
-            }}
-            isInterested={userIsInterested}
-            topMargin
-            interestReqOnGoing={interestOnGoing}
-            isOwners={bookOwnerId === userId}
-          />
-        </FlexItem>
+        <Post
+          bookName={bookName}
+          bookAuthor={bookAuthor}
+          bookOwnerName={bookOwnerName}
+          imgUrl={`${process.env.NEXT_PUBLIC_BASE_URL}${bookPicturePath}`}
+          onInterestButtonClick={() => {
+            if (isSignedIn && socketIo !== undefined && userName) {
+              dispatch(
+                expressInterestStart(
+                  socketIo,
+                  userName,
+                  bookId,
+                  bookName,
+                  bookOwnerId,
+                  bookOwnerName,
+                  !userIsInterested,
+                ),
+              );
+            } else {
+              handleUnsignedInterest();
+            }
+          }}
+          isInterested={userIsInterested}
+          topMargin
+          interestReqOnGoing={interestOnGoing}
+          isOwners={bookOwnerId === userId}
+        />
       );
     });
   }
   // TODO is PageLayout a HOC? I don't think it is anymore
   return (
-    <FlexContainer justify="center" alignItems="center">
+    <>
       {loading && books.length === 0 && <PostShimmerComponent />}
       {books.length > 0 && (
         <>
@@ -164,6 +146,6 @@ export const Posts = ({ profileId }: PostProps): JSX.Element => {
           {hasMorePages && <PostShimmerComponent ref={shimmerRef} />}
         </>
       )}
-    </FlexContainer>
+    </>
   );
 };
