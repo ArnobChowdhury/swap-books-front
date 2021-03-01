@@ -1,1 +1,6 @@
-export { addABook, getHomeFeedBooks, getProfileBooks } from './books.controller';
+export {
+  addABook,
+  deleteABook,
+  getHomeFeedBooks,
+  getProfileBooks,
+} from './books.controller';

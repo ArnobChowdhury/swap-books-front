@@ -284,4 +284,60 @@ export default class Book {
     // @ts-ignore
     return result;
   }
+
+  static async removeBook(bookId: string, userId: string): Promise<void> {
+    const client = getDbClient();
+    const usersCollection = client.db().collection('users');
+    const booksCollection = client.db().collection('books');
+    const roomsCollection = client.db().collection('rooms');
+    const session = client.startSession();
+
+    const userIdAsMongoId = new ObjectId(userId);
+    const bookIdAsMongoId = new ObjectId(bookId);
+
+    try {
+      await session.withTransaction(async () => {
+        const deletedBook = await booksCollection.findOneAndDelete({
+          _id: bookIdAsMongoId,
+          userId: userIdAsMongoId,
+        });
+        console.log('deleted Book', deletedBook);
+
+        // TODO Throw error if document is not found
+
+        await usersCollection.bulkWrite(
+          (deletedBook.value as Book).interestedUsers.map(user => {
+            return {
+              updateOne: {
+                filter: {
+                  _id: user,
+                },
+                update: {
+                  $pull: {
+                    currentInterests: bookIdAsMongoId,
+                  },
+                },
+              },
+            };
+          }),
+        );
+
+        await roomsCollection.updateMany(
+          { 'participants.userId': userIdAsMongoId },
+          {
+            $pull: {
+              'participants.$.interests': {
+                bookId,
+              },
+            },
+          },
+        );
+      });
+    } catch (err) {
+      console.log('errors from book model', err);
+      throw err;
+    } finally {
+      session.endSession();
+    }
+  }
 }

@@ -47,6 +47,25 @@ export const addABook = async (
   }
 };
 
+export const deleteABook = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> => {
+  const { bookId } = req.body;
+  const { userId } = req as ModifiedRequest;
+
+  try {
+    await Book.removeBook(bookId, userId);
+    res.status(201).json({ message: 'Book deleted!', bookId });
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
+};
+
 export const getHomeFeedBooks = async (
   req: Request,
   res: Response,
