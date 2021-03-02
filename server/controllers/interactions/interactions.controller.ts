@@ -22,12 +22,6 @@ import { RoomWithLastModifiedAndID } from '../../models/room';
 import { ObjectID } from 'mongodb';
 import { processRoomForUser } from '../../utils/general';
 
-/**
- * TODOS:
- * //1. Make user join a room when it is a match if that user is online and is not already in that room
- * 2. Send single chats to front end instead of sending bulk msgs
- */
-
 export const saveSocketToRedis = async (socket: SocketDecoded) => {
   const {
     decoded_token: { aud },
@@ -192,7 +186,7 @@ export const joinAllRooms = async (
   const allRoomsOfThisUser = await Room.findAllRoomsByUserId(userId);
   const allMatchedRooms = allRoomsOfThisUser.filter(room => isAMatchedRoom(room));
   // join all rooms
-  allRoomsOfThisUser.forEach(room => {
+  allMatchedRooms.forEach(room => {
     socket.join(room._id.toHexString());
   });
 

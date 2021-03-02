@@ -1,5 +1,5 @@
 import { useRef, useEffect, useContext } from 'react';
-import { useOnScreen } from 'hooks';
+import { useOnScreen, useWindowSize } from 'hooks';
 import {
   Wrapper,
   NotificationLoaderContent,
@@ -21,12 +21,15 @@ import { formatDistanceToNow } from 'date-fns';
 import { RootContext, RootContextProps } from 'contexts/RootContext';
 import { useRouter } from 'next/router';
 import { NOTIFICATIONS_ROUTE } from 'frontEndRoutes';
+import { largeScreen } from 'mediaConfig';
+import { MESSAGES_ROUTE } from 'frontEndRoutes';
 
 export interface NotificationProps {
   notifications: NotificationShape[];
 }
 
 export const Notifications = (): JSX.Element => {
+  const { width } = useWindowSize();
   const rootContext = useContext(RootContext);
   const {
     contentType,
@@ -41,7 +44,7 @@ export const Notifications = (): JSX.Element => {
   const dispatch = useDispatch();
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const loaderRef = useRef<HTMLDivElement | null>(null);
-  const { pathname } = useRouter();
+  const { pathname, push: routerPush } = useRouter();
   const isNotificationsPage = pathname === NOTIFICATIONS_ROUTE;
 
   const handleNotificationIsSeen = (roomId: string) => {
@@ -108,6 +111,9 @@ export const Notifications = (): JSX.Element => {
     const roomToOpen = activeRooms.find(room => room.roomId === roomId);
     if (roomToOpen) {
       dispatch(setCurrentRoom(roomToOpen));
+      if (width < largeScreen) {
+        routerPush(MESSAGES_ROUTE);
+      }
     }
   };
 
