@@ -5,8 +5,8 @@ import user, { UserState } from './user';
 import profile, { ProfileState } from './profile';
 import notifications, { NotificationState } from './notifications';
 import message, { MessageProps } from './message';
-import { persistReducer } from 'redux-persist';
-import { authPersisConfig } from '../config';
+import { Action } from 'redux';
+import { AUTH_LOGOUT } from '../actions/actionTypes';
 
 export type RootState = {
   auth: AuthState;
@@ -17,13 +17,23 @@ export type RootState = {
   message: MessageProps;
 };
 
-const rootReducer = combineReducers({
-  auth: persistReducer(authPersisConfig, auth),
+const appReducer = combineReducers({
+  auth: auth,
   books,
   user,
   notifications,
   profile,
   message,
 });
+
+const rootReducer = (state: RootState | undefined, action: Action) => {
+  const { type } = action;
+  if (type === AUTH_LOGOUT) {
+    state = undefined;
+  }
+
+  // @ts-ignore
+  return appReducer(state, action);
+};
 
 export default rootReducer;

@@ -126,7 +126,12 @@ export const SocketIO = ({ children }: SocketIOInterestInterface) => {
   }, [socketIo, roomId, messageBoxIsOpen]);
 
   useEffect(() => {
-    if (socketIo !== undefined) {
+    /**
+     *  TODO for later:
+     *  1. When we destroy socket instance after signingout we can add another codition isSignedIn to the if block otherwise it emits this action abruptly
+     */
+
+    if (socketIo !== undefined && isSignedIn) {
       dispatch(fetchActiveRoomsReq(socketIo));
     }
   }, [socketIo]);

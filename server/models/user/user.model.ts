@@ -89,6 +89,18 @@ export default class User {
     }
   }
 
+  static getUserNameAndLoc(
+    userId: string,
+  ): Promise<{ name: string; locationObj: User['locationObj'] } | null> {
+    const db = getDb();
+    return db
+      .collection('users')
+      .findOne(
+        { _id: new ObjectId(userId) },
+        { projection: { _id: -1, name: 1, locationObj: 1 } },
+      );
+  }
+
   static async getProfileInfo(userId: string) {
     // const db = getDb();
     const client = getDbClient();
@@ -99,6 +111,7 @@ export default class User {
     let userName: string = '';
     let numberOfbooksAvailable: number = 0;
 
+    // TODO: Right way to achieve this is aggregation since we are just querying DB not writing anything, so transaction is pointless.
     try {
       await session.withTransaction(async () => {
         const userDoc = await userCollection.findOne<UserWithId>(

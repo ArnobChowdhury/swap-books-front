@@ -1,12 +1,8 @@
 import { createStore, applyMiddleware, Middleware, Store } from 'redux';
 import thunk from 'redux-thunk';
-import { MakeStore, createWrapper } from 'next-redux-wrapper';
+import { MakeStore, createWrapper, Context } from 'next-redux-wrapper';
 import rootReducer, { RootState } from './reducers';
 import { composeWithDevTools } from 'redux-devtools-extension';
-import { persistStore, persistReducer } from 'redux-persist';
-import { rootPersistConfig } from './config';
-
-const persistedReducer = persistReducer(rootPersistConfig, rootReducer);
 
 const bindMiddlewares = (middleware: Middleware[]) => {
   if (process.env.NODE_ENV === 'development') {
@@ -17,13 +13,8 @@ const bindMiddlewares = (middleware: Middleware[]) => {
 };
 
 let store: Store<RootState>;
-const makeStore: MakeStore<RootState> = () => {
-  if (!process.browser) {
-    return createStore(rootReducer, bindMiddlewares([thunk]));
-  }
-  store = createStore(persistedReducer, bindMiddlewares([thunk]));
-  // @ts-ignore
-  store.__persistor = persistStore(store);
+const makeStore: MakeStore<RootState> = (context: Context) => {
+  store = createStore(rootReducer, bindMiddlewares([thunk]));
   return store;
 };
 

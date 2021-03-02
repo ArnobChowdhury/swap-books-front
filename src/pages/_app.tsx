@@ -2,10 +2,9 @@ import React, { useState, FC, useEffect } from 'react';
 import { AppProps } from 'next/app';
 import { wrapper } from 'redux/store';
 import { ThemeProvider } from 'styled-components';
-import { PersistGate } from 'redux-persist/integration/react';
 import { useStore, useSelector, useDispatch } from 'react-redux';
 import { RootState } from 'redux/reducers';
-import { authRedirectSuccess } from 'redux/actions/auth';
+import { authRedirectSuccess, authCheckState } from 'redux/actions/auth';
 import { SocketIO } from 'hoc/Sockets';
 import GlobalStyles from '../components/GlobalStyles';
 import theme from '../theme';
@@ -34,6 +33,10 @@ const WrappedApp: FC<AppProps> = ({ Component, pageProps }) => {
 
   const { pathname, push: routerPush } = useRouter();
   const { width } = useWindowSize();
+
+  useEffect(() => {
+    dispatch(authCheckState());
+  }, []);
 
   useEffect(() => {
     if (
@@ -79,13 +82,9 @@ const WrappedApp: FC<AppProps> = ({ Component, pageProps }) => {
     >
       <ThemeProvider theme={theme}>
         <GlobalStyles />
-        {/**
-       @ts-ignore*/}
-        <PersistGate persistor={store.__persistor} loading={null}>
-          <SocketIO>
-            <Component {...pageProps} />
-          </SocketIO>
-        </PersistGate>
+        <SocketIO>
+          <Component {...pageProps} />
+        </SocketIO>
       </ThemeProvider>
     </RootContext.Provider>
   );

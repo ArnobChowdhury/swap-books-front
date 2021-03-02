@@ -2,6 +2,7 @@ import express from 'express';
 import { protectedRoute } from '../middlewares/protectedRoute';
 import {
   getUserInfo,
+  getProfileInfo,
   updateUserLocation,
   setNotificationAsSeen,
   getUserNotifications,
@@ -9,7 +10,8 @@ import {
 
 const router = express.Router();
 
-router.get('/', getUserInfo);
+router.get('/', protectedRoute, getUserInfo);
+router.get('/profile', getProfileInfo);
 router.put('/loc', protectedRoute, updateUserLocation);
 
 // TODO change below route from '/notifications' to '/notifications?seen=roomId'

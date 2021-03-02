@@ -1,6 +1,7 @@
 import mongo from 'mongodb';
 import { RoomWithLastModifiedAndID } from '../models/room';
 import { BookWithoutLocationProp } from '../models/book';
+import User from '../models/user';
 
 interface MongoCollection {
   _id: mongo.ObjectID;
@@ -62,4 +63,21 @@ export const processBookForUser = (
   const bookWithInterestedField = { ...book, isInterested: ind !== undefined };
   delete bookWithInterestedField.interestedUsers;
   return bookWithInterestedField;
+};
+
+export const processUserInfo = ({
+  name,
+  locationObj,
+}: {
+  name: string;
+  locationObj: User['locationObj'];
+}) => {
+  let userLon: number | undefined;
+  let userLat: number | undefined;
+  if (locationObj) {
+    const { coordinates } = locationObj;
+    userLon = coordinates[0];
+    userLat = coordinates[1];
+  }
+  return { name, userLon, userLat };
 };

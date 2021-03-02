@@ -2,8 +2,35 @@ import { Request, Response, NextFunction } from 'express';
 import User from '../../models/user';
 import Room from '../../models/room';
 import { ModifiedRequest } from '../../interface';
+import { processUserInfo } from '../../utils/general';
+import createError from 'http-errors';
 
 export const getUserInfo = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  const { userId } = req as ModifiedRequest;
+  try {
+    const user = await User.getUserNameAndLoc(userId as string);
+    console.log(user);
+    if (user) {
+      const userProcessed = processUserInfo(user);
+      console.log(userProcessed);
+      res.status(201).json(userProcessed);
+    } else {
+      // TODO Throw err 400
+      throw new createError.NotFound('User NOT Found!');
+    }
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
+};
+
+export const getProfileInfo = async (
   req: Request,
   res: Response,
   next: NextFunction,

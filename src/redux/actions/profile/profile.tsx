@@ -35,7 +35,7 @@ export const fetchProfileReq = (userId: string) => {
     dispatch(fetchProfileStart());
 
     return axios
-      .get(`/user`, { params: { userId } })
+      .get(`/user/profile`, { params: { userId } })
       .then(response => {
         const { userName, numberOfbooksAvailable } = response.data;
         dispatch(fetchProfileSuccess(userName, numberOfbooksAvailable));

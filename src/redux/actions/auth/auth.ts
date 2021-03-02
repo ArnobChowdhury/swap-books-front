@@ -142,30 +142,25 @@ export const authRedirectSuccess = () => {
   };
 };
 
-/**
- * TODO Later:
- * With this function dispatching at the root level of the application we probably can get rid of redux persist.
- * And probably that is the right thing to do
- */
 export const authCheckState = () => {
   return (dispatch: Dispatch) => {
     const accessToken = localStorage.getItem('accessToken');
-    if (!accessToken) {
-      // @ts-ignore
-      return dispatch(authLogout());
-    } else {
-      const expirationDate = new Date(
-        Number(localStorage.getItem('expirationDate')),
-      );
-      if (expirationDate <= new Date()) {
-        // @ts-ignore
-        return dispatch(authLogout());
-      } else {
-        //                                     below "|| ''" code is just for type assertion
-        const userId = localStorage.getItem('userId') || '';
-        const expirationDate = Number(localStorage.getItem('expirationDate'));
-        return dispatch(authSuccess(accessToken, userId, expirationDate));
-      }
+    const expirationDate = localStorage.getItem('expirationDate');
+    const userId = localStorage.getItem('userId') || '';
+    const today = new Date().getTime();
+    if (accessToken && expirationDate && today < Number(expirationDate) && userId) {
+      dispatch(authSuccess(accessToken, userId, Number(expirationDate)));
+      const path = '/user';
+      return axios
+        .get(path)
+        .then(res => {
+          const { name, userLon, userLat } = res.data;
+          dispatch(updateUserInfo(name, true, userLon, userLat));
+        })
+        .catch(err => {
+          // @ts-ignore
+          dispatch(authLogout());
+        });
     }
   };
 };
