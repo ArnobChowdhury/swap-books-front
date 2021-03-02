@@ -90,6 +90,10 @@ export const authLogout = () => {
   };
 };
 
+export const authLogoutForOtherTabs = () => {
+  return { type: AUTH_LOGOUT };
+};
+
 export const authRequest = (
   email: string,
   password: string,

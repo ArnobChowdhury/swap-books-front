@@ -4,7 +4,11 @@ import { wrapper } from 'redux/store';
 import { ThemeProvider } from 'styled-components';
 import { useStore, useSelector, useDispatch } from 'react-redux';
 import { RootState } from 'redux/reducers';
-import { authRedirectSuccess, authCheckState } from 'redux/actions/auth';
+import {
+  authRedirectSuccess,
+  authCheckState,
+  authLogoutForOtherTabs,
+} from 'redux/actions/auth';
 import { SocketIO } from 'hoc/Sockets';
 import GlobalStyles from '../components/GlobalStyles';
 import theme from '../theme';
@@ -33,6 +37,29 @@ const WrappedApp: FC<AppProps> = ({ Component, pageProps }) => {
 
   const { pathname, push: routerPush } = useRouter();
   const { width } = useWindowSize();
+
+  // LOGOUT AND LOGIN FUNCTIONALITY FOR OTHER TABS
+  useEffect(() => {
+    const logoutListenerFunc = (event: StorageEvent) => {
+      if (event.key === 'accessToken') {
+        console.log('Check check', event);
+        if (event.newValue === null) {
+          dispatch(authLogoutForOtherTabs());
+        } else if (event.oldValue === null && event.newValue) {
+          // if authCheckState is fired synchronously (without setTimeout), authCheckState cannot get localStorage values
+          setTimeout(() => {
+            dispatch(authCheckState());
+          }, 1000);
+        }
+      }
+    };
+
+    window.addEventListener('storage', logoutListenerFunc);
+
+    return () => {
+      window.removeEventListener('storage', logoutListenerFunc);
+    };
+  }, []);
 
   useEffect(() => {
     dispatch(authCheckState());

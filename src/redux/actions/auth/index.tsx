@@ -6,5 +6,6 @@ export {
   authTokenRefresh,
   authSuccess,
   authLogout,
+  authLogoutForOtherTabs,
   authRedirectSuccess,
 } from './auth';
