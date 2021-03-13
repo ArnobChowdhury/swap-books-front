@@ -1,9 +1,16 @@
-import redis from 'redis';
+import redis, { ClientOpts } from 'redis';
 
-export const client = redis.createClient({
+let redisConnectionConfig: string | ClientOpts = {
   port: 6379,
   host: '127.0.0.1',
-});
+};
+
+if (process.env.NODE_ENV === 'production' && process.env.REDIS_URL) {
+  redisConnectionConfig = process.env.REDIS_URL;
+}
+
+// @ts-ignore
+export const client = redis.createClient(redisConnectionConfig);
 
 client.on('connect', () => {
   // eslint-disable-next-line

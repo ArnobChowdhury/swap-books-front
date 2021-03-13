@@ -12,6 +12,7 @@ if (process.env.NODE_ENV === 'test') {
 
 export const refToMongoTest = mongoTest;
 
+// TODO: Consider rewriting as a promise
 export const databaseKey = async (): Promise<string> => {
   if (process.env.NODE_ENV === 'test' && mongoTest) {
     const testMongoString = await mongoTest.getUri();

@@ -39,11 +39,11 @@
   "scripts": {
     "tsc": "node_modules/.bin/tsc",
     "build:next": "next build",
-    "build:server": "tsc --project tsconfig.server.json -w",
+    "build:server": "tsc --project tsconfig.server.json",
     "build": "yarn build:next && yarn build:server",
     "dev:server": "node_modules/.bin/nodemon build/index.js",
     "dev:alternate": "ts-node --project tsconfig.server.json server/index.ts",
-    "dev": "node_modules/.bin/concurrently \"yarn build:server\" \"yarn dev:server\"",
+    "dev": "node_modules/.bin/concurrently \"yarn build:server -w\" \"yarn dev:server\"",
     "start": "NODE_ENV=production node build/index.js",
     "lint": "tsc --noEmit && eslint . --ext ts --ext tsx --ext js --quiet --fix",
     "test:front": "jest",

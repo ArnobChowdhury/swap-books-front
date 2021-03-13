@@ -50,5 +50,4 @@ Match.args = {
   bookNames: ['Amazing', 'The book thief'],
   ownersBookInterests: ['Uponnash Troyee', 'Kalo Haat - Tin goyenda'],
   type: 'match',
-  roomLink: '12343525321',
 };
