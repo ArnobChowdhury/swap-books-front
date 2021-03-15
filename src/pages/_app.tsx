@@ -110,6 +110,7 @@ const WrappedApp: FC<AppProps> = ({ Component, pageProps }) => {
       <ThemeProvider theme={theme}>
         <GlobalStyles />
         <SocketIO>
+          <script>0</script>
           <Component {...pageProps} />
         </SocketIO>
       </ThemeProvider>
