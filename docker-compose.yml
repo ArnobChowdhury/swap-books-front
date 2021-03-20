@@ -17,7 +17,7 @@ services:
       - redis
       # - proxy
     volumes:
-      - /home/arnob/Documents/swap-books-front/images:/usr/src/app/images
+      - /home/${HOME_DIR}/Documents/swap-books-front/images:/usr/src/app/images
   redis:
     container_name: cache
     image: redis:6.2
