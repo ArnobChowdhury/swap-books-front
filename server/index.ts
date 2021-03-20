@@ -33,6 +33,7 @@ import {
   DISCONNECT,
 } from './socketTypes';
 import { jwtVerify } from './middlewares/jwtVerify';
+import nodemailer from 'nodemailer';
 
 const port = parseInt(process.env.PORT as string, 10) || 3000; // We might want to change it later
 const dev = process.env.NODE_ENV !== 'production';
@@ -136,6 +137,38 @@ app.prepare().then(() => {
   server.use('/images', express.static(path.join(__dirname, '../', './images')));
 
   server.use(jwtVerify);
+
+  /**GET RID OF AFTER TESTING */
+  server.use('/sendmail', async (req, res, next) => {
+    try {
+      let transporter = nodemailer.createTransport({
+        host: 'mail.pustokio.com',
+        port: 587,
+        secure: false,
+        auth: {
+          user: 'bumble@pustokio.com',
+          pass: 'bumbleinthewoods20',
+        },
+        tls: {
+          rejectUnauthorized: false,
+        },
+      });
+
+      let info = await transporter.sendMail({
+        from: '"Pustokio" <no-reply@pustokio.com>',
+        to: 'sami.almuntahi@gmail.com',
+        subject: 'Please verify your mail',
+        text: 'Hey! how are you',
+      });
+
+      res.status(200).json({ message: info.messageId });
+    } catch (err) {
+      console.log(err);
+      err.statusCode = 403;
+      next(err);
+    }
+  });
+  /**GET RID OF AFTER TESTING */
 
   server.use('/auth', authRoutes);
   server.use('/books', booksRoutes);
