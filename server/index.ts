@@ -138,38 +138,6 @@ app.prepare().then(() => {
 
   server.use(jwtVerify);
 
-  /**GET RID OF AFTER TESTING */
-  server.use('/sendmail', async (req, res, next) => {
-    try {
-      let transporter = nodemailer.createTransport({
-        host: 'mail.pustokio.com',
-        port: 587,
-        secure: false,
-        auth: {
-          user: 'bumble@pustokio.com',
-          pass: 'bumbleinthewoods20',
-        },
-        tls: {
-          rejectUnauthorized: false,
-        },
-      });
-
-      let info = await transporter.sendMail({
-        from: '"Pustokio" <no-reply@pustokio.com>',
-        to: 'sami.almuntahi@gmail.com',
-        subject: 'Please verify your mail',
-        text: 'Hey! how are you',
-      });
-
-      res.status(200).json({ message: info.messageId });
-    } catch (err) {
-      console.log(err);
-      err.statusCode = 403;
-      next(err);
-    }
-  });
-  /**GET RID OF AFTER TESTING */
-
   server.use('/auth', authRoutes);
   server.use('/books', booksRoutes);
   server.use('/user', userRoutes);
