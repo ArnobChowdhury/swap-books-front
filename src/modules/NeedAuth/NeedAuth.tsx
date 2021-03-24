@@ -23,7 +23,7 @@ export const NeedAuth = (): JSX.Element => {
           Log in
         </Button>
         <Link href="/signup" passHref>
-          <Button color="pink">Sign up</Button>
+          <Button color="blue">Sign up</Button>
         </Link>
       </ButtonWrapper>
     </>
