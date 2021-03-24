@@ -59,7 +59,7 @@ export const AddBook = ({ onSubmit }: AddBookProps): JSX.Element => {
           inputFieldFullWidth
         />
         <FileInput name="bookimage" labelText="Pick a picture:" />
-        <Button color="pink" type="submit" asButtonTag>
+        <Button color="blue" type="submit" asButtonTag>
           Add
         </Button>
       </Form>

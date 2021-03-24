@@ -112,7 +112,7 @@ export const SignupWidget = (): JSX.Element => {
               labelText={<LinkToTermsAndCondition />}
               name="termsConfirmation"
             />
-            <Button color="pink" type="submit" asButtonTag>
+            <Button color="blue" type="submit" asButtonTag>
               Submit
             </Button>
           </Form>

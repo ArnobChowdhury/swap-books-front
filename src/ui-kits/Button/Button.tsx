@@ -4,7 +4,7 @@ import { ReactNode } from 'react';
 
 export interface ButtonProps {
   children: ReactNode;
-  color?: 'white' | 'pink';
+  color?: 'white' | 'blue' | 'transparent';
   onClick?: () => void;
   asButtonTag?: boolean;
   type?: 'submit' | 'reset' | 'button';
@@ -15,7 +15,7 @@ export interface ButtonProps {
 export const Button = React.forwardRef(
   (
     {
-      color = 'pink',
+      color = 'blue',
       onClick,
       asButtonTag = false,
       children,

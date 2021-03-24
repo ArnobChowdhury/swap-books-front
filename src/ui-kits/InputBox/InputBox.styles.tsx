@@ -23,7 +23,7 @@ export const InputHTML = styled.input.attrs(props => {
   min-width: 22rem;
   min-height: 3.8rem;
   height: 3.8rem;
-  color: ${(props): string | null => props.theme.colorBlackDark};
+  color: ${(props): string | null => props.theme.colorTextDark};
   margin-top: ${({ labelAtTop, theme }) => labelAtTop && theme.spaceFive};
   background: none;
   outline: none;

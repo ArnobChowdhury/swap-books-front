@@ -22,9 +22,9 @@ const GlobalStyles = createGlobalStyle<GlobalStylesProps>`
   body {
     ${(props): string | null =>
       props.storybook
-        ? "@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@300;400&display=swap')"
+        ? "@import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap')"
         : null};
-    font-family: 'Rubik', sans-serif;
+    font-family: 'Lato', sans-serif;
     box-sizing: border-box;
     font-weight: 300;
     color: ${theme.colorTextPrimary};

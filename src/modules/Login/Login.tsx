@@ -57,7 +57,7 @@ export const Login = ({ onSubmit }: LoginProps): JSX.Element => {
           marginBottom="1rem"
           labelAtTop
         />
-        <Button color="pink" type="submit" asButtonTag>
+        <Button color="blue" type="submit" asButtonTag>
           Log in
         </Button>
       </Form>

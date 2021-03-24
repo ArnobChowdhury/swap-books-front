@@ -38,7 +38,7 @@ export const ChatButton = styled.button`
   border-radius: 3px;
   padding: ${({ theme }) => `0 ${theme.spaceFour}`};
   cursor: pointer;
-  box-shadow: ${({ theme }) => theme.boxShadowOne};
+  box-shadow: ${({ theme }) => theme.boxShadow};
   font-size: inherit;
   font-family: inherit;
   font-weight: 300;

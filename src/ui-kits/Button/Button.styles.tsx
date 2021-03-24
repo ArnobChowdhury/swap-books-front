@@ -10,20 +10,37 @@ const ButtonCSS = css<ButtonStyledProps>`
     switch (props.color) {
       case 'white':
         return props.theme.colorWhite;
+      case 'blue':
+        return props.theme.colorPrimary2;
       default:
-        return props.theme.colorPink;
+        return 'transparent';
     }
   }};
   border-radius: 0.3rem;
-  border: ${({ theme }) => `2px solid ${theme.colorPurple}`};
+  border: ${({ theme, color }) => {
+    switch (color) {
+      case 'transparent':
+        return `2px solid ${theme.colorPrimary2}`;
+      default:
+        return `2px solid transparent`;
+    }
+  }};
   padding: ${({ theme }): string | null => `${theme.spaceThree} ${theme.spaceFive}`};
   font-family: inherit;
   font-size: ${(props): string | null => props.theme.fontSmall};
   font-weight: 400;
-  color: ${({ theme }): string | null => theme.colorTextDark};
+  color: ${({ theme, color }): string | null => {
+    switch (color) {
+      case 'transparent':
+        return theme.colorPrimary2;
+      default:
+        return theme.colorPrimary1;
+    }
+  }};
   cursor: pointer;
   transition: all 0.2s;
   text-decoration: none;
+  display: inline-block;
 
   @media (min-width: 360px) {
     padding: ${({ theme }): string | null => `${theme.spaceFour} ${theme.spaceTen}`};

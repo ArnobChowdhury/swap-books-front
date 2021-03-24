@@ -28,7 +28,7 @@ export const NavBarWrapper = styled.nav`
   display: flex;
   justify-content: space-evenly;
   align-items: center;
-  font-size: ${({ theme }) => theme.fontSizeOne};
+  font-size: ${({ theme }) => theme.fontLarge};
 
   @media (min-width: ${largeScreen}px) {
     width: 250px;
@@ -39,17 +39,6 @@ export const NavBarWrapper = styled.nav`
 export const NavBarUL = styled.ul`
   list-style-type: none;
   height: 100%;
-`;
-
-export const NavBarLinkWrapper = styled.li<{ isSelected: boolean }>`
-  height: 100%;
-  display: inline-block;
-  transition: background 0.3s;
-  border-bottom: ${({ isSelected, theme }) =>
-    isSelected ? `4px solid ${theme.colorYellowDeep}` : `4px solid transparent`};
-  &:hover {
-    background: ${({ theme }) => theme.colorBlackPrimary};
-  }
 `;
 
 interface NavButtonProps {

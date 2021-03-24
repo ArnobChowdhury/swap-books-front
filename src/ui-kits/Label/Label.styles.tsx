@@ -54,5 +54,5 @@ export const RequiredSpan = styled.span<InputStyleProps>`
     labelAtTop && 'font-weight: 400'};
   vertical-align: ${(props): string | null => (!props.labelAtTop ? 'top' : null)};
   color: ${({ labelAtTop, theme }): string | null =>
-    !labelAtTop ? theme.colorRed : null};
+    !labelAtTop ? theme.colorAlert : null};
 `;

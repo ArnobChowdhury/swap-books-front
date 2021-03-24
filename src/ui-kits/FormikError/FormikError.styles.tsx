@@ -7,10 +7,10 @@ export const ErrorWrapper = styled.div`
 `;
 
 export const ErrorText = styled.div`
-  font-size: ${({ theme }): string => theme.fontSizeSmall};
+  font-size: ${({ theme }): string => theme.fontSuperSmall};
   font-weight: 600;
   line-height: ${({ theme }): string => theme.spaceTen};
-  color: ${({ theme }): string => theme.colorRed};
+  color: ${({ theme }): string => theme.colorAlert};
   flex-grow: 1;
   margin-left: ${({ theme }): string => theme.spaceFour};
 `;

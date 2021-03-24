@@ -6,7 +6,7 @@ export const Container = styled.div`
   background: ${({ theme }) => theme.colorWhite};
   border-radius: ${({ theme }) => theme.borderRadius};
   padding: ${({ theme }) => theme.spaceFive};
-  font-size: ${({ theme }) => theme.fontSizeOne};
+  font-size: ${({ theme }) => theme.fontLarge};
   display: flex;
   box-shadow: ${({ theme }) => theme.boxShadow};
   align-items: center;

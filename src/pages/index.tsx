@@ -3,6 +3,7 @@ import { NextPage } from 'next';
 import { TopBar } from 'widgets/TopBar';
 import { ActivityBar } from 'widgets/ActivityBar';
 import { ModalManager } from 'widgets/ModalManager';
+import { LandingPage } from 'widgets/LandingPage';
 import { Posts } from 'widgets/Posts';
 import { NavBar } from 'widgets/NavBar';
 import { useWindowSize } from 'hooks';
@@ -17,6 +18,7 @@ const Root: NextPage = (): JSX.Element => {
   const { contentType, setContentType } = rootContext as RootContextProps;
   const { width } = useWindowSize();
   const { accessToken } = useSelector((s: RootState) => s.auth);
+  const { userLon, userLat } = useSelector((s: RootState) => s.user);
   const isSignedIn = Boolean(accessToken);
 
   useEffect(() => {
@@ -25,19 +27,24 @@ const Root: NextPage = (): JSX.Element => {
   return (
     <>
       <ModalManager />
-      <TopBar
-        navBar={width >= largeScreen && <NavBar />}
-        // activityBar={width >= mediumScreen && <ActivityBar />}
-        activityBar={
-          (width >= mediumScreen || contentType === 'Posts') && <ActivityBar />
-        }
-      />
-      {/* {width < mediumScreen && <ActivityBar />} */}
-      {isSignedIn && width < largeScreen && <NavBar />}
+      {!isSignedIn && userLon === null && userLat === null && <LandingPage />}
+      {userLon !== null && userLat !== null && (
+        <>
+          <TopBar
+            navBar={width >= largeScreen && <NavBar />}
+            // activityBar={width >= mediumScreen && <ActivityBar />}
+            activityBar={
+              (width >= mediumScreen || contentType === 'Posts') && <ActivityBar />
+            }
+          />
+          {/* {width < mediumScreen && <ActivityBar />} */}
+          {isSignedIn && width < largeScreen && <NavBar />}
 
-      <PageLayout largeTopMargin={contentType === 'Posts'}>
-        <Posts />
-      </PageLayout>
+          <PageLayout largeTopMargin={contentType === 'Posts'}>
+            <Posts />
+          </PageLayout>
+        </>
+      )}
     </>
   );
 };

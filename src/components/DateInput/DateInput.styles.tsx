@@ -15,7 +15,7 @@ export const Input = styled.input<{ doubleWidth?: boolean }>`
   min-height: 3.8rem;
   height: 3.8rem;
   border-radius: 0.3rem;
-  border: ${({ theme }) => `1px solid ${theme.colorGreyPrimary}`};
+  border: ${({ theme }) => `1px solid ${theme.colorTextPrimary}`};
 
   &::-webkit-outer-spin-button,
   &::-webkit-inner-spin-button {

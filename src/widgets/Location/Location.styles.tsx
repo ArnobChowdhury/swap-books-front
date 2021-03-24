@@ -17,11 +17,11 @@ export const MapContainer = styled.div`
   }
 
   & div.leaflet-locationiq-expanded input {
-    font-family: Rubik;
+    font-family: Lato;
   }
 
   & .locationPopup {
     width: 140px;
-    font-family: Rubik;
+    font-family: Lato;
   }
 `;
