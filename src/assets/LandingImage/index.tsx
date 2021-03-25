@@ -17,7 +17,7 @@ export const LandingImage: React.FC<LogoProps> = ({
         d="M329.435 70.7267C293.085 69.2983 258.46 56.0356 225.401 41.5223C192.343 27.009 159.599 10.9275 124.12 3.23913C101.3 -1.70658 75.2008 -2.40494 56.8182 11.4227C39.1208 24.7552 33.4033 47.706 30.3311 69.0253C28.0171 85.0623 26.6579 101.937 32.9989 116.952C37.3966 127.377 45.209 136.138 50.6064 146.157C69.4047 180.897 56.1218 223.739 35.7509 257.66C26.203 273.577 15.1105 288.769 7.74175 305.695C0.372977 322.621 -3.04182 342.042 3.40585 359.324C9.80298 376.465 25.0404 389.315 41.5415 398.362C75.066 416.742 114.555 421.999 153.09 424.976C238.364 431.573 324.088 428.716 409.587 425.859C441.23 424.799 473.008 423.726 504.134 418.196C521.421 415.123 539.265 410.253 551.818 398.483C567.746 383.544 571.694 358.244 561.023 339.515C543.112 308.095 493.626 300.293 481.09 266.568C474.204 248.01 481.281 227.339 491.289 210.121C512.766 173.196 548.762 140.798 550.661 98.5916C551.964 69.5966 534.654 40.57 507.897 26.8503C479.854 12.4195 440.955 14.2479 420.275 38.0495C398.966 62.5749 361.527 71.9838 329.435 70.7267Z"
         fill="white"
       />
-      <g clip-path="url(#clip0)">
+      <g clipPath="url(#clip0)">
         <path
           d="M204.993 364.121L75.3457 376.304V70.9993L204.993 58.816V364.121Z"
           fill="url(#paint0_linear)"
@@ -320,7 +320,7 @@ export const LandingImage: React.FC<LogoProps> = ({
           opacity="0.1"
           d="M438.666 359.303C438.666 359.303 449.481 364.237 456.613 353.318"
           stroke="black"
-          stroke-miterlimit="10"
+          strokeMiterlimit="10"
         />
         <path
           opacity="0.5"
@@ -428,9 +428,9 @@ export const LandingImage: React.FC<LogoProps> = ({
           width="162.018"
           height="256.226"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -462,9 +462,9 @@ export const LandingImage: React.FC<LogoProps> = ({
           y2="58.8159"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#808080" stop-opacity="0.25" />
-          <stop offset="0.53514" stop-color="#808080" stop-opacity="0.12" />
-          <stop offset="1" stop-color="#808080" stop-opacity="0.1" />
+          <stop stopColor="#808080" stopOpacity="0.25" />
+          <stop offset="0.53514" stopColor="#808080" stopOpacity="0.12" />
+          <stop offset="1" stopColor="#808080" stopOpacity="0.1" />
         </linearGradient>
         <linearGradient
           id="paint1_linear"
@@ -474,9 +474,9 @@ export const LandingImage: React.FC<LogoProps> = ({
           y2="20896.7"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#808080" stop-opacity="0.25" />
-          <stop offset="0.53514" stop-color="#808080" stop-opacity="0.12" />
-          <stop offset="1" stop-color="#808080" stop-opacity="0.1" />
+          <stop stopColor="#808080" stopOpacity="0.25" />
+          <stop offset="0.53514" stopColor="#808080" stopOpacity="0.12" />
+          <stop offset="1" stopColor="#808080" stopOpacity="0.1" />
         </linearGradient>
         <linearGradient
           id="paint2_linear"
@@ -486,9 +486,9 @@ export const LandingImage: React.FC<LogoProps> = ({
           y2="20896.7"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#808080" stop-opacity="0.25" />
-          <stop offset="0.53514" stop-color="#808080" stop-opacity="0.12" />
-          <stop offset="1" stop-color="#808080" stop-opacity="0.1" />
+          <stop stopColor="#808080" stopOpacity="0.25" />
+          <stop offset="0.53514" stopColor="#808080" stopOpacity="0.12" />
+          <stop offset="1" stopColor="#808080" stopOpacity="0.1" />
         </linearGradient>
         <linearGradient
           id="paint3_linear"
@@ -498,9 +498,9 @@ export const LandingImage: React.FC<LogoProps> = ({
           y2="66.8019"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-opacity="0.12" />
-          <stop offset="0.55135" stop-opacity="0.09" />
-          <stop offset="1" stop-opacity="0.02" />
+          <stop stopOpacity="0.12" />
+          <stop offset="0.55135" stopOpacity="0.09" />
+          <stop offset="1" stopOpacity="0.02" />
         </linearGradient>
         <linearGradient
           id="paint4_linear"
@@ -510,9 +510,9 @@ export const LandingImage: React.FC<LogoProps> = ({
           y2="49986.2"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#B3B3B3" stop-opacity="0.25" />
-          <stop offset="0.53514" stop-color="#B3B3B3" stop-opacity="0.1" />
-          <stop offset="1" stop-color="#B3B3B3" stop-opacity="0.05" />
+          <stop stopColor="#B3B3B3" stopOpacity="0.25" />
+          <stop offset="0.53514" stopColor="#B3B3B3" stopOpacity="0.1" />
+          <stop offset="1" stopColor="#B3B3B3" stopOpacity="0.05" />
         </linearGradient>
         <linearGradient
           id="paint5_linear"
@@ -522,9 +522,9 @@ export const LandingImage: React.FC<LogoProps> = ({
           y2="250.64"
           gradientUnits="userSpaceOnUse"
         >
-          <stop offset="0.00541" stop-opacity="0.12" />
-          <stop offset="0.55135" stop-opacity="0.09" />
-          <stop offset="1" stop-opacity="0.05" />
+          <stop offset="0.00541" stopOpacity="0.12" />
+          <stop offset="0.55135" stopOpacity="0.09" />
+          <stop offset="1" stopOpacity="0.05" />
         </linearGradient>
         <linearGradient
           id="paint6_linear"
@@ -534,9 +534,9 @@ export const LandingImage: React.FC<LogoProps> = ({
           y2="138.174"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#808080" stop-opacity="0.63" />
-          <stop offset="0.54" stop-color="#808080" stop-opacity="0.12" />
-          <stop offset="1" stop-color="#808080" stop-opacity="0.1" />
+          <stop stopColor="#808080" stopOpacity="0.63" />
+          <stop offset="0.54" stopColor="#808080" stopOpacity="0.12" />
+          <stop offset="1" stopColor="#808080" stopOpacity="0.1" />
         </linearGradient>
         <clipPath id="clip0">
           <rect
