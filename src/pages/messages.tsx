@@ -11,6 +11,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from 'redux/reducers';
 import { PageLayout } from 'hoc/PageLayout';
 import { RootContext, RootContextProps } from 'contexts/RootContext';
+import Head from 'next/head';
 
 const Root: NextPage = (): JSX.Element => {
   const rootContext = useContext(RootContext);
@@ -25,6 +26,9 @@ const Root: NextPage = (): JSX.Element => {
 
   return (
     <>
+      <Head>
+        <title>Messages | Pustokio</title>
+      </Head>
       <ModalManager />
       <TopBar
         navBar={width >= largeScreen && <NavBar />}

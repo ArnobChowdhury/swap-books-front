@@ -12,5 +12,6 @@ RUN yarn install
 
 COPY ./.next ./.next
 COPY ./build ./build
+COPY ./favicon.ico ./favicon.ico
 
 CMD ["yarn", "start"]

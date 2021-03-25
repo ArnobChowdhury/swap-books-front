@@ -133,7 +133,9 @@ app.prepare().then(() => {
 
   server.use(multer({ storage: fileStorage, fileFilter }).single('bookImage'));
 
-  // eslint-disable-next-line no-console
+  server.use('/favicon.ico', (_req, res) => {
+    res.status(200).sendfile('favicon.ico', { root: path.join(__dirname, '../') });
+  });
   server.use('/images', express.static(path.join(__dirname, '../', './images')));
 
   server.use(jwtVerify);
