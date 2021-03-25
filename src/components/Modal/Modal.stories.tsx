@@ -1,6 +1,6 @@
 import { Modal, ModalProps } from './Modal';
-import { FlexContainer } from '../FlexContainer';
-import { FlexItem } from '../FlexItem';
+import { FlexContainer } from 'ui-kits/FlexContainer';
+import { FlexItem } from 'ui-kits/FlexItem';
 import { Story, Meta } from '@storybook/react';
 
 export default {

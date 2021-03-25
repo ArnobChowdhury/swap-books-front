@@ -1,4 +1,5 @@
 import axios from '../../../axiosInstance';
+import { AxiosError } from 'axios';
 import { Dispatch, Action } from 'redux';
 import { ThunkAction } from 'redux-thunk';
 import { RootState } from 'redux/reducers';
@@ -63,7 +64,7 @@ export const updateUserInfo = (
   };
 };
 
-export const authFail = (error: Error) => {
+export const authFail = (error: { message: string; status: number }) => {
   return {
     type: AUTH_FAIL,
     error: error,
@@ -132,10 +133,23 @@ export const authRequest = (
         dispatch(authSuccess(accessToken, userId, expirationDate));
         dispatch(updateUserInfo(name, true, userLon, userLat));
       })
-      .catch(err => {
+      .catch((err: AxiosError<{ message: string }>) => {
         formikSetSubmitting(false);
         // todo need to check what kind of possible errors we can get???
-        dispatch(authFail(err));
+        if (err.response) {
+          const { data, status } = err.response;
+          const { message } = data;
+          if (status === 401) {
+            dispatch(authFail({ message, status }));
+          } else {
+            dispatch(
+              authFail({
+                message: 'Something went wrong! Please try again!',
+                status,
+              }),
+            );
+          }
+        }
       });
   };
 };

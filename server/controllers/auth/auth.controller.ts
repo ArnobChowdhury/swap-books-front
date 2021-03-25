@@ -56,9 +56,7 @@ export const login: (
     // we don't know what is going to be returned if the user doesn't exist
     const user = await User.findByEmail(email);
     if (!user) {
-      const err: HttpException = new Error(
-        'A user with this email could not be found.',
-      );
+      const err: HttpException = new Error('Invalid Username/Password!');
       err.statusCode = 401;
       throw err;
     }
@@ -72,7 +70,7 @@ export const login: (
 
     const isEqual = await bcrypt.compare(password, dbPassword);
     if (!isEqual) {
-      const err: HttpException = new Error('Wrong password!');
+      const err: HttpException = new Error('Invalid Username/Password!');
       err.statusCode = 401;
       throw err;
     }

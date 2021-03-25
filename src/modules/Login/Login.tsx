@@ -2,6 +2,7 @@ import { Formik, Form, FormikHelpers } from 'formik';
 import { Input } from 'components/Input';
 import * as Yup from 'yup';
 import { Button } from 'ui-kits/Button';
+import { LoginError } from './Login.styles';
 
 export interface LoginCredentials {
   email: string;
@@ -13,54 +14,58 @@ export interface LoginProps {
     loginCreds: LoginCredentials,
     formikHelpers: FormikHelpers<LoginCredentials>,
   ) => void;
+  requestErrorMsg?: string;
 }
 
-export const Login = ({ onSubmit }: LoginProps): JSX.Element => {
+export const Login = ({ onSubmit, requestErrorMsg }: LoginProps): JSX.Element => {
   return (
-    <Formik
-      initialValues={{
-        email: '',
-        password: '',
-      }}
-      validationSchema={Yup.object({
-        email: Yup.string()
-          .email('Invalid email address')
-          .required('Required'),
-        password: Yup.string()
-          .required('Password needed')
-          .min(8, 'Too short. Needs to have min. 8 characters')
-          .matches(/[a-zA-Z]/, 'Password can only contain latin letters'),
-      })}
-      onSubmit={onSubmit}
-    >
-      <Form>
-        <Input
-          type="email"
-          labelText="Email"
-          name="email"
-          placeholder="Please type your email address"
-          isRequired={true}
-          inputFieldFullWidth={true}
-          labelMinWidth="10rem"
-          marginBottom="1rem"
-          labelAtTop
-          autoFocus
-        />
-        <Input
-          type="password"
-          labelText="Password"
-          name="password"
-          placeholder="Choose a strong password"
-          isRequired={true}
-          inputFieldFullWidth={true}
-          labelMinWidth="10rem"
-          marginBottom="1rem"
-          labelAtTop
-        />
-        <Button color="blue" type="submit" asButtonTag>
-          Log in
-        </Button>
-      </Form>
-    </Formik>
+    <>
+      {requestErrorMsg && <LoginError>{requestErrorMsg}</LoginError>}
+      <Formik
+        initialValues={{
+          email: '',
+          password: '',
+        }}
+        validationSchema={Yup.object({
+          email: Yup.string()
+            .email('Invalid email address')
+            .required('Required'),
+          password: Yup.string()
+            .required('Password needed')
+            .min(8, 'Too short. Needs to have min. 8 characters')
+            .matches(/[a-zA-Z]/, 'Password can only contain latin letters'),
+        })}
+        onSubmit={onSubmit}
+      >
+        <Form>
+          <Input
+            type="email"
+            labelText="Email"
+            name="email"
+            placeholder="Please type your email address"
+            isRequired={true}
+            inputFieldFullWidth={true}
+            labelMinWidth="10rem"
+            marginBottom="1rem"
+            labelAtTop
+            autoFocus
+          />
+          <Input
+            type="password"
+            labelText="Password"
+            name="password"
+            placeholder="Choose a strong password"
+            isRequired={true}
+            inputFieldFullWidth={true}
+            labelMinWidth="10rem"
+            marginBottom="1rem"
+            labelAtTop
+          />
+          <Button color="blue" type="submit" asButtonTag>
+            Log in
+          </Button>
+        </Form>
+      </Formik>
+    </>
   );
 };

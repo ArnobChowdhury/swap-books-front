@@ -13,7 +13,7 @@ export interface AuthState {
   accessToken: string | null;
   userId: string | null;
   expirationDate: number;
-  error: string | null | Error;
+  error: { message: string; status: number } | null;
   loading: boolean;
   authRedirectPath: string | null;
 }
@@ -33,7 +33,7 @@ const reducer = (state = initialState, action: AnyAction) => {
     case HYDRATE:
       return { ...state };
     case AUTH_START:
-      return { ...state, loading: true };
+      return { ...state, loading: true, error: null };
     case AUTH_SUCCESS:
       return {
         ...state,
@@ -46,7 +46,7 @@ const reducer = (state = initialState, action: AnyAction) => {
     case AUTH_TOKEN_REFRESH:
       return { ...state, accessToken, expirationDate };
     case AUTH_FAIL:
-      return { ...state, error };
+      return { ...state, loading: false, error };
     case AUTH_REDIRECT_SUCCESS:
       return { ...state, authRedirectPath: null };
     case AUTH_LOGOUT:
