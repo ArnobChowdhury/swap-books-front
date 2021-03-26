@@ -1,9 +1,9 @@
-interface LogoProps {
+interface LogoIconProps {
   width?: number;
 }
-export const LogoIcon: React.FC<LogoProps> = ({
+export const LogoIcon: React.FC<LogoIconProps> = ({
   width = 45,
-}: LogoProps): JSX.Element => {
+}: LogoIconProps): JSX.Element => {
   return (
     <svg
       width={width}
