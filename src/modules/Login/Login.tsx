@@ -2,7 +2,7 @@ import { Formik, Form, FormikHelpers } from 'formik';
 import { Input } from 'components/Input';
 import * as Yup from 'yup';
 import { Button } from 'ui-kits/Button';
-import { LoginError } from './Login.styles';
+import { LoginError, ForgotPassWrapper, ForgotPassLink } from './Login.styles';
 
 export interface LoginCredentials {
   email: string;
@@ -61,6 +61,9 @@ export const Login = ({ onSubmit, requestErrorMsg }: LoginProps): JSX.Element =>
             marginBottom="1rem"
             labelAtTop
           />
+          <ForgotPassWrapper>
+            <ForgotPassLink href="/forgot_password">Forgot Password?</ForgotPassLink>
+          </ForgotPassWrapper>
           <Button color="blue" type="submit" asButtonTag>
             Log in
           </Button>

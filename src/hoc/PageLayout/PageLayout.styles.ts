@@ -6,8 +6,11 @@ export const LayoutWrapper = styled.div`
   justify-content: center;
 `;
 
-export const PageContainer = styled.div<{ largeTopMargin?: boolean }>`
-  max-width: 600px;
+export const PageContainer = styled.div<{
+  largeTopMargin?: boolean;
+  formPage?: boolean;
+}>`
+  max-width: ${({ formPage }) => (formPage ? '400px' : '600px')};
   margin-top: ${({ largeTopMargin }) => (largeTopMargin ? '103px' : '60px')};
   margin-bottom: 70px;
   width: 100%;

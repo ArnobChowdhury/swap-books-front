@@ -8,4 +8,5 @@ export {
   authLogout,
   authLogoutForOtherTabs,
   authRedirectSuccess,
+  forgotPasswordReq,
 } from './auth';

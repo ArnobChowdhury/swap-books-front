@@ -10,3 +10,14 @@ export const LoginError = styled.div`
   margin-bottom: ${({ theme }) => theme.spaceFive};
   font-weight: 400;
 `;
+
+export const ForgotPassWrapper = styled.div`
+  margin-bottom: ${({ theme }) => theme.spaceTen};
+`;
+
+export const ForgotPassLink = styled.a`
+  text-decoration: none;
+  font-size: ${({ theme }) => theme.fontSmall};
+  color: ${({ theme }) => theme.colorPrimary1};
+  cursor: pointer;
+`;

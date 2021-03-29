@@ -12,6 +12,9 @@ import {
   AUTH_TOKEN_REFRESH,
   AUTH_REDIRECT_SUCCESS,
   UPDATE_USER_INFO,
+  FORGOT_PASS_START,
+  FORGOT_PASS_FAIL,
+  FORGOT_PASS_SUCCESS,
 } from './../actionTypes';
 
 export const authStart = () => {
@@ -180,5 +183,62 @@ export const authCheckState = () => {
           dispatch(authLogout());
         });
     }
+  };
+};
+const forgotPasswordStart = () => {
+  return {
+    type: FORGOT_PASS_START,
+  };
+};
+
+const forgotPasswordSuccess = (message: string) => {
+  return {
+    type: FORGOT_PASS_SUCCESS,
+    forgotPassMsg: message,
+  };
+};
+
+const forgotPasswordFail = (err: { message: string; status: number }) => {
+  return {
+    type: FORGOT_PASS_FAIL,
+    forgotPassErr: err,
+  };
+};
+
+export const forgotPasswordReq = (
+  email: string,
+  formikSetSubmitting: (submissionResolved: boolean) => void,
+): ThunkAction<void, RootState, unknown, Action<string>> => {
+  return async (dispatch: Dispatch) => {
+    console.log('dispatching...', email);
+    dispatch(forgotPasswordStart());
+
+    const url = '/auth/forgot_password';
+    return axios
+      .post(url, { email })
+      .then(response => {
+        formikSetSubmitting(false);
+        const { message } = response.data;
+
+        dispatch(forgotPasswordSuccess(message));
+      })
+      .catch((err: AxiosError<{ message: string }>) => {
+        formikSetSubmitting(false);
+        // todo need to check what kind of possible errors we can get???
+        if (err.response) {
+          const { data, status } = err.response;
+          const { message } = data;
+          if (status === 401) {
+            dispatch(forgotPasswordFail({ message, status }));
+          } else {
+            dispatch(
+              forgotPasswordFail({
+                message: 'Something went wrong! Please try again!',
+                status,
+              }),
+            );
+          }
+        }
+      });
   };
 };

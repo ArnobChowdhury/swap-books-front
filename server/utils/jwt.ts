@@ -7,16 +7,29 @@ import { JWTDecoded } from '../interface';
 export const generateJWT = (
   userId: string,
   email: string,
-  tokenType: 'access' | 'refresh',
+  tokenType: 'access' | 'refresh' | 'passReset',
 ): string => {
-  const isAccessToken = tokenType === 'access';
-  const secret: string = process.env[
-    isAccessToken ? 'ACCESS_SECRET' : 'REFRESH_SECRET'
-  ] as string;
+  let secretVar: string;
+  let expiresIn: string;
+  switch (tokenType) {
+    case 'access':
+      secretVar = 'ACCESS_SECRET';
+      expiresIn = '1h';
+      break;
+    case 'refresh':
+      secretVar = 'REFRESH_SECRET';
+      expiresIn = '1y';
+      break;
+    case 'passReset':
+      secretVar = 'PASS_RESET_SECRET';
+      expiresIn = '24h';
+      break;
+  }
+  const secret: string = process.env[secretVar] as string;
   const payload = { email };
   const options = {
-    expiresIn: isAccessToken ? '1h' : '1y',
-    issuer: 'bookbarterapp.com',
+    expiresIn,
+    issuer: 'www.pustokio.com',
     audience: userId,
   };
   const token = JWT.sign(payload, secret, options);

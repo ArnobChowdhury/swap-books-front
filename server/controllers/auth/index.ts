@@ -1,1 +1,7 @@
-export { login, signup, refreshToken, logout } from './auth.controller';
+export {
+  login,
+  signup,
+  refreshToken,
+  logout,
+  forgotPassword,
+} from './auth.controller';

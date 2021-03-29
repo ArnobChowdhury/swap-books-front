@@ -33,7 +33,6 @@ import {
   DISCONNECT,
 } from './socketTypes';
 import { jwtVerify } from './middlewares/jwtVerify';
-import nodemailer from 'nodemailer';
 
 const port = parseInt(process.env.PORT as string, 10) || 3000; // We might want to change it later
 const dev = process.env.NODE_ENV !== 'production';
@@ -44,6 +43,7 @@ const server = express();
 
 app.prepare().then(() => {
   server.use(morgan('dev'));
+
   const HTTPServer = createServer(server);
   // more sane options can be added to io server
   const io = new Server(HTTPServer);
@@ -136,6 +136,12 @@ app.prepare().then(() => {
   server.use('/favicon.ico', (_req, res) => {
     res.status(200).sendfile('favicon.ico', { root: path.join(__dirname, '../') });
   });
+  server.use('/pustokio_logo.png', (_req, res) => {
+    res
+      .status(200)
+      .sendfile('pustokio_logo.png', { root: path.join(__dirname, '../') });
+  });
+
   server.use('/images', express.static(path.join(__dirname, '../', './images')));
 
   server.use(jwtVerify);

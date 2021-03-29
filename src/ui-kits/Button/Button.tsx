@@ -10,6 +10,7 @@ export interface ButtonProps {
   type?: 'submit' | 'reset' | 'button';
   href?: string;
   disabled?: boolean;
+  isFullWidth?: boolean;
 }
 
 export const Button = React.forwardRef(
@@ -22,6 +23,7 @@ export const Button = React.forwardRef(
       type,
       href,
       disabled,
+      isFullWidth = false,
     }: ButtonProps,
     ref,
   ): JSX.Element => {
@@ -33,11 +35,17 @@ export const Button = React.forwardRef(
             type={type}
             onClick={onClick}
             color={color}
+            isFullWidth={isFullWidth}
           >
             {children}
           </ButtonBTag>
         ) : (
-          <ButtonATag onClick={onClick} color={color} href={href}>
+          <ButtonATag
+            isFullWidth={isFullWidth}
+            onClick={onClick}
+            color={color}
+            href={href}
+          >
             {children}
           </ButtonATag>
         )}

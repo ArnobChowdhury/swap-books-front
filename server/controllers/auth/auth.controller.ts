@@ -1,10 +1,12 @@
 import { Request, Response, NextFunction } from 'express';
+import path from 'path';
 import bcrypt from 'bcryptjs';
 import createHttpError from 'http-errors';
 import { HttpException } from '../../interface';
 import User from '../../models/user';
 import { generateJWT, verifyRefreshToken } from '../../utils/jwt';
 import { client as redisClient } from '../../utils/redis';
+import { emailTransporter } from '../../utils/email';
 
 // todo check if it is possible to use a single function for sign up and sign in
 export const signup = async (
@@ -126,6 +128,78 @@ export const logout = (req: Request, res: Response, next: NextFunction): void =>
       if (err) {
         throw new createHttpError.InternalServerError();
       }
+    });
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
+};
+
+export const forgotPassword: (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => Promise<void> = async (req: Request, res: Response, next: NextFunction) => {
+  const { email } = req.body;
+  try {
+    // we don't know what is going to be returned if the user doesn't exist
+    const user = await User.findByEmail(email);
+    if (!user) {
+      emailTransporter.sendMail({
+        from: '"Pustokio" <no-reply@pustokio.com>', // sender address
+        to: email,
+        subject: 'No Account Found', // Subject line
+        text: `
+          Hi,
+
+          We received a request to reset the password to access Pustokio with your email address ${email}, but we were unable to find an account associated with this address.
+
+          If you use Pustokio and were expecting this email, consider trying to request a password reset using the email address associated with your account.
+
+          If you do not use Pustokio or did not request a password reset, please ignore this email.
+
+          Thanks, 
+          The Pustokio team
+        `,
+        // @ts-ignore
+        template: 'accountNotFound',
+        context: {
+          email,
+        },
+      });
+    } else {
+      const { _id, name } = user;
+      const token = generateJWT(_id.toHexString(), email, 'passReset');
+      emailTransporter.sendMail({
+        from: '"Pustokio" <no-reply@pustokio.com>', // sender address
+        to: email,
+        subject: 'Account Password Reset', // Subject line
+        text: `
+          Hi ${name},
+
+          You recently requested to reset your password for your Pustokio account. Use the link below to reset it. This password reset is only valid for the next 24 hours.          
+
+          https://www.pustokio.com/reset_pass/${token}
+
+          If you did not request this change, please ignore this email. Your account information has not changed. 
+
+          Thanks, 
+          The Pustokio team
+        `,
+        // @ts-ignore
+        template: 'resetPass',
+        context: {
+          name,
+          action_url: `https://www.pustokio.com/reset_pass/${token}`,
+        },
+      });
+    }
+
+    res.status(200).json({
+      message:
+        'We have sent an email to the address provided. Please check your inbox. It might take a few minutes. If not found in your inbox, please check your spam folder.',
     });
   } catch (err) {
     if (!err.statusCode) {

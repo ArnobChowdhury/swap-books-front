@@ -7,6 +7,9 @@ import {
   AUTH_START,
   AUTH_FAIL,
   AUTH_REDIRECT_SUCCESS,
+  FORGOT_PASS_START,
+  FORGOT_PASS_SUCCESS,
+  FORGOT_PASS_FAIL,
 } from '../../actions/actionTypes';
 
 export interface AuthState {
@@ -16,6 +19,9 @@ export interface AuthState {
   error: { message: string; status: number } | null;
   loading: boolean;
   authRedirectPath: string | null;
+  forgotPassMsg: string | null;
+  forgotPassLoading: boolean;
+  forgotPassErr: { message: string; status: number } | null;
 }
 
 export const initialState: AuthState = {
@@ -25,10 +31,21 @@ export const initialState: AuthState = {
   error: null,
   loading: false,
   authRedirectPath: null,
+  forgotPassLoading: false,
+  forgotPassMsg: null,
+  forgotPassErr: null,
 };
 
 const reducer = (state = initialState, action: AnyAction) => {
-  const { accessToken, userId, expirationDate, error } = action;
+  const {
+    accessToken,
+    userId,
+    expirationDate,
+    error,
+    forgotPassMsg,
+    forgotPassErr,
+  } = action;
+
   switch (action.type) {
     case HYDRATE:
       return { ...state };
@@ -51,7 +68,13 @@ const reducer = (state = initialState, action: AnyAction) => {
       return { ...state, authRedirectPath: null };
     case AUTH_LOGOUT:
       return { ...state, userId: null, accessToken: null, authRedirectPath: '/' };
-    // todo not all actions of the original implementation of maximilan is handled here
+    case FORGOT_PASS_START:
+      return { ...state, forgotPassLoading: true };
+    case FORGOT_PASS_SUCCESS:
+      return { ...state, forgotPassLoading: false, forgotPassMsg };
+    case FORGOT_PASS_FAIL:
+      return { ...state, forgotPassLoading: false, forgotPassErr };
+
     default:
       return state;
   }

@@ -3,9 +3,11 @@ import { ButtonProps } from './Button';
 
 interface ButtonStyledProps {
   color: ButtonProps['color'];
+  isFullWidth: boolean;
 }
 
 const ButtonCSS = css<ButtonStyledProps>`
+  width: ${({ isFullWidth }) => (isFullWidth ? '100%' : 'auto')};
   background: ${(props): string | null => {
     switch (props.color) {
       case 'white':
