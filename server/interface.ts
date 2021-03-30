@@ -16,7 +16,7 @@ export interface JWTDecoded {
   iat: number;
   exp: number;
   aud: string;
-  iss: 'pustokio.com';
+  iss: 'www.pustokio.com';
 }
 
 export interface SocketDecoded extends Socket {

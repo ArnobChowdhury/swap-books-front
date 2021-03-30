@@ -10,4 +10,5 @@ export {
   authRedirectSuccess,
   forgotPasswordReq,
   resetPasswordReq,
+  checkResetPasswordLinkReq,
 } from './auth';

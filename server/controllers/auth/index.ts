@@ -4,4 +4,6 @@ export {
   refreshToken,
   logout,
   forgotPassword,
+  resetPassword,
+  checkResetPasswordLink,
 } from './auth.controller';

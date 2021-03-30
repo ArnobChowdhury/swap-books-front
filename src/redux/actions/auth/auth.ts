@@ -1,3 +1,4 @@
+import { Dispatch as ReactDispatch, SetStateAction } from 'react';
 import axios from '../../../axiosInstance';
 import { AxiosError } from 'axios';
 import { Dispatch, Action } from 'redux';
@@ -216,7 +217,7 @@ export const forgotPasswordReq = (
   return async (dispatch: Dispatch) => {
     dispatch(forgotPasswordStart());
 
-    const url = '/auth/forgot_password';
+    const url = '/auth/forgot-password';
     return axios
       .post(url, { email })
       .then(response => {
@@ -267,6 +268,7 @@ const resetPasswordFail = (err: { message: string; status: number }) => {
 };
 
 export const resetPasswordReq = (
+  id: string,
   password: string,
   token: string,
   formikSetSubmitting: (submissionResolved: boolean) => void,
@@ -274,9 +276,9 @@ export const resetPasswordReq = (
   return async (dispatch: Dispatch) => {
     dispatch(resetPasswordStart());
 
-    const url = '/auth/reset_password';
+    const url = '/auth/reset-password';
     return axios
-      .post(url, { password, token })
+      .post(url, { id, password, token })
       .then(response => {
         formikSetSubmitting(false);
         const { message } = response.data;
@@ -286,6 +288,42 @@ export const resetPasswordReq = (
       .catch((err: AxiosError<{ message: string }>) => {
         formikSetSubmitting(false);
         // todo need to check what kind of possible errors we can get???
+        if (err.response) {
+          const { data, status } = err.response;
+          const { message } = data;
+          if (status === 401) {
+            dispatch(resetPasswordFail({ message, status }));
+          } else {
+            dispatch(
+              resetPasswordFail({
+                message: 'Something went wrong! Please try again!',
+                status,
+              }),
+            );
+          }
+        }
+      });
+  };
+};
+
+export const checkResetPasswordLinkReq = (
+  id: string,
+  token: string,
+  setIsValidLink: ReactDispatch<SetStateAction<boolean>>,
+  setLinkCheckOngoing: ReactDispatch<SetStateAction<boolean>>,
+): ThunkAction<void, RootState, unknown, Action<string>> => {
+  return async (dispatch: Dispatch) => {
+    const url = '/auth/check-reset-password-link';
+    return axios
+      .post(url, { id, token })
+      .then(response => {
+        console.log(response);
+        setIsValidLink(true);
+        setLinkCheckOngoing(false);
+      })
+      .catch((err: AxiosError<{ message: string }>) => {
+        setIsValidLink(false);
+        setLinkCheckOngoing(false);
         if (err.response) {
           const { data, status } = err.response;
           const { message } = data;

@@ -62,7 +62,7 @@ export const Login = ({ onSubmit, requestErrorMsg }: LoginProps): JSX.Element =>
             labelAtTop
           />
           <ForgotPassWrapper>
-            <ForgotPassLink href="/forgot_password">Forgot Password?</ForgotPassLink>
+            <ForgotPassLink href="/forgot-password">Forgot Password?</ForgotPassLink>
           </ForgotPassWrapper>
           <Button color="blue" type="submit" asButtonTag>
             Log in

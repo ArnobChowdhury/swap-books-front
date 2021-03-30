@@ -1,10 +1,13 @@
 import { Request, Response, NextFunction } from 'express';
-import path from 'path';
 import bcrypt from 'bcryptjs';
 import createHttpError from 'http-errors';
 import { HttpException } from '../../interface';
 import User from '../../models/user';
-import { generateJWT, verifyRefreshToken } from '../../utils/jwt';
+import {
+  generateJWT,
+  verifyRefreshToken,
+  decodePasswordResetToken,
+} from '../../utils/jwt';
 import { client as redisClient } from '../../utils/redis';
 import { emailTransporter } from '../../utils/email';
 
@@ -170,8 +173,9 @@ export const forgotPassword: (
         },
       });
     } else {
-      const { _id, name } = user;
-      const token = generateJWT(_id.toHexString(), email, 'passReset');
+      const { _id, name, password } = user;
+      const userId = _id.toHexString();
+      const token = generateJWT(userId, email, 'passReset', password);
       emailTransporter.sendMail({
         from: '"Pustokio" <no-reply@pustokio.com>', // sender address
         to: email,
@@ -181,7 +185,7 @@ export const forgotPassword: (
 
           You recently requested to reset your password for your Pustokio account. Use the link below to reset it. This password reset is only valid for the next 24 hours.          
 
-          https://www.pustokio.com/reset_pass/${token}
+          https://www.pustokio.com/reset-pass/${userId}?token=${token}
 
           If you did not request this change, please ignore this email. Your account information has not changed. 
 
@@ -192,7 +196,7 @@ export const forgotPassword: (
         template: 'resetPass',
         context: {
           name,
-          action_url: `https://www.pustokio.com/reset_pass/${token}`,
+          action_url: `https://www.pustokio.com/reset-pass/${userId}?token=${token}`,
         },
       });
     }
@@ -201,6 +205,47 @@ export const forgotPassword: (
       message:
         'We have sent an email to the address provided. Please check your inbox. It might take a few minutes. If not found in your inbox, please check your spam folder.',
     });
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
+};
+
+export const checkResetPasswordLink = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  const { id, token } = req.body;
+  console.log(id);
+  try {
+    const { password: existingPassword } = await User.findById(id);
+    decodePasswordResetToken(token, existingPassword);
+    res.status(201).json({ message: 'Valid link' });
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    } else {
+      err.message = 'Invalid Link!';
+    }
+    next(err);
+  }
+};
+
+export const resetPassword = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  const { id, token, password: newPassword } = req.body;
+  try {
+    const { password: existingPassword } = await User.findById(id);
+    const { userId } = decodePasswordResetToken(token, existingPassword);
+    const hashedPassword = await bcrypt.hash(newPassword, 12);
+    await User.updatePassword(userId, hashedPassword);
+    res.status(201).json({ message: 'Password has been updated.' });
   } catch (err) {
     if (!err.statusCode) {
       err.statusCode = 500;

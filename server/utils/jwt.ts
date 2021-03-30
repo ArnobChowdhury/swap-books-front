@@ -8,6 +8,7 @@ export const generateJWT = (
   userId: string,
   email: string,
   tokenType: 'access' | 'refresh' | 'passReset',
+  additionalSecret: string = '',
 ): string => {
   let secretVar: string;
   let expiresIn: string;
@@ -25,7 +26,8 @@ export const generateJWT = (
       expiresIn = '24h';
       break;
   }
-  const secret: string = process.env[secretVar] as string;
+  const secret: string = (process.env[secretVar] as string) + additionalSecret;
+  console.log(secret);
   const payload = { email };
   const options = {
     expiresIn,
@@ -77,4 +79,27 @@ export const verifyRefreshToken = (
       },
     );
   });
+};
+
+// This function can be changed to a generic one to only decode JWT tokens
+export const decodePasswordResetToken = (
+  token: string,
+  additionalSecret: string,
+) => {
+  try {
+    const decoded = JWT.verify(
+      token,
+      (process.env.PASS_RESET_SECRET as string) + additionalSecret,
+    );
+    const { email, aud: userId } = decoded as JWTDecoded;
+    return { email, userId };
+  } catch (err) {
+    const message =
+      err.name === 'JsonWebTokenError'
+        ? 'Unauthorized'
+        : 'TokenExpiredError'
+        ? 'Link has expired.'
+        : err.message;
+    throw new createError.Unauthorized(message);
+  }
 };

@@ -169,6 +169,13 @@ export default class User {
       throw new Error('Something went wrong!');
     }
   }
+
+  static async updatePassword(userId: string, password: string) {
+    const db = getDb();
+    return db
+      .collection('users')
+      .updateOne({ _id: new ObjectId(userId) }, { $set: { password } });
+  }
 }
 
 /** TODO for mongodb

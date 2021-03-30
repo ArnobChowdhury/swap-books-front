@@ -3,24 +3,45 @@ import { Button } from 'ui-kits/Button';
 import { Spinner } from 'ui-kits/Spinner';
 import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
-import { resetPasswordReq } from 'redux/actions/auth';
+import { resetPasswordReq, checkResetPasswordLinkReq } from 'redux/actions/auth';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'redux/reducers';
 import { IconContainer, CenterContainer, ReqMsg } from './ResetPassWidget.styles';
 import { Tick } from 'assets/Tick';
 import { Danger } from 'assets/Danger';
+import { useRouter } from 'next/router';
+import { useState, useEffect } from 'react';
 
-export const ResetPassWidget = ({ token }: { token: string }): JSX.Element => {
-  const { resetPassLoading: reqOnGoing, resetPassMsg, resetPassErr } = useSelector(
+export const ResetPassWidget = (): JSX.Element => {
+  const { resetPassLoading, resetPassMsg, resetPassErr } = useSelector(
     (s: RootState) => s.auth,
   );
 
   const dispatch = useDispatch();
 
+  const router = useRouter();
+  const { id, token } = router.query;
+
+  const [isValidLink, setIsValidLink] = useState<boolean>(false);
+  const [linkCheckOngoing, setLinkCheckOngoing] = useState<boolean>(true);
+
+  useEffect(() => {
+    if (id && token) {
+      dispatch(
+        checkResetPasswordLinkReq(
+          id as string,
+          token as string,
+          setIsValidLink,
+          setLinkCheckOngoing,
+        ),
+      );
+    }
+  }, [id, token]);
+
   // TODO Confirmed password should match password in validation schema
   return (
     <CenterContainer>
-      {reqOnGoing && <Spinner />}
+      {(linkCheckOngoing || resetPassLoading) && <Spinner />}
       {resetPassMsg && (
         <>
           <IconContainer>
@@ -37,7 +58,7 @@ export const ResetPassWidget = ({ token }: { token: string }): JSX.Element => {
           <ReqMsg>{resetPassErr.message}</ReqMsg>
         </>
       )}
-      {!resetPassMsg && !resetPassErr && (
+      {isValidLink && !resetPassMsg && !resetPassErr && (
         <Formik
           initialValues={{
             password: '',
@@ -50,7 +71,14 @@ export const ResetPassWidget = ({ token }: { token: string }): JSX.Element => {
               .matches(/[a-zA-Z]/, 'Password can only contain latin letters'),
           })}
           onSubmit={({ password }, { setSubmitting }) => {
-            dispatch(resetPasswordReq(password, token, setSubmitting));
+            dispatch(
+              resetPasswordReq(
+                id as string,
+                password,
+                token as string,
+                setSubmitting,
+              ),
+            );
             // TODO: RIGHT NEW ACTION
           }}
         >
