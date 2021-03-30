@@ -1,0 +1,1 @@
+export { ResetPassWidget } from './ResetPassWidget';

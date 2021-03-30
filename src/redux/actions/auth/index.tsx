@@ -9,4 +9,5 @@ export {
   authLogoutForOtherTabs,
   authRedirectSuccess,
   forgotPasswordReq,
+  resetPasswordReq,
 } from './auth';

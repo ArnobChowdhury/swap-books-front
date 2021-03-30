@@ -10,6 +10,9 @@ import {
   FORGOT_PASS_START,
   FORGOT_PASS_SUCCESS,
   FORGOT_PASS_FAIL,
+  RESET_PASS_START,
+  RESET_PASS_SUCCESS,
+  RESET_PASS_FAIL,
 } from '../../actions/actionTypes';
 
 export interface AuthState {
@@ -22,6 +25,9 @@ export interface AuthState {
   forgotPassMsg: string | null;
   forgotPassLoading: boolean;
   forgotPassErr: { message: string; status: number } | null;
+  resetPassMsg: string | null;
+  resetPassLoading: boolean;
+  resetPassErr: { message: string; status: number } | null;
 }
 
 export const initialState: AuthState = {
@@ -34,6 +40,9 @@ export const initialState: AuthState = {
   forgotPassLoading: false,
   forgotPassMsg: null,
   forgotPassErr: null,
+  resetPassLoading: false,
+  resetPassMsg: null,
+  resetPassErr: null,
 };
 
 const reducer = (state = initialState, action: AnyAction) => {
@@ -44,6 +53,8 @@ const reducer = (state = initialState, action: AnyAction) => {
     error,
     forgotPassMsg,
     forgotPassErr,
+    resetPassMsg,
+    resetPassErr,
   } = action;
 
   switch (action.type) {
@@ -74,6 +85,12 @@ const reducer = (state = initialState, action: AnyAction) => {
       return { ...state, forgotPassLoading: false, forgotPassMsg };
     case FORGOT_PASS_FAIL:
       return { ...state, forgotPassLoading: false, forgotPassErr };
+    case RESET_PASS_START:
+      return { ...state, resetPassLoading: true };
+    case RESET_PASS_SUCCESS:
+      return { ...state, resetPassLoading: false, resetPassMsg };
+    case RESET_PASS_FAIL:
+      return { ...state, resetPassLoading: false, resetPassErr };
 
     default:
       return state;

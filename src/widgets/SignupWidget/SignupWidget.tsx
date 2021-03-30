@@ -23,6 +23,8 @@ export const SignupWidget = (): JSX.Element => {
   );
 
   const dispatch = useDispatch();
+
+  // TODO Confirm password field should match Password field
   return (
     <CenterContainer>
       {userCreationOnGoing && <Spinner />}

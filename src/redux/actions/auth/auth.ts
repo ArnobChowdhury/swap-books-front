@@ -15,6 +15,9 @@ import {
   FORGOT_PASS_START,
   FORGOT_PASS_FAIL,
   FORGOT_PASS_SUCCESS,
+  RESET_PASS_START,
+  RESET_PASS_SUCCESS,
+  RESET_PASS_FAIL,
 } from './../actionTypes';
 
 export const authStart = () => {
@@ -185,6 +188,7 @@ export const authCheckState = () => {
     }
   };
 };
+
 const forgotPasswordStart = () => {
   return {
     type: FORGOT_PASS_START,
@@ -210,7 +214,6 @@ export const forgotPasswordReq = (
   formikSetSubmitting: (submissionResolved: boolean) => void,
 ): ThunkAction<void, RootState, unknown, Action<string>> => {
   return async (dispatch: Dispatch) => {
-    console.log('dispatching...', email);
     dispatch(forgotPasswordStart());
 
     const url = '/auth/forgot_password';
@@ -233,6 +236,64 @@ export const forgotPasswordReq = (
           } else {
             dispatch(
               forgotPasswordFail({
+                message: 'Something went wrong! Please try again!',
+                status,
+              }),
+            );
+          }
+        }
+      });
+  };
+};
+
+const resetPasswordStart = () => {
+  return {
+    type: RESET_PASS_START,
+  };
+};
+
+const resetPasswordSuccess = (message: string) => {
+  return {
+    type: RESET_PASS_SUCCESS,
+    resetPassMsg: message,
+  };
+};
+
+const resetPasswordFail = (err: { message: string; status: number }) => {
+  return {
+    type: RESET_PASS_FAIL,
+    resetPassErr: err,
+  };
+};
+
+export const resetPasswordReq = (
+  password: string,
+  token: string,
+  formikSetSubmitting: (submissionResolved: boolean) => void,
+): ThunkAction<void, RootState, unknown, Action<string>> => {
+  return async (dispatch: Dispatch) => {
+    dispatch(resetPasswordStart());
+
+    const url = '/auth/reset_password';
+    return axios
+      .post(url, { password, token })
+      .then(response => {
+        formikSetSubmitting(false);
+        const { message } = response.data;
+
+        dispatch(resetPasswordSuccess(message));
+      })
+      .catch((err: AxiosError<{ message: string }>) => {
+        formikSetSubmitting(false);
+        // todo need to check what kind of possible errors we can get???
+        if (err.response) {
+          const { data, status } = err.response;
+          const { message } = data;
+          if (status === 401) {
+            dispatch(resetPasswordFail({ message, status }));
+          } else {
+            dispatch(
+              resetPasswordFail({
                 message: 'Something went wrong! Please try again!',
                 status,
               }),
