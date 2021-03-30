@@ -46,6 +46,13 @@ export const SignupWidget = (): JSX.Element => {
             .required('Password needed')
             .min(8, 'Too short. Needs to have min. 8 characters')
             .matches(/[a-zA-Z]/, 'Password can only contain latin letters'),
+          confirmPassword: Yup.string().test(
+            'passwords-match',
+            'Passwords must match',
+            function(value) {
+              return this.parent.password === value;
+            },
+          ),
           ageConfirmation: Yup.boolean().oneOf(
             [true],
             'You must be at least be at least 13 years or older',
