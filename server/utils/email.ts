@@ -12,7 +12,7 @@ export const emailTransporter = nodemailer.createTransport({
   },
   tls: {
     // do not fail on invalid certs
-    rejectUnauthorized: process.env.NODE_ENV === 'production' ? true : false,
+    rejectUnauthorized: false,
   },
 });
 

@@ -134,12 +134,12 @@ app.prepare().then(() => {
   server.use(multer({ storage: fileStorage, fileFilter }).single('bookImage'));
 
   server.use('/favicon.ico', (_req, res) => {
-    res.status(200).sendfile('favicon.ico', { root: path.join(__dirname, '../') });
+    res.status(200).sendFile('favicon.ico', { root: path.join(__dirname, '../') });
   });
   server.use('/pustokio_logo.png', (_req, res) => {
     res
       .status(200)
-      .sendfile('pustokio_logo.png', { root: path.join(__dirname, '../') });
+      .sendFile('pustokio_logo.png', { root: path.join(__dirname, '../') });
   });
 
   server.use('/images', express.static(path.join(__dirname, '../', './images')));
