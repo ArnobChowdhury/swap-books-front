@@ -10,10 +10,13 @@ export const emailTransporter = nodemailer.createTransport({
     user: process.env.EMAIL_ID, // generated ethereal user
     pass: process.env.EMAIL_PASS, // generated ethereal password
   },
-  tls: {
-    // do not fail on invalid certs
-    rejectUnauthorized: false,
-  },
+  tls:
+    process.env.NODE_ENV === 'production'
+      ? {}
+      : {
+          // do not fail on invalid certs
+          rejectUnauthorized: false,
+        },
 });
 
 const layoutsDir = path.join(__dirname, '..', 'views', 'layouts');
