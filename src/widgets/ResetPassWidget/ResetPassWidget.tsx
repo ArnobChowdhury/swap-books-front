@@ -11,6 +11,7 @@ import { Tick } from 'assets/Tick';
 import { Danger } from 'assets/Danger';
 import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
+import { RequestResult } from 'components/RequestResult';
 
 export const ResetPassWidget = (): JSX.Element => {
   const { resetPassLoading, resetPassMsg, resetPassErr } = useSelector(
@@ -42,21 +43,9 @@ export const ResetPassWidget = (): JSX.Element => {
   return (
     <CenterContainer>
       {(linkCheckOngoing || resetPassLoading) && <Spinner />}
-      {resetPassMsg && (
-        <>
-          <IconContainer>
-            <Tick size={50} />
-          </IconContainer>
-          <ReqMsg>{resetPassMsg}</ReqMsg>
-        </>
-      )}
+      {resetPassMsg && <RequestResult msg={resetPassMsg} reqStatus="success" />}
       {resetPassErr && (
-        <>
-          <IconContainer>
-            <Danger size={50} />
-          </IconContainer>
-          <ReqMsg>{resetPassErr.message}</ReqMsg>
-        </>
+        <RequestResult msg={resetPassErr.message} reqStatus="error" />
       )}
       {isValidLink && !resetPassMsg && !resetPassErr && (
         <Formik

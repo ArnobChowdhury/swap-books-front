@@ -6,6 +6,10 @@ import {
   FETCH_BOOKS_SUCCESS,
   FETCH_MORE_BOOKS_SUCCESS,
   FETCH_BOOKS_FAIL,
+  ADD_A_BOOK_START,
+  ADD_A_BOOK_SUCCESS,
+  ADD_A_BOOK_FAIL,
+  ADD_A_BOOK_REFRESH,
   EXPRESS_INTEREST_START,
   EXPRESS_INTEREST_SUCCESS,
   EXPRESS_INTEREST_FAIL,
@@ -32,6 +36,9 @@ export interface BooksState {
   loading: boolean;
   page: number;
   hasMorePages: boolean;
+  addBookReqOnGoing: boolean;
+  addBookReqSuccessMsg: string | null;
+  addBookReqErr: { message: string; status: number } | null;
 }
 
 export const initialState: BooksState = {
@@ -41,6 +48,9 @@ export const initialState: BooksState = {
   loading: false,
   page: 0,
   hasMorePages: true,
+  addBookReqOnGoing: false,
+  addBookReqSuccessMsg: null,
+  addBookReqErr: null,
 };
 
 // todo write tests for expressInterest related functions
@@ -53,6 +63,8 @@ const reducer = (state = initialState, action: AnyAction) => {
     hasMorePages,
     unavilableBookId,
     unavilableErr,
+    addBookReqSuccessMsg,
+    addBookReqErr,
   } = action;
   switch (action.type) {
     case HYDRATE:
@@ -68,6 +80,19 @@ const reducer = (state = initialState, action: AnyAction) => {
       return { ...state, loading: false, books: newBooks, page, hasMorePages };
     case FETCH_BOOKS_FAIL:
       return { ...state, loading: false, error };
+    case ADD_A_BOOK_START:
+      return { ...state, addBookReqOnGoing: true };
+    case ADD_A_BOOK_SUCCESS:
+      return { ...state, addBookReqOnGoing: false, addBookReqSuccessMsg };
+    case ADD_A_BOOK_FAIL:
+      return { ...state, addBookReqOnGoing: false, addBookReqErr };
+    case ADD_A_BOOK_REFRESH:
+      return {
+        ...state,
+        addBookReqOnGoing: false,
+        addBookReqErr: null,
+        addBookReqSuccessMsg: null,
+      };
     case EXPRESS_INTEREST_START:
       const allBooks = [...state.books];
       const interestStartedOn = allBooks.find(

@@ -7,8 +7,7 @@ import { forgotPasswordReq } from 'redux/actions/auth';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'redux/reducers';
 import { CenterContainer, ReqMsg, IconContainer } from './ForgotPassword.styles';
-import { Tick } from 'assets/Tick';
-import { Danger } from 'assets/Danger';
+import { RequestResult } from 'components/RequestResult';
 
 export const ForgotPassword = (): JSX.Element => {
   const {
@@ -22,21 +21,9 @@ export const ForgotPassword = (): JSX.Element => {
   return (
     <CenterContainer>
       {reqOnGoing && <Spinner />}
-      {forgotPassMsg && (
-        <>
-          <IconContainer>
-            <Tick size={50} />
-          </IconContainer>
-          <ReqMsg>{forgotPassMsg}</ReqMsg>
-        </>
-      )}
+      {forgotPassMsg && <RequestResult msg={forgotPassMsg} reqStatus="success" />}
       {forgotPassErr && (
-        <>
-          <IconContainer>
-            <Danger size={50} />
-          </IconContainer>
-          <ReqMsg>{forgotPassErr.message}</ReqMsg>
-        </>
+        <RequestResult msg={forgotPassErr.message} reqStatus="error" />
       )}
       {!forgotPassMsg && !forgotPassErr && (
         <Formik

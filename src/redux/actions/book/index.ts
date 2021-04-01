@@ -2,6 +2,7 @@ export {
   addABookRequest,
   addABookStart,
   addABookFail,
+  addABookRefresh,
   addABookSuccess,
   fetchBooksRequest,
   fetchProfileBooksRequest,

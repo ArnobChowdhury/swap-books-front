@@ -5,7 +5,7 @@ import { Modal } from 'components/Modal';
 import { Login, LoginCredentials } from 'modules/Login';
 import { AddBook, BookType } from 'modules/AddBook';
 import { authRequest } from 'redux/actions/auth';
-import { addABookRequest } from 'redux/actions/book';
+import { addABookRequest, addABookRefresh } from 'redux/actions/book';
 import { FormikHelpers } from 'formik';
 import { NeedAuth } from 'modules/NeedAuth';
 import { Location } from 'widgets/Location';
@@ -33,7 +33,14 @@ export const ModalManager = (): JSX.Element => {
     );
   };
 
+  const handleAddAnotherBook = () => {
+    dispatch(addABookRefresh());
+  };
+
   const { loading: loginSubmitting, error } = useSelector((s: RootState) => s.auth);
+  const { addBookReqOnGoing, addBookReqErr, addBookReqSuccessMsg } = useSelector(
+    (s: RootState) => s.books,
+  );
 
   return (
     <>
@@ -43,8 +50,16 @@ export const ModalManager = (): JSX.Element => {
         </Modal>
       )}
       {showModal && popupType === 'addABook' && (
-        <Modal onClick={() => setShowModal(false)}>
-          <AddBook onSubmit={handleAddBookSubmit} />
+        <Modal
+          onClick={() => setShowModal(false)}
+          formSubmitting={addBookReqOnGoing}
+        >
+          <AddBook
+            onSubmit={handleAddBookSubmit}
+            successMsg={addBookReqSuccessMsg}
+            errMsg={addBookReqErr?.message}
+            onAddAnother={handleAddAnotherBook}
+          />
         </Modal>
       )}
       {showModal && popupType === 'requireLoginOrSignup' && (

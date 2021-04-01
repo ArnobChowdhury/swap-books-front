@@ -16,8 +16,12 @@ export const ForgotPassWrapper = styled.div`
 `;
 
 export const ForgotPassLink = styled.a`
-  text-decoration: none;
   font-size: ${({ theme }) => theme.fontSmall};
   color: ${({ theme }) => theme.colorPrimary1};
-  cursor: pointer;
+`;
+
+export const LogoBox = styled.div`
+  width: 100%;
+  text-align: center;
+  margin-bottom: ${({ theme }) => theme.spaceTen};
 `;

@@ -1,6 +1,5 @@
-import { ModalDiv, LogoBox, BackgroundDiv } from './Modal.styles';
+import { ModalDiv, BackgroundDiv } from './Modal.styles';
 import { LoadingBar } from 'ui-kits/LoadingBar';
-import { LogoIcon } from 'assets/LogoIcon';
 
 export interface ModalProps {
   children: React.ReactNode;
@@ -18,9 +17,6 @@ export const Modal: React.FC<ModalProps> = ({
     <>
       <BackgroundDiv onClick={onClick} />
       <ModalDiv largeModal={largeModal}>
-        <LogoBox>
-          <LogoIcon width={30} />
-        </LogoBox>
         {formSubmitting && <LoadingBar />}
         {children}
       </ModalDiv>

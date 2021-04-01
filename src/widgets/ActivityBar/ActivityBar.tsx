@@ -6,6 +6,8 @@ import { LocatorIcon } from 'assets/LocatorIcon';
 import { RootContext, RootContextProps } from 'contexts/RootContext';
 import { useSelector } from 'react-redux';
 import { RootState } from 'redux/reducers';
+import { addABookRefresh } from 'redux/actions/book';
+import { useDispatch } from 'react-redux';
 
 export const ActivityBar = (): JSX.Element => {
   const { accessToken } = useSelector((s: RootState) => s.auth);
@@ -19,8 +21,10 @@ export const ActivityBar = (): JSX.Element => {
     setPopupType('location');
   };
 
+  const dispatch = useDispatch();
   const handleAddABookButtonClick = () => {
     if (isSignedIn) {
+      dispatch(addABookRefresh());
       setShowModal(true);
       setPopupType('addABook');
     } else {

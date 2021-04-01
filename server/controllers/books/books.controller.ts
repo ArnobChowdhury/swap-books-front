@@ -33,7 +33,7 @@ export const addABook = async (
       const result = await book.save();
       const { insertedId: bookId } = result;
 
-      res.status(201).json({ message: 'Book added!', bookId });
+      res.status(201).json({ message: 'Book has been added!', bookId });
     } else {
       throw new createError.Forbidden(
         'You need to update your location before you can add a book.',

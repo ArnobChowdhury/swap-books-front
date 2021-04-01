@@ -3,11 +3,11 @@ import { SOCKET_EXPRESS_INTEREST } from '../../../socketTypes';
 import { BookShape } from '../../reducers/books';
 import { Dispatch } from 'redux';
 import { Socket } from 'socket.io-client';
-
 import {
   ADD_A_BOOK_START,
   ADD_A_BOOK_SUCCESS,
   ADD_A_BOOK_FAIL,
+  ADD_A_BOOK_REFRESH,
   FETCH_BOOKS_FAIL,
   FETCH_BOOKS_START,
   FETCH_BOOKS_SUCCESS,
@@ -19,6 +19,7 @@ import {
   MAKE_UNAVAILABLE_SUCCESS,
   MAKE_UNAVAILABLE_FAIL,
 } from './../actionTypes';
+import { AxiosError } from 'axios';
 
 export const addABookStart = () => {
   return {
@@ -26,17 +27,18 @@ export const addABookStart = () => {
   };
 };
 
-export const addABookSuccess = () => {
+export const addABookSuccess = (addBookReqSuccessMsg: string) => {
   return {
     type: ADD_A_BOOK_SUCCESS,
+    addBookReqSuccessMsg,
   };
 };
 
 // todo take care of the parameter type later
-export const addABookFail = (error: any) => {
+export const addABookFail = (addBookReqErr: { message: string; status: number }) => {
   return {
     type: ADD_A_BOOK_FAIL,
-    error: error,
+    addBookReqErr,
   };
 };
 
@@ -65,16 +67,32 @@ export const addABookRequest = (
       .then(response => {
         // todo how should we handle the message???
         const { message, bookId } = response.data;
-        dispatch(addABookSuccess());
+        dispatch(addABookSuccess(message));
         formikSetSubmitting(false);
-        setShowModal(false);
       })
-      .catch(err => {
+      .catch((err: AxiosError<AxiosError<{ message: string }>>) => {
         formikSetSubmitting(false);
         // todo need to check what kind of possible errors we can get???
-        dispatch(addABookFail(err));
+        if (err.response) {
+          const { status, data } = err.response;
+          const { message } = data;
+          if (status === 403) {
+            dispatch(addABookFail({ message, status }));
+          } else {
+            dispatch(
+              addABookFail({
+                message: 'Something went wrong! Please try again!',
+                status,
+              }),
+            );
+          }
+        }
       });
   };
+};
+
+export const addABookRefresh = () => {
+  return { type: ADD_A_BOOK_REFRESH };
 };
 
 export const fetchBooksStart = () => {

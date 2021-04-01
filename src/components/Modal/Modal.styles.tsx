@@ -1,12 +1,6 @@
 import styled from 'styled-components';
 import { mediumScreen, smallScreen } from '../../mediaConfig';
 
-export const LogoBox = styled.div`
-  width: 100%;
-  text-align: center;
-  margin-bottom: ${({ theme }) => theme.spaceTen};
-`;
-
 export const ModalDiv = styled.div<{ largeModal?: boolean }>`
   width: ${({ largeModal }) => (largeModal ? '60vw' : '30vw')};
   min-width: 30rem;
