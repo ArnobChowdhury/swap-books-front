@@ -8,6 +8,7 @@ export {
   authLogout,
   authLogoutForOtherTabs,
   authRedirectSuccess,
+  authErrorRefresh,
   forgotPasswordReq,
   resetPasswordReq,
   checkResetPasswordLinkReq,

@@ -39,10 +39,7 @@ export const Login = ({ onSubmit, requestErrorMsg }: LoginProps): JSX.Element =>
           email: Yup.string()
             .email('Invalid email address')
             .required('Required'),
-          password: Yup.string()
-            .required('Password needed')
-            .min(8, 'Too short. Needs to have min. 8 characters')
-            .matches(/[a-zA-Z]/, 'Password can only contain latin letters'),
+          password: Yup.string().required('Password needed'),
         })}
         onSubmit={onSubmit}
       >

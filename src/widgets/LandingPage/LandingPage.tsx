@@ -18,13 +18,17 @@ import { Paragraph } from 'ui-kits/Paragraph';
 import { Button } from 'ui-kits/Button';
 import theme from 'theme';
 import { RootContext, RootContextProps } from 'contexts/RootContext';
+import { authErrorRefresh } from 'redux/actions/auth';
+import { useDispatch } from 'react-redux';
 
 export const LandingPage = (): JSX.Element => {
   const { colorPrimary2, spaceFive, spaceSeven } = theme;
   const rootContext = useContext(RootContext);
   const { setPopupType, setShowModal } = rootContext as RootContextProps;
 
+  const dispatch = useDispatch();
   const handleLoginButtonClick = () => {
+    dispatch(authErrorRefresh());
     setShowModal(true);
     setPopupType('login');
   };

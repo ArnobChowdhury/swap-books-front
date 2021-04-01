@@ -12,6 +12,7 @@ import {
   AUTH_LOGOUT,
   AUTH_TOKEN_REFRESH,
   AUTH_REDIRECT_SUCCESS,
+  AUTH_ERROR_REFRESH,
   UPDATE_USER_INFO,
   FORGOT_PASS_START,
   FORGOT_PASS_FAIL,
@@ -188,6 +189,10 @@ export const authCheckState = () => {
         });
     }
   };
+};
+
+export const authErrorRefresh = () => {
+  return { type: AUTH_ERROR_REFRESH };
 };
 
 const forgotPasswordStart = () => {

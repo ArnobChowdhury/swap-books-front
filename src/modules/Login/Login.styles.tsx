@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 export const LoginError = styled.div`
-  padding: ${({ theme }) => theme.spaceFive};
+  padding: ${({ theme }) => `${theme.spaceFive} ${theme.spaceFour}`};
   border: ${({ theme }) => `1px solid ${theme.colorAlert}`};
   background: ${({ theme }) => theme.colorAlertTransparent};
   color: ${({ theme }) => theme.colorAlert};

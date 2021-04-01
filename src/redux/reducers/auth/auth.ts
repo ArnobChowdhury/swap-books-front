@@ -7,6 +7,7 @@ import {
   AUTH_START,
   AUTH_FAIL,
   AUTH_REDIRECT_SUCCESS,
+  AUTH_ERROR_REFRESH,
   FORGOT_PASS_START,
   FORGOT_PASS_SUCCESS,
   FORGOT_PASS_FAIL,
@@ -79,6 +80,8 @@ const reducer = (state = initialState, action: AnyAction) => {
       return { ...state, authRedirectPath: null };
     case AUTH_LOGOUT:
       return { ...state, userId: null, accessToken: null, authRedirectPath: '/' };
+    case AUTH_ERROR_REFRESH:
+      return { ...state, error: null };
     case FORGOT_PASS_START:
       return { ...state, forgotPassLoading: true };
     case FORGOT_PASS_SUCCESS:
