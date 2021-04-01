@@ -40,9 +40,11 @@ export const TopBar = ({ activityBar, navBar }: TopBarProps): JSX.Element => {
   return (
     <TopBarContainer>
       <TopBarWrapper isSignedIn={isSignedIn}>
-        <ItemWrapper itemAlign="left">
-          <Logo lightBG width={120} />
-        </ItemWrapper>
+        <Link href="/" passHref>
+          <ItemWrapper itemAlign="left">
+            <Logo lightBG width={120} />
+          </ItemWrapper>
+        </Link>
         {activityBar && <ItemWrapper itemAlign="center">{activityBar}</ItemWrapper>}
         {isSignedIn && navBar && (
           <ItemWrapper itemAlign="right">{navBar}</ItemWrapper>

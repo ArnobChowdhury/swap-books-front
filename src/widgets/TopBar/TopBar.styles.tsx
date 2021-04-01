@@ -39,7 +39,7 @@ export const ButtonWrapper = styled.div`
     margin-right: ${({ theme }) => theme.spaceThree};
   }
 `;
-export const ItemWrapper = styled.div<{ itemAlign: 'left' | 'center' | 'right' }>`
+export const ItemWrapper = styled.a<{ itemAlign: 'left' | 'center' | 'right' }>`
   display: flex;
   justify-content: ${({ itemAlign }) => {
     if (itemAlign === 'left') {
