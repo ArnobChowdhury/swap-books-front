@@ -14,6 +14,8 @@ services:
       ACCESS_SECRET: '${ACCESS_SECRET}'
       REFRESH_SECRET: '${REFRESH_SECRET}'
       MAIL_SECRET: '${MAIL_SECRET}'
+      EMAIL_ID: '${EMAIL_ID}'
+      EMAIL_PASS: '${EMAIL_PASS}'
     links:
       - redis
       # - proxy
