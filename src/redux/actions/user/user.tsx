@@ -1,4 +1,5 @@
 import axios from '../../../axiosInstance';
+import { AxiosError } from 'axios';
 import {
   CREATE_USER_START,
   CREATE_USER_SUCCESS,
@@ -6,6 +7,10 @@ import {
   UPDATE_USER_LOC_START,
   UPDATE_USER_LOC_SUCCESS,
   UPDATE_USER_LOC_FAIL,
+  CREATE_USER_REFRESH,
+  VERIFY_EMAIL_START,
+  VERIFY_EMAIL_SUCCESS,
+  VERIFY_EMAIL_FAIL,
 } from '../actionTypes';
 import { Dispatch } from 'redux';
 
@@ -15,16 +20,20 @@ export const createUserStart = () => {
   };
 };
 
-export const createUserSuccess = () => {
+export const createUserSuccess = (userCreationSuccessfulMsg: string) => {
   return {
     type: CREATE_USER_SUCCESS,
+    userCreationSuccessfulMsg,
   };
 };
 
-export const createUserFail = (error: unknown) => {
+export const createUserFail = (userCreationError: {
+  message: string;
+  status: number;
+}) => {
   return {
     type: CREATE_USER_FAIL,
-    error,
+    userCreationError,
   };
 };
 
@@ -50,11 +59,83 @@ export const createUserReq = (
       .post('/auth/signup', userData)
       .then(response => {
         formikSetSubmitting(false);
-        const { message, userId } = response.data;
-        dispatch(createUserSuccess());
+        const { message } = response.data;
+        dispatch(createUserSuccess(message));
       })
-      .catch(error => {
-        dispatch(createUserFail(error));
+      .catch((error: AxiosError<{ message: string }>) => {
+        // TODO need to parse status and message here
+        if (error.response) {
+          const { data, status } = error.response;
+          const { message } = data;
+          setTimeout(() => {
+            if (status === 401) {
+              dispatch(createUserFail({ message, status }));
+            } else {
+              dispatch(
+                createUserFail({
+                  message: 'Something went wrong! Please try again in a bit!',
+                  status,
+                }),
+              );
+            }
+          }, 5000);
+        }
+      });
+  };
+};
+
+export const createUserRefresh = () => {
+  return {
+    type: CREATE_USER_REFRESH,
+  };
+};
+
+export const verifyEmailStart = () => {
+  return {
+    type: VERIFY_EMAIL_START,
+  };
+};
+
+export const verifyEmailSuccess = (verifyEmailSuccessMsg: string) => {
+  return {
+    type: VERIFY_EMAIL_SUCCESS,
+    verifyEmailSuccessMsg,
+  };
+};
+
+export const verifyEmailFail = (verifyEmailErr: {
+  message: string;
+  status: number;
+}) => {
+  return {
+    type: VERIFY_EMAIL_FAIL,
+    verifyEmailErr,
+  };
+};
+
+export const verifyEmailReq = (token: string) => {
+  return (dispatch: Dispatch) => {
+    dispatch(verifyEmailStart());
+    return axios
+      .post('/auth//mail-verify', { token })
+      .then(res => {
+        const { message } = res.data;
+        dispatch(verifyEmailSuccess(message));
+      })
+      .catch((err: AxiosError<{ message: string }>) => {
+        setTimeout(() => {
+          if (err.response) {
+            const { data, status } = err.response;
+            const { message } = data;
+            if (status === 401) {
+              dispatch(verifyEmailFail({ message, status }));
+            } else {
+              dispatch(
+                verifyEmailFail({ message: 'Something went wrong!', status }),
+              );
+            }
+          }
+        }, 5000);
       });
   };
 };
@@ -73,10 +154,13 @@ export const updateUserLocationSuccess = (userLon: number, userLat: number) => {
   };
 };
 
-const updateUserLocationFail = (err: Error) => {
+const updateUserLocationFail = (locationUpdatetError: {
+  message: string;
+  status: number;
+}) => {
   return {
     type: UPDATE_USER_LOC_FAIL,
-    error: err,
+    locationUpdatetError,
   };
 };
 
@@ -99,6 +183,7 @@ export const updateUserLocationReq = (
         }
       })
       .catch(err => {
+        // TODO need to parse message and status separately
         dispatch(updateUserLocationFail(err));
       });
   };

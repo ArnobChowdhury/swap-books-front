@@ -13,3 +13,9 @@ export const CenterContainer = styled.div<{ containerWidth?: number }>`
     margin-top: ${({ theme }) => theme.spaceFive};
   }
 `;
+
+export const LoaderWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;

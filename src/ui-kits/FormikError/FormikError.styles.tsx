@@ -3,16 +3,15 @@ import styled from 'styled-components';
 export const ErrorWrapper = styled.div`
   flex-basis: 100%;
   display: flex;
-  height: 2rem;
+  height: 2.5rem;
 `;
 
 export const ErrorText = styled.div`
-  font-size: ${({ theme }): string => theme.fontSuperSmall};
-  font-weight: 600;
-  line-height: ${({ theme }): string => theme.spaceTen};
+  font-size: ${({ theme }): string => theme.fontSmall};
+  font-weight: 400;
+  line-height: 2.5rem;
   color: ${({ theme }): string => theme.colorAlert};
   flex-grow: 1;
-  margin-left: ${({ theme }): string => theme.spaceFour};
 `;
 
 export const ErrorGutter = styled.div`

@@ -21,6 +21,8 @@ export const jwtVerify = (
       return;
     }
   } else {
+    // TODO: EITHER ALL PROTECTED ROUTES SHOULD TAKE INTO ACCOUNT THAT IF isAuthenticated IS FALSE THEY DO NOT DELIVER DATA
+    // TODO IMPORTANT: SINCE WE ARE ONLY USING THIS MIDDLEWARE TO PROTECT OUR ROUTES WE CAN JUST THROW AN ERROR THAT YOU NEED TO AUTHENTICATED
     (req as ModifiedRequest).isAuthenticated = false;
   }
   next();

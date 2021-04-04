@@ -18,6 +18,8 @@ export default class User {
 
   termsConfirmation: boolean;
 
+  emailVerified: boolean;
+
   locationObj?: {
     type: string;
     coordinates: number[];
@@ -31,12 +33,14 @@ export default class User {
     password: string,
     ageConfirmation: boolean,
     termsConfirmation: boolean,
+    emailVerified: boolean = false,
   ) {
     this.name = name;
     this.email = email;
     this.password = password;
     this.ageConfirmation = ageConfirmation;
     this.termsConfirmation = termsConfirmation;
+    this.emailVerified = emailVerified;
     this.currentInterests = [];
   }
 
@@ -45,10 +49,10 @@ export default class User {
     return db.collection('users').insertOne(this);
   }
 
-  static async findByEmail(email: string): Promise<UserWithId> {
+  static async findByEmail(email: string) {
     const db = getDb();
     try {
-      const user = await db.collection('users').findOne({ email });
+      const user = await db.collection('users').findOne<UserWithId>({ email });
       return user;
     } catch {
       throw new Error('No user with this email was found.');
@@ -76,17 +80,51 @@ export default class User {
     }
   }
 
-  static async findById(userId: string): Promise<UserWithId> {
+  static async findById(userId: string) {
     const db = getDb();
     try {
       const user = await db
         .collection('users')
-        .findOne({ _id: new ObjectId(userId) });
+        .findOne<UserWithId>({ _id: new ObjectId(userId) });
       return user;
     } catch {
       // todo is it the right way to catch an error
       throw new Error('Could not retrieve user');
     }
+  }
+
+  static async updateAllInfo(info: Omit<UserWithId, 'save'>) {
+    const db = getDb();
+    const {
+      _id,
+      email,
+      emailVerified,
+      ageConfirmation,
+      name,
+      password,
+      termsConfirmation,
+    } = info;
+
+    return db.collection('users').updateOne(
+      { _id },
+      {
+        $set: {
+          name,
+          password,
+          email,
+          emailVerified,
+          ageConfirmation,
+          termsConfirmation,
+        },
+      },
+    );
+  }
+
+  static async verifyEmail(userId: string) {
+    const db = getDb();
+    return db
+      .collection('users')
+      .updateOne({ _id: new ObjectId(userId) }, { $set: { emailVerified: true } });
   }
 
   static getUserNameAndLoc(

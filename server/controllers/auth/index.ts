@@ -6,4 +6,5 @@ export {
   forgotPassword,
   resetPassword,
   checkResetPasswordLink,
+  emailVerification,
 } from './auth.controller';

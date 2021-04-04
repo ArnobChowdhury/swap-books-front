@@ -6,10 +6,11 @@ import User from '../../models/user';
 import {
   generateJWT,
   verifyRefreshToken,
-  decodePasswordResetToken,
+  decodeMailLinkToken,
 } from '../../utils/jwt';
 import { client as redisClient } from '../../utils/redis';
 import { emailTransporter } from '../../utils/email';
+import JWT from 'jsonwebtoken';
 
 // todo check if it is possible to use a single function for sign up and sign in
 export const signup = async (
@@ -23,7 +24,7 @@ export const signup = async (
   try {
     const userExists = await User.findByEmail(email);
 
-    if (userExists) {
+    if (userExists && userExists.emailVerified) {
       const err: HttpException = new Error('Something went wrong!');
       err.statusCode = 401;
       throw err;
@@ -31,18 +32,95 @@ export const signup = async (
 
     const hashedPassword = await bcrypt.hash(password, 12);
 
-    const user = new User(
-      name,
-      email,
-      hashedPassword,
-      ageConfirmation,
-      termsConfirmation,
-    );
-    const result = await user.save();
-    // const { _id: userId } = result.ops[0];
-    const userId = result.insertedId;
+    let userId;
+    if (!userExists) {
+      const user = new User(
+        name,
+        email,
+        hashedPassword,
+        ageConfirmation,
+        termsConfirmation,
+      );
+      const result = await user.save();
+      userId = result.insertedId;
+    } else {
+      // TODO: This is a questionable approach. Let's think about this.
+      User.updateAllInfo({
+        _id: userExists._id,
+        name,
+        email,
+        password: hashedPassword,
+        ageConfirmation,
+        termsConfirmation,
+        currentInterests: [],
+        emailVerified: false,
+      });
+      userId = userExists._id;
+    }
 
-    res.status(201).json({ message: 'User created!', userId });
+    const secret = process.env.MAIL_SECRET as string;
+    const token = JWT.sign({ email }, secret, {
+      audience: userId.toHexString(),
+      issuer: 'www.pustokio.com',
+    });
+
+    const action_url =
+      process.env.NODE_ENV === 'production'
+        ? `https://www.pustokio.com/mail-verify/${token}`
+        : `http://localhost:${process.env.PORT}/mail-verify/${token}`;
+
+    emailTransporter.sendMail({
+      from: '"Pustokio" <no-reply@pustokio.com>', // sender address
+      to: email,
+      subject: 'Verify Email Address for Pustokio Account', // Subject line
+      text: `
+          Hi ${name},
+          We are excited to have you get started. Use the link below to confirm your email. 
+
+          ${action_url}
+
+          If you did not sign up for a Pustokio account, please ignore this email.
+
+          Thanks, 
+          The Pustokio team
+        `,
+      // @ts-ignore
+      template: 'verifyEmail',
+      context: {
+        name,
+        action_url,
+      },
+    });
+
+    res.status(201).json({
+      message:
+        'We sent an email to the adderess provided by you. Please check your inbox and verify your mail.',
+    });
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
+};
+
+export const emailVerification = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  const { token } = req.body;
+
+  try {
+    const { userId } = decodeMailLinkToken(token);
+    const user = await User.findById(userId);
+
+    if (user && user.emailVerified) {
+      throw new createHttpError.Unauthorized('This email is already verified.');
+    }
+
+    await User.verifyEmail(userId);
+    res.status(201).json({ message: 'Your email has been verified!' });
   } catch (err) {
     if (!err.statusCode) {
       err.statusCode = 500;
@@ -64,6 +142,10 @@ export const login: (
       const err: HttpException = new Error('Invalid Username/Password!');
       err.statusCode = 401;
       throw err;
+    }
+
+    if (!user.emailVerified) {
+      throw new createHttpError.Unauthorized('This account is not verified yet.');
     }
 
     const { _id: dbId, password: dbPassword, name, locationObj } = user;
@@ -219,11 +301,15 @@ export const checkResetPasswordLink = async (
   next: NextFunction,
 ) => {
   const { id, token } = req.body;
-  console.log(id);
   try {
-    const { password: existingPassword } = await User.findById(id);
-    decodePasswordResetToken(token, existingPassword);
-    res.status(201).json({ message: 'Valid link' });
+    const user = await User.findById(id);
+    if (!user) {
+      new createHttpError.Unauthorized('Invalid link!');
+    } else {
+      const { password: existingPassword } = user;
+      decodeMailLinkToken(token, existingPassword);
+      res.status(201).json({ message: 'Valid link' });
+    }
   } catch (err) {
     if (!err.statusCode) {
       err.statusCode = 500;
@@ -241,11 +327,16 @@ export const resetPassword = async (
 ) => {
   const { id, token, password: newPassword } = req.body;
   try {
-    const { password: existingPassword } = await User.findById(id);
-    const { userId } = decodePasswordResetToken(token, existingPassword);
-    const hashedPassword = await bcrypt.hash(newPassword, 12);
-    await User.updatePassword(userId, hashedPassword);
-    res.status(201).json({ message: 'Password has been updated.' });
+    const user = await User.findById(id);
+    if (!user) {
+      new createHttpError.Unauthorized('Invalid link!');
+    } else {
+      const { password: existingPassword } = user;
+      const { userId } = decodeMailLinkToken(token, existingPassword);
+      const hashedPassword = await bcrypt.hash(newPassword, 12);
+      await User.updatePassword(userId, hashedPassword);
+      res.status(201).json({ message: 'Password has been updated.' });
+    }
   } catch (err) {
     if (!err.statusCode) {
       err.statusCode = 500;

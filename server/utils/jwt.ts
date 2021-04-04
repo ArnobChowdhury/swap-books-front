@@ -10,46 +10,49 @@ export const generateJWT = (
   tokenType: 'access' | 'refresh' | 'passReset',
   additionalSecret: string = '',
 ): string => {
-  let secretVar: string;
-  let expiresIn: string;
-  switch (tokenType) {
-    case 'access':
-      secretVar = 'ACCESS_SECRET';
-      expiresIn = '1h';
-      break;
-    case 'refresh':
-      secretVar = 'REFRESH_SECRET';
-      expiresIn = '1y';
-      break;
-    case 'passReset':
-      secretVar = 'PASS_RESET_SECRET';
-      expiresIn = '24h';
-      break;
-  }
-  const secret: string = (process.env[secretVar] as string) + additionalSecret;
-  console.log(secret);
-  const payload = { email };
-  const options = {
-    expiresIn,
-    issuer: 'www.pustokio.com',
-    audience: userId,
-  };
-  const token = JWT.sign(payload, secret, options);
+  try {
+    let secretVar: string;
+    let expiresIn: string | undefined;
+    switch (tokenType) {
+      case 'access':
+        secretVar = 'ACCESS_SECRET';
+        expiresIn = '1h';
+        break;
+      case 'refresh':
+        secretVar = 'REFRESH_SECRET';
+        expiresIn = '1y';
+        break;
+      case 'passReset':
+        secretVar = 'MAIL_SECRET';
+        expiresIn = '24h';
+        break;
+    }
+    const secret: string = (process.env[secretVar] as string) + additionalSecret;
+    const payload = { email };
+    const options = {
+      expiresIn,
+      issuer: 'www.pustokio.com',
+      audience: userId,
+    };
+    const token = JWT.sign(payload, secret, options);
 
-  if (tokenType === 'refresh') {
-    // we set the token to redis
-    redisClient.SET(
-      `refreshToken:${userId}`,
-      token,
-      'EX',
-      365 * 24 * 60 * 60,
-      (err, reply) => {
-        // TODO should we keep the redis.print???
-        redis.print(err, reply);
-      },
-    );
+    if (tokenType === 'refresh') {
+      // we set the token to redis
+      redisClient.SET(
+        `refreshToken:${userId}`,
+        token,
+        'EX',
+        365 * 24 * 60 * 60,
+        (err, reply) => {
+          // TODO should we keep the redis.print???
+          redis.print(err, reply);
+        },
+      );
+    }
+    return token;
+  } catch (err) {
+    throw err;
   }
-  return token;
 };
 
 export const verifyRefreshToken = (
@@ -82,14 +85,14 @@ export const verifyRefreshToken = (
 };
 
 // This function can be changed to a generic one to only decode JWT tokens
-export const decodePasswordResetToken = (
+export const decodeMailLinkToken = (
   token: string,
-  additionalSecret: string,
+  additionalSecret: string = '',
 ) => {
   try {
     const decoded = JWT.verify(
       token,
-      (process.env.PASS_RESET_SECRET as string) + additionalSecret,
+      (process.env.MAIL_SECRET as string) + additionalSecret,
     );
     const { email, aud: userId } = decoded as JWTDecoded;
     return { email, userId };
