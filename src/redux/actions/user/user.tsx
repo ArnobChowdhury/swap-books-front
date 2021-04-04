@@ -67,18 +67,16 @@ export const createUserReq = (
         if (error.response) {
           const { data, status } = error.response;
           const { message } = data;
-          setTimeout(() => {
-            if (status === 401) {
-              dispatch(createUserFail({ message, status }));
-            } else {
-              dispatch(
-                createUserFail({
-                  message: 'Something went wrong! Please try again in a bit!',
-                  status,
-                }),
-              );
-            }
-          }, 5000);
+          if (status === 401) {
+            dispatch(createUserFail({ message, status }));
+          } else {
+            dispatch(
+              createUserFail({
+                message: 'Something went wrong! Please try again in a bit!',
+                status,
+              }),
+            );
+          }
         }
       });
   };
@@ -123,19 +121,15 @@ export const verifyEmailReq = (token: string) => {
         dispatch(verifyEmailSuccess(message));
       })
       .catch((err: AxiosError<{ message: string }>) => {
-        setTimeout(() => {
-          if (err.response) {
-            const { data, status } = err.response;
-            const { message } = data;
-            if (status === 401) {
-              dispatch(verifyEmailFail({ message, status }));
-            } else {
-              dispatch(
-                verifyEmailFail({ message: 'Something went wrong!', status }),
-              );
-            }
+        if (err.response) {
+          const { data, status } = err.response;
+          const { message } = data;
+          if (status === 401) {
+            dispatch(verifyEmailFail({ message, status }));
+          } else {
+            dispatch(verifyEmailFail({ message: 'Something went wrong!', status }));
           }
-        }, 5000);
+        }
       });
   };
 };
