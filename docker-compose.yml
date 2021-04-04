@@ -13,6 +13,7 @@ services:
       DATABASE_KEY: '${DATABASE_KEY}'
       ACCESS_SECRET: '${ACCESS_SECRET}'
       REFRESH_SECRET: '${REFRESH_SECRET}'
+      MAIL_SECRET: '${MAIL_SECRET}'
     links:
       - redis
       # - proxy
