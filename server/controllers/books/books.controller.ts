@@ -19,25 +19,30 @@ export const addABook = async (
   const bookPicturePath = `images/${filename}`;
 
   try {
-    const { locationObj, name: bookOwnerName } = await User.findById(userId);
-    if (locationObj) {
-      const { coordinates } = locationObj;
-      const book = new Book(
-        bookName,
-        bookAuthor,
-        bookPicturePath,
-        bookOwnerName,
-        new ObjectId(userId),
-        coordinates,
-      );
-      const result = await book.save();
-      const { insertedId: bookId } = result;
+    const user = await User.findById(userId);
+    if (user) {
+      const { locationObj, name: bookOwnerName } = user;
+      if (locationObj) {
+        const { coordinates } = locationObj;
+        const book = new Book(
+          bookName,
+          bookAuthor,
+          bookPicturePath,
+          bookOwnerName,
+          new ObjectId(userId),
+          coordinates,
+        );
+        const result = await book.save();
+        const { insertedId: bookId } = result;
 
-      res.status(201).json({ message: 'Book has been added!', bookId });
+        res.status(201).json({ message: 'Book has been added!', bookId });
+      } else {
+        throw new createError.Forbidden(
+          'You need to update your location before you can add a book.',
+        );
+      }
     } else {
-      throw new createError.Forbidden(
-        'You need to update your location before you can add a book.',
-      );
+      throw new createError.Unauthorized('No user found!');
     }
   } catch (err) {
     if (!err.statusCode) {
