@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from 'react';
 import Head from 'next/head';
-import { initiateMap } from '../../public/loc';
+import { initiateMap, initiateMarker } from '../../public/loc';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'redux/reducers';
 import {
@@ -40,6 +40,7 @@ const getNameForLocation = async ({
 // This is a fake event.
 interface Geocoder {
   on(event: 'select', cb: (event: LeafletMouseEvent) => void): void;
+  off(event: 'select'): void;
 }
 
 function createScriptTag(source: string, cb?: () => void): void {
@@ -78,7 +79,7 @@ export const Location = () => {
   const scriptCBs: { (): void }[] = [];
 
   const [locIQMap, setLocIQMap] = useState<Map | null>();
-  const [locIQMarker, setLocIQMarker] = useState<Marker | null>();
+  const [locIQMarker, setLocIQMarker] = useState<Marker | null>(null);
   const [geoCoder, setGeoCoder] = useState<Geocoder | null>();
 
   const { spaceSeven, spaceFive } = theme;
@@ -87,13 +88,12 @@ export const Location = () => {
     if (i == numOfScripts) {
       scriptCBs[i] = () =>
         createScriptTag(scriptSources[i], () => {
-          const zoom = userLat ? 13 : 2;
+          const zoom = userLat ? 13 : 7;
           initiateMap(
-            userLat ? userLat : 0.0,
-            userLon ? userLon : 0.0,
+            userLat ? userLat : 23.8104, // TODO Hardcoding Bangladesh's map for now, This will be changed using user Ip address later
+            userLon ? userLon : 90.4064,
             zoom,
             setLocIQMap,
-            setLocIQMarker,
             setGeoCoder,
           );
         });
@@ -134,7 +134,6 @@ export const Location = () => {
   }, [userLat, userLon]);
 
   const moveMarker = async (map: Map, marker: Marker, latlng: LatLng) => {
-    map.setView(latlng, map.getZoom());
     // @ts-ignore
     marker.setLatLng(latlng, { draggable: true });
     setCurrentLoc(latlng);
@@ -148,6 +147,8 @@ export const Location = () => {
     locIQMarker: Marker,
   ) => {
     const { latlng } = event;
+    const zoom = locIQMap.getZoom() < 10 ? 10 : locIQMap.getZoom();
+    locIQMap.setView(latlng, zoom);
     moveMarker(locIQMap, locIQMarker, latlng);
   };
 
@@ -156,6 +157,9 @@ export const Location = () => {
     locIQMap: Map,
     locIQMarker: Marker,
   ) => {
+    const { latlng } = event;
+    const zoom = locIQMap.getZoom() < 15 ? 15 : locIQMap.getZoom();
+    locIQMap.setView(latlng, zoom);
     // @ts-ignore
     setPopupText(event.feature.innerText);
     moveMarker(locIQMap, locIQMarker, event.latlng);
@@ -167,22 +171,66 @@ export const Location = () => {
     locIQMarker: Marker,
   ) => {
     const position = locIQMarker.getLatLng();
+    const zoom = locIQMap.getZoom();
+    locIQMap.setView(position, zoom);
     moveMarker(locIQMap, locIQMarker, position);
   };
 
   useEffect(() => {
-    if (locIQMap && locIQMarker && geoCoder) {
-      locIQMap.on('click', (e: LeafletMouseEvent) =>
-        handleClick(e, locIQMap, locIQMarker),
-      );
-      geoCoder.on('select', event => {
-        handleAutoCompleteSelection(event, locIQMap, locIQMarker);
+    if (userLat && userLon && locIQMap && !locIQMarker) {
+      const marker = initiateMarker([userLat, userLon]);
+      setLocIQMarker(marker);
+    }
+  }, [userLat, userLon, locIQMap, locIQMarker]);
+
+  useEffect(() => {
+    if (locIQMap) {
+      locIQMap.on('click', (e: LeafletMouseEvent) => {
+        if (!locIQMarker) {
+          const { latlng } = e;
+          const marker = initiateMarker(latlng);
+          handleClick(e, locIQMap, marker);
+          setLocIQMarker(marker);
+        } else {
+          handleClick(e, locIQMap, locIQMarker);
+        }
       });
+      return () => {
+        locIQMap.off('click');
+      };
+    }
+  }, [locIQMap, locIQMarker, geoCoder]);
+
+  useEffect(() => {
+    if (locIQMarker && locIQMap) {
       locIQMarker.on('dragend', event => {
         handleMarkerDrag(event, locIQMap, locIQMarker);
       });
+
+      return () => {
+        locIQMarker.off('dragend');
+      };
     }
-  }, [locIQMap, locIQMarker, geoCoder]);
+  }, [locIQMarker, locIQMap]);
+
+  useEffect(() => {
+    if (locIQMap && geoCoder) {
+      geoCoder.on('select', event => {
+        if (!locIQMarker) {
+          const { latlng } = event;
+          const marker = initiateMarker(latlng);
+          setLocIQMarker(marker);
+          handleAutoCompleteSelection(event, locIQMap, marker);
+        } else {
+          handleAutoCompleteSelection(event, locIQMap, locIQMarker);
+        }
+      });
+
+      return () => {
+        geoCoder.off('select');
+      };
+    }
+  }, [locIQMarker, locIQMap, geoCoder]);
 
   useEffect(() => {
     if (locIQMarker) {
@@ -197,10 +245,6 @@ export const Location = () => {
   const [scriptActivatedOnce, setScriptActivatedOnce] = useState<boolean>(false);
   const activateScripts = scriptCBs[0];
   useEffect(() => {
-    // if (userLon && userLat && !scriptActivatedOnce) {
-    //   activateScripts();
-    //   setScriptActivatedOnce(true);
-    // }
     if (!scriptActivatedOnce) {
       activateScripts();
       setScriptActivatedOnce(true);
@@ -250,7 +294,7 @@ export const Location = () => {
         ></link>
       </Head>
       <Header marginBelow={spaceFive}>Location</Header>
-      <Paragraph marginBelow={spaceSeven}>
+      <Paragraph marginBelow={spaceSeven} fontSize="large">
         Select your location to discover books available to swap around you.
       </Paragraph>
       <MapContainer id="map" />

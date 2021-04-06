@@ -44,7 +44,7 @@ export const PageCFAContainer = styled.div`
 
   @media (min-width: 1024px) {
     width: 450px;
-    padding-top: 100px;
+    padding-top: 50px;
     order: 1;
     flex-basis: auto;
     display: block;
@@ -52,6 +52,10 @@ export const PageCFAContainer = styled.div`
 
   @media (min-width: 1366px) {
     width: 600px;
+  }
+
+  @media (min-width: 1500px) {
+    padding-top: 100px;
   }
 `;
 
@@ -132,7 +136,7 @@ export const PageImageContainer = styled.div`
   @media (min-width: 1024px) {
     width: 450px;
     text-align: right;
-    padding-top: 50px;
+    padding-top: 35px;
     order: 1;
     flex-basis: auto;
 
@@ -143,11 +147,14 @@ export const PageImageContainer = styled.div`
 
   @media (min-width: 1366px) {
     width: 600px;
-    padding-top: 70px;
 
     & > svg {
       width: 567px;
     }
+  }
+
+  @media (min-width: 1500px) {
+    padding-top: 70px;
   }
 `;
 

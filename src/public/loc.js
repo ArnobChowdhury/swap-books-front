@@ -1,24 +1,19 @@
 const key = process.env.NEXT_PUBLIC_LOCATIONIQ_ACCESS_KEY;
 let map;
-let marker;
 
 export const initiateMap = (
   userLat,
   userLon,
   zoom,
   attachMapFunc,
-  attachMarkerFunc,
   attachGeoCoderFunc,
 ) => {
   map = L.map('map', {
-    // center: [39.73, -104.99], // Map loads with this location as center
-    center: [userLat, userLon],
+    center: [userLat, userLon], // MAp loads this location as center
     zoom,
     scrollWheelZoom: true,
     zoomControl: false,
   });
-
-  marker = L.marker([userLat, userLon], { draggable: true }).addTo(map);
 
   L.tileLayer(
     `https://{s}-tiles.locationiq.com/v2/obk/r/{z}/{x}/{y}.png?key=${key}`,
@@ -43,6 +38,10 @@ export const initiateMap = (
     .addTo(map);
 
   attachMapFunc(map);
-  attachMarkerFunc(marker);
   attachGeoCoderFunc(geocoder);
+};
+
+export const initiateMarker = latlng => {
+  const marker = L.marker(latlng, { draggable: true }).addTo(map);
+  return marker;
 };
