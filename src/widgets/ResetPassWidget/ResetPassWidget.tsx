@@ -53,16 +53,17 @@ export const ResetPassWidget = (): JSX.Element => {
           }}
           validationSchema={Yup.object({
             password: Yup.string()
-              .required('Password needed')
+              .required('Password needed.')
               .min(8, 'Too short. Needs to have min. 8 characters')
-              .matches(/[a-zA-Z]/, 'Password can only contain latin letters'),
-            confirmPassword: Yup.string().test(
-              'passwords-match',
-              'Passwords must match',
-              function(value) {
+              .matches(
+                /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/,
+                'Password needs at least one lowercase letter, one uppercase letter and one number.',
+              ),
+            confirmPassword: Yup.string()
+              .required('Confirm Password field cannot be left empty.')
+              .test('passwords-match', 'Passwords must match', function(value) {
                 return this.parent.password === value;
-              },
-            ),
+              }),
           })}
           onSubmit={({ password }, { setSubmitting }) => {
             dispatch(
@@ -84,6 +85,7 @@ export const ResetPassWidget = (): JSX.Element => {
               labelAtTop
               isRequired
               inputFieldFullWidth
+              trimWhiteSpaceOnBlur={false}
             />
             <Input
               name="confirmPassword"
@@ -92,6 +94,7 @@ export const ResetPassWidget = (): JSX.Element => {
               labelAtTop
               isRequired
               inputFieldFullWidth
+              trimWhiteSpaceOnBlur={false}
             />
             <Button isFullWidth color="blue" type="submit" asButtonTag>
               Reset Password

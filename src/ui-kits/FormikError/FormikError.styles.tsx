@@ -3,7 +3,7 @@ import styled from 'styled-components';
 export const ErrorWrapper = styled.div`
   flex-basis: 100%;
   display: flex;
-  height: 2.5rem;
+  min-height: 2.5rem;
 `;
 
 export const ErrorText = styled.div`

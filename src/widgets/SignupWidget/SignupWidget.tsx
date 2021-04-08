@@ -62,20 +62,32 @@ export const SignupWidget = (): JSX.Element => {
           }}
           validationSchema={Yup.object({
             username: Yup.string()
-              .max(26, 'Too long. Must be within 26 characters.')
-              .required('Required'),
+              .min(3, 'Too Short. Must be at least 3 characters.')
+              .max(30, 'Too long. Must be within 30 characters.')
+              .matches(/^[^\s]+$/, 'Needs to be one word without whitespaces.')
+              .matches(/^(?!\.).+$/, 'Username cannot start with a dot(.).')
+              .matches(/^(?!.*\.\.).+$/, 'Username cannot have consecutive dots.')
+              .matches(/^(?!.*\.$).+$/, 'Username cannot end with a dot(.).')
+              .matches(
+                /^(?!.*\.\.)(?!.*\.$)[^\W][\w.]+$/,
+                'Username can only contain Latin letters, numbers, dots and underscores.',
+              )
+              .required('Required field.'),
             email: Yup.string()
               .email('Invalid email address.')
-              .required('Required'),
+              .required('Required field.'),
             password: Yup.string()
-              .required('Password needed')
               .min(8, 'Too short. Needs to have min. 8 characters.')
-              .matches(/[a-zA-Z]/, 'Password can only contain latin letters.'),
+              .matches(
+                /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/,
+                'Password needs at least one lowercase letter, one uppercase letter and one number.',
+              )
+              .required('Password needed'),
             confirmPassword: Yup.string()
-              .required('Confirm Password field cannot be left empty.')
-              .test('passwords-match', 'Passwords must match', function(value) {
+              .test('passwords-match', 'Passwords must match.', function(value) {
                 return this.parent.password === value;
-              }),
+              })
+              .required('Confirm Password field cannot be left empty.'),
             ageConfirmation: Yup.boolean().oneOf(
               [true],
               'You must be at least be at least 13 years or older.',
@@ -109,6 +121,7 @@ export const SignupWidget = (): JSX.Element => {
               labelAtTop
               isRequired
               inputFieldFullWidth
+              trimWhiteSpaceOnBlur
             />
             <Input
               name="email"
@@ -117,6 +130,7 @@ export const SignupWidget = (): JSX.Element => {
               labelAtTop
               isRequired
               inputFieldFullWidth
+              trimWhiteSpaceOnBlur
             />
             <Input
               name="password"
@@ -125,6 +139,7 @@ export const SignupWidget = (): JSX.Element => {
               labelAtTop
               isRequired
               inputFieldFullWidth
+              trimWhiteSpaceOnBlur={false}
             />
             <Input
               name="confirmPassword"
@@ -133,6 +148,7 @@ export const SignupWidget = (): JSX.Element => {
               labelAtTop
               isRequired
               inputFieldFullWidth
+              trimWhiteSpaceOnBlur={false}
             />
             <Checkbox labelText="I am 13 years or older." name="ageConfirmation" />
             <Checkbox

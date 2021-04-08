@@ -32,8 +32,8 @@ export const ForgotPassword = (): JSX.Element => {
           }}
           validationSchema={Yup.object({
             email: Yup.string()
-              .email('Invalid email address')
-              .required('Required'),
+              .email('Invalid email address.')
+              .required('Required field.'),
           })}
           onSubmit={({ email }, { setSubmitting }) => {
             dispatch(forgotPasswordReq(email, setSubmitting));
@@ -47,6 +47,7 @@ export const ForgotPassword = (): JSX.Element => {
               labelAtTop
               isRequired
               inputFieldFullWidth
+              trimWhiteSpaceOnBlur
             />
             <Button isFullWidth color="blue" type="submit" asButtonTag>
               Retrieve Password

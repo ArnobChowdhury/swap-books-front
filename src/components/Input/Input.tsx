@@ -20,6 +20,7 @@ export interface InputProps {
   labelMinWidth?: string;
   marginBottom?: string;
   autoFocus?: boolean;
+  trimWhiteSpaceOnBlur: boolean;
 }
 
 /**
@@ -36,11 +37,35 @@ export const Input: React.FC<InputProps> = (props: InputProps) => {
     labelMinWidth,
     marginBottom,
     autoFocus,
+    trimWhiteSpaceOnBlur,
   } = props;
 
-  const [field, meta] = useField(props);
+  const [field, meta, helpers] = useField(props);
 
   const [showPassword, setShowPassword] = useState<boolean>(false);
+
+  // const { onBlur: _unused, ...restFields } = field;
+
+  const { setValue } = helpers;
+  const handleWhiteSpaceOnBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    if (trimWhiteSpaceOnBlur) {
+      setValue(e.currentTarget.value.trim());
+    }
+  };
+
+  let formikmethods;
+  if (!trimWhiteSpaceOnBlur) {
+    formikmethods = { ...field };
+  } else {
+    const { onBlur: formikOnBlur, ...rest } = field;
+    formikmethods = {
+      ...rest,
+      onBlur: (e: React.FocusEvent<HTMLInputElement>) => {
+        handleWhiteSpaceOnBlur(e);
+        formikOnBlur(e);
+      },
+    };
+  }
 
   return (
     <Label
@@ -57,7 +82,7 @@ export const Input: React.FC<InputProps> = (props: InputProps) => {
           isFullWidth={inputFieldFullWidth}
           labelAtTop={labelAtTop}
           autoFocus={autoFocus}
-          {...field}
+          {...formikmethods}
         />
         {type === 'password' && (
           <ShowPasswordWrapper onClick={() => setShowPassword(!showPassword)}>

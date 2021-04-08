@@ -38,7 +38,7 @@ export const Login = ({ onSubmit, requestErrorMsg }: LoginProps): JSX.Element =>
         validationSchema={Yup.object({
           email: Yup.string()
             .email('Invalid email address')
-            .required('Required'),
+            .required('Required field.'),
           password: Yup.string().required('Password needed'),
         })}
         onSubmit={onSubmit}
@@ -55,6 +55,7 @@ export const Login = ({ onSubmit, requestErrorMsg }: LoginProps): JSX.Element =>
             marginBottom="1rem"
             labelAtTop
             autoFocus
+            trimWhiteSpaceOnBlur
           />
           <Input
             type="password"
@@ -66,6 +67,7 @@ export const Login = ({ onSubmit, requestErrorMsg }: LoginProps): JSX.Element =>
             labelMinWidth="10rem"
             marginBottom="1rem"
             labelAtTop
+            trimWhiteSpaceOnBlur={false}
           />
           <ForgotPassWrapper>
             <ForgotPassLink href="/forgot-password">Forgot Password?</ForgotPassLink>

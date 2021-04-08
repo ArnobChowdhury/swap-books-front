@@ -6,6 +6,7 @@ export interface InputBoxProps {
   placeholder?: string;
   type?: 'text' | 'email' | 'password';
   onChange?: React.FormEventHandler<HTMLInputElement>;
+  onBlur?: React.FocusEventHandler<HTMLInputElement>;
   isFullWidth?: boolean;
   labelAtTop?: boolean;
   autoFocus?: boolean;
@@ -20,6 +21,7 @@ export const InputBox: React.FC<InputBoxProps> = ({
   type = 'text',
   placeholder,
   onChange,
+  onBlur,
   isFullWidth = false,
   labelAtTop = false,
   name,
@@ -36,6 +38,7 @@ export const InputBox: React.FC<InputBoxProps> = ({
       {...{ labelAtTop }}
       data-testid="inputFieldTestid"
       autoFocus={autoFocus}
+      onBlur={onBlur}
     />
   );
 };

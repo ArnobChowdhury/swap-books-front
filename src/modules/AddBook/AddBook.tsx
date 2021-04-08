@@ -50,8 +50,8 @@ export const AddBook = ({
             bookimage: null as BookType['bookimage'],
           }}
           validationSchema={Yup.object({
-            bookname: Yup.string().required('Required'),
-            bookauthor: Yup.string().required('Required'),
+            bookname: Yup.string().required('Required field.'),
+            bookauthor: Yup.string().required('Required field.'),
             bookimage: Yup.mixed()
               .required('An image of the book is required')
               .test('fileSize', 'File must be below 5mb', value => {
@@ -71,6 +71,7 @@ export const AddBook = ({
               labelAtTop
               inputFieldFullWidth
               autoFocus
+              trimWhiteSpaceOnBlur
             />
             <Input
               type="text"
@@ -78,6 +79,7 @@ export const AddBook = ({
               name="bookauthor"
               labelAtTop
               inputFieldFullWidth
+              trimWhiteSpaceOnBlur
             />
             <FileInput name="bookimage" labelText="Pick a picture:" />
             <Button color="blue" type="submit" asButtonTag>
