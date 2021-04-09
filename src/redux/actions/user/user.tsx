@@ -115,7 +115,7 @@ export const verifyEmailReq = (token: string) => {
   return (dispatch: Dispatch) => {
     dispatch(verifyEmailStart());
     return axios
-      .post('/auth//mail-verify', { token })
+      .post('/auth/mail-verify', { token })
       .then(res => {
         const { message } = res.data;
         dispatch(verifyEmailSuccess(message));

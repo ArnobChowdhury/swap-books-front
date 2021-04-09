@@ -93,6 +93,7 @@ export const setNotificationAsSeen = async (
   const { roomId } = req.body;
   const { userId } = req as ModifiedRequest;
   try {
+    // TODO This function does not error even when we send a roomId that does not exist
     await Room.setNotificationAsSeen(roomId, userId);
     res.status(201).json({ message: 'Notification updated' });
   } catch (err) {

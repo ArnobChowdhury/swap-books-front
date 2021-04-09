@@ -11,7 +11,7 @@ interface FileInputProps {
 export const FileInput = (props: FileInputProps) => {
   const { labelText } = props;
   const [field, meta, helpers] = useField(props);
-  const { name } = field;
+  const { name, onBlur } = field;
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     helpers.setValue(event.target.files?.[0]);
@@ -19,8 +19,13 @@ export const FileInput = (props: FileInputProps) => {
 
   return (
     <Label labelAtTop labelText={labelText}>
-      <StyledInput type="file" name={name} onChange={handleFileChange} />
-      <FormikError hasGutter={true} isTouched={meta.touched} error={meta.error} />
+      <StyledInput
+        type="file"
+        name={name}
+        onChange={handleFileChange}
+        onBlur={onBlur}
+      />
+      <FormikError isTouched={meta.touched} error={meta.error} />
     </Label>
   );
 };

@@ -50,8 +50,12 @@ export const AddBook = ({
             bookimage: null as BookType['bookimage'],
           }}
           validationSchema={Yup.object({
-            bookname: Yup.string().required('Required field.'),
-            bookauthor: Yup.string().required('Required field.'),
+            bookname: Yup.string()
+              .max(200, 'Book name cannot be longer than 200 characters.')
+              .required('Required field.'),
+            bookauthor: Yup.string()
+              .max(200, 'Name of book authors cannot be more than 200 characters.')
+              .required('Required field.'),
             bookimage: Yup.mixed()
               .required('An image of the book is required')
               .test('fileSize', 'File must be below 5mb', value => {

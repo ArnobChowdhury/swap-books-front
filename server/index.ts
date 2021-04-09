@@ -6,12 +6,11 @@ import bodyParser from 'body-parser';
 import { Server } from 'socket.io';
 import { createServer } from 'http';
 import { HttpException, SocketDecoded } from './interface';
-import multer from 'multer';
 import morgan from 'morgan';
 import socketioJwt from 'socketio-jwt';
-import authRoutes from './routes/auth.route';
-import booksRoutes from './routes/books.route';
-import userRoutes from './routes/user.route';
+import authRoutes from './routes/auth';
+import booksRoutes from './routes/books';
+import userRoutes from './routes/user';
 import {
   saveSocketToRedis,
   expressInterest,
@@ -95,43 +94,10 @@ app.prepare().then(() => {
     });
   });
 
-  // executeLater(io);
-  // TODO Just in case we want to disconnect the user when logging out
-  // io.sockets.connected['socketId'].disconnect()
-
-  const fileStorage = multer.diskStorage({
-    destination: (_req, _file, cb) => {
-      cb(null, 'images');
-    },
-    filename: (_req, file, cb) => {
-      cb(
-        null,
-        `${new Date().toISOString().replace(/:/g, '-')}-${file.originalname}`,
-      );
-    },
-  });
-
-  const fileFilter = (
-    _req: Request,
-    file: Express.Multer.File,
-    cb: (firstArg: null, secondArg: boolean) => void,
-  ): void => {
-    if (
-      file.mimetype === 'image/png' ||
-      file.mimetype === 'image/jpg' ||
-      file.mimetype === 'image/jpeg'
-    ) {
-      cb(null, true);
-    } else {
-      cb(null, false);
-    }
-  };
-
+  // TODO Do we need cors(). Most probably no. Get rid of it.
   server.use(cors());
 
   server.use(bodyParser.json());
-
-  server.use(multer({ storage: fileStorage, fileFilter }).single('bookImage'));
 
   server.use('/favicon.ico', (_req, res) => {
     res.status(200).sendFile('favicon.ico', { root: path.join(__dirname, '../') });
