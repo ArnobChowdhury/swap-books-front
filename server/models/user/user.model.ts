@@ -93,33 +93,6 @@ export default class User {
     }
   }
 
-  static async updateAllInfo(info: Omit<UserWithId, 'save'>) {
-    const db = getDb();
-    const {
-      _id,
-      email,
-      emailVerified,
-      ageConfirmation,
-      name,
-      password,
-      termsConfirmation,
-    } = info;
-
-    return db.collection('users').updateOne(
-      { _id },
-      {
-        $set: {
-          name,
-          password,
-          email,
-          emailVerified,
-          ageConfirmation,
-          termsConfirmation,
-        },
-      },
-    );
-  }
-
   static async verifyEmail(userId: string) {
     const db = getDb();
     return db

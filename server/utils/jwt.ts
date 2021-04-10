@@ -106,3 +106,18 @@ export const decodeMailLinkToken = (
     throw new createError.Unauthorized(message);
   }
 };
+
+export const createEmailVerifyLink = (userId: string, email: string): string => {
+  const secret = process.env.MAIL_SECRET as string;
+  const token = JWT.sign({ email }, secret, {
+    audience: userId,
+    issuer: 'www.pustokio.com',
+  });
+
+  const action_url =
+    process.env.NODE_ENV === 'production'
+      ? `https://www.pustokio.com/mail-verify/${token}`
+      : `http://localhost:${process.env.PORT}/mail-verify/${token}`;
+
+  return action_url;
+};

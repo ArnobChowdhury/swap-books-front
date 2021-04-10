@@ -7,10 +7,10 @@ import {
   generateJWT,
   verifyRefreshToken,
   decodeMailLinkToken,
+  createEmailVerifyLink,
 } from '../../utils/jwt';
 import { client as redisClient } from '../../utils/redis';
 import { emailTransporter } from '../../utils/email';
-import JWT from 'jsonwebtoken';
 
 // todo check if it is possible to use a single function for sign up and sign in
 export const signup = async (
@@ -22,18 +22,58 @@ export const signup = async (
   const { name, email, password, ageConfirmation, termsConfirmation } = req.body;
 
   try {
-    const userExists = await User.findByEmail(email);
+    const existingUser = await User.findByEmail(email);
 
-    if (userExists && userExists.emailVerified) {
-      const err: HttpException = new Error('Something went wrong!');
-      err.statusCode = 401;
-      throw err;
-    }
+    if (existingUser) {
+      const { name: existingName, _id: userId } = existingUser;
+      if (existingUser.emailVerified) {
+        await emailTransporter.sendMail({
+          from: '"Pustokio" <no-reply@pustokio.com>', // sender address
+          to: email,
+          subject: 'Account Exists Already', // Subject line
+          text: `
+          Hi ${existingName},
+          We received a request to sign up for a Pustokio account with your email address - (${email}). However, an account with this email is already registered. If you have forgotten your password, please try requesting a password-reset from login.
 
-    const hashedPassword = await bcrypt.hash(password, 12);
+          If you did not try to sign up with this email, please ignore this email, your account information has not changed.
 
-    let userId;
-    if (!userExists) {
+          Thanks, 
+          The Pustokio team
+        `,
+          // @ts-ignore
+          template: 'userExistAndVerified',
+          context: {
+            name: existingName,
+            email,
+          },
+        });
+      } else {
+        const action_url = createEmailVerifyLink(userId.toHexString(), email);
+
+        await emailTransporter.sendMail({
+          from: '"Pustokio" <no-reply@pustokio.com>',
+          to: email,
+          subject: 'Account Exists Already, Please Verify',
+          text: `
+          Hi ${existingName},
+          You have already registered an account with this email. However, you have not verified this email with Pustokio. Use the link below to confirm your email.
+
+          If you did not try to sign up with this email, please ignore this email, your account information has not changed.
+
+          Thanks, 
+          The Pustokio team
+        `,
+          // @ts-ignore
+          template: 'userExistButNotVerified',
+          context: {
+            name: existingName,
+            action_url,
+          },
+        });
+      }
+    } else {
+      const hashedPassword = await bcrypt.hash(password, 12);
+
       const user = new User(
         name,
         email,
@@ -42,38 +82,15 @@ export const signup = async (
         termsConfirmation,
       );
       const result = await user.save();
-      userId = result.insertedId;
-    } else {
-      // TODO: This is a questionable approach. Let's think about this.
-      User.updateAllInfo({
-        _id: userExists._id,
-        name,
-        email,
-        password: hashedPassword,
-        ageConfirmation,
-        termsConfirmation,
-        currentInterests: [],
-        emailVerified: false,
-      });
-      userId = userExists._id;
-    }
+      const userId = result.insertedId;
 
-    const secret = process.env.MAIL_SECRET as string;
-    const token = JWT.sign({ email }, secret, {
-      audience: userId.toHexString(),
-      issuer: 'www.pustokio.com',
-    });
+      const action_url = createEmailVerifyLink(userId.toHexString(), email);
 
-    const action_url =
-      process.env.NODE_ENV === 'production'
-        ? `https://www.pustokio.com/mail-verify/${token}`
-        : `http://localhost:${process.env.PORT}/mail-verify/${token}`;
-
-    emailTransporter.sendMail({
-      from: '"Pustokio" <no-reply@pustokio.com>', // sender address
-      to: email,
-      subject: 'Verify Email Address for Pustokio Account', // Subject line
-      text: `
+      await emailTransporter.sendMail({
+        from: '"Pustokio" <no-reply@pustokio.com>', // sender address
+        to: email,
+        subject: 'Verify Email Address for Pustokio Account', // Subject line
+        text: `
           Hi ${name},
           We are excited to have you get started. Use the link below to confirm your email. 
 
@@ -84,14 +101,14 @@ export const signup = async (
           Thanks, 
           The Pustokio team
         `,
-      // @ts-ignore
-      template: 'verifyEmail',
-      context: {
-        name,
-        action_url,
-      },
-    });
-
+        // @ts-ignore
+        template: 'verifyEmail',
+        context: {
+          name,
+          action_url,
+        },
+      });
+    }
     res.status(201).json({
       message:
         'We sent an email to the adderess provided by you. Please check your inbox and verify your mail.',
@@ -232,7 +249,7 @@ export const forgotPassword: (
     // we don't know what is going to be returned if the user doesn't exist
     const user = await User.findByEmail(email);
     if (!user) {
-      emailTransporter.sendMail({
+      await emailTransporter.sendMail({
         from: '"Pustokio" <no-reply@pustokio.com>', // sender address
         to: email,
         subject: 'No Account Found', // Subject line
@@ -258,7 +275,7 @@ export const forgotPassword: (
       const { _id, name, password } = user;
       const userId = _id.toHexString();
       const token = generateJWT(userId, email, 'passReset', password);
-      emailTransporter.sendMail({
+      await emailTransporter.sendMail({
         from: '"Pustokio" <no-reply@pustokio.com>', // sender address
         to: email,
         subject: 'Account Password Reset', // Subject line
