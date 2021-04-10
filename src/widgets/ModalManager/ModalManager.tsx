@@ -10,6 +10,7 @@ import { FormikHelpers } from 'formik';
 import { NeedAuth } from 'modules/NeedAuth';
 import { Location } from 'widgets/Location';
 import { RootState } from 'redux/reducers';
+import { useRouter } from 'next/router';
 
 export const ModalManager = (): JSX.Element => {
   const { showModal, setShowModal, popupType } = useContext(
@@ -17,11 +18,14 @@ export const ModalManager = (): JSX.Element => {
   ) as RootContextProps;
 
   const dispatch = useDispatch();
+  const router = useRouter();
+  const { pathname } = router;
+
   const handleLoginSubmit = (
     { email, password }: LoginCredentials,
     { setSubmitting }: FormikHelpers<LoginCredentials>,
   ) => {
-    dispatch(authRequest(email, password, setSubmitting, setShowModal));
+    dispatch(authRequest(email, password, setSubmitting, setShowModal, pathname));
   };
 
   const handleAddBookSubmit = (

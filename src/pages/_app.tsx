@@ -66,12 +66,7 @@ const WrappedApp: FC<AppProps> = ({ Component, pageProps }) => {
   }, []);
 
   useEffect(() => {
-    if (
-      authRedirectPath &&
-      (pathname === MESSAGES_ROUTE ||
-        pathname === USER_ROUTE ||
-        pathname === NOTIFICATIONS_ROUTE)
-    ) {
+    if (authRedirectPath) {
       routerPush(authRedirectPath);
       dispatch(authRedirectSuccess());
     }

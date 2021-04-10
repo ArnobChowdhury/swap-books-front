@@ -4,6 +4,12 @@ import { AxiosError } from 'axios';
 import { Dispatch, Action } from 'redux';
 import { ThunkAction } from 'redux-thunk';
 import { RootState } from 'redux/reducers';
+import {
+  HOME_ROUTE,
+  MESSAGES_ROUTE,
+  NOTIFICATIONS_ROUTE,
+  USER_ROUTE,
+} from 'frontEndRoutes';
 
 import {
   AUTH_SUCCESS,
@@ -12,6 +18,7 @@ import {
   AUTH_LOGOUT,
   AUTH_TOKEN_REFRESH,
   AUTH_REDIRECT_SUCCESS,
+  AUTH_REDIRECT_START,
   AUTH_ERROR_REFRESH,
   UPDATE_USER_INFO,
   FORGOT_PASS_START,
@@ -103,11 +110,25 @@ export const authLogoutForOtherTabs = () => {
   return { type: AUTH_LOGOUT };
 };
 
+export const authRedirectSuccess = () => {
+  return {
+    type: AUTH_REDIRECT_SUCCESS,
+  };
+};
+
+export const authRedirectStart = (authRedirectPath: string) => {
+  return {
+    type: AUTH_REDIRECT_START,
+    authRedirectPath,
+  };
+};
+
 export const authRequest = (
   email: string,
   password: string,
   formikSetSubmitting: (submissionResolved: boolean) => void,
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>,
+  currentPath: string,
 ): ThunkAction<void, RootState, unknown, Action<string>> => {
   return async (dispatch: Dispatch) => {
     dispatch(authStart());
@@ -139,7 +160,28 @@ export const authRequest = (
         localStorage.setItem('userId', userId);
         localStorage.setItem('expirationDate', `${expirationDate}`);
         dispatch(authSuccess(accessToken, userId, expirationDate));
-        dispatch(updateUserInfo(name, true, userLon, userLat));
+        dispatch(
+          updateUserInfo(
+            name,
+            true,
+            !userLon ? null : userLon,
+            !userLat ? null : userLat,
+          ),
+        );
+        const noRedirectRoutes = [
+          HOME_ROUTE,
+          MESSAGES_ROUTE,
+          NOTIFICATIONS_ROUTE,
+          USER_ROUTE,
+        ];
+        console.log('currentPath', currentPath);
+        console.log(
+          'Routes includes or not',
+          noRedirectRoutes.includes(currentPath),
+        );
+        if (!noRedirectRoutes.includes(currentPath)) {
+          dispatch(authRedirectStart('/'));
+        }
       })
       .catch((err: AxiosError<{ message: string }>) => {
         formikSetSubmitting(false);
@@ -162,12 +204,6 @@ export const authRequest = (
   };
 };
 
-export const authRedirectSuccess = () => {
-  return {
-    type: AUTH_REDIRECT_SUCCESS,
-  };
-};
-
 export const authCheckState = () => {
   return (dispatch: Dispatch) => {
     const accessToken = localStorage.getItem('accessToken');
@@ -181,7 +217,14 @@ export const authCheckState = () => {
         .get(path)
         .then(res => {
           const { name, userLon, userLat } = res.data;
-          dispatch(updateUserInfo(name, true, userLon, userLat));
+          dispatch(
+            updateUserInfo(
+              name,
+              true,
+              !userLon ? null : userLon,
+              !userLat ? null : userLat,
+            ),
+          );
         })
         .catch(err => {
           // @ts-ignore

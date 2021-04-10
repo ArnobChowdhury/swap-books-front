@@ -32,11 +32,10 @@ const Root: NextPage = (): JSX.Element => {
       </Head>
       <ModalManager />
       {!isSignedIn && userLon === null && userLat === null && <LandingPage />}
-      {userLon !== null && userLat !== null && (
+      {(isSignedIn || (userLon && userLat)) && (
         <>
           <TopBar
             navBar={width >= largeScreen && <NavBar />}
-            // activityBar={width >= mediumScreen && <ActivityBar />}
             activityBar={
               (width >= mediumScreen || contentType === 'Posts') && <ActivityBar />
             }
