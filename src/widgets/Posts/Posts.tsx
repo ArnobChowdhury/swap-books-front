@@ -5,6 +5,7 @@ import {
   fetchProfileBooksRequest,
   expressInterestStart,
   makeUnavailableRequest,
+  booksResetToNil,
 } from 'redux/actions/book';
 import { RootState } from 'redux/reducers';
 import { SocketIoContext } from 'hoc/Sockets';
@@ -75,6 +76,8 @@ export const Posts = ({ profileId }: PostProps): JSX.Element => {
   useEffect(() => {
     if (!profileId && process.browser && userLon && userLat) {
       dispatch(fetchBooksRequest(userLon, userLat, 1));
+    } else {
+      dispatch(booksResetToNil());
     }
   }, [userLon, userLat, profileId]);
 

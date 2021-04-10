@@ -2,6 +2,7 @@ import { HYDRATE } from 'next-redux-wrapper';
 import { AnyAction } from 'redux';
 // import { action } from '@storybook/addon-actions';
 import {
+  BOOKS_RESET_TO_NIL,
   FETCH_BOOKS_START,
   FETCH_BOOKS_SUCCESS,
   FETCH_MORE_BOOKS_SUCCESS,
@@ -70,6 +71,8 @@ const reducer = (state = initialState, action: AnyAction) => {
     case HYDRATE:
       // our action do not return a property named payload
       return { ...state };
+    case BOOKS_RESET_TO_NIL:
+      return { ...initialState };
     case FETCH_BOOKS_START:
       return { ...state, loading: true };
     case FETCH_BOOKS_SUCCESS:

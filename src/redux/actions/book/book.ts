@@ -18,8 +18,13 @@ import {
   MAKE_UNAVAILABLE_START,
   MAKE_UNAVAILABLE_SUCCESS,
   MAKE_UNAVAILABLE_FAIL,
+  BOOKS_RESET_TO_NIL,
 } from './../actionTypes';
 import { AxiosError } from 'axios';
+
+export const booksResetToNil = () => {
+  return { type: BOOKS_RESET_TO_NIL };
+};
 
 export const addABookStart = () => {
   return {
