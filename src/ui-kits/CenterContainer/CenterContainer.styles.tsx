@@ -1,14 +1,14 @@
 import styled from 'styled-components';
 
-export const PageContainer = styled.div`
-  display: flex;
-  justify-content: center;
-`;
+export const CenterContainer = styled.div<{ containerWidth?: number }>`
+  width: 100%;
+  flex-basis: 100%;
+  background: ${({ theme }) => theme.colorWhite};
+  padding: 4rem;
+  box-shadow: ${({ theme }) => theme.boxShadow};
+  margin-top: ${({ theme }) => theme.spaceTen};
 
-// todo think of a way to move this widths to theme
-export const ContentContainer = styled.div<{ containerWidth?: number }>`
-  width: ${({ containerWidth }) =>
-    containerWidth ? `${containerWidth}px` : '600px'};
-  flex-basis: ${({ containerWidth }) =>
-    containerWidth ? `${containerWidth}px` : '600px'};
+  & button {
+    margin-top: ${({ theme }) => theme.spaceFive};
+  }
 `;

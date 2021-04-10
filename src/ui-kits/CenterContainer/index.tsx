@@ -1,1 +1,1 @@
-export { CenterContainer } from './CenterContainer';
+export { CenterContainer } from './CenterContainer.styles';

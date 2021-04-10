@@ -174,11 +174,6 @@ export const authRequest = (
           NOTIFICATIONS_ROUTE,
           USER_ROUTE,
         ];
-        console.log('currentPath', currentPath);
-        console.log(
-          'Routes includes or not',
-          noRedirectRoutes.includes(currentPath),
-        );
         if (!noRedirectRoutes.includes(currentPath)) {
           dispatch(authRedirectStart('/'));
         }

@@ -13,6 +13,8 @@ import { Post, PostShimmer } from 'modules/Post';
 import { RootContext, RootContextProps } from 'contexts/RootContext';
 import { useOnScreen, useWindowSize } from 'hooks';
 import { useRouter } from 'next/router';
+import { CenterContainer } from 'ui-kits/CenterContainer';
+import { RequestResult } from 'components/RequestResult';
 
 const PostShimmerComponent = React.forwardRef(
   (_props, ref: React.Ref<HTMLDivElement>) => {
@@ -150,14 +152,35 @@ export const Posts = ({ profileId }: PostProps): JSX.Element => {
     });
   }
   // TODO is PageLayout a HOC? I don't think it is anymore
+  const showShimmer = loading && books.length === 0;
+  const showBooks = books.length > 0;
+  const showPickLocation = !profileId && !userLon && !userLat;
+  const showNoBooksAtThisLocation = !loading && userLat && userLon && !showBooks;
+
   return (
     <>
-      {loading && books.length === 0 && <PostShimmerComponent />}
-      {books.length > 0 && (
+      {showShimmer && <PostShimmerComponent />}
+      {showBooks && (
         <>
           {posts}
           {hasMorePages && <PostShimmerComponent ref={shimmerRef} />}
         </>
+      )}
+      {showPickLocation && (
+        <CenterContainer>
+          <RequestResult
+            msg="You need to pick a location to see available books."
+            reqStatus="needLocation"
+          ></RequestResult>
+        </CenterContainer>
+      )}
+      {showNoBooksAtThisLocation && (
+        <CenterContainer>
+          <RequestResult
+            msg="Sorry, No books are available to be swapped at your chosen location. Try changing your location or add a book."
+            reqStatus="noBooks"
+          ></RequestResult>
+        </CenterContainer>
       )}
     </>
   );

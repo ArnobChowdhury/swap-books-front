@@ -6,7 +6,7 @@ import * as Yup from 'yup';
 import { forgotPasswordReq } from 'redux/actions/auth';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'redux/reducers';
-import { CenterContainer } from './ForgotPassword.styles';
+import { CenterContainer } from 'ui-kits/CenterContainer';
 import { RequestResult } from 'components/RequestResult';
 
 export const ForgotPassword = (): JSX.Element => {
