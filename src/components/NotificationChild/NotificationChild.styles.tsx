@@ -41,7 +41,7 @@ export const ChatButton = styled.button`
   box-shadow: ${({ theme }) => theme.boxShadow};
   font-size: inherit;
   font-family: inherit;
-  font-weight: 300;
+  font-weight: 400;
   padding: ${({ theme }) => theme.spaceTwo};
   &:active {
     transform: translateY(1px);

@@ -26,6 +26,7 @@ export const TopBarWrapper = styled.div<{ isSignedIn: boolean }>`
 
   @media (min-width: ${mediumScreen}px) {
     justify-content: space-between;
+    max-width: 1400px;
   }
 `;
 
