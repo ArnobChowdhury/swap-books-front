@@ -29,6 +29,6 @@ export const InputHTML = styled.input.attrs(props => {
   outline: none;
 
   &:focus {
-    border: ${({ theme }) => `1px solid ${theme.colorPurple}`};
+    border: ${({ theme }) => `1px solid ${theme.colorPrimary3}`};
   }
 `;

@@ -236,7 +236,6 @@ export const NavBar = (): JSX.Element => {
       <NavBarWrapper>
         <NavButton
           borderBottom={contentType === 'Posts'}
-          buttonType="Posts"
           onClick={handleHomeButtonClick}
         >
           <HomeIcon hasBodyColor={contentType === 'Posts'} />
@@ -245,31 +244,29 @@ export const NavBar = (): JSX.Element => {
           borderBottom={contentType === 'Messages'}
           onClick={handleMsgButtonClick}
           ref={messageButtonRef}
-          buttonType="Messages"
         >
-          {totalUnseenMsgs > 0 && (
-            <Count buttonType="Messages">{totalUnseenMsgs}</Count>
-          )}
+          {totalUnseenMsgs > 0 && <Count>{totalUnseenMsgs}</Count>}
           <ChatIcon hasBodyColor={contentType === 'Messages'} />
         </NavButton>
         <NavButton
           borderBottom={contentType === 'Notifications'}
           onClick={handleNotificationButtonClick}
           ref={notificationButtonRef}
-          buttonType="Notifications"
         >
           {totalUnseenNotification !== null && totalUnseenNotification > 0 && (
-            <Count buttonType="Notification">{totalUnseenNotification}</Count>
+            <Count>{totalUnseenNotification}</Count>
           )}
           <NotificationIcon hasBodyColor={contentType === 'Notifications'} />
         </NavButton>
         <NavButton
           borderBottom={contentType === 'User'}
-          buttonType="User"
           onClick={handleUserButtonClick}
           ref={userButtonRef}
         >
-          <UserIcon userName={userName ? userName : ''} />
+          <UserIcon
+            hasBodyColor={contentType === 'User'}
+            userName={userName ? userName : ''}
+          />
         </NavButton>
       </NavBarWrapper>
     </NavBarContainer>

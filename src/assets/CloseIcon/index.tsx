@@ -8,7 +8,7 @@ export const CloseIcon = ({
   height?: string;
   colorAlert?: boolean;
 }) => {
-  const { colorPink, colorTextPrimary } = theme;
+  const { colorTextPrimary, colorAlert: colorRed } = theme;
   return (
     <svg
       width={width}
@@ -19,7 +19,7 @@ export const CloseIcon = ({
     >
       <path
         d="M5 5L19 19M5 19L19 5"
-        stroke={colorAlert ? colorPink : colorTextPrimary}
+        stroke={colorAlert ? colorRed : colorTextPrimary}
         strokeWidth="1.5"
         strokeLinecap="round"
         strokeLinejoin="round"

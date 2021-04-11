@@ -34,10 +34,10 @@ export const LDSRing = styled.div`
     width: 32px;
     height: 32px;
     margin: 8px;
-    border: 4px solid ${({ theme }) => theme.colorPink};
+    border: 4px solid ${({ theme }) => theme.colorPrimary3};
     border-radius: 50%;
     animation: ${LDSAnimation} 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
-    border-color: ${({ theme }) => theme.colorPink} transparent transparent
+    border-color: ${({ theme }) => theme.colorPrimary3} transparent transparent
       transparent;
   }
 

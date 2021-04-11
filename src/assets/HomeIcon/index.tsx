@@ -8,7 +8,7 @@ export const HomeIcon = ({
   width?: string;
   height?: string;
 }) => {
-  const { colorPurple, colorTextPrimary } = theme;
+  const { colorTextPrimary, colorWhite } = theme;
   return (
     <svg
       width={width}
@@ -18,18 +18,12 @@ export const HomeIcon = ({
       xmlns="http://www.w3.org/2000/svg"
     >
       <path
-        d="M18.6667 28H25.3333V14.6666H28L16 2.66663L4 14.6666H6.66667V28H13.3333M18.6667 28V18.6666H13.3333V28M18.6667 28H13.3333"
+        d="M22.3333 13.6666V27H15.6667V17.6666H10.3333V27H3.66667V13.6666H1L13 1.66663L25 13.6666H22.3333Z"
+        fill={hasBodyColor ? colorTextPrimary : colorWhite}
         stroke={colorTextPrimary}
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <rect
-        x="14"
-        y="19"
-        width="4"
-        height="8"
-        fill={hasBodyColor ? colorPurple : colorTextPrimary}
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
       />
     </svg>
   );

@@ -1,10 +1,8 @@
 const theme = {
   colorPrimary1: '#140564',
   colorPrimary2: '#C4BBF8',
+  colorPrimary3: '#A090FF',
   colorWhite: '#FFFFFF',
-  colorPurple: '#8B08F1',
-  colorPink: '#FF4773',
-  colorGreen: '#A3DC29',
   colorLogoBlue: '#140564',
   colorBG: '#F5F5F5',
   colorTextPrimary: '#50586C',

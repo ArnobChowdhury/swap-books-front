@@ -155,7 +155,8 @@ export const Posts = ({ profileId }: PostProps): JSX.Element => {
   const showShimmer = loading && books.length === 0;
   const showBooks = books.length > 0;
   const showPickLocation = !profileId && !userLon && !userLat;
-  const showNoBooksAtThisLocation = !loading && userLat && userLon && !showBooks;
+  const showNoBooksAtThisLocation =
+    !profileId && !loading && userLat && userLon && !showBooks;
 
   return (
     <>

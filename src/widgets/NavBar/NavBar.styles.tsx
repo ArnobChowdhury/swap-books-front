@@ -41,12 +41,7 @@ export const NavBarUL = styled.ul`
   height: 100%;
 `;
 
-interface NavButtonProps {
-  borderBottom: boolean;
-  buttonType: 'Messages' | 'Notifications' | 'Posts' | 'User';
-}
-
-export const NavButton = styled.button<NavButtonProps>`
+export const NavButton = styled.button<{ borderBottom: boolean }>`
   position: relative;
   text-decoration: none;
   height: 100%;
@@ -59,36 +54,14 @@ export const NavButton = styled.button<NavButtonProps>`
   background: none;
   cursor: pointer;
   outline: none;
-  border-top: ${({ theme, borderBottom, buttonType }) => {
-    let color;
-    if (buttonType === 'Messages') {
-      color = theme.colorGreen;
-    } else if (buttonType === 'Notifications') {
-      color = theme.colorPink;
-    } else if (buttonType === 'Posts') {
-      color = theme.colorPurple;
-    } else {
-      color = theme.colorTextPrimary;
-    }
-    return `4px solid ${borderBottom ? color : 'transparent'}`;
-  }};
+  border-top: ${({ theme, borderBottom }) =>
+    `4px solid ${borderBottom ? theme.colorTextPrimary : 'transparent'}`};
 
   @media (min-width: ${largeScreen}px) {
     width: 60px;
     border-top: none;
-    border-bottom: ${({ theme, borderBottom, buttonType }) => {
-      let color;
-      if (buttonType === 'Messages') {
-        color = theme.colorGreen;
-      } else if (buttonType === 'Notifications') {
-        color = theme.colorPink;
-      } else if (buttonType === 'Posts') {
-        color = theme.colorPurple;
-      } else {
-        color = theme.colorTextPrimary;
-      }
-      return `4px solid ${borderBottom ? color : 'transparent'}`;
-    }};
+    border-bottom: ${({ theme, borderBottom }) =>
+      `4px solid ${borderBottom ? theme.colorTextPrimary : 'transparent'}`};
   }
 
   &:hover {
@@ -108,15 +81,14 @@ export const DropDown = styled.div<{ isSelected: boolean }>`
   overflow: hidden;
 `;
 
-export const Count = styled.div<{ buttonType: 'Messages' | 'Notification' }>`
+export const Count = styled.div`
   position: absolute;
   top: 12%;
   right: 25%;
   width: ${({ theme }) => theme.spaceTen};
   height: ${({ theme }) => theme.spaceTen};
   border-radius: 50%;
-  background: ${({ theme, buttonType }) =>
-    buttonType === 'Messages' ? theme.colorGreen : theme.colorPink};
+  background: ${({ theme }) => theme.colorTextPrimary};
   color: ${({ theme }) => theme.colorTextDark};
   font-size: ${({ theme }) => theme.fontSmall};
   text-align: center;

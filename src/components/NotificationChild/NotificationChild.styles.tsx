@@ -33,7 +33,7 @@ export const IconWrapper = styled.div`
 `;
 
 export const ChatButton = styled.button`
-  background: ${({ theme }) => theme.colorGreen};
+  background: ${({ theme }) => theme.colorPrimary3};
   border: none;
   border-radius: 3px;
   padding: ${({ theme }) => `0 ${theme.spaceFour}`};
