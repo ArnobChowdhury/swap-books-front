@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'redux/reducers';
 import { CenterContainer } from 'ui-kits/CenterContainer';
 import { RequestResult } from 'components/RequestResult';
+import { LoaderBook } from 'assets/LoaderBook';
 
 export const ForgotPassword = (): JSX.Element => {
   const {
@@ -20,12 +21,12 @@ export const ForgotPassword = (): JSX.Element => {
 
   return (
     <CenterContainer>
-      {reqOnGoing && <Spinner />}
+      {reqOnGoing && <LoaderBook text="Submitting" />}
       {forgotPassMsg && <RequestResult msg={forgotPassMsg} reqStatus="success" />}
       {forgotPassErr && (
         <RequestResult msg={forgotPassErr.message} reqStatus="error" />
       )}
-      {!forgotPassMsg && !forgotPassErr && (
+      {!reqOnGoing && !forgotPassMsg && !forgotPassErr && (
         <Formik
           initialValues={{
             email: '',

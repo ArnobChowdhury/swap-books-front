@@ -10,6 +10,7 @@ import { CenterContainer } from 'ui-kits/CenterContainer';
 import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
 import { RequestResult } from 'components/RequestResult';
+import { LoaderBook } from 'assets/LoaderBook';
 
 export const ResetPassWidget = (): JSX.Element => {
   const { resetPassLoading, resetPassMsg, resetPassErr } = useSelector(
@@ -38,14 +39,17 @@ export const ResetPassWidget = (): JSX.Element => {
   }, [id, token]);
 
   // TODO Confirmed password should match password in validation schema
+  const showLoader = linkCheckOngoing || resetPassLoading;
   return (
     <CenterContainer>
-      {(linkCheckOngoing || resetPassLoading) && <Spinner />}
+      {showLoader && (
+        <LoaderBook text={linkCheckOngoing ? 'Checking link' : 'Submitting'} />
+      )}
       {resetPassMsg && <RequestResult msg={resetPassMsg} reqStatus="success" />}
       {resetPassErr && (
         <RequestResult msg={resetPassErr.message} reqStatus="error" />
       )}
-      {isValidLink && !resetPassMsg && !resetPassErr && (
+      {isValidLink && !showLoader && !resetPassMsg && !resetPassErr && (
         <Formik
           initialValues={{
             password: '',

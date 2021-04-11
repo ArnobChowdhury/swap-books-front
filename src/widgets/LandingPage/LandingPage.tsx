@@ -53,7 +53,7 @@ export const LandingPage = (): JSX.Element => {
               headerColor={colorPrimary2}
               headerFontSize={55}
             >
-              Swap Books with People Near You
+              Stop! This site is under development and not ready to be used
             </Header>
             <Paragraph fontSize="large">
               Choose your location, add books and find people you can exchange your

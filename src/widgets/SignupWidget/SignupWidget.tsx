@@ -6,7 +6,7 @@ import * as Yup from 'yup';
 import { createUserReq, createUserRefresh } from 'redux/actions/user';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'redux/reducers';
-import { LoaderWrapper, TryAgainButtonWrapper } from './SignupWidget.styles';
+import { TryAgainButtonWrapper } from './SignupWidget.styles';
 import { CenterContainer } from 'ui-kits/CenterContainer';
 import { LoaderBook } from 'assets/LoaderBook';
 import { RequestResult } from 'components/RequestResult';
@@ -31,11 +31,7 @@ export const SignupWidget = (): JSX.Element => {
   // TODO Confirm password field should match Password field
   return (
     <CenterContainer>
-      {userCreationOnGoing && (
-        <LoaderWrapper>
-          <LoaderBook text="Submitting" />
-        </LoaderWrapper>
-      )}
+      {userCreationOnGoing && <LoaderBook text="Submitting" />}
       {userCreationSuccessfulMsg && (
         <RequestResult msg={userCreationSuccessfulMsg} reqStatus="success" />
       )}
