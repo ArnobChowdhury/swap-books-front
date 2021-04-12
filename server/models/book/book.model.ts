@@ -121,6 +121,11 @@ export default class Book {
       .toArray();
   }
 
+  static async getNumberOfBooksByUser(userId: mongodb.ObjectId) {
+    const db = getDb();
+    return db.collection('books').countDocuments({ userId });
+  }
+
   static async addInterestTransaction(
     bookId: string,
     bookName: string,
@@ -334,7 +339,6 @@ export default class Book {
         );
       });
     } catch (err) {
-      console.log('errors from book model', err);
       throw err;
     } finally {
       session.endSession();

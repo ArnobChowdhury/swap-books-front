@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs';
 import createHttpError from 'http-errors';
 import { HttpException } from '../../interface';
 import User from '../../models/user';
+import Book from '../../models/book';
 import {
   generateJWT,
   verifyRefreshToken,
@@ -165,7 +166,9 @@ export const login: (
       throw new createHttpError.Unauthorized('This account is not verified yet.');
     }
 
-    const { _id: dbId, password: dbPassword, name, locationObj } = user;
+    const { _id: userIdAsMongoId, password: dbPassword, name, locationObj } = user;
+    const booksAvailableToSwap = await Book.getNumberOfBooksByUser(userIdAsMongoId);
+
     let userLon: number | null = null;
     let userLat: number | null = null;
     if (locationObj) {
@@ -178,7 +181,7 @@ export const login: (
       err.statusCode = 401;
       throw err;
     }
-    const userId = dbId.toString();
+    const userId = userIdAsMongoId.toString();
 
     res.status(200).json({
       name,
@@ -188,6 +191,7 @@ export const login: (
       expiresIn: 3600,
       userLon,
       userLat,
+      booksAvailableToSwap,
     });
   } catch (err) {
     if (!err.statusCode) {

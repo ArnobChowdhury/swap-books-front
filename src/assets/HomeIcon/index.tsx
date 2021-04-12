@@ -21,9 +21,9 @@ export const HomeIcon = ({
         d="M22.3333 13.6666V27H15.6667V17.6666H10.3333V27H3.66667V13.6666H1L13 1.66663L25 13.6666H22.3333Z"
         fill={hasBodyColor ? colorTextPrimary : colorWhite}
         stroke={colorTextPrimary}
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   );

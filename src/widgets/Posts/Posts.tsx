@@ -46,7 +46,7 @@ export const Posts = ({ profileId }: PostProps): JSX.Element => {
     (store: RootState) => store.books,
   );
 
-  const { name: userName, userLon, userLat } = useSelector(
+  const { name: userName, userLon, userLat, booksAvailableToSwap } = useSelector(
     (store: RootState) => store.user,
   );
   const { accessToken, userId } = useSelector((s: RootState) => s.auth);
@@ -118,7 +118,12 @@ export const Posts = ({ profileId }: PostProps): JSX.Element => {
           bookOwnerName={bookOwnerName}
           imgUrl={`${process.env.NEXT_PUBLIC_BASE_URL}${bookPicturePath}`}
           onInterestButtonClick={() => {
-            if (isSignedIn && socketIo !== undefined && userName) {
+            if (
+              isSignedIn &&
+              socketIo !== undefined &&
+              userName &&
+              booksAvailableToSwap > 0
+            ) {
               dispatch(
                 expressInterestStart(
                   socketIo,

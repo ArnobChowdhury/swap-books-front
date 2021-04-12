@@ -4,6 +4,8 @@ import Room from '../../models/room';
 import { ModifiedRequest } from '../../interface';
 import { processUserInfo } from '../../utils/general';
 import createError from 'http-errors';
+import Book from '../../models/book';
+import mongodb from 'mongodb';
 
 export const getUserInfo = async (
   req: Request,
@@ -13,13 +15,12 @@ export const getUserInfo = async (
   const { userId } = req as ModifiedRequest;
   try {
     const user = await User.getUserNameAndLoc(userId as string);
-    console.log(user);
+    const userIdAsMongoId = new mongodb.ObjectID(userId);
+    const booksAvailableToSwap = await Book.getNumberOfBooksByUser(userIdAsMongoId);
     if (user) {
       const userProcessed = processUserInfo(user);
-      console.log(userProcessed);
-      res.status(201).json(userProcessed);
+      res.status(201).json({ ...userProcessed, booksAvailableToSwap });
     } else {
-      // TODO Throw err 400
       throw new createError.NotFound('User NOT Found!');
     }
   } catch (err) {

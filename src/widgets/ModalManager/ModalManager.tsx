@@ -8,12 +8,13 @@ import { authRequest } from 'redux/actions/auth';
 import { addABookRequest, addABookRefresh } from 'redux/actions/book';
 import { FormikHelpers } from 'formik';
 import { NeedAuth } from 'modules/NeedAuth';
+import { NeedBook } from 'modules/NeedBook';
 import { Location } from 'widgets/Location';
 import { RootState } from 'redux/reducers';
 import { useRouter } from 'next/router';
 
 export const ModalManager = (): JSX.Element => {
-  const { showModal, setShowModal, popupType } = useContext(
+  const { showModal, setPopupType, setShowModal, popupType } = useContext(
     RootContext,
   ) as RootContextProps;
 
@@ -41,10 +42,19 @@ export const ModalManager = (): JSX.Element => {
     dispatch(addABookRefresh());
   };
 
-  const { loading: loginSubmitting, error } = useSelector((s: RootState) => s.auth);
+  const handleAddBookButtonClick = () => {
+    dispatch(addABookRefresh());
+    setPopupType('addABook');
+  };
+
+  const { loading: loginSubmitting, error, accessToken } = useSelector(
+    (s: RootState) => s.auth,
+  );
   const { addBookReqOnGoing, addBookReqErr, addBookReqSuccessMsg } = useSelector(
     (s: RootState) => s.books,
   );
+
+  const isSignedIn = Boolean(accessToken);
 
   return (
     <>
@@ -68,7 +78,8 @@ export const ModalManager = (): JSX.Element => {
       )}
       {showModal && popupType === 'requireLoginOrSignup' && (
         <Modal onClick={() => setShowModal(false)}>
-          <NeedAuth />
+          {!isSignedIn && <NeedAuth />}
+          {isSignedIn && <NeedBook onAddButtonClick={handleAddBookButtonClick} />}
         </Modal>
       )}
       {showModal && popupType === 'location' && (

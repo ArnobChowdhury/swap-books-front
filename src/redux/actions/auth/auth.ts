@@ -69,6 +69,7 @@ export const updateUserInfo = (
   userCreationSuccessful: boolean,
   userLon: number | null,
   userLat: number | null,
+  booksAvailableToSwap: number,
 ) => {
   return {
     type: UPDATE_USER_INFO,
@@ -76,6 +77,7 @@ export const updateUserInfo = (
     userCreationSuccessful,
     userLon,
     userLat,
+    booksAvailableToSwap,
   };
 };
 
@@ -92,7 +94,7 @@ export const authLogout = () => {
     return axios
       .post('/auth/logout', { userId })
       .then(() => {
-        dispatch(updateUserInfo(null, false, null, null));
+        dispatch(updateUserInfo(null, false, null, null, 0));
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
         localStorage.removeItem('userId');
@@ -151,6 +153,7 @@ export const authRequest = (
           expiresIn,
           userLon,
           userLat,
+          booksAvailableToSwap,
         } = response.data;
 
         const expirationDate = new Date().getTime() + expiresIn * 1000;
@@ -166,6 +169,7 @@ export const authRequest = (
             true,
             !userLon ? null : userLon,
             !userLat ? null : userLat,
+            booksAvailableToSwap,
           ),
         );
         const noRedirectRoutes = [
@@ -211,13 +215,14 @@ export const authCheckState = () => {
       return axios
         .get(path)
         .then(res => {
-          const { name, userLon, userLat } = res.data;
+          const { name, userLon, userLat, booksAvailableToSwap } = res.data;
           dispatch(
             updateUserInfo(
               name,
               true,
               !userLon ? null : userLon,
               !userLat ? null : userLat,
+              booksAvailableToSwap,
             ),
           );
         })

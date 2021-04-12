@@ -28,6 +28,7 @@ export interface UserState {
   verifyEmailReqOnGoing: boolean;
   verifyEmailSuccessMsg: string | null;
   verifyEmailErr: { message: string; status: number } | null;
+  booksAvailableToSwap: number;
 }
 
 export const initialState: UserState = {
@@ -43,6 +44,7 @@ export const initialState: UserState = {
   verifyEmailReqOnGoing: false,
   verifyEmailSuccessMsg: null,
   verifyEmailErr: null,
+  booksAvailableToSwap: 0,
 };
 
 const reducer = (state = initialState, action: AnyAction) => {
@@ -58,6 +60,7 @@ const reducer = (state = initialState, action: AnyAction) => {
     locationUpdatetError,
     verifyEmailSuccessMsg,
     verifyEmailErr,
+    booksAvailableToSwap,
   } = action;
   switch (action.type) {
     case HYDRATE:
@@ -91,6 +94,7 @@ const reducer = (state = initialState, action: AnyAction) => {
         sex,
         userLon,
         userLat,
+        booksAvailableToSwap,
       };
     case UPDATE_USER_LOC_START:
       return {
