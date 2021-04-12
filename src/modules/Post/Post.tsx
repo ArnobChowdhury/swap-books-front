@@ -9,6 +9,7 @@ import {
   PostBottom,
   PostOptionWrapper,
   PostOwner,
+  ValidTillTime,
 } from './Post.styles';
 import { InterestIcon } from 'assets/InterestIcon';
 import { IconButton } from 'ui-kits/IconButton';
@@ -19,6 +20,7 @@ import { BookAuthorIcon } from 'assets/BookAuthorIcon';
 import { CloseIcon } from 'assets/CloseIcon';
 import { PostButtonSmall } from 'components/PostButtonSmall';
 import { useWindowSize } from 'hooks/useWindowSize';
+import { formatDistanceToNow } from 'date-fns';
 
 export interface PostProps {
   imgUrl: string;
@@ -33,6 +35,7 @@ export interface PostProps {
   isOwners: boolean;
   postOptions?: PostOptionProps['options'];
   isUsersProfile: boolean;
+  validTill: string;
 }
 
 export const Post = ({
@@ -48,6 +51,7 @@ export const Post = ({
   isOwners,
   postOptions,
   isUsersProfile,
+  validTill,
 }: PostProps): JSX.Element => {
   const { width } = useWindowSize();
   return (
@@ -57,6 +61,7 @@ export const Post = ({
         {bookOwnerName}
       </PostOwner>
       <ImageWrapper>
+        <ValidTillTime>{formatDistanceToNow(new Date(validTill))}</ValidTillTime>
         <Image src={imgUrl} alt={`image of book named: ${bookName}`} />
       </ImageWrapper>
       <PostBottom>

@@ -108,6 +108,7 @@ export const Posts = ({ profileId }: PostProps): JSX.Element => {
         bookOwnerId,
         userIsInterested,
         reqOnGoing,
+        validTill,
       } = el;
 
       // todo if the expressing interest network activity goes wrong what do we do???
@@ -152,6 +153,7 @@ export const Posts = ({ profileId }: PostProps): JSX.Element => {
           isOwners={bookOwnerId === userId}
           key={bookId}
           isUsersProfile={isUsersProfile}
+          validTill={validTill}
         />
       );
     });

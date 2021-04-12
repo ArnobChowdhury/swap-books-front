@@ -126,7 +126,16 @@ export const fetchBooksFail = (error: any) => {
  * This Book interface can be combined with the interface of the backend
  * when we are sending the data
  */
-const processBooks = (book: {
+const processBooks = ({
+  _id,
+  bookName,
+  bookAuthor,
+  bookPicturePath,
+  userId,
+  bookOwnerName,
+  isInterested,
+  validTill,
+}: {
   _id: string;
   bookName: string;
   bookAuthor: string;
@@ -134,17 +143,19 @@ const processBooks = (book: {
   userId: string;
   bookOwnerName: string;
   isInterested: string;
+  validTill: string;
 }) => {
   return {
-    bookId: book._id,
-    bookName: book.bookName,
-    bookAuthor: book.bookAuthor,
-    bookPicturePath: book.bookPicturePath,
-    bookOwnerId: book.userId,
-    bookOwnerName: book.bookOwnerName,
-    userIsInterested: book.isInterested,
+    bookId: _id,
+    bookName,
+    bookAuthor,
+    bookPicturePath,
+    bookOwnerId: userId,
+    bookOwnerName,
+    userIsInterested: isInterested,
     reqOnGoing: false,
     reqError: null,
+    validTill,
   };
 };
 

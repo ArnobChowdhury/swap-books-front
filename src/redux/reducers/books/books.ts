@@ -29,6 +29,7 @@ export interface BookShape {
   userIsInterested: boolean;
   reqOnGoing: boolean;
   reqError: string | null | Error;
+  validTill: string;
 }
 
 export interface BooksState {

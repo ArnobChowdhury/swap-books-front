@@ -70,6 +70,9 @@ export default {
         },
       ],
     },
+    validTill: {
+      defaultValue: '2021-04-22T12:12:25.762Z',
+    },
   },
 } as Meta;
 

@@ -26,7 +26,6 @@ export const PostOwner = styled.div`
   padding: ${({ theme }) => `0 ${theme.spaceSeven}`};
 `;
 
-// TODO delete if not used
 export const ImageWrapper = styled.div`
   position: relative;
   height: 420px;
@@ -46,6 +45,17 @@ export const Image = styled.img`
   @media (min-width: 450px) {
     object-fit: contain;
   }
+`;
+
+export const ValidTillTime = styled.div`
+  position: absolute;
+  top: ${({ theme }) => theme.spaceFive};
+  right: ${({ theme }) => theme.spaceFive};
+  padding: ${({ theme }) => `${theme.spaceFour} ${theme.spaceSix}`};
+  background: ${({ theme }) => theme.colorPrimary2};
+  border-radius: 20px;
+  text-transform: capitalize;
+  color: ${({ theme }) => theme.colorLogoBlue};
 `;
 
 export const ContentWrapper = styled.div`
