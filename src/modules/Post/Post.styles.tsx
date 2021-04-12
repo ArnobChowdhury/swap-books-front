@@ -56,6 +56,7 @@ export const ValidTillTime = styled.div`
   border-radius: 20px;
   text-transform: capitalize;
   color: ${({ theme }) => theme.colorLogoBlue};
+  box-shadow: ${({ theme }) => theme.boxShadow};
 `;
 
 export const ContentWrapper = styled.div`

@@ -121,6 +121,18 @@ export const fetchBooksFail = (error: any) => {
   return { type: FETCH_BOOKS_FAIL, error: error };
 };
 
+const makeBookStale = (unavilableBookId: string, expiryDate: string) => {
+  return async (dispath: Dispatch) => {
+    const timeLeft = new Date(expiryDate).getTime() - new Date().getTime();
+    setTimeout(() => {
+      dispath({
+        type: MAKE_UNAVAILABLE_SUCCESS,
+        unavilableBookId,
+      });
+    }, timeLeft);
+  };
+};
+
 /**
  * TODO: For later
  * This Book interface can be combined with the interface of the backend
@@ -174,8 +186,19 @@ export const fetchBooksRequest = (
       .then(response => {
         const { message, books } = response.data;
         const booksStructured: BookShape[] = books.map(processBooks);
+        const booksFiltered = booksStructured.filter(book => {
+          const { validTill } = book;
+          const timeNow = new Date().getTime();
+          const expiry = new Date(validTill).getTime();
+          return timeNow < expiry;
+        });
+        booksFiltered.forEach(book => {
+          const { bookId, validTill } = book;
+          // @ts-ignore
+          dispatch(makeBookStale(bookId, validTill));
+        });
         const type = page === 1 ? FETCH_BOOKS_SUCCESS : FETCH_MORE_BOOKS_SUCCESS;
-        dispatch(fetchBooksSuccess(booksStructured, type, page));
+        dispatch(fetchBooksSuccess(booksFiltered, type, page));
       })
       .catch(err => {
         // todo need to check what kind of possible errors we can get???
