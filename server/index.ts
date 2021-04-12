@@ -2,15 +2,18 @@ import next from 'next';
 import path from 'path';
 import cors from 'cors';
 import express, { Request, Response, NextFunction, Express } from 'express';
+import mongodb from 'mongodb';
 import bodyParser from 'body-parser';
 import { Server } from 'socket.io';
 import { createServer } from 'http';
+import schedule from 'node-schedule';
 import { HttpException, SocketDecoded } from './interface';
 import morgan from 'morgan';
 import socketioJwt from 'socketio-jwt';
 import authRoutes from './routes/auth';
 import booksRoutes from './routes/books';
 import userRoutes from './routes/user';
+import Book from './models/book';
 import {
   saveSocketToRedis,
   expressInterest,
@@ -115,6 +118,30 @@ app.prepare().then(() => {
   server.use('/auth', authRoutes);
   server.use('/books', booksRoutes);
   server.use('/user', userRoutes);
+
+  // SCHEDULER TO DELETE ALL EXPIRED BOOKS
+
+  schedule.scheduleJob('* * * * *', async () => {
+    const books = await Book.getStaleBookIds();
+    console.log('Deleting book -', books);
+    if (books.length > 0) {
+      books.forEach(
+        async ({
+          _id,
+          userId,
+        }: {
+          _id: mongodb.ObjectId;
+          userId: mongodb.ObjectId;
+        }) => {
+          const bookIdAsMongoId = _id.toHexString();
+          const userIdAsMongoId = userId.toHexString();
+          await Book.removeBook(bookIdAsMongoId, userIdAsMongoId);
+        },
+      );
+    }
+  });
+
+  // NEXT JS CONFIGS
 
   server.all('*', (req, res) => {
     return handle(req, res);

@@ -33,9 +33,7 @@ export const ModalManager = (): JSX.Element => {
     { bookname, bookauthor, bookimage }: BookType,
     { setSubmitting }: FormikHelpers<BookType>,
   ) => {
-    dispatch(
-      addABookRequest(bookname, bookauthor, bookimage, setSubmitting, setShowModal),
-    );
+    dispatch(addABookRequest(bookname, bookauthor, bookimage, setSubmitting));
   };
 
   const handleAddAnotherBook = () => {

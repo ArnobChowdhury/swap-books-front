@@ -13,7 +13,7 @@ export const addABook = async (
   res: Response,
   next: NextFunction,
 ): Promise<void> => {
-  const { bookName, bookAuthor } = req.body;
+  const { bookName, bookAuthor, createdAt } = req.body;
   const { filename } = req.file;
   const { userId } = req as ModifiedRequest;
   const bookPicturePath = `images/${filename}`;
@@ -31,6 +31,7 @@ export const addABook = async (
           bookOwnerName,
           new ObjectId(userId),
           coordinates,
+          Number(createdAt),
         );
         const result = await book.save();
         const { insertedId: bookId } = result;

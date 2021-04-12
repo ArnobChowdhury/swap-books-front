@@ -7,6 +7,9 @@ export const addBookSchema = Yup.object({
   bookAuthor: Yup.string()
     .max(200, 'Name of book authors cannot be more than 200 characters.')
     .required('Required field.'),
+  createdAt: Yup.string()
+    .max(13, 'Not valid date')
+    .required('Required field.'),
   filename: Yup.string().required('Need an image.'),
 });
 

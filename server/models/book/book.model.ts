@@ -27,6 +27,8 @@ export default class Book {
 
   interestedUsers: mongodb.ObjectId[];
 
+  validTill: Date;
+
   constructor(
     bookName: string,
     bookAuthor: string,
@@ -34,6 +36,7 @@ export default class Book {
     bookOwnerName: string,
     userId: mongodb.ObjectId,
     coordinates: number[],
+    createdAt: number,
     id?: number,
   ) {
     this.bookName = bookName;
@@ -45,6 +48,7 @@ export default class Book {
       type: 'Point',
       coordinates,
     };
+    this.validTill = new Date(createdAt + 10 * 24 * 60 * 60 * 1000);
     this._id = id;
     this.interestedUsers = [];
   }
@@ -124,6 +128,15 @@ export default class Book {
   static async getNumberOfBooksByUser(userId: mongodb.ObjectId) {
     const db = getDb();
     return db.collection('books').countDocuments({ userId });
+  }
+
+  static async getStaleBookIds() {
+    const db = getDb();
+    return db
+      .collection('books')
+      .find({ validTill: { $lte: new Date() } })
+      .project({ _id: 1, userId: 1 })
+      .toArray();
   }
 
   static async addInterestTransaction(
@@ -306,7 +319,6 @@ export default class Book {
           _id: bookIdAsMongoId,
           userId: userIdAsMongoId,
         });
-        console.log('deleted Book', deletedBook);
 
         // TODO Throw error if document is not found
         if (deletedBook.value.interestedUsers.length > 0) {

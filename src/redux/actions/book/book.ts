@@ -53,14 +53,18 @@ export const addABookRequest = (
   bookauthor: string,
   bookimage: any,
   formikSetSubmitting: (submissionResolved: boolean) => void,
-  setShowModal: React.Dispatch<React.SetStateAction<boolean>>,
 ) => {
   return async (dispatch: Dispatch) => {
     dispatch(addABookStart());
+
     const fd = new FormData();
+    const createdAt = String(new Date().getTime());
+
     fd.append('bookName', bookname);
     fd.append('bookAuthor', bookauthor);
     fd.append('bookImage', bookimage);
+    fd.append('createdAt', createdAt);
+
     const path = '/books/add';
     // todo below put method should be changed to post method.
     return axios
