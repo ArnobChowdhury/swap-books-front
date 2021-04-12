@@ -76,7 +76,7 @@ export default class Message {
     const db = getDb();
     const recentMessagesFromDb = await db
       .collection('messages')
-      .find<MessageWithId>({ roomId: new ObjectId(roomId) })
+      .find({ roomId: new ObjectId(roomId) })
       .sort({ _id: -1 })
       .limit(20)
       .toArray();

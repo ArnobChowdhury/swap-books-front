@@ -105,7 +105,7 @@ export default class Room {
 
     const notifications = await db
       .collection('rooms')
-      .find<RoomWithLastModifiedAndID>({
+      .find({
         participants: {
           $elemMatch: {
             userId: userIdAsMongoId,
