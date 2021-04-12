@@ -309,36 +309,38 @@ export default class Book {
         console.log('deleted Book', deletedBook);
 
         // TODO Throw error if document is not found
-
-        await usersCollection.bulkWrite(
-          (deletedBook.value as Book).interestedUsers.map(user => {
-            return {
-              updateOne: {
-                filter: {
-                  _id: user,
-                },
-                update: {
-                  $pull: {
-                    currentInterests: bookIdAsMongoId,
+        if (deletedBook.value.interestedUsers.length > 0) {
+          await usersCollection.bulkWrite(
+            deletedBook.value.interestedUsers.map((user: mongodb.ObjectId) => {
+              return {
+                updateOne: {
+                  filter: {
+                    _id: user,
+                  },
+                  update: {
+                    $pull: {
+                      currentInterests: bookIdAsMongoId,
+                    },
                   },
                 },
-              },
-            };
-          }),
-        );
+              };
+            }),
+          );
 
-        await roomsCollection.updateMany(
-          { 'participants.userId': userIdAsMongoId },
-          {
-            $pull: {
-              'participants.$.interests': {
-                bookId,
+          await roomsCollection.updateMany(
+            { 'participants.userId': userIdAsMongoId },
+            {
+              $pull: {
+                'participants.$.interests': {
+                  bookId,
+                },
               },
             },
-          },
-        );
+          );
+        }
       });
     } catch (err) {
+      console.log('err thrown inside catch block', err);
       throw err;
     } finally {
       session.endSession();

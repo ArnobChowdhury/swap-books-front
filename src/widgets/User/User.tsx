@@ -12,10 +12,13 @@ export const User = ({ profileId }: UserProps) => {
   const { profileName, numberOfbooksAvailable } = useSelector(
     (s: RootState) => s.profile,
   );
-  const { books } = useSelector((s: RootState) => s.books);
-  // const { name: userName } = useSelector((store: RootState) => store.user);
+  const { userId } = useSelector((s: RootState) => s.auth);
+  const { booksAvailableToSwap: booksAvailableToSwapByUser } = useSelector(
+    (s: RootState) => s.user,
+  );
 
   const dispatch = useDispatch();
+  const isUsers = userId === profileId;
 
   useEffect(() => {
     if (process.browser) {
@@ -26,7 +29,9 @@ export const User = ({ profileId }: UserProps) => {
   return (
     <UserInfo
       userName={profileName ? profileName : ''}
-      numOfAvailableBooks={numberOfbooksAvailable}
+      numOfAvailableBooks={
+        isUsers ? booksAvailableToSwapByUser : numberOfbooksAvailable
+      }
     />
   );
 };

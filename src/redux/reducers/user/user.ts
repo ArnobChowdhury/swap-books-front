@@ -13,6 +13,8 @@ import {
   VERIFY_EMAIL_START,
   VERIFY_EMAIL_SUCCESS,
   VERIFY_EMAIL_FAIL,
+  ADD_A_BOOK_SUCCESS,
+  MAKE_UNAVAILABLE_SUCCESS,
 } from '../../actions/actionTypes';
 
 export interface UserState {
@@ -114,6 +116,13 @@ const reducer = (state = initialState, action: AnyAction) => {
         locationUpdatetError,
         locationUpdatetOnGoing: false,
       };
+    case ADD_A_BOOK_SUCCESS:
+      const { booksAvailableToSwap: currentCount } = state;
+      return { ...state, booksAvailableToSwap: currentCount + 1 };
+    case MAKE_UNAVAILABLE_SUCCESS: {
+      const { booksAvailableToSwap: currentCount } = state;
+      return { ...state, booksAvailableToSwap: currentCount - 1 };
+    }
     default:
       return state;
   }
