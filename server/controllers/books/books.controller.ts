@@ -53,6 +53,30 @@ export const addABook = async (
   }
 };
 
+export const extendBookValidity = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  const { bookId: bookIdFromClient, requestedAt } = req.body;
+  try {
+    const updatedBook = await Book.extendBookValidity(
+      bookIdFromClient,
+      Number(requestedAt),
+    );
+    const { _id: bookId, validTill } = updatedBook;
+
+    res
+      .status(201)
+      .json({ message: 'Extended for next ten days!', bookId, validTill });
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
+};
+
 export const deleteABook = async (
   req: Request,
   res: Response,

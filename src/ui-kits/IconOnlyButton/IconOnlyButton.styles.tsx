@@ -12,6 +12,7 @@ export const StyledButton = styled.button<{ size?: number }>`
   width: ${({ theme, size }) => (size ? `${size}px` : theme.spaceTen)};
   min-width: ${({ theme, size }) => (size ? `${size}px` : theme.spaceTen)};
   border-radius: 50%;
+  padding: ${({ theme }) => theme.spaceOne};
 
   &:active {
     background: ${({ theme }) => theme.colorBG};

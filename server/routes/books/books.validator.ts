@@ -16,3 +16,8 @@ export const addBookSchema = Yup.object({
 export const deleteBookSchema = Yup.object({
   bookId: Yup.string().required('Need bookId'),
 });
+
+export const extendBookValiditySchema = Yup.object({
+  bookId: Yup.string().required('Need bookId'),
+  requestedAt: Yup.string().required('Need validity'),
+});

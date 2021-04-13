@@ -68,6 +68,12 @@ export default {
             /** */
           },
         },
+        {
+          name: 'Make available for another 10 days',
+          onClick: () => {
+            /** */
+          },
+        },
       ],
     },
     validTill: {

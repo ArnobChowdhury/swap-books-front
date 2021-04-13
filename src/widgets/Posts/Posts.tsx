@@ -6,6 +6,7 @@ import {
   expressInterestStart,
   makeUnavailableRequest,
   booksResetToNil,
+  availableTenMoreDaysReq,
 } from 'redux/actions/book';
 import { RootState } from 'redux/reducers';
 import { SocketIoContext } from 'hoc/Sockets';
@@ -109,9 +110,13 @@ export const Posts = ({ profileId }: PostProps): JSX.Element => {
         userIsInterested,
         reqOnGoing,
         validTill,
+        availableTenMoreDaysReqOnGoing,
+        availableTenMoreDaysSuccessMsg,
+        availableTenMoreDaysErr,
       } = el;
 
       // todo if the expressing interest network activity goes wrong what do we do???
+      const isOwners = bookOwnerId === userId;
       return (
         <Post
           bookName={bookName}
@@ -150,10 +155,16 @@ export const Posts = ({ profileId }: PostProps): JSX.Element => {
           isInterested={userIsInterested}
           topMargin
           reqOnGoing={reqOnGoing}
-          isOwners={bookOwnerId === userId}
+          isOwners={isOwners}
           key={bookId}
           isUsersProfile={isUsersProfile}
           validTill={validTill}
+          onAvailableButtonClick={() => {
+            dispatch(availableTenMoreDaysReq(bookId));
+          }}
+          availableTenMoreDaysReqOnGoing={availableTenMoreDaysReqOnGoing}
+          availableTenMoreDaysSuccessMsg={availableTenMoreDaysSuccessMsg}
+          availableTenMoreDaysErr={availableTenMoreDaysErr}
         />
       );
     });

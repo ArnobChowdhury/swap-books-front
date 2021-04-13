@@ -10,7 +10,8 @@ export const ReqMsg = styled.div`
   line-height: 26px;
 `;
 
-export const IconContainer = styled.div`
+export const IconContainer = styled.div<{ noBottomMarginAfterIcon?: boolean }>`
   text-align: center;
-  margin-bottom: ${({ theme }) => theme.spaceSeven};
+  margin-bottom: ${({ theme, noBottomMarginAfterIcon }) =>
+    !noBottomMarginAfterIcon && theme.spaceSeven};
 `;

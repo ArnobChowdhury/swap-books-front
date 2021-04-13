@@ -12,6 +12,8 @@ import {
   ValidTillTime,
 } from './Post.styles';
 import { InterestIcon } from 'assets/InterestIcon';
+import { EditIcon } from 'assets/EditIcon';
+import { TenDaysValidityIcon } from 'assets/TenDaysValidityIcon';
 import { IconButton } from 'ui-kits/IconButton';
 import { UserIcon } from 'ui-kits/UserIcon';
 import { PostOption, PostOptionProps } from 'components/PostOption';
@@ -33,9 +35,13 @@ export interface PostProps {
   onInterestButtonClick?: (e: MouseEvent<HTMLButtonElement>) => void;
   onUnavailableButtonClick?: (e: MouseEvent<HTMLButtonElement>) => void;
   isOwners: boolean;
-  postOptions?: PostOptionProps['options'];
   isUsersProfile: boolean;
   validTill: string;
+  onEditButtonClick?: () => void;
+  onAvailableButtonClick?: () => void;
+  availableTenMoreDaysReqOnGoing?: boolean;
+  availableTenMoreDaysSuccessMsg?: string | null;
+  availableTenMoreDaysErr?: { message: string; status: number } | null;
 }
 
 export const Post = ({
@@ -49,11 +55,25 @@ export const Post = ({
   onInterestButtonClick,
   onUnavailableButtonClick,
   isOwners,
-  postOptions,
   isUsersProfile,
   validTill,
+  onEditButtonClick,
+  onAvailableButtonClick,
+  availableTenMoreDaysReqOnGoing,
+  availableTenMoreDaysSuccessMsg,
+  availableTenMoreDaysErr,
 }: PostProps): JSX.Element => {
   const { width } = useWindowSize();
+
+  const postOwnersOptions: PostOptionProps['options'] = [
+    { name: 'Edit', iconComponent: <EditIcon />, onClick: onEditButtonClick },
+    {
+      name: 'Mark Available for 10 days',
+      iconComponent: <TenDaysValidityIcon />,
+      onClick: onAvailableButtonClick,
+    },
+  ];
+
   return (
     <PostWrapper requestOnGoing={reqOnGoing} topMargin={topMargin}>
       <PostOwner>
@@ -119,10 +139,14 @@ export const Post = ({
           />
         )}
       </PostBottom>
-      {/**Todo: Post option should be changed later */}
-      {postOptions && (
+      {isOwners && (
         <PostOptionWrapper>
-          <PostOption options={postOptions} />
+          <PostOption
+            options={postOwnersOptions}
+            availableTenMoreDaysErr={availableTenMoreDaysErr}
+            availableTenMoreDaysSuccessMsg={availableTenMoreDaysSuccessMsg}
+            availableTenMoreDaysReqOnGoing={availableTenMoreDaysReqOnGoing}
+          />
         </PostOptionWrapper>
       )}
     </PostWrapper>

@@ -1,6 +1,5 @@
 import { Input } from 'components/Input';
 import { Button } from 'ui-kits/Button';
-import { Spinner } from 'ui-kits/Spinner';
 import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
 import { forgotPasswordReq } from 'redux/actions/auth';

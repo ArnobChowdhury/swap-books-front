@@ -139,6 +139,23 @@ export default class Book {
       .toArray();
   }
 
+  static async extendBookValidity(
+    bookId: string,
+    requestedAt: number,
+  ): Promise<Book> {
+    const db = getDb();
+    const bookIdAsMongoId = new ObjectId(bookId);
+    const validTill = new Date(requestedAt + 10 * 24 * 60 * 60 * 1000);
+    const updateDoc = await db
+      .collection('books')
+      .findOneAndUpdate(
+        { _id: bookIdAsMongoId },
+        { $set: { validTill } },
+        { returnOriginal: false },
+      );
+    return updateDoc.value;
+  }
+
   static async addInterestTransaction(
     bookId: string,
     bookName: string,

@@ -50,7 +50,7 @@ export const Image = styled.img`
 export const ValidTillTime = styled.div`
   position: absolute;
   top: ${({ theme }) => theme.spaceFive};
-  right: ${({ theme }) => theme.spaceFive};
+  right: ${({ theme }) => theme.spaceSeven};
   padding: ${({ theme }) => `${theme.spaceFour} ${theme.spaceSix}`};
   background: ${({ theme }) => theme.colorPrimary2};
   border-radius: 20px;
@@ -110,8 +110,8 @@ export const PostBottom = styled.div`
 
 export const PostOptionWrapper = styled.div`
   position: absolute;
-  right: ${({ theme }) => theme.spaceFive};
-  top: ${({ theme }) => theme.spaceFive};
+  right: ${({ theme }) => theme.spaceSeven};
+  top: ${({ theme }) => theme.spaceSeven};
 `;
 // POST SHIMMER STYLES
 

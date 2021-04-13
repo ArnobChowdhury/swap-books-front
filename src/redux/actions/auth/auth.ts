@@ -231,6 +231,7 @@ export const authCheckState = () => {
           dispatch(authLogout());
         });
     }
+    // TODO Else ask for ask for a new token with refresh token or get rid of time guard in previous if block
   };
 };
 

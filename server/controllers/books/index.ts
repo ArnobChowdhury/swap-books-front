@@ -3,4 +3,5 @@ export {
   deleteABook,
   getHomeFeedBooks,
   getProfileBooks,
+  extendBookValidity,
 } from './books.controller';

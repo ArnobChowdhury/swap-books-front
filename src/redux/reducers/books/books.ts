@@ -17,6 +17,10 @@ import {
   MAKE_UNAVAILABLE_START,
   MAKE_UNAVAILABLE_SUCCESS,
   MAKE_UNAVAILABLE_FAIL,
+  AVAILABLE_TEN_MORE_DAYS_START,
+  AVAILABLE_TEN_MORE_DAYS_SUCCESS,
+  AVAILABLE_TEN_MORE_DAYS_FAIL,
+  AVAILABLE_TEN_MORE_DAYS_REFRESH,
 } from '../../actions/actionTypes';
 
 export interface BookShape {
@@ -30,6 +34,9 @@ export interface BookShape {
   reqOnGoing: boolean;
   reqError: string | null | Error;
   validTill: string;
+  availableTenMoreDaysReqOnGoing: boolean;
+  availableTenMoreDaysSuccessMsg: string | null;
+  availableTenMoreDaysErr: { message: string; status: number } | null;
 }
 
 export interface BooksState {
@@ -67,29 +74,43 @@ const reducer = (state = initialState, action: AnyAction) => {
     unavilableErr,
     addBookReqSuccessMsg,
     addBookReqErr,
+    availableTenDaysBookId,
+    availableTenDaysExpiry,
+    availableTenMoreDaysSuccessMsg,
+    availableTenMoreDaysErr,
   } = action;
+
   switch (action.type) {
     case HYDRATE:
       // our action do not return a property named payload
       return { ...state };
+
     case BOOKS_RESET_TO_NIL:
       return { ...initialState };
+
     case FETCH_BOOKS_START:
       return { ...state, loading: true };
+
     case FETCH_BOOKS_SUCCESS:
       return { ...state, loading: false, books, page, hasMorePages };
+
     case FETCH_MORE_BOOKS_SUCCESS:
       const prevBooks = state.books;
       const newBooks = [...prevBooks, ...books];
       return { ...state, loading: false, books: newBooks, page, hasMorePages };
+
     case FETCH_BOOKS_FAIL:
       return { ...state, loading: false, error };
+
     case ADD_A_BOOK_START:
       return { ...state, addBookReqOnGoing: true };
+
     case ADD_A_BOOK_SUCCESS:
       return { ...state, addBookReqOnGoing: false, addBookReqSuccessMsg };
+
     case ADD_A_BOOK_FAIL:
       return { ...state, addBookReqOnGoing: false, addBookReqErr };
+
     case ADD_A_BOOK_REFRESH:
       return {
         ...state,
@@ -97,6 +118,7 @@ const reducer = (state = initialState, action: AnyAction) => {
         addBookReqErr: null,
         addBookReqSuccessMsg: null,
       };
+
     case EXPRESS_INTEREST_START:
       const allBooks = [...state.books];
       const interestStartedOn = allBooks.find(
@@ -106,6 +128,7 @@ const reducer = (state = initialState, action: AnyAction) => {
         interestStartedOn.reqOnGoing = true;
       }
       return { ...state, books: allBooks };
+
     case EXPRESS_INTEREST_SUCCESS:
       const existingBooks = [...state.books];
       const interestSucceedOn = existingBooks.find(
@@ -116,6 +139,7 @@ const reducer = (state = initialState, action: AnyAction) => {
         interestSucceedOn.reqOnGoing = false;
       }
       return { ...state, books: existingBooks };
+
     case EXPRESS_INTEREST_FAIL:
       const currentBooks = [...state.books];
       const interestFailedOn = currentBooks.find(
@@ -157,6 +181,64 @@ const reducer = (state = initialState, action: AnyAction) => {
         bookMakingUnavailable.reqError = unavilableErr;
       }
       return { ...state, books: currentBooks };
+    }
+
+    case AVAILABLE_TEN_MORE_DAYS_START: {
+      const { books } = state;
+      const newBooks = books.map(book => {
+        if (book.bookId === availableTenDaysBookId) {
+          return { ...book, availableTenMoreDaysReqOnGoing: true };
+        }
+        return book;
+      });
+      return { ...state, books: newBooks };
+    }
+
+    case AVAILABLE_TEN_MORE_DAYS_SUCCESS: {
+      const { books } = state;
+      const newBooks = books.map(book => {
+        if (book.bookId === availableTenDaysBookId) {
+          return {
+            ...book,
+            validTill: availableTenDaysExpiry,
+            availableTenMoreDaysReqOnGoing: false,
+            availableTenMoreDaysSuccessMsg,
+          };
+        }
+        return book;
+      });
+      return { ...state, books: newBooks };
+    }
+
+    case AVAILABLE_TEN_MORE_DAYS_FAIL: {
+      const { books } = state;
+      const newBooks = books.map(book => {
+        if (book.bookId === availableTenDaysBookId) {
+          return {
+            ...book,
+            availableTenMoreDaysReqOnGoing: false,
+            availableTenMoreDaysErr,
+          };
+        }
+        return book;
+      });
+      return { ...state, books: newBooks };
+    }
+
+    case AVAILABLE_TEN_MORE_DAYS_REFRESH: {
+      const { books } = state;
+      const newBooks = books.map(book => {
+        if (book.bookId === availableTenDaysBookId) {
+          return {
+            ...book,
+            availableTenMoreDaysReqOnGoing: false,
+            availableTenMoreDaysSuccessMsg: null,
+            availableTenMoreDaysErr: null,
+          };
+        }
+        return book;
+      });
+      return { ...state, books: newBooks };
     }
 
     default:

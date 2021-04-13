@@ -19,6 +19,10 @@ import {
   MAKE_UNAVAILABLE_SUCCESS,
   MAKE_UNAVAILABLE_FAIL,
   BOOKS_RESET_TO_NIL,
+  AVAILABLE_TEN_MORE_DAYS_START,
+  AVAILABLE_TEN_MORE_DAYS_SUCCESS,
+  AVAILABLE_TEN_MORE_DAYS_FAIL,
+  AVAILABLE_TEN_MORE_DAYS_REFRESH,
 } from './../actionTypes';
 import { AxiosError } from 'axios';
 
@@ -168,6 +172,9 @@ const processBooks = ({
     reqOnGoing: false,
     reqError: null,
     validTill,
+    availableTenMoreDaysReqOnGoing: false,
+    availableTenMoreDaysSuccessMsg: null,
+    availableTenMoreDaysErr: null,
   };
 };
 
@@ -299,6 +306,83 @@ export const makeUnavailableRequest = (bookId: string) => {
       })
       .catch(err => {
         dispatch(makeUnavailableFail(bookId, err));
+      });
+  };
+};
+
+const availableTenMoreDaysStart = (availableTenDaysBookId: string) => {
+  return {
+    type: AVAILABLE_TEN_MORE_DAYS_START,
+    availableTenDaysBookId,
+  };
+};
+
+const availableTenMoreDaysSuccess = (
+  availableTenDaysBookId: string,
+  availableTenDaysExpiry: string,
+  availableTenMoreDaysSuccessMsg: string,
+) => {
+  return {
+    type: AVAILABLE_TEN_MORE_DAYS_SUCCESS,
+    availableTenDaysBookId,
+    availableTenDaysExpiry,
+    availableTenMoreDaysSuccessMsg,
+  };
+};
+
+const availableTenMoreDaysFail = (
+  availableTenDaysBookId: string,
+  availableTenMoreDaysErr: { message: string; status: number },
+) => {
+  return {
+    type: AVAILABLE_TEN_MORE_DAYS_FAIL,
+    availableTenDaysBookId,
+    availableTenMoreDaysErr,
+  };
+};
+
+const availableTenMoreDaysRefresh = (availableTenDaysBookId: string) => {
+  return async (dispatch: Dispatch) => {
+    setTimeout(() => {
+      dispatch({
+        type: AVAILABLE_TEN_MORE_DAYS_REFRESH,
+        availableTenDaysBookId,
+      });
+    }, 2000);
+  };
+};
+
+export const availableTenMoreDaysReq = (bookId: string) => {
+  return async (dispatch: Dispatch) => {
+    dispatch(availableTenMoreDaysStart(bookId));
+
+    const path = '/books/extend-book-validity';
+    const requestedAt = new Date().getTime();
+
+    return axios
+      .put(path, { bookId, requestedAt })
+      .then(res => {
+        const { message, bookId, validTill } = res.data;
+        dispatch(availableTenMoreDaysSuccess(bookId, validTill, message));
+        // @ts-ignore
+        dispatch(availableTenMoreDaysRefresh(bookId));
+      })
+      .catch(err => {
+        const { status, data } = err.response;
+        const { message } = data;
+
+        if (status === 403) {
+          dispatch(availableTenMoreDaysFail(bookId, { message, status }));
+        } else {
+          dispatch(
+            availableTenMoreDaysFail(bookId, {
+              message: 'Something went wrong! Please try again later!',
+              status,
+            }),
+          );
+        }
+        // @ts-ignore
+        dispatch(availableTenMoreDaysRefresh(bookId));
       });
   };
 };

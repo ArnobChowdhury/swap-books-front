@@ -49,13 +49,13 @@ export const LoaderBook = ({ text }: { text?: string }) => {
             </List>
           </UnorderedList>
         </Wrapper>
-        {text && (
-          <TextWrapper>
-            <Text>{text}</Text>
-            <DotDummy />
-          </TextWrapper>
-        )}
       </Loader>
+      {text && (
+        <TextWrapper>
+          <Text>{text}</Text>
+          <DotDummy />
+        </TextWrapper>
+      )}
     </Container>
   );
 };
