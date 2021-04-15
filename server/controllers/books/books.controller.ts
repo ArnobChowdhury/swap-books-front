@@ -5,6 +5,8 @@ import Book from '../../models/book';
 import User from '../../models/user';
 import { ModifiedRequest } from '../../interface';
 import { processBookForUser } from '../../utils/general';
+import path from 'path';
+import fs from 'fs';
 
 const { ObjectId } = mongodb;
 
@@ -45,6 +47,46 @@ export const addABook = async (
     } else {
       throw new createError.Unauthorized('No user found!');
     }
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
+};
+
+export const editBook = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> => {
+  const { bookName, bookAuthor, bookId } = req.body;
+  const { userId } = req as ModifiedRequest;
+  let bookPicturePath;
+  if (req.file) {
+    const filename = req.file.filename;
+    bookPicturePath = `images/${filename}`;
+  }
+
+  try {
+    let deleteFilePath;
+    if (bookPicturePath) {
+      const { bookPicturePath: oldPicturePath } = await Book.getBookPicturePath(
+        bookId,
+      );
+      deleteFilePath = oldPicturePath;
+    }
+
+    const book = await Book.editBook(bookId, bookName, bookAuthor, bookPicturePath);
+    const processedBook = processBookForUser(book, userId);
+
+    if (deleteFilePath) {
+      fs.unlinkSync(path.join(__dirname, '..', '..', '..', deleteFilePath));
+    }
+
+    res
+      .status(201)
+      .json({ message: 'Book edited successfully!', book: processedBook });
   } catch (err) {
     if (!err.statusCode) {
       err.statusCode = 500;

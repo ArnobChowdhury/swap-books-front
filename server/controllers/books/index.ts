@@ -1,5 +1,6 @@
 export {
   addABook,
+  editBook,
   deleteABook,
   getHomeFeedBooks,
   getProfileBooks,

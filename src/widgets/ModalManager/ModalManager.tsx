@@ -1,17 +1,18 @@
 import { useContext } from 'react';
+import { useRouter } from 'next/router';
 import { useDispatch, useSelector } from 'react-redux';
-import { RootContextProps, RootContext } from 'contexts/RootContext';
+import { FormikHelpers } from 'formik';
 import { Modal } from 'components/Modal';
 import { Login, LoginCredentials } from 'modules/Login';
 import { AddBook, BookType } from 'modules/AddBook';
-import { authRequest } from 'redux/actions/auth';
-import { addABookRequest, addABookRefresh } from 'redux/actions/book';
-import { FormikHelpers } from 'formik';
 import { NeedAuth } from 'modules/NeedAuth';
 import { NeedBook } from 'modules/NeedBook';
+import { EditBook } from 'widgets/EditBook';
 import { Location } from 'widgets/Location';
 import { RootState } from 'redux/reducers';
-import { useRouter } from 'next/router';
+import { RootContextProps, RootContext } from 'contexts/RootContext';
+import { authRequest } from 'redux/actions/auth';
+import { addABookRequest, addABookRefresh } from 'redux/actions/book';
 
 export const ModalManager = (): JSX.Element => {
   const { showModal, setPopupType, setShowModal, popupType } = useContext(
@@ -85,6 +86,7 @@ export const ModalManager = (): JSX.Element => {
           <Location />
         </Modal>
       )}
+      {showModal && popupType === 'editBook' && <EditBook />}
     </>
   );
 };

@@ -70,7 +70,7 @@ export const AddBook = ({
           <Form>
             <Input
               type="text"
-              labelText="Book you want to swap:"
+              labelText="Book name:"
               name="bookname"
               labelAtTop
               inputFieldFullWidth
@@ -79,7 +79,7 @@ export const AddBook = ({
             />
             <Input
               type="text"
-              labelText="Author of the book:"
+              labelText="Author:"
               name="bookauthor"
               labelAtTop
               inputFieldFullWidth

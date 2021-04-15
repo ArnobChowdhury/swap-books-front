@@ -5,7 +5,11 @@ import { RoomWithLastModifiedAndID } from '../room';
 
 const { ObjectId } = mongodb;
 
-export type BookWithoutLocationProp = Omit<Book, 'location'>;
+export interface BookWithId extends Book {
+  _id: mongodb.ObjectId;
+}
+
+export type BookWithoutLocationProp = Omit<BookWithId, 'location'>;
 
 export default class Book {
   bookName: string;
@@ -22,8 +26,6 @@ export default class Book {
     type: 'Point';
     coordinates: number[];
   };
-
-  _id: number | undefined;
 
   interestedUsers: mongodb.ObjectId[];
 
@@ -49,11 +51,10 @@ export default class Book {
       coordinates,
     };
     this.validTill = new Date(createdAt + 10 * 24 * 60 * 60 * 1000);
-    this._id = id;
     this.interestedUsers = [];
   }
 
-  save(): Promise<mongodb.InsertOneWriteOpResult<this>> {
+  save(): Promise<mongodb.InsertOneWriteOpResult<BookWithId>> {
     const db = getDb();
     return db.collection('books').insertOne(this);
   }
@@ -75,6 +76,47 @@ export default class Book {
       // todo is it the right way to catch an error
       throw new Error('Could not retrieve any books for the user');
     }
+  }
+
+  static async editBook(
+    bookId: string,
+    bookName: string,
+    bookAuthor: string,
+    bookPicturePath?: string,
+  ): Promise<BookWithoutLocationProp> {
+    const db = getDb();
+    let res;
+    try {
+      if (bookPicturePath) {
+        res = await db
+          .collection('books')
+          .findOneAndUpdate(
+            { _id: new ObjectId(bookId) },
+            { $set: { bookName, bookAuthor, bookPicturePath } },
+            { returnOriginal: false, projection: {} },
+          );
+      } else {
+        res = await db
+          .collection('books')
+          .findOneAndUpdate(
+            { _id: new ObjectId(bookId) },
+            { $set: { bookName, bookAuthor } },
+            { returnOriginal: false, projection: { location: 0 } },
+          );
+      }
+
+      return res.value;
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  static async getBookPicturePath(bookId: string) {
+    const db = getDb();
+    const _id = new ObjectId(bookId);
+    return db
+      .collection('books')
+      .findOne({ _id }, { projection: { _id: 0, bookPicturePath: 1 } });
   }
 
   static async getLocationBasedBooks(
@@ -142,7 +184,7 @@ export default class Book {
   static async extendBookValidity(
     bookId: string,
     requestedAt: number,
-  ): Promise<Book> {
+  ): Promise<BookWithId> {
     const db = getDb();
     const bookIdAsMongoId = new ObjectId(bookId);
     const validTill = new Date(requestedAt + 10 * 24 * 60 * 60 * 1000);

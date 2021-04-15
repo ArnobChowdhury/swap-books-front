@@ -21,6 +21,11 @@ import {
   AVAILABLE_TEN_MORE_DAYS_SUCCESS,
   AVAILABLE_TEN_MORE_DAYS_FAIL,
   AVAILABLE_TEN_MORE_DAYS_REFRESH,
+  EDIT_BOOK_SET,
+  EDIT_BOOK_START,
+  EDIT_BOOK_SUCCESS,
+  EDIT_BOOK_FAIL,
+  EDIT_BOOK_REFRESH,
 } from '../../actions/actionTypes';
 
 export interface BookShape {
@@ -48,6 +53,10 @@ export interface BooksState {
   addBookReqOnGoing: boolean;
   addBookReqSuccessMsg: string | null;
   addBookReqErr: { message: string; status: number } | null;
+  editBookId: string | null;
+  editBookReqOnGoing: boolean;
+  editBookSuccessMsg: string | null;
+  editBookErr: { message: string; status: number } | null;
 }
 
 export const initialState: BooksState = {
@@ -60,6 +69,10 @@ export const initialState: BooksState = {
   addBookReqOnGoing: false,
   addBookReqSuccessMsg: null,
   addBookReqErr: null,
+  editBookId: null,
+  editBookReqOnGoing: false,
+  editBookSuccessMsg: null,
+  editBookErr: null,
 };
 
 // todo write tests for expressInterest related functions
@@ -78,6 +91,10 @@ const reducer = (state = initialState, action: AnyAction) => {
     availableTenDaysExpiry,
     availableTenMoreDaysSuccessMsg,
     availableTenMoreDaysErr,
+    editBookId,
+    editBookSuccessMsg,
+    editBookErr,
+    editedBook,
   } = action;
 
   switch (action.type) {
@@ -239,6 +256,45 @@ const reducer = (state = initialState, action: AnyAction) => {
         return book;
       });
       return { ...state, books: newBooks };
+    }
+
+    case EDIT_BOOK_SET: {
+      return { ...state, editBookId };
+    }
+
+    case EDIT_BOOK_START: {
+      return { ...state, editBookReqOnGoing: true };
+    }
+
+    case EDIT_BOOK_SUCCESS: {
+      const { books } = state;
+      const newBooks = books.map(book => {
+        if (book.bookId === editBookId) {
+          return editedBook;
+        }
+        return book;
+      });
+
+      return {
+        ...state,
+        books: newBooks,
+        editBookReqOnGoing: false,
+        editBookSuccessMsg,
+      };
+    }
+
+    case EDIT_BOOK_FAIL: {
+      return { ...state, editBookReqOnGoing: false, editBookErr };
+    }
+
+    case EDIT_BOOK_REFRESH: {
+      return {
+        ...state,
+        editBookReqOnGoing: false,
+        editBookId: null,
+        editBookSuccessMsg: null,
+        editBookErr: null,
+      };
     }
 
     default:

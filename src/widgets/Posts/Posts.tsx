@@ -7,6 +7,8 @@ import {
   makeUnavailableRequest,
   booksResetToNil,
   availableTenMoreDaysReq,
+  editBookSetId,
+  editBookRefresh,
 } from 'redux/actions/book';
 import { RootState } from 'redux/reducers';
 import { SocketIoContext } from 'hoc/Sockets';
@@ -161,6 +163,12 @@ export const Posts = ({ profileId }: PostProps): JSX.Element => {
           validTill={validTill}
           onAvailableButtonClick={() => {
             dispatch(availableTenMoreDaysReq(bookId));
+          }}
+          onEditButtonClick={() => {
+            setPopupType('editBook');
+            setShowModal(true);
+            dispatch(editBookRefresh());
+            dispatch(editBookSetId(bookId));
           }}
           availableTenMoreDaysReqOnGoing={availableTenMoreDaysReqOnGoing}
           availableTenMoreDaysSuccessMsg={availableTenMoreDaysSuccessMsg}

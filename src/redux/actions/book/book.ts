@@ -23,6 +23,11 @@ import {
   AVAILABLE_TEN_MORE_DAYS_SUCCESS,
   AVAILABLE_TEN_MORE_DAYS_FAIL,
   AVAILABLE_TEN_MORE_DAYS_REFRESH,
+  EDIT_BOOK_SET,
+  EDIT_BOOK_START,
+  EDIT_BOOK_SUCCESS,
+  EDIT_BOOK_FAIL,
+  EDIT_BOOK_REFRESH,
 } from './../actionTypes';
 import { AxiosError } from 'axios';
 
@@ -158,7 +163,7 @@ const processBooks = ({
   bookPicturePath: string;
   userId: string;
   bookOwnerName: string;
-  isInterested: string;
+  isInterested: boolean;
   validTill: string;
 }) => {
   return {
@@ -214,6 +219,7 @@ export const fetchBooksRequest = (
   };
 };
 
+// TODO Make same as fetchBooksRequest
 export const fetchProfileBooksRequest = (profileId: string, page: number) => {
   return async (dispatch: Dispatch) => {
     dispatch(fetchBooksStart());
@@ -383,6 +389,86 @@ export const availableTenMoreDaysReq = (bookId: string) => {
         }
         // @ts-ignore
         dispatch(availableTenMoreDaysRefresh(bookId));
+      });
+  };
+};
+
+export const editBookSetId = (editBookId: string) => {
+  return {
+    type: EDIT_BOOK_SET,
+    editBookId,
+  };
+};
+
+const editBookStart = (editBookId: string) => {
+  return {
+    type: EDIT_BOOK_START,
+    editBookId,
+  };
+};
+
+const editBookSuccess = (
+  editBookId: string,
+  editedBook: BookShape,
+  editBookSuccessMsg: string,
+) => {
+  return {
+    type: EDIT_BOOK_SUCCESS,
+    editBookId,
+    editedBook,
+    editBookSuccessMsg,
+  };
+};
+
+const editBookFail = (editBookErr: { message: string; status: number }) => {
+  return {
+    type: EDIT_BOOK_FAIL,
+    editBookErr,
+  };
+};
+
+export const editBookRefresh = () => {
+  return {
+    type: EDIT_BOOK_REFRESH,
+  };
+};
+
+export const editBookReq = (
+  bookId: string,
+  bookname: string,
+  bookauthor: string,
+  bookimage: any,
+  formikSetSubmitting: (submissionResolved: boolean) => void,
+) => {
+  return async (dispatch: Dispatch) => {
+    dispatch(editBookStart(bookId));
+
+    const fd = new FormData();
+
+    fd.append('bookId', bookId);
+    fd.append('bookName', bookname);
+    fd.append('bookAuthor', bookauthor);
+    fd.append('bookImage', bookimage);
+
+    const path = 'books/edit';
+
+    return axios
+      .put(path, fd, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      })
+      .then(res => {
+        const { book, message } = res.data;
+        const bookStructured = processBooks(book);
+        dispatch(editBookSuccess(bookId, bookStructured, message));
+
+        formikSetSubmitting(false);
+      })
+      .catch(err => {
+        formikSetSubmitting(false);
+        const { status } = err.response;
+        dispatch(editBookFail({ status, message: 'Something went wrong!' }));
       });
   };
 };
