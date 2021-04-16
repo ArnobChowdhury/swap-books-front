@@ -17,7 +17,7 @@ import Head from 'next/head';
 
 const UserPage: NextPage = (): JSX.Element => {
   const { accessToken } = useSelector((store: RootState) => store.auth);
-  const { name } = useSelector((store: RootState) => store.user);
+  const { profileName } = useSelector((store: RootState) => store.profile);
   const isSignedIn = Boolean(accessToken);
 
   const router = useRouter();
@@ -34,7 +34,7 @@ const UserPage: NextPage = (): JSX.Element => {
   return (
     <>
       <Head>
-        <title>{name} | Pustokio</title>
+        <title>{profileName} | Pustokio</title>
       </Head>
       <ModalManager />
       <TopBar
