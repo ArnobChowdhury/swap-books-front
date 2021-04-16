@@ -128,7 +128,11 @@ export const deleteABook = async (
   const { userId } = req as ModifiedRequest;
 
   try {
+    const { bookPicturePath } = await Book.getBookPicturePath(bookId);
     await Book.removeBook(bookId, userId);
+    if (bookPicturePath) {
+      fs.unlinkSync(path.join(__dirname, '..', '..', '..', bookPicturePath));
+    }
     res.status(201).json({ message: 'Book deleted!', bookId });
   } catch (err) {
     if (!err.statusCode) {

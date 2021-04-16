@@ -13,6 +13,7 @@ import {
 } from './Post.styles';
 import { InterestIcon } from 'assets/InterestIcon';
 import { EditIcon } from 'assets/EditIcon';
+import { DeleteIcon } from 'assets/DeleteIcon';
 import { TenDaysValidityIcon } from 'assets/TenDaysValidityIcon';
 import { IconButton } from 'ui-kits/IconButton';
 import { UserIcon } from 'ui-kits/UserIcon';
@@ -39,6 +40,7 @@ export interface PostProps {
   validTill: string;
   onEditButtonClick?: () => void;
   onAvailableButtonClick?: () => void;
+  onDeleteButtonClick?: () => void;
   availableTenMoreDaysReqOnGoing?: boolean;
   availableTenMoreDaysSuccessMsg?: string | null;
   availableTenMoreDaysErr?: { message: string; status: number } | null;
@@ -59,6 +61,7 @@ export const Post = ({
   validTill,
   onEditButtonClick,
   onAvailableButtonClick,
+  onDeleteButtonClick,
   availableTenMoreDaysReqOnGoing,
   availableTenMoreDaysSuccessMsg,
   availableTenMoreDaysErr,
@@ -68,9 +71,14 @@ export const Post = ({
   const postOwnersOptions: PostOptionProps['options'] = [
     { name: 'Edit', iconComponent: <EditIcon />, onClick: onEditButtonClick },
     {
-      name: 'Mark Available for 10 days',
+      name: 'Mark available for 10 days',
       iconComponent: <TenDaysValidityIcon />,
       onClick: onAvailableButtonClick,
+    },
+    {
+      name: 'Delete post',
+      iconComponent: <DeleteIcon />,
+      onClick: onDeleteButtonClick,
     },
   ];
 

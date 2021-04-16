@@ -148,6 +148,7 @@ export const Posts = ({ profileId }: PostProps): JSX.Element => {
               handleUnsignedInterest();
             }
           }}
+          // Need to get rid of onUnavailableButtonClick
           onUnavailableButtonClick={() => {
             if (isSignedIn) {
               dispatch(makeUnavailableRequest(bookId));
@@ -170,6 +171,14 @@ export const Posts = ({ profileId }: PostProps): JSX.Element => {
             setShowModal(true);
             dispatch(editBookRefresh());
             dispatch(editBookSetId(bookId));
+          }}
+          onDeleteButtonClick={() => {
+            if (isSignedIn) {
+              dispatch(makeUnavailableRequest(bookId));
+              // DO WE REALLY NEED handleUnsignedInterest ??? Probably not. Harold Investigate
+            } else {
+              handleUnsignedInterest();
+            }
           }}
           availableTenMoreDaysReqOnGoing={availableTenMoreDaysReqOnGoing}
           availableTenMoreDaysSuccessMsg={availableTenMoreDaysSuccessMsg}

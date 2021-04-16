@@ -1,6 +1,4 @@
-import theme from 'theme';
 export const EditIcon = ({ size = 24 }: { size?: number }): JSX.Element => {
-  const { colorPrimary2 } = theme;
   return (
     <svg
       width={size}
