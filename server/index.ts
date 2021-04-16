@@ -1,6 +1,7 @@
 import next from 'next';
 import path from 'path';
 import cors from 'cors';
+import fs from 'fs';
 import express, { Request, Response, NextFunction, Express } from 'express';
 import mongodb from 'mongodb';
 import bodyParser from 'body-parser';
@@ -129,13 +130,16 @@ app.prepare().then(() => {
         async ({
           _id,
           userId,
+          bookPicturePath,
         }: {
           _id: mongodb.ObjectId;
           userId: mongodb.ObjectId;
+          bookPicturePath: string;
         }) => {
           const bookIdAsMongoId = _id.toHexString();
           const userIdAsMongoId = userId.toHexString();
           await Book.removeBook(bookIdAsMongoId, userIdAsMongoId);
+          fs.unlinkSync(path.join(__dirname, '..', bookPicturePath));
         },
       );
     }

@@ -177,7 +177,7 @@ export default class Book {
     return db
       .collection('books')
       .find({ validTill: { $lte: new Date() } })
-      .project({ _id: 1, userId: 1 })
+      .project({ _id: 1, userId: 1, bookPicturePath: 1 })
       .toArray();
   }
 
