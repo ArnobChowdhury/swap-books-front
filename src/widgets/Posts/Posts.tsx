@@ -2,7 +2,6 @@ import React, { useContext, useEffect, useRef, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   fetchBooksRequest,
-  fetchProfileBooksRequest,
   expressInterestStart,
   makeUnavailableRequest,
   booksResetToNil,
@@ -58,13 +57,15 @@ export const Posts = ({ profileId }: PostProps): JSX.Element => {
 
   const handleAdditionalBookFetchForHome = useCallback(() => {
     if (process.browser && userLon && userLat) {
-      dispatch(fetchBooksRequest(userLon, userLat, page + 1));
+      dispatch(
+        fetchBooksRequest({ location: { userLon, userLat }, page: page + 1 }),
+      );
     }
   }, [books, userLon, userLat, page]);
 
   const handleAdditionalBookFetchForProfile = useCallback(() => {
     if (process.browser && profileId) {
-      dispatch(fetchProfileBooksRequest(profileId, page + 1));
+      dispatch(fetchBooksRequest({ profileId, page: page + 1 }));
     }
   }, [books, profileId, page]);
 
@@ -80,7 +81,7 @@ export const Posts = ({ profileId }: PostProps): JSX.Element => {
 
   useEffect(() => {
     if (!profileId && process.browser && userLon && userLat) {
-      dispatch(fetchBooksRequest(userLon, userLat, 1));
+      dispatch(fetchBooksRequest({ location: { userLon, userLat }, page: 1 }));
     } else {
       dispatch(booksResetToNil());
     }
@@ -88,7 +89,7 @@ export const Posts = ({ profileId }: PostProps): JSX.Element => {
 
   useEffect(() => {
     if (profileId) {
-      dispatch(fetchProfileBooksRequest(profileId, 1));
+      dispatch(fetchBooksRequest({ profileId, page: 1 }));
     }
   }, [profileId]);
 

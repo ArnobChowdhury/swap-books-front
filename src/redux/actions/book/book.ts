@@ -183,20 +183,37 @@ const processBooks = ({
   };
 };
 
-export const fetchBooksRequest = (
-  userLon: number,
-  userLat: number,
-  page: number,
-) => {
+interface FetchBookProps {
+  page: number;
+  location?: { userLat: number; userLon: number };
+  profileId?: string;
+}
+
+export const fetchBooksRequest = ({ page, location, profileId }: FetchBookProps) => {
   return async (dispatch: Dispatch) => {
     dispatch(fetchBooksStart());
+
     const userId = localStorage.getItem('userId');
-    const path = '/books';
+
+    let path, params;
+    if (location) {
+      const { userLat, userLon } = location;
+      path = '/books';
+      params = {
+        userLon,
+        userLat,
+        userId,
+        page,
+      };
+    } else {
+      path = `/books/${profileId}`;
+      params = { userId, page };
+    }
 
     return axios
-      .get(path, { params: { userLon, userLat, userId, page } })
+      .get(path, { params })
       .then(response => {
-        const { message, books } = response.data;
+        const { books } = response.data;
         const booksStructured: BookShape[] = books.map(processBooks);
         const booksFiltered = booksStructured.filter(book => {
           const { validTill } = book;
@@ -219,31 +236,7 @@ export const fetchBooksRequest = (
   };
 };
 
-// TODO Make same as fetchBooksRequest
-export const fetchProfileBooksRequest = (profileId: string, page: number) => {
-  return async (dispatch: Dispatch) => {
-    dispatch(fetchBooksStart());
-    const userId = localStorage.getItem('userId');
-    const path = `/books/${profileId}`;
-
-    return axios
-      .get(path, { params: { userId, page } })
-      .then(response => {
-        const { books } = response.data;
-        const booksStructured: BookShape[] = books.map(processBooks);
-
-        const type = page === 1 ? FETCH_BOOKS_SUCCESS : FETCH_MORE_BOOKS_SUCCESS;
-        dispatch(fetchBooksSuccess(booksStructured, type, page));
-      })
-      .catch(err => {
-        // todo need to check what kind of possible errors we can get???
-        dispatch(fetchBooksFail(err));
-      });
-  };
-};
-
 // todo write tests for expressInterest related functions
-
 export const expressInterestStart = (
   socket: Socket,
   userName: string,

@@ -6,7 +6,6 @@ export {
   addABookRefresh,
   addABookSuccess,
   fetchBooksRequest,
-  fetchProfileBooksRequest,
   fetchBooksStart,
   fetchBooksSuccess,
   fetchBooksFail,
