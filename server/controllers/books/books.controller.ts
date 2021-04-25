@@ -3,8 +3,14 @@ import { Request, Response, NextFunction } from 'express';
 import createError from 'http-errors';
 import Book from '../../models/book';
 import User from '../../models/user';
+import Room from '../../models/room';
 import { ModifiedRequest } from '../../interface';
-import { processBookForUser } from '../../utils/general';
+import {
+  processBookForUser,
+  extractRoomMateIdFromRoom,
+  _idToRequiredProp,
+  extractInterestsOfUserFromRoom,
+} from '../../utils/general';
 import path from 'path';
 import fs from 'fs';
 
@@ -190,6 +196,75 @@ export const getProfileBooks = async (
       });
       res.status(201).json({ books });
     }
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
+};
+
+export const getMatchesForAbook = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  const { bookId } = req.query;
+  const { userId } = req as ModifiedRequest;
+
+  try {
+    if (!bookId) {
+      throw new createError.BadRequest('Insufficient information');
+    }
+
+    const rawMatches = await Room.getMatchesForAbook(userId, bookId as string);
+    const allRoomMatesIds = rawMatches.map(match =>
+      extractRoomMateIdFromRoom(userId, match),
+    );
+    const matchesWithNames = await User.findUserNamesByIdsInBatch(allRoomMatesIds);
+    const matchesForBook = matchesWithNames.map(match =>
+      _idToRequiredProp(match, 'userId'),
+    );
+
+    res.status(200).json({ message: 'Get all matches', matchesForBook });
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
+};
+
+export const getBooksOfAMatch = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  const { matchId } = req.query;
+  const { userId } = req as ModifiedRequest;
+
+  try {
+    if (!matchId) {
+      throw new createError.BadRequest('Insufficient information');
+    }
+
+    const room = await Room.findRoomWithParticipants(
+      matchId as string,
+      userId as string,
+    );
+    if (!room) {
+      throw new createError.NotFound(
+        'Sorry! Interests of the user could not be found!',
+      );
+    }
+
+    const matchedBooks = extractInterestsOfUserFromRoom(userId, room);
+    // TODO: We can delete below line we start saving only bookId in the database instead of { bookName, bookId }
+    const matchedBookIds = matchedBooks.map(book => book.bookId);
+    const books = await Book.getBooksInBatches(matchedBookIds);
+    const booksOfTheMatch = books.map(book => _idToRequiredProp(book, 'bookId'));
+
+    res.status(200).json({ message: 'Get all books', booksOfTheMatch });
   } catch (err) {
     if (!err.statusCode) {
       err.statusCode = 500;

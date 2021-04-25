@@ -88,8 +88,8 @@ export const Count = styled.div`
   width: ${({ theme }) => theme.spaceTen};
   height: ${({ theme }) => theme.spaceTen};
   border-radius: 50%;
-  background: ${({ theme }) => theme.colorTextPrimary};
-  color: ${({ theme }) => theme.colorTextDark};
+  background: ${({ theme }) => theme.colorPrimary2};
+  color: ${({ theme }) => theme.colorPrimary1};
   font-size: ${({ theme }) => theme.fontSmall};
   text-align: center;
   display: flex;

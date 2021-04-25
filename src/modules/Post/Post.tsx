@@ -21,6 +21,7 @@ import { PostOption, PostOptionProps } from 'components/PostOption';
 import { BookNameIcon } from 'assets/BookNameIcon';
 import { BookAuthorIcon } from 'assets/BookAuthorIcon';
 import { CloseIcon } from 'assets/CloseIcon';
+import { SwapIcon } from 'assets/SwapIcon';
 import { PostButtonSmall } from 'components/PostButtonSmall';
 import { useWindowSize } from 'hooks/useWindowSize';
 import { formatDistanceToNow } from 'date-fns';
@@ -33,8 +34,7 @@ export interface PostProps {
   isInterested: boolean;
   topMargin?: boolean;
   reqOnGoing: boolean;
-  onInterestButtonClick?: (e: MouseEvent<HTMLButtonElement>) => void;
-  onUnavailableButtonClick?: (e: MouseEvent<HTMLButtonElement>) => void;
+  onPostButtonClick?: (e: MouseEvent<HTMLButtonElement>) => void;
   isOwners: boolean;
   isUsersProfile: boolean;
   validTill: string;
@@ -54,8 +54,7 @@ export const Post = ({
   topMargin,
   reqOnGoing,
   isInterested = false,
-  onInterestButtonClick,
-  onUnavailableButtonClick,
+  onPostButtonClick,
   isOwners,
   isUsersProfile,
   validTill,
@@ -103,21 +102,30 @@ export const Post = ({
             <BookInfo>{bookAuthor}</BookInfo>
           </ContentContainer>
         </ContentWrapper>
-        {!isUsersProfile && width >= 450 && (
+        {!isOwners && width >= 450 && (
           <IconButton
             buttonText={isInterested ? 'Interested' : 'Show Interest'}
             icon={
-              <InterestIcon hasBodyColor={isInterested} width="30" height="30" />
+              <InterestIcon hasBodyColor={isInterested} width="32" height="32" />
             }
-            onClick={onInterestButtonClick}
+            onClick={onPostButtonClick}
             disabled={isOwners}
             requestOngoing={reqOnGoing}
             textColor="primary"
           />
         )}
-        {!isUsersProfile && width < 450 && (
+        {isOwners && width >= 450 && (
+          <IconButton
+            buttonText={'Swapped'}
+            icon={<SwapIcon />}
+            onClick={onPostButtonClick}
+            requestOngoing={reqOnGoing}
+            textColor="primary"
+          />
+        )}
+        {!isOwners && width < 450 && (
           <PostButtonSmall
-            onClick={onInterestButtonClick}
+            onClick={onPostButtonClick}
             requestOnGoing={reqOnGoing}
             disabled={isOwners}
             icon={
@@ -130,20 +138,11 @@ export const Post = ({
             }
           />
         )}
-        {isUsersProfile && width >= 450 && (
-          <IconButton
-            buttonText="Unavailable"
-            icon={<CloseIcon colorAlert width="25" height="25" />}
-            onClick={onUnavailableButtonClick}
-            requestOngoing={reqOnGoing}
-            textColor="primary"
-          />
-        )}
-        {isUsersProfile && width < 450 && (
+        {isOwners && width <= 450 && (
           <PostButtonSmall
-            onClick={onUnavailableButtonClick}
+            onClick={onPostButtonClick}
             requestOnGoing={reqOnGoing}
-            icon={<CloseIcon colorAlert width="35" height="35" />}
+            icon={<SwapIcon />}
           />
         )}
       </PostBottom>

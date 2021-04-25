@@ -2,6 +2,8 @@ import { Server } from 'socket.io';
 import { SocketDecoded } from '../../interface';
 import Book from '../../models/book';
 import Room from '../../models/room';
+import Notification from '../../models/notification';
+import Swap from '../../models/swap';
 import {
   RECEIVE_LATEST_NOTIFICATION,
   RECEIVE_INTEREST,
@@ -18,9 +20,10 @@ import {
   getSocketIdFromRedis,
   delSocketIdFromRedis,
 } from '../../utils/sockets';
-import { RoomWithLastModifiedAndID } from '../../models/room';
+import { RoomWithId } from '../../models/room';
 import { ObjectID } from 'mongodb';
 import { processRoomForUser } from '../../utils/general';
+import createHttpError from 'http-errors';
 
 export const saveSocketToRedis = async (socket: SocketDecoded) => {
   const {
@@ -60,7 +63,7 @@ export const expressInterest = async (
   },
 ) => {
   try {
-    let interestNotification: RoomWithLastModifiedAndID;
+    let interestNotification: RoomWithId;
     if (isInterested) {
       interestNotification = await Book.addInterestTransaction(
         bookId,
@@ -84,7 +87,7 @@ export const expressInterest = async (
       isMatch = isAMatchedRoom(interestNotification);
     }
 
-    const numOfUnseenNotificationForBookOwner = await Room.getCountOfUnseenNotification(
+    const numOfUnseenNotificationForBookOwner = await Notification.getCountOfUnseenNotification(
       bookOwnerId,
     );
 
@@ -116,7 +119,7 @@ export const expressInterest = async (
     }
 
     if (isMatch) {
-      const numOfUnseenNotificationForUser = await Room.getCountOfUnseenNotification(
+      const numOfUnseenNotificationForUser = await Notification.getCountOfUnseenNotification(
         userId,
       );
       // Send rooms to these people if they are online
@@ -169,8 +172,8 @@ interface RoomResponse {
   roomId: ObjectID;
   roomMateName: string;
   roomMateId: string;
-  roomMateInterests: RoomWithLastModifiedAndID['participants'][0]['interests'];
-  userInterests: RoomWithLastModifiedAndID['participants'][0]['interests'];
+  roomMateInterests: RoomWithId['participants'][0]['interests'];
+  userInterests: RoomWithId['participants'][0]['interests'];
 }
 
 export const joinAllRooms = async (
@@ -260,4 +263,29 @@ export const setMsgAsSeen = async (
   await Message.setMsgAsSeen(roomId, aud, msgId);
   socket.to(roomId).emit(SET_MSG_AS_SEEN, roomId, msgId);
   cb();
+};
+
+export const createSwapRequest = async (
+  socket: SocketDecoded,
+  matchId: string,
+  swapWithBook: string,
+  swapBook: string,
+  cb: (isSuccess: boolean, swapBook: string) => void,
+) => {
+  const {
+    decoded_token: { aud },
+  } = socket;
+  try {
+    const room = await Room.findRoomWithParticipants(matchId, aud);
+    if (!room) {
+      throw new createHttpError.NotFound('Match could not be found!');
+    }
+
+    await Swap.requestTransaction(aud, matchId, room._id, swapBook, swapWithBook);
+
+    // TODO Emit the swap notification to user if online
+    cb(true, swapBook);
+  } catch {
+    cb(false, swapBook);
+  }
 };

@@ -6,4 +6,5 @@ export {
   sendMsg,
   socketDisconnect,
   setMsgAsSeen,
+  createSwapRequest,
 } from './interactions.controller';

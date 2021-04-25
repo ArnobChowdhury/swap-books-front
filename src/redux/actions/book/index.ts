@@ -17,4 +17,11 @@ export {
   editBookSetId,
   editBookReq,
   editBookRefresh,
+  fetchMatchesForBookReset,
+  fetchMatchesForBookSetId,
+  fetchMatchesForBookReq,
+  fetchBooksForMatchReset,
+  fetchBooksForMatchReq,
+  sendingSwapRequestReset,
+  sendingSwapRequest,
 } from './book';

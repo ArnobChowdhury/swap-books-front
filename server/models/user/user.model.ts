@@ -1,4 +1,4 @@
-import mongodb from 'mongodb';
+import mongodb, { ObjectId } from 'mongodb';
 import { getDb, getDbClient } from '../../utils/database';
 
 const { ObjectId } = mongodb;
@@ -90,6 +90,22 @@ export default class User {
     } catch {
       // todo is it the right way to catch an error
       throw new Error('Could not retrieve user');
+    }
+  }
+
+  static async findUserNamesByIdsInBatch(
+    userIds: ObjectId[],
+  ): Promise<{ name: string; _id: ObjectId }[]> {
+    const db = getDb();
+    try {
+      const user = await db
+        .collection('users')
+        .find({ _id: { $in: userIds } }, { projection: { name: 1 } })
+        .toArray();
+      return user;
+    } catch {
+      // todo is it the right way to catch an error
+      throw new Error('Could not retrieve users');
     }
   }
 

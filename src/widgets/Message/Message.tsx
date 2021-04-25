@@ -3,6 +3,7 @@ import { IconOnlyButton } from 'ui-kits/IconOnlyButton';
 import { UserIcon } from 'ui-kits/UserIcon';
 import { Header } from 'ui-kits/Header';
 import { Paragraph } from 'ui-kits/Paragraph';
+import { IconRotator } from 'ui-kits/IconRotator';
 import theme from 'theme';
 import {
   MessageBoxContainer,
@@ -254,14 +255,14 @@ export const Message = () => {
               </MsgPartnerName>
               <MutualInterests showBottomMargin={showInterestForThisRoom}>
                 Mutual Interests
-                <ShowInterestsButton
+                <IconRotator
                   rotateOneEighty={showInterestForThisRoom}
                   onClick={() =>
                     setShowInterestForThisRoom(!showInterestForThisRoom)
                   }
                 >
                   <DownArrow width="10" height="10" />
-                </ShowInterestsButton>
+                </IconRotator>
               </MutualInterests>
               <InterestContainer show={showInterestForThisRoom}>
                 <Paragraph

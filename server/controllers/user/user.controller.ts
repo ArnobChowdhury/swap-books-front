@@ -1,8 +1,13 @@
 import { Request, Response, NextFunction } from 'express';
 import User from '../../models/user';
 import Room from '../../models/room';
+import Notification from '../../models/notification';
+import Swap from '../../models/swap';
 import { ModifiedRequest } from '../../interface';
-import { processUserInfo } from '../../utils/general';
+import {
+  processUserInfo,
+  addLastModifiedFieldToNotification,
+} from '../../utils/general';
 import createError from 'http-errors';
 import Book from '../../models/book';
 import mongodb from 'mongodb';
@@ -76,8 +81,54 @@ export const getUserNotifications = async (
   const { skip } = req.query;
 
   try {
-    const notifications = await Room.getNotificationForUser(userId, Number(skip));
-    const unseen = await Room.getCountOfUnseenNotification(userId);
+    const allnotifications = await Notification.getNotificationsForUser(
+      userId,
+      Number(skip),
+    );
+    const interestOrMatchNotifications = allnotifications.filter(
+      ({ type }) => type === 'interest' || type === 'match',
+    );
+
+    const swapNotifications = allnotifications.filter(
+      ({ type }) =>
+        type === 'swapReq' || type === 'swapApprove' || type === 'swapReject',
+    );
+
+    const idOfInterestOrMatchNotifications = interestOrMatchNotifications.map(
+      ({ roomId }) => roomId,
+    );
+
+    const idOfSwapsNotifications = swapNotifications.map(({ swapId }) => swapId);
+
+    const roomsAsNotifications = await Room.getRoomsInBatch(
+      // @ts-ignore
+      idOfInterestOrMatchNotifications,
+    );
+    const roomNotificationsWithLastModified = addLastModifiedFieldToNotification(
+      roomsAsNotifications,
+      interestOrMatchNotifications,
+      'roomId',
+    );
+
+    // @ts-ignore
+    const swapsAsNotifications = await Swap.getSwapsInBatch(idOfSwapsNotifications);
+    const swapNotificationsWithLastModified = addLastModifiedFieldToNotification(
+      swapsAsNotifications,
+      swapNotifications,
+      'roomId',
+    );
+
+    const notifications = [
+      ...roomNotificationsWithLastModified,
+      ...swapNotificationsWithLastModified,
+    ];
+
+    notifications.sort(
+      // @ts-ignore
+      (a, b) => new Date(b.lastModified) - new Date(a.lastModified),
+    );
+
+    const unseen = await Notification.getCountOfUnseenNotification(userId);
 
     res.status(201).json({ notifications, unseen });
   } catch (err) {

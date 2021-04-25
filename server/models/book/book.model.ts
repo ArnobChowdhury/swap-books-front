@@ -1,9 +1,8 @@
-import mongodb from 'mongodb';
+import mongodb, { ObjectId } from 'mongodb';
 import { HttpException } from '../../interface';
 import { getDb, getDbClient } from '../../utils/database';
-import { RoomWithLastModifiedAndID } from '../room';
-
-const { ObjectId } = mongodb;
+import { RoomWithId } from '../room';
+import { isAMatchedRoom } from '../../utils/general';
 
 export interface BookWithId extends Book {
   _id: mongodb.ObjectId;
@@ -31,6 +30,8 @@ export default class Book {
 
   validTill: Date;
 
+  swapRequested: boolean;
+
   constructor(
     bookName: string,
     bookAuthor: string,
@@ -52,6 +53,7 @@ export default class Book {
     };
     this.validTill = new Date(createdAt + 10 * 24 * 60 * 60 * 1000);
     this.interestedUsers = [];
+    this.swapRequested = false;
   }
 
   save(): Promise<mongodb.InsertOneWriteOpResult<BookWithId>> {
@@ -59,6 +61,7 @@ export default class Book {
     return db.collection('books').insertOne(this);
   }
 
+  // TODO GET RID OF THIS SHAMBLES
   static throwError(msg: string): void {
     const err: HttpException = new Error(msg);
     err.statusCode = 401;
@@ -205,15 +208,16 @@ export default class Book {
     bookOwnerName: string,
     userId: string,
     userName: string,
-  ): Promise<RoomWithLastModifiedAndID> {
+  ): Promise<RoomWithId> {
     const client = getDbClient();
     const usersCollection = client.db().collection('users');
     const booksCollection = client.db().collection('books');
     const roomsCollection = client.db().collection('rooms');
+    const notificationsCollection = client.db().collection('notifications');
     const session = client.startSession();
 
     // todo skipping "transaction options" for now. Study later
-    let result: RoomWithLastModifiedAndID;
+    let result: RoomWithId;
 
     try {
       await session.withTransaction(async () => {
@@ -240,7 +244,7 @@ export default class Book {
 
         if (room !== null) {
           // update room
-          await roomsCollection.updateOne(
+          const updatedResult = await roomsCollection.findOneAndUpdate(
             { _id: room._id, 'participants.userId': bookOwnerIdAsMongoId },
             {
               $push: {
@@ -249,26 +253,28 @@ export default class Book {
                   $position: 0,
                 },
               },
-              $set: {
-                'participants.$.interestSeen': false,
-              },
+            },
+            {
+              returnOriginal: false,
             },
           );
-          const updatedDoc = await roomsCollection.findOneAndUpdate(
-            { _id: room._id, 'participants.userId': userIdAsMongoId },
+          const { value } = updatedResult;
+          result = value;
+          const isMatch = isAMatchedRoom(value);
+          await notificationsCollection.updateOne(
+            {
+              roomId: value._id,
+            },
             {
               $set: {
-                'participants.$.interestSeen': false,
+                seen: false,
+                type: isMatch ? 'match' : 'interest',
               },
               $currentDate: {
                 lastModified: true,
               },
             },
-            { returnOriginal: false },
           );
-
-          const { value } = updatedDoc;
-          result = value;
         } else {
           // create room
           const insertedResult = await roomsCollection.insertOne({
@@ -277,35 +283,44 @@ export default class Book {
                 userId: userIdAsMongoId,
                 userName,
                 interests: [],
-                interestSeen: true,
+                // interestSeen: true,
                 unreadMsgs: false,
               },
               {
                 userId: bookOwnerIdAsMongoId,
                 userName: bookOwnerName,
                 interests: [{ bookName, bookId }],
-                interestSeen: false,
+                // interestSeen: false,
                 unreadMsgs: false,
               },
             ],
-            lastModified: new Date(),
+            // lastModified: new Date(),
           });
           [result] = insertedResult.ops;
+
+          await notificationsCollection.insertOne({
+            fromId: userIdAsMongoId,
+            toId: bookOwnerIdAsMongoId,
+            type: 'interest',
+            lastModified: new Date(),
+            roomId: result._id,
+            seen: false,
+          });
         }
       });
+      // @ts-ignore
+      return result;
     } finally {
       session.endSession();
     }
-    // @ts-ignore
-    return result;
   }
-
+  // TODO Needs to be aligned with addInterestTransation
   static async removeInterestTransaction(
     bookId: string,
     bookName: string,
     bookOwnerId: string,
     userId: string,
-  ): Promise<RoomWithLastModifiedAndID> {
+  ): Promise<RoomWithId> {
     const client = getDbClient();
     const usersCollection = client.db().collection('users');
     const booksCollection = client.db().collection('books');
@@ -315,7 +330,7 @@ export default class Book {
     const userIdAsMongoId = new ObjectId(userId);
     const bookOwnerIdAsMongoId = new ObjectId(bookOwnerId);
     const bookIdAsMongoId = new ObjectId(bookId);
-    let result: RoomWithLastModifiedAndID;
+    let result: RoomWithId;
 
     try {
       await session.withTransaction(async () => {
@@ -411,10 +426,44 @@ export default class Book {
         }
       });
     } catch (err) {
-      console.log('err thrown inside catch block', err);
       throw err;
     } finally {
       session.endSession();
     }
+  }
+
+  static async getBooksInBatches(
+    bookIds: string[],
+  ): Promise<
+    {
+      _id: ObjectId;
+      bookName: string;
+      bookAuthor: string;
+      bookPicturePath: string;
+    }[]
+  > {
+    const db = getDb();
+    const bookIdsAsMongoObjectIds = bookIds.map(id => new ObjectId(id));
+    return db
+      .collection('books')
+      .find(
+        { _id: { $in: bookIdsAsMongoObjectIds } },
+        {
+          projection: {
+            bookName: 1,
+            bookAuthor: 1,
+            bookPicturePath: 1,
+          },
+        },
+      )
+      .toArray();
+  }
+
+  static async setAsSwapped(bookId: string) {
+    const db = getDb();
+    const bookIdAsMongoId = new ObjectId(bookId);
+    return db
+      .collection('books')
+      .updateOne({ _id: bookIdAsMongoId }, { $set: { swapRequested: true } });
   }
 }

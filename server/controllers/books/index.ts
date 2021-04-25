@@ -5,4 +5,6 @@ export {
   getHomeFeedBooks,
   getProfileBooks,
   extendBookValidity,
+  getMatchesForAbook,
+  getBooksOfAMatch,
 } from './books.controller';

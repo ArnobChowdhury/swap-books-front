@@ -23,6 +23,7 @@ import {
   initMsgs,
   socketDisconnect,
   setMsgAsSeen,
+  createSwapRequest,
 } from './controllers/interactions';
 import { mongoConnect, closeDb } from './utils/database';
 import { client as redisClient } from './utils/redis';
@@ -33,6 +34,7 @@ import {
   SEND_MSG,
   INIT_MSGS,
   SET_MSG_AS_SEEN,
+  SWAP_REQUEST,
   DISCONNECT,
 } from './socketTypes';
 import { jwtVerify } from './middlewares/jwtVerify';
@@ -91,6 +93,19 @@ app.prepare().then(() => {
       await setMsgAsSeen(socket, roomId, msgId, cb);
       // todo add catch block
     });
+
+    socket.on(
+      SWAP_REQUEST,
+      async (
+        matchId,
+        swapWithBook,
+        swapBook,
+        cb: (isSuccess: boolean, swapBook: string) => void,
+      ) => {
+        await createSwapRequest(socket, matchId, swapWithBook, swapBook, cb);
+        // todo add catch block
+      },
+    );
 
     socket.on(DISCONNECT, async () => {
       await socketDisconnect(socket);

@@ -1,5 +1,5 @@
 import axios from '../../../axiosInstance';
-import { SOCKET_EXPRESS_INTEREST } from '../../../socketTypes';
+import { SOCKET_EXPRESS_INTEREST, SOCKET_SWAP_REQUEST } from '../../../socketTypes';
 import { BookShape } from '../../reducers/books';
 import { Dispatch } from 'redux';
 import { Socket } from 'socket.io-client';
@@ -28,6 +28,19 @@ import {
   EDIT_BOOK_SUCCESS,
   EDIT_BOOK_FAIL,
   EDIT_BOOK_REFRESH,
+  FETCH_MATCHES_FOR_A_BOOK_SET,
+  FETCH_MATCHES_FOR_A_BOOK_START,
+  FETCH_MATCHES_FOR_A_BOOK_SUCCESS,
+  FETCH_MATCHES_FOR_A_BOOK_FAIL,
+  FETCH_MATCHES_FOR_A_BOOK_RESET,
+  FETCH_MATCHED_BOOKS_START,
+  FETCH_MATCHED_BOOKS_SUCCESS,
+  FETCH_MATCHED_BOOKS_FAIL,
+  FETCH_MATCHED_BOOKS_RESET,
+  SENDING_SWAP_REQUEST_START,
+  SENDING_SWAP_REQUEST_SUCCESS,
+  SENDING_SWAP_REQUEST_FAIL,
+  SENDING_SWAP_REQUEST_RESET,
 } from './../actionTypes';
 import { AxiosError } from 'axios';
 
@@ -463,5 +476,190 @@ export const editBookReq = (
         const { status } = err.response;
         dispatch(editBookFail({ status, message: 'Something went wrong!' }));
       });
+  };
+};
+
+export const fetchMatchesForBookSetId = (fetchMatchesForBookId: string) => {
+  return {
+    type: FETCH_MATCHES_FOR_A_BOOK_SET,
+    fetchMatchesForBookId,
+  };
+};
+
+const fetchMatchesForBookStart = (fetchMatchesForBookId: string) => {
+  return {
+    type: FETCH_MATCHES_FOR_A_BOOK_START,
+  };
+};
+
+const fetchMatchesForBookSuccess = (
+  matchesForBook: {
+    name: string;
+    userId: string;
+  }[],
+) => {
+  return {
+    type: FETCH_MATCHES_FOR_A_BOOK_SUCCESS,
+    matchesForBook,
+  };
+};
+
+const fetchMatchesForBookFail = (fetchMatchesForBookErr: {
+  message: string;
+  status: string;
+}) => {
+  return {
+    type: FETCH_MATCHES_FOR_A_BOOK_FAIL,
+    fetchMatchesForBookErr,
+  };
+};
+
+export const fetchMatchesForBookReset = () => {
+  return {
+    type: FETCH_MATCHES_FOR_A_BOOK_RESET,
+  };
+};
+
+export const fetchMatchesForBookReq = (fetchMatchesForBookId: string) => {
+  return (dispatch: Dispatch) => {
+    dispatch(fetchMatchesForBookStart(fetchMatchesForBookId));
+    const path = '/books/matches';
+    const params = { bookId: fetchMatchesForBookId };
+
+    return axios
+      .get(path, { params })
+      .then(res => {
+        setTimeout(() => {
+          const { matchesForBook } = res.data;
+          dispatch(fetchMatchesForBookSuccess(matchesForBook));
+        });
+      })
+      .catch(err => {
+        const { status } = err.response;
+        dispatch(
+          fetchMatchesForBookFail({
+            message: 'Something went wrong! Could not fetch matches for this book.',
+            status,
+          }),
+        );
+      });
+  };
+};
+
+const fetchBooksForMatchStart = (fetchBooksOfTheMatchId: string) => {
+  return {
+    type: FETCH_MATCHED_BOOKS_START,
+    fetchBooksOfTheMatchId,
+  };
+};
+
+const fetchBooksForMatchSuccess = (
+  booksOfTheMatch: { bookName: string; bookId: string }[],
+) => {
+  return {
+    type: FETCH_MATCHED_BOOKS_SUCCESS,
+    booksOfTheMatch,
+  };
+};
+
+const fetchBooksForMatchFail = (fetchBooksOfTheMatchErr: {
+  message: string;
+  status: number;
+}) => {
+  return {
+    type: FETCH_MATCHED_BOOKS_FAIL,
+    fetchBooksOfTheMatchErr,
+  };
+};
+
+export const fetchBooksForMatchReset = () => {
+  return {
+    type: FETCH_MATCHED_BOOKS_RESET,
+  };
+};
+
+export const fetchBooksForMatchReq = (matchId: string) => {
+  return (dispatch: Dispatch) => {
+    dispatch(fetchBooksForMatchStart(matchId));
+    const path = '/books/books-of-match';
+    const params = { matchId };
+
+    return axios
+      .get(path, { params })
+      .then(res => {
+        const { booksOfTheMatch } = res.data;
+        dispatch(fetchBooksForMatchSuccess(booksOfTheMatch));
+      })
+      .catch(err => {
+        const { status } = err.response;
+        dispatch(
+          fetchBooksForMatchFail({
+            message: 'Something went wrong! Could not get swappable books.',
+            status,
+          }),
+        );
+      });
+  };
+};
+
+const sendingSwapRequestStart = () => {
+  return {
+    type: SENDING_SWAP_REQUEST_START,
+  };
+};
+
+const sendingSwapRequestSuccess = (sendingSwapReqSuccessMsg: string) => {
+  return {
+    type: SENDING_SWAP_REQUEST_SUCCESS,
+    sendingSwapReqSuccessMsg,
+  };
+};
+
+const sendingSwapRequestFail = (sendingSwapReqErr: {
+  message: string;
+  status: number;
+}) => {
+  return {
+    type: SENDING_SWAP_REQUEST_FAIL,
+    sendingSwapReqErr,
+  };
+};
+
+export const sendingSwapRequestReset = () => {
+  return {
+    type: SENDING_SWAP_REQUEST_RESET,
+  };
+};
+
+export const sendingSwapRequest = (
+  socket: Socket,
+  matchId: string,
+  swapWithBook: string,
+  swapBook: string,
+) => {
+  return (dispatch: Dispatch) => {
+    dispatch(sendingSwapRequestStart());
+    socket.emit(
+      SOCKET_SWAP_REQUEST,
+      matchId,
+      swapWithBook,
+      swapBook,
+      (isSuccess: boolean, swapBook: string) => {
+        /**
+         * TODO -
+         * MAKE THE BOOK UNAVAILABLE
+         */
+        if (isSuccess) {
+          dispatch(sendingSwapRequestSuccess('Hoise'));
+        } else {
+          dispatch(
+            sendingSwapRequestFail({
+              message: 'Something went wrong! Could not send the swap request.',
+              status: 401,
+            }),
+          );
+        }
+      },
+    );
   };
 };

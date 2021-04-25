@@ -6,6 +6,7 @@ export type PopupType =
   | 'addABook'
   | 'location'
   | 'editBook'
+  | 'swapBook'
   | null;
 
 export type ContentType = 'Messages' | 'Notifications' | 'User' | 'Posts';

@@ -21,20 +21,21 @@ export const TransparentBackground = styled.div`
   background: rgba(0, 0, 0, 0.5);
 `;
 
-export const LDSRing = styled.div`
+export const LDSRing = styled.div<{ big: boolean }>`
   display: inline-block;
   position: relative;
-  width: 50px;
-  height: 50px;
+  width: ${({ big }) => (big ? '50px' : '40px')};
+  height: ${({ big }) => (big ? '50px' : '40px')};
 
   & div {
     box-sizing: border-box;
     display: block;
     position: absolute;
-    width: 32px;
-    height: 32px;
+    width: ${({ big }) => (big ? '32px' : '24px')};
+    height: ${({ big }) => (big ? '32px' : '24px')};
     margin: 8px;
-    border: 4px solid ${({ theme }) => theme.colorPrimary3};
+    border: ${({ theme, big }) =>
+      `${big ? '4px' : '2px'} solid ${theme.colorPrimary3}`};
     border-radius: 50%;
     animation: ${LDSAnimation} 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
     border-color: ${({ theme }) => theme.colorPrimary3} transparent transparent

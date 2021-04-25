@@ -26,6 +26,19 @@ import {
   EDIT_BOOK_SUCCESS,
   EDIT_BOOK_FAIL,
   EDIT_BOOK_REFRESH,
+  FETCH_MATCHES_FOR_A_BOOK_SET,
+  FETCH_MATCHES_FOR_A_BOOK_START,
+  FETCH_MATCHES_FOR_A_BOOK_SUCCESS,
+  FETCH_MATCHES_FOR_A_BOOK_FAIL,
+  FETCH_MATCHES_FOR_A_BOOK_RESET,
+  FETCH_MATCHED_BOOKS_START,
+  FETCH_MATCHED_BOOKS_SUCCESS,
+  FETCH_MATCHED_BOOKS_FAIL,
+  FETCH_MATCHED_BOOKS_RESET,
+  SENDING_SWAP_REQUEST_START,
+  SENDING_SWAP_REQUEST_SUCCESS,
+  SENDING_SWAP_REQUEST_FAIL,
+  SENDING_SWAP_REQUEST_RESET,
 } from '../../actions/actionTypes';
 
 export interface BookShape {
@@ -57,6 +70,24 @@ export interface BooksState {
   editBookReqOnGoing: boolean;
   editBookSuccessMsg: string | null;
   editBookErr: { message: string; status: number } | null;
+  fetchMatchesForBookId: string | null;
+  fetchMatchesForBookReqOnGoing: boolean;
+  fetchMatchesForBookErr: { message: string; status: number } | null;
+  matchesForBook: { name: string; userId: string }[] | null;
+  fetchBooksOfTheMatchId: string | null;
+  fetchBooksOfTheMatchReqOnGoing: boolean;
+  fetchBooksOfTheMatchErr: { message: string; status: number } | null;
+  booksOfTheMatch:
+    | {
+        bookName: string;
+        bookId: string;
+        bookAuthor: string;
+        bookPicturePath: string;
+      }[]
+    | null;
+  sendingSwapReqOnGoing: boolean;
+  sendingSwapReqSuccessMsg: string | null;
+  sendingSwapReqErr: { message: string; status: number } | null;
 }
 
 export const initialState: BooksState = {
@@ -73,6 +104,17 @@ export const initialState: BooksState = {
   editBookReqOnGoing: false,
   editBookSuccessMsg: null,
   editBookErr: null,
+  fetchMatchesForBookId: null,
+  fetchMatchesForBookReqOnGoing: false,
+  matchesForBook: null,
+  fetchMatchesForBookErr: null,
+  fetchBooksOfTheMatchId: null,
+  fetchBooksOfTheMatchReqOnGoing: false,
+  fetchBooksOfTheMatchErr: null,
+  booksOfTheMatch: null,
+  sendingSwapReqOnGoing: false,
+  sendingSwapReqSuccessMsg: null,
+  sendingSwapReqErr: null,
 };
 
 // todo write tests for expressInterest related functions
@@ -95,6 +137,14 @@ const reducer = (state = initialState, action: AnyAction) => {
     editBookSuccessMsg,
     editBookErr,
     editedBook,
+    fetchMatchesForBookId,
+    matchesForBook,
+    fetchMatchesForBookErr,
+    fetchBooksOfTheMatchId,
+    fetchBooksOfTheMatchErr,
+    booksOfTheMatch,
+    sendingSwapReqSuccessMsg,
+    sendingSwapReqErr,
   } = action;
 
   switch (action.type) {
@@ -294,6 +344,106 @@ const reducer = (state = initialState, action: AnyAction) => {
         editBookId: null,
         editBookSuccessMsg: null,
         editBookErr: null,
+      };
+    }
+
+    case FETCH_MATCHES_FOR_A_BOOK_SET: {
+      return { ...state, fetchMatchesForBookId };
+    }
+
+    case FETCH_MATCHES_FOR_A_BOOK_START: {
+      return { ...state, fetchMatchesForBookReqOnGoing: true };
+    }
+
+    case FETCH_MATCHES_FOR_A_BOOK_SUCCESS: {
+      return {
+        ...state,
+        fetchMatchesForBookReqOnGoing: false,
+        matchesForBook,
+      };
+    }
+
+    case FETCH_MATCHES_FOR_A_BOOK_FAIL: {
+      return {
+        ...state,
+        fetchMatchesForBookReqOnGoing: false,
+        fetchMatchesForBookErr,
+      };
+    }
+
+    case FETCH_MATCHES_FOR_A_BOOK_RESET: {
+      return {
+        ...state,
+        fetchMatchesForBookId: null,
+        fetchMatchesForBookReqOnGoing: false,
+        matchesForBook: null,
+        fetchMatchesForBookErr: null,
+      };
+    }
+
+    case FETCH_MATCHED_BOOKS_START: {
+      return {
+        ...state,
+        fetchBooksOfTheMatchReqOnGoing: true,
+        fetchBooksOfTheMatchId,
+      };
+    }
+
+    case FETCH_MATCHED_BOOKS_SUCCESS: {
+      return {
+        ...state,
+        fetchBooksOfTheMatchReqOnGoing: false,
+        booksOfTheMatch,
+      };
+    }
+
+    case FETCH_MATCHED_BOOKS_FAIL: {
+      return {
+        ...state,
+        fetchBooksOfTheMatchReqOnGoing: false,
+        fetchBooksOfTheMatchErr,
+      };
+    }
+
+    case FETCH_MATCHED_BOOKS_RESET: {
+      return {
+        ...state,
+        fetchBooksOfTheMatchReqOnGoing: false,
+        fetchBooksOfTheMatchErr: null,
+        fetchBooksOfTheMatchId: null,
+        booksOfTheMatch: null,
+      };
+    }
+
+    case SENDING_SWAP_REQUEST_START: {
+      return {
+        ...state,
+        sendingSwapReqOnGoing: true,
+      };
+    }
+
+    case SENDING_SWAP_REQUEST_SUCCESS: {
+      return {
+        ...state,
+        sendingSwapReqOnGoing: false,
+        sendingSwapReqSuccessMsg,
+      };
+    }
+
+    case SENDING_SWAP_REQUEST_FAIL: {
+      return {
+        ...state,
+        sendingSwapReqOnGoing: false,
+        sendingSwapReqErr,
+      };
+    }
+
+    case SENDING_SWAP_REQUEST_RESET: {
+      return {
+        ...state,
+        sendingSwapReqOnGoing: false,
+        sendingSwapReqSuccessMsg: null,
+        sendingSwapReqErr: null,
       };
     }
 

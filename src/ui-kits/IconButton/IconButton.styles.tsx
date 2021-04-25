@@ -18,7 +18,7 @@ export const StyledButton = styled.button<IconButtonStyledProps>`
   width: 165px;
   font-family: inherit;
   ${({ fontSize }) => fontSize && `font-size: ${fontSize}px`};
-  font-weight: 300;
+  font-weight: 400;
   letter-spacing: 0.5px;
   color: ${({ textColor, theme }): string | null =>
     textColor === 'primary' ? theme.colorTextPrimary : theme.colorTextSecondary};

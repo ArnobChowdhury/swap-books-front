@@ -8,6 +8,10 @@ import {
   availableTenMoreDaysReq,
   editBookSetId,
   editBookRefresh,
+  fetchMatchesForBookSetId,
+  fetchMatchesForBookReset,
+  fetchBooksForMatchReset,
+  sendingSwapRequestReset,
 } from 'redux/actions/book';
 import { RootState } from 'redux/reducers';
 import { SocketIoContext } from 'hoc/Sockets';
@@ -126,34 +130,36 @@ export const Posts = ({ profileId }: PostProps): JSX.Element => {
           bookAuthor={bookAuthor}
           bookOwnerName={bookOwnerName}
           imgUrl={`${process.env.NEXT_PUBLIC_BASE_URL}${bookPicturePath}`}
-          onInterestButtonClick={() => {
-            if (
-              isSignedIn &&
-              socketIo !== undefined &&
-              userName &&
-              booksAvailableToSwap > 0
-            ) {
-              dispatch(
-                expressInterestStart(
-                  socketIo,
-                  userName,
-                  bookId,
-                  bookName,
-                  bookOwnerId,
-                  bookOwnerName,
-                  !userIsInterested,
-                ),
-              );
+          onPostButtonClick={() => {
+            if (!isOwners) {
+              if (
+                isSignedIn &&
+                socketIo !== undefined &&
+                userName &&
+                booksAvailableToSwap > 0
+              ) {
+                dispatch(
+                  expressInterestStart(
+                    socketIo,
+                    userName,
+                    bookId,
+                    bookName,
+                    bookOwnerId,
+                    bookOwnerName,
+                    !userIsInterested,
+                  ),
+                );
+              } else {
+                handleUnsignedInterest();
+              }
             } else {
-              handleUnsignedInterest();
-            }
-          }}
-          // Need to get rid of onUnavailableButtonClick
-          onUnavailableButtonClick={() => {
-            if (isSignedIn) {
-              dispatch(makeUnavailableRequest(bookId));
-            } else {
-              handleUnsignedInterest();
+              // TODO Since we are doing all the reset here we can just have one reset for the whole post swap related states
+              dispatch(fetchMatchesForBookReset());
+              dispatch(sendingSwapRequestReset());
+              dispatch(fetchBooksForMatchReset());
+              dispatch(fetchMatchesForBookSetId(bookId));
+              setShowModal(true);
+              setPopupType('swapBook');
             }
           }}
           isInterested={userIsInterested}

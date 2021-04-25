@@ -12,12 +12,11 @@ interface ParticipatntsProps {
   userId: mongodb.ObjectId;
   userName: string;
   interests: InterestProps[];
-  interestSeen: boolean;
   unreadMsgs: boolean;
+  lastMessage: Date | null;
 }
 
-export interface RoomWithLastModifiedAndID extends Room {
-  lastModified: Timestamp;
+export interface RoomWithId extends Room {
   _id: mongodb.ObjectId;
 }
 
@@ -29,38 +28,37 @@ export default class Room {
       userId: string;
       userName: string;
       interests: InterestProps[];
-      interestSeen: boolean;
     }[],
   ) {
     const participantsWithObjectId = participants.map(participant => {
-      const { userId, userName, interests, interestSeen } = participant;
+      const { userId, userName, interests } = participant;
       const userIdAsObjectId = new ObjectId(userId);
       const newParticipantObject: ParticipatntsProps = {
         userName,
         userId: userIdAsObjectId,
         interests,
-        interestSeen,
         unreadMsgs: false,
+        lastMessage: null,
       };
       return newParticipantObject;
     });
     this.participants = participantsWithObjectId;
   }
 
-  save(): Promise<mongodb.InsertOneWriteOpResult<RoomWithLastModifiedAndID>> {
+  save(): Promise<mongodb.InsertOneWriteOpResult<RoomWithId>> {
     const db = getDb();
     return db.collection('rooms').insertOne({ ...this, lastModified: new Date() });
   }
 
   static async findRoomWithParticipants(
     ...participants: string[]
-  ): Promise<RoomWithLastModifiedAndID | null> {
+  ): Promise<RoomWithId | null> {
     const db = getDb();
     const arrayOfParticipants = participants.map(participant => {
       return new ObjectId(participant);
     });
     try {
-      const room = await db.collection('rooms').findOne<RoomWithLastModifiedAndID>({
+      const room = await db.collection('rooms').findOne<RoomWithId>({
         participants: {
           $all: [
             { $elemMatch: { userId: arrayOfParticipants[0] } },
@@ -77,12 +75,11 @@ export default class Room {
 
   /**
    * TODO for findAllRoomsByUserId
-   * 1. Limit number of responses
-   * 2. Paginate
+   * 1. Do we need it anymore?
+   * 2. Limit number of responses
+   * 3. Paginate
    */
-  static async findAllRoomsByUserId(
-    userId: string,
-  ): Promise<RoomWithLastModifiedAndID[]> {
+  static async findAllRoomsByUserId(userId: string): Promise<RoomWithId[]> {
     const db = getDb();
     try {
       const room = await db
@@ -96,70 +93,27 @@ export default class Room {
     }
   }
 
-  static async getNotificationForUser(
-    userId: string,
-    skip: number,
-  ): Promise<RoomWithLastModifiedAndID[]> {
-    const userIdAsMongoId = new ObjectId(userId);
+  static async getRoomsInBatch(_ids: mongodb.ObjectId[]): Promise<RoomWithId[]> {
     const db = getDb();
-
-    const notifications = await db
+    return db
       .collection('rooms')
-      .find({
-        participants: {
-          $elemMatch: {
-            userId: userIdAsMongoId,
-            interests: { $type: 'array', $ne: [] },
-          },
-        },
-      })
-      .sort({ lastModified: -1, _id: -1 })
-      .skip(skip)
-      .limit(5)
+      .find({ _id: { $in: _ids } })
       .toArray();
-
-    return notifications;
   }
 
-  static async getCountOfUnseenNotification(
-    userIdAsString: string,
-  ): Promise<number> {
+  static async getMatchesForAbook(
+    userId: string,
+    bookId: string,
+  ): Promise<RoomWithId[]> {
     const db = getDb();
-    const userId = new ObjectId(userIdAsString);
 
     return db
       .collection('rooms')
       .find({
-        participants: {
-          $elemMatch: {
-            userId,
-            interests: { $type: 'array', $ne: [] },
-            interestSeen: false,
-          },
-        },
+        'participants.userId': new ObjectId(userId),
+        'participants.interests.bookId': bookId,
+        'participants.interests': { $type: 'array', $ne: [] },
       })
-      .count();
-  }
-
-  static async setNotificationAsSeen(
-    roomId: string,
-    userIdAsString: string,
-  ): Promise<mongodb.UpdateWriteOpResult> {
-    const db = getDb();
-    const _id = new ObjectId(roomId);
-    const userId = new ObjectId(userIdAsString);
-    return db
-      .collection('rooms')
-      .updateOne(
-        { _id, 'participants.userId': userId },
-        { $set: { 'participants.$.interestSeen': true } },
-      );
-  }
-
-  static async getNotificationByRoomId(
-    _id: mongodb.ObjectId,
-  ): Promise<RoomWithLastModifiedAndID | null> {
-    const db = getDb();
-    return db.collection('rooms').findOne({ _id });
+      .toArray();
   }
 }

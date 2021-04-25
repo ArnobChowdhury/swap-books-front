@@ -1,7 +1,5 @@
-import Room, {
-  RoomWithLastModifiedAndID as _RoomWithLastModifiedAndID,
-} from './room.model';
+import Room, { RoomWithId as _RoomWithId } from './room.model';
 
-export type RoomWithLastModifiedAndID = _RoomWithLastModifiedAndID;
+export type RoomWithId = _RoomWithId;
 
 export default Room;

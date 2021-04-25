@@ -1,3 +1,4 @@
+// CENTRALIZE SOCKET TYPES
 export const CONNECT = 'connect';
 
 export const RECEIVE_LATEST_NOTIFICATION = 'receive latest notification';
@@ -12,5 +13,7 @@ export const SEND_MSG = 'send msg';
 export const RECEIVE_NEW_MSG = 'receive new msg';
 export const SET_MSG_AS_SEEN = 'set msg as seen';
 export const INIT_MSGS = 'init msgs';
+
+export const SWAP_REQUEST = 'swap request';
 
 export const DISCONNECT = 'disconnect';

@@ -1,7 +1,9 @@
-import mongo from 'mongodb';
-import { RoomWithLastModifiedAndID } from '../models/room';
+import mongo, { ObjectId } from 'mongodb';
+import { RoomWithId } from '../models/room';
 import { BookWithoutLocationProp } from '../models/book';
 import User from '../models/user';
+import { SwapWithId } from '../models/swap';
+import { NotificationWithId } from '../models/notification/notification.model';
 
 interface MongoCollection {
   _id: mongo.ObjectID;
@@ -27,7 +29,7 @@ export const sortMongoCollectionByTimeStamp = <T extends MongoCollection>(
   return sortedArray;
 };
 
-export const isAMatchedRoom = (room: RoomWithLastModifiedAndID): boolean => {
+export const isAMatchedRoom = (room: RoomWithId): boolean => {
   if (
     room.participants[0].interests.length > 0 &&
     room.participants[1].interests.length > 0
@@ -37,10 +39,7 @@ export const isAMatchedRoom = (room: RoomWithLastModifiedAndID): boolean => {
   return false;
 };
 
-export const processRoomForUser = (
-  room: RoomWithLastModifiedAndID,
-  userId: string,
-) => {
+export const processRoomForUser = (room: RoomWithId, userId: string) => {
   const roomMateIndex = room.participants.findIndex(
     participant => participant.userId.toHexString() !== userId,
   );
@@ -80,4 +79,67 @@ export const processUserInfo = ({
     userLat = coordinates[1];
   }
   return { name, userLon, userLat };
+};
+
+type ExcludeSaveFromRoom = Omit<RoomWithId, 'save'>;
+interface RoomWithLastModified extends ExcludeSaveFromRoom {
+  lastModified: Date;
+}
+
+interface SwapWithLastModified extends SwapWithId {
+  lastModified: Date;
+}
+
+type NotificationInputType = RoomWithId | SwapWithId;
+
+export const addLastModifiedFieldToNotification = (
+  roomsOrSwaps: NotificationInputType[],
+  notifications: NotificationWithId[],
+  type: 'roomId' | 'swapId',
+) => {
+  const notificationWithLastModified = roomsOrSwaps.map(roomOrSwap => {
+    const notification = notifications.find(
+      notification =>
+        roomOrSwap._id.toHexString() === notification[type]?.toHexString(),
+    );
+    let lastModified;
+
+    if (notification) {
+      lastModified = notification.lastModified;
+    }
+
+    const newRoomORSwap = { ...roomOrSwap, lastModified };
+    return newRoomORSwap;
+  });
+
+  return notificationWithLastModified;
+};
+
+export const extractRoomMateIdFromRoom = (userId: string, room: RoomWithId) => {
+  const roomMate = room.participants.find(
+    participant => participant.userId.toHexString() !== userId,
+  );
+  // @ts-ignore
+  return roomMate.userId;
+};
+
+interface ObjWithId {
+  _id: ObjectId;
+  [key: string]: any;
+}
+
+export const _idToRequiredProp = (obj: ObjWithId, requiredProp: string) => {
+  const { _id } = obj;
+  const newObj = { ...obj, [requiredProp]: _id.toHexString() };
+  delete newObj._id;
+
+  return newObj;
+};
+
+export const extractInterestsOfUserFromRoom = (userId: string, room: RoomWithId) => {
+  const roomMate = room.participants.find(
+    participant => participant.userId.toHexString() !== userId,
+  );
+  // @ts-ignore
+  return roomMate.interests;
 };
