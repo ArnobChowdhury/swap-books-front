@@ -33,13 +33,18 @@ export const IconWrapper = styled.div`
   border-radius: 100%;
 `;
 
-export const ActivityButton = styled.button<{ isAlert?: boolean }>`
+export const ActivityButton = styled.button<{
+  isAlert?: boolean;
+  noLeftMargin?: boolean;
+}>`
   background: ${({ theme, isAlert }) =>
     isAlert ? theme.colorAlert : theme.colorPrimary3};
   color: ${({ theme, isAlert }) =>
     isAlert ? theme.colorWhite : theme.colorPrimary1};
   border: none;
   border-radius: 3px;
+  margin: ${({ theme, noLeftMargin }) =>
+    noLeftMargin ? `0 ${theme.spaceTwo} 0 0` : `0 ${theme.spaceTwo}`};
   padding: ${({ theme }) => `${theme.spaceOne} ${theme.spaceSix}`};
   cursor: pointer;
   box-shadow: ${({ theme }) => theme.boxShadow};

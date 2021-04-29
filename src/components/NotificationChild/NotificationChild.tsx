@@ -113,25 +113,27 @@ export const NotificationChild = ({
           </Link>{' '}
           has claimed that you have swapped your book - <Books>{books}</Books> with{' '}
           {interestedUserName}'s book - <Books>{ownersInterests}.</Books> Do you
-          accept this claim?{' '}
-          <ActivityButton
-            onClick={e =>
-              onChatButtonClick && onChatButtonClick(e, chatRoomId as string)
-            }
-            className="dropdown-element"
-          >
-            Yes
-          </ActivityButton>{' '}
-          <ActivityButton
-            isAlert
-            onClick={e =>
-              onChatButtonClick && onChatButtonClick(e, chatRoomId as string)
-            }
-            className="dropdown-element"
-          >
-            No
-          </ActivityButton>{' '}
-          <LastModified />
+          accept this claim? <LastModified />
+          <div>
+            <ActivityButton
+              noLeftMargin
+              onClick={e =>
+                onChatButtonClick && onChatButtonClick(e, chatRoomId as string)
+              }
+              className="dropdown-element"
+            >
+              Yes
+            </ActivityButton>{' '}
+            <ActivityButton
+              isAlert
+              onClick={e =>
+                onChatButtonClick && onChatButtonClick(e, chatRoomId as string)
+              }
+              className="dropdown-element"
+            >
+              No
+            </ActivityButton>
+          </div>
         </span>
       )}
       {type === 'announcement' && <>{noticeText}</>}

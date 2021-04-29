@@ -107,7 +107,7 @@ app.prepare().then(() => {
         swapBook,
         cb: (isSuccess: boolean, swapBook: string) => void,
       ) => {
-        await createSwapRequest(socket, matchId, swapWithBook, swapBook, cb);
+        await createSwapRequest(io, socket, matchId, swapWithBook, swapBook, cb);
         // todo add catch block
       },
     );

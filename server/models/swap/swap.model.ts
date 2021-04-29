@@ -1,6 +1,6 @@
 import mongodb, { ObjectId } from 'mongodb';
 import { getDb, getDbClient } from '../../utils/database';
-import Notification from '../notification';
+import Notification, { NotificationWithId } from '../notification';
 import Book from '../book';
 
 export interface SwapWithId extends Swap {
@@ -47,14 +47,18 @@ export default class Swap {
     roomId: ObjectId,
     swapBook: string,
     swapWithBook: string,
-  ) {
+  ): Promise<{ swap: SwapWithId; notification: NotificationWithId }> {
     const client = getDbClient();
     const session = client.startSession();
 
+    let swap: SwapWithId | undefined;
+    let notification: NotificationWithId | undefined;
     try {
       await session.withTransaction(async () => {
         const newSwap = new this(fromId, toId, roomId, swapBook, swapWithBook);
-        const { insertedId: swapId } = await newSwap.save();
+        const inserteSwapResult = await newSwap.save();
+        const { insertedId: swapId, ops: swapOp } = inserteSwapResult;
+        [swap] = swapOp;
 
         const swapNotification = new Notification(
           fromId,
@@ -64,9 +68,15 @@ export default class Swap {
           undefined,
           swapId.toHexString(),
         );
-        await swapNotification.save();
+        const insertedNotification = await swapNotification.save();
+        const { ops: notificationOp } = insertedNotification;
+        [notification] = notificationOp;
+
         await Book.setAsSwapped(swapBook);
       });
+
+      // @ts-ignore
+      return { swap, notification };
     } finally {
       session.endSession();
     }

@@ -21,6 +21,7 @@ import {
   processRoomNotification,
   _idToRequiredProp,
   transformRoomWithBookNameAndId,
+  processSwapNotification,
 } from '../../utils/general';
 import {
   setSocketIdToRedis,
@@ -28,7 +29,7 @@ import {
   delSocketIdFromRedis,
 } from '../../utils/sockets';
 import { RoomWithId } from '../../models/room';
-import { ObjectID } from 'mongodb';
+import { ObjectID, ObjectId } from 'mongodb';
 import createHttpError from 'http-errors';
 import User from '../../models/user';
 
@@ -339,22 +340,73 @@ export const setMsgAsSeen = async (
 };
 
 export const createSwapRequest = async (
+  io: Server,
   socket: SocketDecoded,
-  matchId: string,
+  swapWithId: string,
   swapWithBook: string,
   swapBook: string,
   cb: (isSuccess: boolean, swapBook: string) => void,
 ) => {
   const {
-    decoded_token: { aud },
+    decoded_token: { aud: userId },
   } = socket;
   try {
-    const room = await Room.findRoomWithParticipants(matchId, aud);
+    const room = await Room.findRoomWithParticipants(swapWithId, userId);
     if (!room) {
       throw new createHttpError.NotFound('Match could not be found!');
     }
 
-    await Swap.requestTransaction(aud, matchId, room._id, swapBook, swapWithBook);
+    const { swap, notification } = await Swap.requestTransaction(
+      userId,
+      swapWithId,
+      room._id,
+      swapBook,
+      swapWithBook,
+    );
+
+    const swapWithSocketId = await getSocketIdFromRedis(swapWithId);
+    const roomId = room._id.toHexString();
+    const roomMembers = io.sockets.adapter.rooms.get(roomId);
+
+    let matchIsInRoom: boolean = false;
+
+    if (roomMembers) {
+      matchIsInRoom = swapWithSocketId ? roomMembers.has(swapWithSocketId) : false;
+    }
+
+    const numOfUnseenNotificationForMatch = await Notification.getCountOfUnseenNotification(
+      swapWithId,
+    );
+
+    const requiredBooksWithIdAndName = await Book.getBooksInBatches(
+      [swapBook, swapWithBook],
+      'bookName',
+    );
+    const swapBookNameAndId = requiredBooksWithIdAndName.find(
+      book => book._id.toHexString() === swapBook,
+    );
+
+    const swapWithBookNameAndId = requiredBooksWithIdAndName.find(
+      book => book._id.toHexString() === swapWithBook,
+    );
+
+    const fromUser = await User.findById(userId);
+
+    const notificationForSwapWith = processSwapNotification(
+      notification,
+      swap,
+      swapBookNameAndId?.bookName,
+      swapWithBookNameAndId?.bookName,
+      fromUser?.name as string,
+    );
+
+    if (matchIsInRoom && swapWithSocketId) {
+      const swapWithSocket = io.sockets.sockets.get(swapWithSocketId);
+      swapWithSocket?.emit(RECEIVE_LATEST_NOTIFICATION, {
+        notifications: [notificationForSwapWith],
+        unseen: numOfUnseenNotificationForMatch,
+      });
+    }
 
     // TODO Emit the swap notification to user if online
     cb(true, swapBook);
