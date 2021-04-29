@@ -18,6 +18,7 @@ import Book from './models/book';
 import {
   saveSocketToRedis,
   expressInterest,
+  removeInterest,
   joinAllRooms,
   sendMsg,
   initMsgs,
@@ -69,8 +70,12 @@ app.prepare().then(() => {
 
     await saveSocketToRedis(socket);
 
-    socket.on(EXPRESS_INTEREST, async bookInfo => {
-      await expressInterest(io, socket, bookInfo);
+    socket.on(EXPRESS_INTEREST, async (isInterested, bookInfo) => {
+      if (isInterested) {
+        await expressInterest(io, socket, bookInfo);
+      } else {
+        await removeInterest(io, socket, bookInfo);
+      }
       // todo add catch block
     });
 

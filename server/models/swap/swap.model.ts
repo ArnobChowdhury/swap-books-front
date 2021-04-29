@@ -10,9 +10,9 @@ export interface SwapWithId extends Swap {
 export default class Swap {
   fromId: mongodb.ObjectId;
   toId: mongodb.ObjectId;
-  roomId: mongodb.ObjectId | null;
-  swapBook: mongodb.ObjectId | null;
-  swapWithBook: mongodb.ObjectId | null;
+  roomId: mongodb.ObjectId;
+  swapBook: mongodb.ObjectId;
+  swapWithBook: mongodb.ObjectId;
 
   constructor(
     fromId: string,

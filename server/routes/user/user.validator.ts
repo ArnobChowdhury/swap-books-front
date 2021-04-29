@@ -7,5 +7,5 @@ export const updateUserLocationSchema = Yup.object({
 //setNotificationAsSeen
 
 export const setNotificationAsSeenSchema = Yup.object({
-  roomId: Yup.string().required('Need Room Id.'),
+  notificationId: Yup.string().required('Need Notification Id.'),
 });

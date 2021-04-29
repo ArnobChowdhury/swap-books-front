@@ -21,49 +21,11 @@ export const getNotificationStart = () => {
   };
 };
 
-const processNotificationForState = (notification: NotificationShapeOnTheServer) => {
-  const { _id, participants, lastModified } = notification;
-  const userId = localStorage.getItem('userId');
-  const userIndex = notification.participants.findIndex(user => {
-    return user.userId === userId;
-  });
-  const interestedUserIndex = userIndex === 0 ? 1 : 0;
-
-  const interestsOfThisUser = participants[interestedUserIndex].interests;
-  const interestsOfInterestedUser = participants[userIndex].interests;
-
-  let notificationType: NotificationShape['notificationType'];
-  if (
-    interestsOfThisUser &&
-    interestsOfInterestedUser &&
-    interestsOfThisUser.length > 0 &&
-    interestsOfInterestedUser.length > 0
-  ) {
-    notificationType = 'match';
-  } else {
-    notificationType = 'interest';
-  }
-
-  return {
-    _id,
-    interestedUserId: participants[interestedUserIndex].userId,
-    interestedUserName: participants[interestedUserIndex].userName,
-    notificationType,
-    interestsOfInterestedUser,
-    interestsOfThisUser,
-    seen: participants[userIndex].interestSeen,
-    lastModified,
-  };
-};
-
 export const getNotificationSuccess = (
   response: NotificationResponseShape,
   type: string,
 ) => {
-  const { notifications: notificationsFromServer, unseen } = response;
-  const notifications: NotificationShape[] = notificationsFromServer.map(
-    processNotificationForState,
-  );
+  const { notifications, unseen } = response;
 
   const hasMoreNotifications = notifications.length < 5 ? false : true;
 
@@ -99,14 +61,17 @@ export const getNotificationsRequest = (skip = 0) => (dispatch: Dispatch) => {
     });
 };
 
-export const setNotificationAsSeenRequest = (roomId: string) => (
+export const setNotificationAsSeenRequest = (notificationId: string) => (
   dispatch: Dispatch,
 ) => {
   return axios
-    .put('/user/notifications', { roomId })
+    .put('/user/notifications', { notificationId })
     .then(res => {
       const { message } = res.data;
-      dispatch({ type: SET_NOTIFICATION_AS_SEEN, seenNotificationId: roomId });
+      dispatch({
+        type: SET_NOTIFICATION_AS_SEEN,
+        seenNotificationId: notificationId,
+      });
     })
     .catch(err => {
       // TODO: ERROR HANDLING
@@ -114,15 +79,15 @@ export const setNotificationAsSeenRequest = (roomId: string) => (
     });
 };
 
-export const addLatestNotification = (notification: NotificationResponseShape) => {
-  const { notifications, unseen: totalUnseen } = notification;
-  const notificationProcessedForState = processNotificationForState(
-    notifications[0],
-  );
+export const addLatestNotification = (
+  latestNotification: NotificationResponseShape,
+) => {
+  const { notifications, unseen: totalUnseen } = latestNotification;
+  const [notification] = notifications;
 
   return {
     type: ADD_LIVE_NOTIFICATION,
-    latestNotification: notificationProcessedForState,
+    latestNotification: notification,
     totalUnseen,
   };
 };

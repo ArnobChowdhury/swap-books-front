@@ -47,8 +47,8 @@ export const Notifications = (): JSX.Element => {
   const { pathname, push: routerPush } = useRouter();
   const isNotificationsPage = pathname === NOTIFICATIONS_ROUTE;
 
-  const handleNotificationIsSeen = (roomId: string) => {
-    dispatch(setNotificationAsSeenRequest(roomId));
+  const handleNotificationIsSeen = (notificationId: string) => {
+    dispatch(setNotificationAsSeenRequest(notificationId));
   };
 
   const handleLoaderOnScreen = () => {
@@ -62,23 +62,23 @@ export const Notifications = (): JSX.Element => {
   useEffect(() => {
     let intersectionObserver: IntersectionObserver;
     if (wrapperRef.current) {
-      const nodes = document.querySelectorAll('div[data-roomid]');
+      const nodes = document.querySelectorAll('div[data-nid]');
       intersectionObserver = new IntersectionObserver(
         (entries, observer) => {
           entries.forEach(entry => {
             if (entry.isIntersecting) {
-              const roomId = (entry.target as HTMLElement).dataset.roomid;
+              const nId = (entry.target as HTMLElement).dataset.nid;
               const notificationIndex = notifications.findIndex(
-                notification => notification._id === roomId,
+                notification => notification._id === nId,
               );
 
-              if (!notifications[notificationIndex].seen && roomId) {
+              if (!notifications[notificationIndex].seen && nId) {
                 // @ts-ignore
                 if (window.requestIdleCallback) {
                   // @ts-ignore
-                  window.requestIdleCallback(() => handleNotificationIsSeen(roomId));
+                  window.requestIdleCallback(() => handleNotificationIsSeen(nId));
                 } else {
-                  handleNotificationIsSeen(roomId);
+                  handleNotificationIsSeen(nId);
                 }
               }
 
@@ -120,24 +120,25 @@ export const Notifications = (): JSX.Element => {
   const notificationsChildren = notifications.map(
     ({
       _id,
-      interestedUserId,
-      interestedUserName,
+      notificationFromId,
+      notificationFromName,
       seen,
       notificationType,
-      interestsOfThisUser,
-      interestsOfInterestedUser,
+      usersBookInterests,
+      notificationForBooks,
       lastModified,
+      chatRoomId,
     }: NotificationShape) => {
       let ownersBookInterests;
-      if (interestsOfThisUser) {
-        ownersBookInterests = interestsOfThisUser.map(interests => {
+      if (usersBookInterests) {
+        ownersBookInterests = usersBookInterests.map(interests => {
           return interests.bookName;
         });
       }
 
       let interestsOfOtherUser;
-      if (interestsOfInterestedUser) {
-        interestsOfOtherUser = interestsOfInterestedUser.map(interests => {
+      if (notificationForBooks) {
+        interestsOfOtherUser = notificationForBooks.map(interests => {
           return interests.bookName;
         });
       }
@@ -145,15 +146,16 @@ export const Notifications = (): JSX.Element => {
       return (
         <NotificationChild
           key={_id}
-          fromId={interestedUserId}
+          fromId={notificationFromId}
           bookNames={interestsOfOtherUser}
           seen={seen}
-          fromName={interestedUserName}
+          fromName={notificationFromName}
           type={notificationType}
           ownersBookInterests={ownersBookInterests}
           onChatButtonClick={handleChatButtonClick}
-          roomId={_id}
+          notificationId={_id}
           lastModified={formatDistanceToNow(new Date(lastModified))}
+          chatRoomId={chatRoomId}
         />
       );
     },

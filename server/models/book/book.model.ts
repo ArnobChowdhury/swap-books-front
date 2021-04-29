@@ -3,6 +3,8 @@ import { HttpException } from '../../interface';
 import { getDb, getDbClient } from '../../utils/database';
 import { RoomWithId } from '../room';
 import { isAMatchedRoom } from '../../utils/general';
+import { NotificationWithId } from '../notification';
+import User from '../user';
 
 export interface BookWithId extends Book {
   _id: mongodb.ObjectId;
@@ -36,6 +38,7 @@ export default class Book {
     bookName: string,
     bookAuthor: string,
     bookPicturePath: string,
+    // TODO: IMPORTANT GET RID OF bookOwnerName // WE ARE GOING THE NORMALIZATION WAY
     bookOwnerName: string,
     userId: mongodb.ObjectId,
     coordinates: number[],
@@ -203,12 +206,15 @@ export default class Book {
 
   static async addInterestTransaction(
     bookId: string,
-    bookName: string,
     bookOwnerId: string,
-    bookOwnerName: string,
     userId: string,
-    userName: string,
-  ): Promise<RoomWithId> {
+  ): Promise<{
+    room: RoomWithId;
+    outGoingNotification: NotificationWithId;
+    inComingNotification?: NotificationWithId;
+    userName: string;
+    bookOwnerName?: string;
+  }> {
     const client = getDbClient();
     const usersCollection = client.db().collection('users');
     const booksCollection = client.db().collection('books');
@@ -217,7 +223,11 @@ export default class Book {
     const session = client.startSession();
 
     // todo skipping "transaction options" for now. Study later
-    let result: RoomWithId;
+    let room: RoomWithId;
+    let outGoingNotification: NotificationWithId;
+    let inComingNotification: NotificationWithId;
+    let userName: string;
+    let bookOwnerName: string | undefined;
 
     try {
       await session.withTransaction(async () => {
@@ -226,14 +236,17 @@ export default class Book {
           { $push: { interestedUsers: new ObjectId(userId) } },
         );
 
-        await usersCollection.updateOne(
+        const updatedUser = await usersCollection.findOneAndUpdate(
           { _id: new ObjectId(userId) },
           { $push: { currentInterests: new ObjectId(bookId) } },
         );
+        const { value: userVal } = updatedUser;
+        userName = userVal.name;
+
         const userIdAsMongoId = new ObjectId(userId);
         const bookOwnerIdAsMongoId = new ObjectId(bookOwnerId);
-        // TODO need to do upsert for Room
-        const room = await roomsCollection.findOne({
+
+        const existingRoom = await roomsCollection.findOne({
           participants: {
             $all: [
               { $elemMatch: { userId: userIdAsMongoId } },
@@ -242,14 +255,14 @@ export default class Book {
           },
         });
 
-        if (room !== null) {
+        if (existingRoom !== null) {
           // update room
           const updatedResult = await roomsCollection.findOneAndUpdate(
-            { _id: room._id, 'participants.userId': bookOwnerIdAsMongoId },
+            { _id: existingRoom._id, 'participants.userId': bookOwnerIdAsMongoId },
             {
               $push: {
                 'participants.$.interests': {
-                  $each: [{ bookName, bookId }],
+                  $each: [bookId],
                   $position: 0,
                 },
               },
@@ -258,58 +271,65 @@ export default class Book {
               returnOriginal: false,
             },
           );
-          const { value } = updatedResult;
-          result = value;
-          const isMatch = isAMatchedRoom(value);
-          await notificationsCollection.updateOne(
-            {
-              roomId: value._id,
-            },
-            {
-              $set: {
-                seen: false,
-                type: isMatch ? 'match' : 'interest',
-              },
-              $currentDate: {
-                lastModified: true,
-              },
-            },
-          );
+          const { value: roomVal } = updatedResult;
+          room = roomVal;
         } else {
           // create room
-          const insertedResult = await roomsCollection.insertOne({
+          const insertedRoom = await roomsCollection.insertOne({
             participants: [
               {
                 userId: userIdAsMongoId,
-                userName,
                 interests: [],
-                // interestSeen: true,
                 unreadMsgs: false,
               },
               {
                 userId: bookOwnerIdAsMongoId,
-                userName: bookOwnerName,
-                interests: [{ bookName, bookId }],
-                // interestSeen: false,
+                interests: [bookId],
                 unreadMsgs: false,
               },
             ],
-            // lastModified: new Date(),
           });
-          [result] = insertedResult.ops;
+          [room] = insertedRoom.ops;
+        }
 
-          await notificationsCollection.insertOne({
+        const isMatch = isAMatchedRoom(room);
+        const outGoingNotificationUpsertResult = await notificationsCollection.findOneAndUpdate(
+          {
             fromId: userIdAsMongoId,
             toId: bookOwnerIdAsMongoId,
-            type: 'interest',
-            lastModified: new Date(),
-            roomId: result._id,
-            seen: false,
-          });
+            roomId: room._id,
+          },
+          {
+            $set: { type: isMatch ? 'match' : 'interest', seen: false },
+            $currentDate: { lastModified: true },
+          },
+          { returnOriginal: false, upsert: true },
+        );
+        outGoingNotification = outGoingNotificationUpsertResult.value;
+
+        if (isMatch) {
+          const inComingNotificationUpsertResult = await notificationsCollection.findOneAndUpdate(
+            {
+              fromId: bookOwnerIdAsMongoId,
+              toId: userIdAsMongoId,
+              roomId: room._id,
+            },
+            {
+              $set: { type: 'match', seen: false },
+              $currentDate: { lastModified: true },
+            },
+            { returnOriginal: false, upsert: true },
+          );
+          const bookOwner = await User.findById(bookOwnerId);
+          bookOwnerName = bookOwner?.name;
+
+          inComingNotification = inComingNotificationUpsertResult.value;
         }
       });
+      // prettier-ignore
       // @ts-ignore
-      return result;
+
+      return { room, outGoingNotification, inComingNotification, userName, bookOwnerName };
     } finally {
       session.endSession();
     }
@@ -317,7 +337,6 @@ export default class Book {
   // TODO Needs to be aligned with addInterestTransation
   static async removeInterestTransaction(
     bookId: string,
-    bookName: string,
     bookOwnerId: string,
     userId: string,
   ): Promise<RoomWithId> {
@@ -325,6 +344,7 @@ export default class Book {
     const usersCollection = client.db().collection('users');
     const booksCollection = client.db().collection('books');
     const roomsCollection = client.db().collection('rooms');
+    const notificationsCollection = client.db().collection('notifications');
     const session = client.startSession();
 
     const userIdAsMongoId = new ObjectId(userId);
@@ -356,18 +376,36 @@ export default class Book {
           },
           {
             $pull: {
-              'participants.$.interests': {
-                bookId,
-                bookName,
-              },
-            },
-            $currentDate: {
-              lastModified: true,
+              'participants.$.interests': bookId,
             },
           },
           { returnOriginal: false },
         );
         const { value } = updatedDoc;
+
+        const isEmptyRoom =
+          (value as RoomWithId).participants[0].interests.length === 0 &&
+          (value as RoomWithId).participants[1].interests.length === 0;
+        if (isEmptyRoom) {
+          await roomsCollection.deleteOne({ _id: value._id });
+          await notificationsCollection.deleteMany({ roomId: value._id });
+        }
+
+        const bookOwnerRoomVal = (value as RoomWithId).participants.find(
+          participant => participant.userId.toHexString() === bookOwnerId,
+        );
+        const noInterestOfUser = bookOwnerRoomVal?.interests.length === 0;
+        if (noInterestOfUser) {
+          await notificationsCollection.updateOne(
+            { fromId: bookOwnerIdAsMongoId, roomId: (value as RoomWithId)._id },
+            { $set: { type: 'interest' } },
+          );
+          await notificationsCollection.deleteOne({
+            fromId: userIdAsMongoId,
+            roomId: (value as RoomWithId)._id,
+          });
+        }
+
         result = value;
       });
     } finally {
@@ -417,9 +455,7 @@ export default class Book {
             { 'participants.userId': userIdAsMongoId },
             {
               $pull: {
-                'participants.$.interests': {
-                  bookId,
-                },
+                'participants.$.interests': bookId,
               },
             },
           );
@@ -434,28 +470,21 @@ export default class Book {
 
   static async getBooksInBatches(
     bookIds: string[],
+    ...props: (keyof Book)[]
   ): Promise<
     {
       _id: ObjectId;
-      bookName: string;
-      bookAuthor: string;
-      bookPicturePath: string;
+      [key: string]: any;
     }[]
   > {
     const db = getDb();
     const bookIdsAsMongoObjectIds = bookIds.map(id => new ObjectId(id));
+    const projection: { [key: string]: 1 } = {};
+    props.forEach(prop => (projection[prop] = 1));
+
     return db
       .collection('books')
-      .find(
-        { _id: { $in: bookIdsAsMongoObjectIds } },
-        {
-          projection: {
-            bookName: 1,
-            bookAuthor: 1,
-            bookPicturePath: 1,
-          },
-        },
-      )
+      .find({ _id: { $in: bookIdsAsMongoObjectIds } }, { projection })
       .toArray();
   }
 

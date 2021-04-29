@@ -17,7 +17,6 @@ import {
   MsgPartnerInfo,
   MsgPartnerName,
   MutualInterests,
-  ShowInterestsButton,
   InterestContainer,
   MessageContent,
   MessageInputWrapper,

@@ -126,7 +126,7 @@ export const SwapMatches = (): JSX.Element => {
             {booksOfTheMatch && isSelected && (
               <>
                 <Header marginBelow={spaceFive} headerFontSize={14}>
-                  Swapped with:
+                  Books:
                 </Header>
                 <BooksListUl>{swappables}</BooksListUl>
               </>

@@ -3,16 +3,11 @@ import { getDb } from '../../utils/database';
 
 const { ObjectId } = mongodb;
 
-interface InterestProps {
-  bookId: string;
-  bookName: string;
-}
-
 interface ParticipatntsProps {
   userId: mongodb.ObjectId;
-  userName: string;
-  interests: InterestProps[];
+  interests: string[];
   unreadMsgs: boolean;
+  // TODO Let's use it for sorting rooms for messaging
   lastMessage: Date | null;
 }
 
@@ -26,15 +21,13 @@ export default class Room {
   constructor(
     participants: {
       userId: string;
-      userName: string;
-      interests: InterestProps[];
+      interests: string[];
     }[],
   ) {
     const participantsWithObjectId = participants.map(participant => {
-      const { userId, userName, interests } = participant;
+      const { userId, interests } = participant;
       const userIdAsObjectId = new ObjectId(userId);
       const newParticipantObject: ParticipatntsProps = {
-        userName,
         userId: userIdAsObjectId,
         interests,
         unreadMsgs: false,
@@ -111,8 +104,7 @@ export default class Room {
       .collection('rooms')
       .find({
         'participants.userId': new ObjectId(userId),
-        'participants.interests.bookId': bookId,
-        'participants.interests': { $type: 'array', $ne: [] },
+        'participants.interests': bookId,
       })
       .toArray();
   }

@@ -3,7 +3,7 @@ import { RoomWithId } from '../models/room';
 import { BookWithoutLocationProp } from '../models/book';
 import User from '../models/user';
 import { SwapWithId } from '../models/swap';
-import { NotificationWithId } from '../models/notification/notification.model';
+import { NotificationWithId } from '../models/notification';
 
 interface MongoCollection {
   _id: mongo.ObjectID;
@@ -39,14 +39,18 @@ export const isAMatchedRoom = (room: RoomWithId): boolean => {
   return false;
 };
 
-export const processRoomForUser = (room: RoomWithId, userId: string) => {
+export const processRoomForUser = (
+  room: RoomWithId,
+  userId: string,
+  roomMateName: string,
+) => {
   const roomMateIndex = room.participants.findIndex(
     participant => participant.userId.toHexString() !== userId,
   );
   const userIndex = roomMateIndex === 0 ? 1 : 0;
   return {
     roomId: room._id,
-    roomMateName: room.participants[roomMateIndex].userName,
+    roomMateName: roomMateName,
     roomMateId: room.participants[roomMateIndex].userId.toHexString(),
     roomMateInterests: room.participants[userIndex].interests,
     userInterests: room.participants[roomMateIndex].interests,
@@ -92,29 +96,6 @@ interface SwapWithLastModified extends SwapWithId {
 
 type NotificationInputType = RoomWithId | SwapWithId;
 
-export const addLastModifiedFieldToNotification = (
-  roomsOrSwaps: NotificationInputType[],
-  notifications: NotificationWithId[],
-  type: 'roomId' | 'swapId',
-) => {
-  const notificationWithLastModified = roomsOrSwaps.map(roomOrSwap => {
-    const notification = notifications.find(
-      notification =>
-        roomOrSwap._id.toHexString() === notification[type]?.toHexString(),
-    );
-    let lastModified;
-
-    if (notification) {
-      lastModified = notification.lastModified;
-    }
-
-    const newRoomORSwap = { ...roomOrSwap, lastModified };
-    return newRoomORSwap;
-  });
-
-  return notificationWithLastModified;
-};
-
 export const extractRoomMateIdFromRoom = (userId: string, room: RoomWithId) => {
   const roomMate = room.participants.find(
     participant => participant.userId.toHexString() !== userId,
@@ -142,4 +123,102 @@ export const extractInterestsOfUserFromRoom = (userId: string, room: RoomWithId)
   );
   // @ts-ignore
   return roomMate.interests;
+};
+
+interface RoomWithBookAsObject {
+  participants: {
+    interests: {
+      [key: string]: any;
+      _id: ObjectId;
+    }[];
+    userId: ObjectId;
+    unreadMsgs: boolean;
+  }[];
+  _id: ObjectId;
+}
+
+export const processRoomNotification = (
+  notification: NotificationWithId,
+  room: RoomWithBookAsObject,
+  notificationFromId: string,
+  notificationFromName: string,
+) => {
+  const {
+    _id: notificationId,
+    lastModified,
+    seen,
+    type: notificationType,
+  } = notification;
+  const _id = notificationId.toHexString();
+
+  const { participants, _id: roomId } = room;
+  const chatRoomId = roomId.toHexString();
+
+  const userIndex = participants.findIndex(user => {
+    return user.userId.toHexString() !== notificationFromId;
+  });
+
+  const notificationFromUserIndex = userIndex === 0 ? 1 : 0;
+
+  const { interests: usersBookInterests } = participants[notificationFromUserIndex];
+
+  const { interests: notificationForBooks } = participants[userIndex];
+
+  return {
+    _id,
+    notificationFromId,
+    notificationFromName,
+    notificationType,
+    notificationForBooks,
+    usersBookInterests,
+    seen,
+    lastModified,
+    chatRoomId: notificationType === 'match' ? chatRoomId : undefined,
+  };
+};
+
+export const processSwapNotification = (
+  notification: NotificationWithId,
+  swap: SwapWithId,
+  swapBookName: string,
+  swapWithBookName: string,
+  fromIdName: string,
+) => {
+  const { _id, lastModified, seen, type: notificationType } = notification;
+  const { fromId: notificationFromId, swapBook, swapWithBook } = swap;
+
+  return {
+    _id,
+    notificationFromId,
+    notificationFromName: fromIdName,
+    notificationType,
+    notificationForBooks: [
+      { bookId: swapBook.toHexString(), bookName: swapBookName },
+    ],
+    usersBookInterests: [
+      { bookId: swapWithBook.toHexString(), bookName: swapWithBookName },
+    ],
+    seen,
+    lastModified,
+  };
+};
+
+export const transformRoomWithBookNameAndId = (
+  room: RoomWithId,
+  allBooks: { _id: ObjectId; bookName: string }[],
+) => {
+  const { participants } = room;
+  const transformedParticipants = participants.map(participant => {
+    const { interests } = participant;
+    const transformedInterests = interests.map(interestId => {
+      const book = allBooks.find(book => book._id.toHexString() === interestId);
+      return book;
+    });
+    const transformedInterestsWithBookId = transformedInterests.map(interest =>
+      _idToRequiredProp(interest as ObjWithId, 'bookId'),
+    );
+    return { ...participant, interests: transformedInterestsWithBookId };
+  });
+
+  return { ...room, participants: transformedParticipants };
 };

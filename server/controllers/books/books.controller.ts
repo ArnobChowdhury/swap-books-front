@@ -258,10 +258,13 @@ export const getBooksOfAMatch = async (
       );
     }
 
-    const matchedBooks = extractInterestsOfUserFromRoom(userId, room);
-    // TODO: We can delete below line we start saving only bookId in the database instead of { bookName, bookId }
-    const matchedBookIds = matchedBooks.map(book => book.bookId);
-    const books = await Book.getBooksInBatches(matchedBookIds);
+    const matchedBooksIds = extractInterestsOfUserFromRoom(userId, room);
+    const books = await Book.getBooksInBatches(
+      matchedBooksIds,
+      'bookName',
+      'bookAuthor',
+      'bookPicturePath',
+    );
     const booksOfTheMatch = books.map(book => _idToRequiredProp(book, 'bookId'));
 
     res.status(200).json({ message: 'Get all books', booksOfTheMatch });

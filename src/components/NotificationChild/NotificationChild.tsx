@@ -3,13 +3,16 @@ import {
   Wrapper,
   InterestedUserLink,
   IconWrapper,
-  ChatButton,
+  ActivityButton,
   LastModifiedStyled,
+  Books,
 } from './NotificationChild.styles';
 import { InterestNotificationIcon } from 'assets/InterestNotificationIcon';
+import { SwapNotification } from 'assets/SwapNotification';
 import { MatchIcon } from 'assets/MatchIcon';
 import { HTMLAttributes } from 'react';
 import Link from 'next/link';
+import { NotificationShape } from 'redux/reducers/notifications';
 
 export interface NotificationChildProps {
   seen: boolean;
@@ -17,15 +20,16 @@ export interface NotificationChildProps {
   fromName: string;
   bookNames?: string[];
   ownersBookInterests?: string[];
-  type: 'interest' | 'match' | 'notice';
+  type: NotificationShape['notificationType'];
   noticeText?: string;
   otherProps?: HTMLAttributes<HTMLDivElement>;
   onChatButtonClick?: (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
     roomId: string,
   ) => void;
-  roomId: string;
+  notificationId: string;
   lastModified: string;
+  chatRoomId?: string;
 }
 
 export const NotificationChild = ({
@@ -38,8 +42,9 @@ export const NotificationChild = ({
   noticeText,
   otherProps,
   onChatButtonClick,
-  roomId,
+  notificationId,
   lastModified,
+  chatRoomId,
 }: NotificationChildProps): JSX.Element => {
   const bookNamesArePlural = bookNames && bookNames.length > 1;
 
@@ -55,18 +60,19 @@ export const NotificationChild = ({
   }, [lastModified]);
 
   return (
-    <Wrapper seen={seen} {...otherProps} data-roomid={roomId}>
+    <Wrapper seen={seen} {...otherProps} data-nid={notificationId}>
       <IconWrapper>
         {type === 'interest' && <InterestNotificationIcon />}
         {type === 'match' && <MatchIcon />}
+        {type === 'swapReq' && <SwapNotification />}
       </IconWrapper>
 
       {type === 'interest' && (
         <span>
           <strong>Expressed Interest: </strong>
           {interestedUserName} is interested in your{' '}
-          {bookNamesArePlural ? 'books' : 'book'} <i>{books}</i>. Check books you can
-          swap with
+          {bookNamesArePlural ? 'books' : 'book'} <Books>{books}</Books>. Check books
+          you can swap with
           <Link href={`/user/${interestedUserId}`} passHref>
             <InterestedUserLink>{` ${interestedUserName}.`}</InterestedUserLink>
           </Link>{' '}
@@ -83,19 +89,52 @@ export const NotificationChild = ({
             </InterestedUserLink>
           </Link>{' '}
           is interested in your {bookNamesArePlural ? 'books' : 'book'}{' '}
-          <i>{books}</i>. You are interested in {interestedUserName}&apos;s -{' '}
-          <i>{ownersInterests}.</i>{' '}
-          <ChatButton
-            onClick={e => onChatButtonClick && onChatButtonClick(e, roomId)}
+          <Books>{books}</Books>. You are interested in {interestedUserName}&apos;s -{' '}
+          <Books>{ownersInterests}.</Books>{' '}
+          <ActivityButton
+            onClick={e =>
+              onChatButtonClick && onChatButtonClick(e, chatRoomId as string)
+            }
             className="dropdown-element"
           >
             Chat
-          </ChatButton>{' '}
+          </ActivityButton>{' '}
           with him to make a swap deal. <LastModified />
         </span>
       )}
 
-      {type === 'notice' && <>{noticeText}</>}
+      {type === 'swapReq' && (
+        <span>
+          <strong>Swap Claim: </strong>
+          <Link href={`/user/${interestedUserId}`} passHref>
+            <InterestedUserLink href={`/user/${interestedUserId}`}>
+              {interestedUserName}
+            </InterestedUserLink>
+          </Link>{' '}
+          has claimed that you have swapped your book - <Books>{books}</Books> with{' '}
+          {interestedUserName}'s book - <Books>{ownersInterests}.</Books> Do you
+          accept this claim?{' '}
+          <ActivityButton
+            onClick={e =>
+              onChatButtonClick && onChatButtonClick(e, chatRoomId as string)
+            }
+            className="dropdown-element"
+          >
+            Yes
+          </ActivityButton>{' '}
+          <ActivityButton
+            isAlert
+            onClick={e =>
+              onChatButtonClick && onChatButtonClick(e, chatRoomId as string)
+            }
+            className="dropdown-element"
+          >
+            No
+          </ActivityButton>{' '}
+          <LastModified />
+        </span>
+      )}
+      {type === 'announcement' && <>{noticeText}</>}
     </Wrapper>
   );
 };

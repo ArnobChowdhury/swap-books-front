@@ -1,8 +1,6 @@
 import mongodb, { ObjectId } from 'mongodb';
 import { getDb, getDbClient } from '../../utils/database';
 
-const { ObjectId } = mongodb;
-
 interface UserWithId extends User {
   _id: mongodb.ObjectID;
 }
@@ -204,8 +202,3 @@ export default class User {
       .updateOne({ _id: new ObjectId(userId) }, { $set: { password } });
   }
 }
-
-/** TODO for mongodb
- * Can we create more than one user using the same email???
- * How about same email with different casing(uppercase/ lowercase)
- */

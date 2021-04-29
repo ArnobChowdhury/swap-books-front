@@ -22,6 +22,7 @@ export interface NotificationBookShape {
   bookId: string;
 }
 
+// TODO GET RID OF THIS SINCE THIS IS NOT THE RIGHT STRUCTURE ANYMORE
 export interface NotificationShapeOnTheServer {
   _id: string;
   participants: NotificationParticipantShape[];
@@ -34,13 +35,20 @@ export interface NotificationResponseShape {
 
 export interface NotificationShape {
   _id: string;
-  interestedUserId: string;
-  interestedUserName: string;
-  notificationType: 'interest' | 'match' | 'notice';
-  interestsOfInterestedUser?: NotificationBookShape[];
-  interestsOfThisUser?: NotificationBookShape[];
+  notificationFromId: string;
+  notificationFromName: string;
+  notificationType:
+    | 'interest'
+    | 'match'
+    | 'swapReq'
+    | 'swapApprove'
+    | 'swapReject'
+    | 'announcement';
+  notificationForBooks?: NotificationBookShape[];
+  usersBookInterests?: NotificationBookShape[];
   seen: boolean;
   lastModified: string;
+  chatRoomId?: string;
 }
 
 export interface NotificationState {

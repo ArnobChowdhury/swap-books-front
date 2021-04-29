@@ -252,23 +252,16 @@ export const fetchBooksRequest = ({ page, location, profileId }: FetchBookProps)
 // todo write tests for expressInterest related functions
 export const expressInterestStart = (
   socket: Socket,
-  userName: string,
   bookId: string,
-  bookName: string,
   bookOwnerId: string,
-  bookOwnerName: string,
   isInterested: boolean,
 ) => {
   // TODO Stop retrieving userId from localStorage // Since Our backend should already know from socket
   const userId = localStorage.getItem('userId');
-  socket.emit(SOCKET_EXPRESS_INTEREST, {
+  socket.emit(SOCKET_EXPRESS_INTEREST, isInterested, {
     userId,
-    userName,
     bookId,
-    bookName,
     bookOwnerId,
-    bookOwnerName,
-    isInterested,
   });
   // TODO: can be a callback like notification
   return { type: EXPRESS_INTEREST_START, interestActivity: { bookId } };

@@ -141,11 +141,8 @@ export const Posts = ({ profileId }: PostProps): JSX.Element => {
                 dispatch(
                   expressInterestStart(
                     socketIo,
-                    userName,
                     bookId,
-                    bookName,
                     bookOwnerId,
-                    bookOwnerName,
                     !userIsInterested,
                   ),
                 );

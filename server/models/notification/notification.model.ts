@@ -69,4 +69,13 @@ export default class Notification {
 
     return db.collection('notifications').countDocuments({ toId, seen: false });
   }
+
+  static async setNotificationAsSeen(notificationAsString: string) {
+    const _id = new ObjectId(notificationAsString);
+    const db = getDb();
+
+    return db
+      .collection('notifications')
+      .updateOne({ _id }, { $set: { seen: true } });
+  }
 }

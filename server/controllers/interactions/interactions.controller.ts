@@ -2,7 +2,7 @@ import { Server } from 'socket.io';
 import { SocketDecoded } from '../../interface';
 import Book from '../../models/book';
 import Room from '../../models/room';
-import Notification from '../../models/notification';
+import Notification, { NotificationWithId } from '../../models/notification';
 import Swap from '../../models/swap';
 import {
   RECEIVE_LATEST_NOTIFICATION,
@@ -13,8 +13,15 @@ import {
   SET_MSG_AS_SEEN,
 } from '../../socketTypes';
 import Message, { MessageWithId } from '../../models/message';
-import { Timestamp } from '../../utils/general';
-import { addTimestampToMongoCollection, isAMatchedRoom } from '../../utils/general';
+import {
+  addTimestampToMongoCollection,
+  isAMatchedRoom,
+  processRoomForUser,
+  Timestamp,
+  processRoomNotification,
+  _idToRequiredProp,
+  transformRoomWithBookNameAndId,
+} from '../../utils/general';
 import {
   setSocketIdToRedis,
   getSocketIdFromRedis,
@@ -22,8 +29,8 @@ import {
 } from '../../utils/sockets';
 import { RoomWithId } from '../../models/room';
 import { ObjectID } from 'mongodb';
-import { processRoomForUser } from '../../utils/general';
 import createHttpError from 'http-errors';
+import User from '../../models/user';
 
 export const saveSocketToRedis = async (socket: SocketDecoded) => {
   const {
@@ -41,71 +48,30 @@ export const saveSocketToRedis = async (socket: SocketDecoded) => {
   }
 };
 
-export const expressInterest = async (
+export const removeInterest = async (
   io: Server,
   socket: SocketDecoded,
   {
     userId,
-    userName,
     bookId,
-    bookName,
     bookOwnerId,
-    bookOwnerName,
-    isInterested,
   }: {
     userId: string;
-    userName: string;
     bookId: string;
-    bookName: string;
     bookOwnerId: string;
-    bookOwnerName: string;
-    isInterested: string;
   },
 ) => {
   try {
-    let interestNotification: RoomWithId;
-    if (isInterested) {
-      interestNotification = await Book.addInterestTransaction(
-        bookId,
-        bookName,
-        bookOwnerId,
-        bookOwnerName,
-        userId,
-        userName,
-      );
-    } else {
-      interestNotification = await Book.removeInterestTransaction(
-        bookId,
-        bookName,
-        bookOwnerId,
-        userId,
-      );
-    }
-
-    let isMatch = false;
-    if (interestNotification) {
-      isMatch = isAMatchedRoom(interestNotification);
-    }
-
-    const numOfUnseenNotificationForBookOwner = await Notification.getCountOfUnseenNotification(
+    const removedFromRoom = await Book.removeInterestTransaction(
+      bookId,
       bookOwnerId,
+      userId,
     );
 
+    const isMatch = isAMatchedRoom(removedFromRoom);
     const bookOwnerSocketId = await getSocketIdFromRedis(bookOwnerId);
 
-    /**
-     * TODO /
-     * 1. For now, we are sending notification only when user is interested in a book NOT
-     * when the user removes the notification. We might want to think about this.
-     */
-    if (bookOwnerSocketId !== null && isInterested) {
-      socket.broadcast.to(bookOwnerSocketId).emit(RECEIVE_LATEST_NOTIFICATION, {
-        notifications: [interestNotification],
-        unseen: numOfUnseenNotificationForBookOwner,
-      });
-    }
-
-    const roomId = interestNotification._id.toHexString();
+    const roomId = removedFromRoom._id.toHexString();
     const roomMembers = io.sockets.adapter.rooms.get(roomId);
 
     let userIsInRoom: boolean = false;
@@ -118,40 +84,9 @@ export const expressInterest = async (
         : false;
     }
 
-    if (isMatch) {
-      const numOfUnseenNotificationForUser = await Notification.getCountOfUnseenNotification(
-        userId,
-      );
-      // Send rooms to these people if they are online
-      if (!userIsInRoom) {
-        socket.join(roomId);
-        //TODO emit a the newly joined room name to user
-        socket.emit(
-          JOIN_SINGLE_ROOM,
-          processRoomForUser(interestNotification, userId),
-        );
-      }
-
-      if (!bookOwnerIsInRoom && bookOwnerSocketId) {
-        const bookOwnerSocket = io.sockets.sockets.get(bookOwnerSocketId);
-        bookOwnerSocket?.join(roomId);
-        //TODO emit a the newly joined room name to bookOwner
-        bookOwnerSocket?.emit(
-          JOIN_SINGLE_ROOM,
-          processRoomForUser(interestNotification, bookOwnerId),
-        );
-      }
-
-      socket.emit(RECEIVE_LATEST_NOTIFICATION, {
-        notifications: [interestNotification],
-        unseen: numOfUnseenNotificationForUser,
-      });
-    }
-
     if (!isMatch) {
       if (userIsInRoom) {
         socket.leave(roomId);
-        //TODO emit a the newly joined room name to user
         socket.emit(LEAVE_SINGLE_ROOM, roomId);
       }
 
@@ -162,10 +97,127 @@ export const expressInterest = async (
       }
     }
 
-    socket.emit(RECEIVE_INTEREST, { bookId, isInterested });
+    socket.emit(RECEIVE_INTEREST, { bookId, isInterested: false });
+  } catch {
+    // TODO if there is an error we will let the user know about this. We will create an error type for this
+  }
+};
+
+export const expressInterest = async (
+  io: Server,
+  socket: SocketDecoded,
+  {
+    userId,
+    bookId,
+    bookOwnerId,
+  }: {
+    userId: string;
+    bookId: string;
+    bookOwnerId: string;
+  },
+) => {
+  try {
+    const {
+      room,
+      outGoingNotification,
+      inComingNotification,
+      userName,
+      bookOwnerName,
+    } = await Book.addInterestTransaction(bookId, bookOwnerId, userId);
+
+    const numOfUnseenNotificationForBookOwner = await Notification.getCountOfUnseenNotification(
+      bookOwnerId,
+    );
+
+    const allRequiredBookIds: string[] = [];
+    room.participants.forEach(particpant => {
+      particpant.interests.forEach(bookId => {
+        allRequiredBookIds.push(bookId);
+      });
+    });
+
+    const requiredBooksForNotifications = await Book.getBooksInBatches(
+      allRequiredBookIds,
+      'bookName',
+    );
+
+    const newTransformedRoom = transformRoomWithBookNameAndId(
+      room,
+      // @ts-ignore
+      requiredBooksForNotifications,
+    );
+
+    const outGoingNotificationProcessed = processRoomNotification(
+      outGoingNotification,
+      // @ts-ignore
+      newTransformedRoom,
+      userId,
+      userName,
+    );
+
+    const bookOwnerSocketId = await getSocketIdFromRedis(bookOwnerId);
+
+    if (bookOwnerSocketId !== null) {
+      socket.broadcast.to(bookOwnerSocketId).emit(RECEIVE_LATEST_NOTIFICATION, {
+        notifications: [outGoingNotificationProcessed],
+        unseen: numOfUnseenNotificationForBookOwner,
+      });
+    }
+
+    const roomId = room._id.toHexString();
+    const roomMembers = io.sockets.adapter.rooms.get(roomId);
+
+    let userIsInRoom: boolean = false;
+    let bookOwnerIsInRoom: boolean = false;
+
+    if (roomMembers) {
+      userIsInRoom = roomMembers.has(socket.id);
+      bookOwnerIsInRoom = bookOwnerSocketId
+        ? roomMembers.has(bookOwnerSocketId)
+        : false;
+    }
+
+    if (inComingNotification && bookOwnerName) {
+      // having inComingNotification meaning it is a match so we should join the room if we are not already and send the notification to user as well
+      const numOfUnseenNotificationForUser = await Notification.getCountOfUnseenNotification(
+        userId,
+      );
+      // Send rooms to these people if they are online
+      if (!userIsInRoom) {
+        socket.join(roomId);
+        socket.emit(
+          JOIN_SINGLE_ROOM,
+          processRoomForUser(room, userId, bookOwnerName),
+        );
+      }
+
+      if (!bookOwnerIsInRoom && bookOwnerSocketId) {
+        const bookOwnerSocket = io.sockets.sockets.get(bookOwnerSocketId);
+        bookOwnerSocket?.join(roomId);
+        //TODO emit a the newly joined room name to bookOwner
+        bookOwnerSocket?.emit(
+          JOIN_SINGLE_ROOM,
+          processRoomForUser(room, bookOwnerId, userName),
+        );
+      }
+
+      const inComingNotificationProcessed = processRoomNotification(
+        inComingNotification,
+        // @ts-ignore
+        newTransformedRoom,
+        bookOwnerId,
+        bookOwnerName,
+      );
+      socket.emit(RECEIVE_LATEST_NOTIFICATION, {
+        notifications: [inComingNotificationProcessed],
+        unseen: numOfUnseenNotificationForUser,
+      });
+    }
+
+    socket.emit(RECEIVE_INTEREST, { bookId, isInterested: true });
   } catch (err) {
     // TODO if there is an error we will let the user know about this. We will create an error type for this
-    // eslint-disable-next-line no-console
+    console.log(err);
   }
 };
 interface RoomResponse {
@@ -193,7 +245,28 @@ export const joinAllRooms = async (
     socket.join(room._id.toHexString());
   });
 
-  const allRooms = allMatchedRooms.map(room => processRoomForUser(room, userId));
+  const allRoomMateIds = allMatchedRooms.map(room => {
+    const roomMate = room.participants.find(
+      room => room.userId.toHexString() !== userId,
+    );
+    // @ts-ignore
+    return roomMate.userId;
+  });
+
+  const allRoomMatesWithNameAndId = await User.findUserNamesByIdsInBatch(
+    allRoomMateIds,
+  );
+
+  const allRooms = allMatchedRooms.map(room => {
+    const roomMateIndex = room.participants.findIndex(
+      participant => participant.userId.toHexString() !== userId,
+    );
+    const roomMate = allRoomMatesWithNameAndId.find(
+      ({ _id }) =>
+        _id.toHexString() === room.participants[roomMateIndex].userId.toHexString(),
+    );
+    return processRoomForUser(room, userId, roomMate?.name as string);
+  });
   // TODO we need to sort the rooms according to lastMessage before sending it to front-end
 
   // TODO check if user has unseen message in db
