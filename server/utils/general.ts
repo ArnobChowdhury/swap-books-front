@@ -182,8 +182,14 @@ export const processSwapNotification = (
   swap: SwapWithId,
   fromIdName: string,
 ) => {
-  const { _id, lastModified, seen, type: notificationType } = notification;
-  const { fromId: notificationFromId, swapBook, swapWithBook, status } = swap;
+  const {
+    _id,
+    lastModified,
+    seen,
+    type: notificationType,
+    fromId: notificationFromId,
+  } = notification;
+  const { swapBook, swapWithBook, status } = swap;
 
   const shouldReverseBooks =
     notificationType === 'swapReject' || notificationType === 'swapApprove';
