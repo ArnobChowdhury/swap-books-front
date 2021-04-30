@@ -4,4 +4,5 @@ export {
   getNotificationFail,
   setNotificationAsSeenRequest,
   addLatestNotification,
+  swapConsentRequest,
 } from './notifications';

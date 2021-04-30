@@ -36,6 +36,7 @@ export const IconWrapper = styled.div`
 export const ActivityButton = styled.button<{
   isAlert?: boolean;
   noLeftMargin?: boolean;
+  reqOnGoing?: boolean;
 }>`
   background: ${({ theme, isAlert }) =>
     isAlert ? theme.colorAlert : theme.colorPrimary3};
@@ -51,6 +52,9 @@ export const ActivityButton = styled.button<{
   font-size: inherit;
   font-family: inherit;
   font-weight: 400;
+  opacity: ${({ reqOnGoing }) => (reqOnGoing ? '.5' : '1')};
+  pointer-events: ${({ reqOnGoing }) => (reqOnGoing ? 'none' : 'auto')};
+
   &:active {
     transform: translateY(1px);
   }
@@ -61,6 +65,6 @@ export const LastModifiedStyled = styled.span`
   display: inline-block;
 `;
 
-export const Books = styled.i`
+export const Emphasis = styled.i`
   color: ${({ theme }) => theme.colorTextSecondary};
 `;

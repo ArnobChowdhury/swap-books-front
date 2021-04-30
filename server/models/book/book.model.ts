@@ -2,7 +2,11 @@ import mongodb, { ObjectId } from 'mongodb';
 import { HttpException } from '../../interface';
 import { getDb, getDbClient } from '../../utils/database';
 import { RoomWithId } from '../room';
-import { isAMatchedRoom } from '../../utils/general';
+import {
+  isAMatchedRoom,
+  isEmptyRoom,
+  oneWayInterestOfRoomMate,
+} from '../../utils/general';
 import { NotificationWithId } from '../notification';
 import User from '../user';
 
@@ -383,19 +387,12 @@ export default class Book {
         );
         const { value } = updatedDoc;
 
-        const isEmptyRoom =
-          (value as RoomWithId).participants[0].interests.length === 0 &&
-          (value as RoomWithId).participants[1].interests.length === 0;
-        if (isEmptyRoom) {
+        if (isEmptyRoom(value)) {
           await roomsCollection.deleteOne({ _id: value._id });
           await notificationsCollection.deleteMany({ roomId: value._id });
         }
 
-        const bookOwnerRoomVal = (value as RoomWithId).participants.find(
-          participant => participant.userId.toHexString() === bookOwnerId,
-        );
-        const noInterestOfUser = bookOwnerRoomVal?.interests.length === 0;
-        if (noInterestOfUser) {
+        if (oneWayInterestOfRoomMate(value, userId)) {
           await notificationsCollection.updateOne(
             { fromId: bookOwnerIdAsMongoId, roomId: (value as RoomWithId)._id },
             { $set: { type: 'interest' } },
@@ -420,10 +417,13 @@ export default class Book {
     const usersCollection = client.db().collection('users');
     const booksCollection = client.db().collection('books');
     const roomsCollection = client.db().collection('rooms');
+    const notificationsCollection = client.db().collection('notifications');
     const session = client.startSession();
 
     const userIdAsMongoId = new ObjectId(userId);
     const bookIdAsMongoId = new ObjectId(bookId);
+
+    // TODO Since more databases has been added - swap, notifications etc. we need to re-think what else we have to do for safely removing a book
 
     try {
       await session.withTransaction(async () => {
@@ -459,6 +459,74 @@ export default class Book {
               },
             },
           );
+
+          const allRoomsBookOwner = await roomsCollection
+            .find({ 'participants.userId': userIdAsMongoId })
+            .toArray();
+
+          if (allRoomsBookOwner.length > 0) {
+            const roomDeleteOps: mongodb.BulkWriteOperation<any>[] = [];
+            const notificationsOps: mongodb.BulkWriteOperation<any>[] = [];
+            allRoomsBookOwner.forEach(room => {
+              console.log('is room empty', isEmptyRoom(room));
+              if (isEmptyRoom(room)) {
+                roomDeleteOps.push({
+                  deleteOne: {
+                    filter: {
+                      _id: room._id,
+                    },
+                  },
+                });
+                notificationsOps.push({
+                  deleteMany: {
+                    filter: {
+                      roomId: room._id,
+                    },
+                  },
+                });
+              }
+
+              const roomMateIndex =
+                (room as RoomWithId).participants[0].userId.toHexString() !== userId
+                  ? 0
+                  : 1;
+              const roomMateId = (room as RoomWithId).participants[roomMateIndex]
+                .userId;
+
+              const oneWayInterestOfUser = oneWayInterestOfRoomMate; // Just so that it a bit readable
+              if (oneWayInterestOfUser(room, roomMateId.toHexString())) {
+                notificationsOps.push(
+                  {
+                    deleteOne: {
+                      filter: {
+                        fromId: roomMateId,
+                        roomId: room._id,
+                      },
+                    },
+                  },
+                  {
+                    updateOne: {
+                      filter: {
+                        fromId: new ObjectId(userId),
+                      },
+                      update: {
+                        $set: {
+                          type: 'interest',
+                        },
+                      },
+                    },
+                  },
+                );
+              }
+            });
+
+            if (roomDeleteOps.length > 0) {
+              await roomsCollection.bulkWrite(roomDeleteOps);
+            }
+            if (notificationsOps.length > 0) {
+              await notificationsCollection.bulkWrite(notificationsOps);
+            }
+          }
         }
       });
     } catch (err) {

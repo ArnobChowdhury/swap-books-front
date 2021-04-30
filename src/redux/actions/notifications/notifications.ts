@@ -1,10 +1,8 @@
-import {
-  NotificationResponseShape,
-  NotificationShape,
-  NotificationShapeOnTheServer,
-} from 'redux/reducers/notifications';
+import { NotificationResponseShape } from 'redux/reducers/notifications';
 import { Dispatch } from 'redux';
 import axios from 'axiosInstance';
+import { SOCKET_SWAP_CONSENT } from 'socketTypes';
+import { Socket } from 'socket.io-client';
 
 import {
   GET_NOTIFICATIONS_FAIL,
@@ -13,6 +11,9 @@ import {
   SET_NOTIFICATION_AS_SEEN,
   ADD_LIVE_NOTIFICATION,
   GET_MORE_NOTIFICATIONS_SUCCESS,
+  SWAP_CONSENT_REQUEST_START,
+  SWAP_CONSENT_REQUEST_SUCCESS,
+  SWAP_CONSENT_REQUEST_FAIL,
 } from './../actionTypes';
 
 export const getNotificationStart = () => {
@@ -89,5 +90,66 @@ export const addLatestNotification = (
     type: ADD_LIVE_NOTIFICATION,
     latestNotification: notification,
     totalUnseen,
+  };
+};
+
+const swapConsentStart = (notificationIdForSwapConsent: string) => {
+  return {
+    type: SWAP_CONSENT_REQUEST_START,
+    notificationIdForSwapConsent,
+  };
+};
+
+const swapConsentSuccess = (
+  notificationIdForSwapConsent: string,
+  statusOfSwapConsent: 'approved' | 'pending' | 'rejected',
+) => {
+  return {
+    type: SWAP_CONSENT_REQUEST_SUCCESS,
+    notificationIdForSwapConsent,
+    statusOfSwapConsent,
+  };
+};
+
+const swapConsentFail = (
+  notificationIdForSwapConsent: string,
+  errorForSwapConsent: { message: string; status: number },
+) => {
+  return {
+    type: SWAP_CONSENT_REQUEST_FAIL,
+    notificationIdForSwapConsent,
+    errorForSwapConsent,
+  };
+};
+
+export const swapConsentRequest = (
+  socket: Socket,
+  notificationId: string,
+  hasAccepted: boolean,
+) => {
+  return (dispatch: Dispatch) => {
+    dispatch(swapConsentStart(notificationId));
+    socket.emit(
+      SOCKET_SWAP_CONSENT,
+      notificationId,
+      hasAccepted,
+      (isSuccess: boolean) => {
+        /**
+         * TODO -
+         * MAKE THE BOOK UNAVAILABLE
+         */
+        const status = hasAccepted ? 'approved' : 'rejected';
+        if (isSuccess) {
+          dispatch(swapConsentSuccess(notificationId, status));
+        } else {
+          dispatch(
+            swapConsentFail(notificationId, {
+              message: 'Failed. Try again later.',
+              status: 401,
+            }),
+          );
+        }
+      },
+    );
   };
 };

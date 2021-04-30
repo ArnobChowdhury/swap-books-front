@@ -48,6 +48,12 @@ export default class Notification {
     return db.collection('notifications').insertOne(this);
   }
 
+  static async findById(notificationId: string): Promise<NotificationWithId> {
+    const _id = new ObjectId(notificationId);
+    const db = getDb();
+    return db.collection('notifications').findOne({ _id });
+  }
+
   static async getNotificationsForUser(
     toIdAsString: string,
     skip: number,

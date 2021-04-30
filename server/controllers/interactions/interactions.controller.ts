@@ -32,6 +32,8 @@ import { RoomWithId } from '../../models/room';
 import { ObjectID, ObjectId } from 'mongodb';
 import createHttpError from 'http-errors';
 import User from '../../models/user';
+import fs from 'fs';
+import path from 'path';
 
 export const saveSocketToRedis = async (socket: SocketDecoded) => {
   const {
@@ -345,7 +347,7 @@ export const createSwapRequest = async (
   swapWithId: string,
   swapWithBook: string,
   swapBook: string,
-  cb: (isSuccess: boolean, swapBook: string) => void,
+  cb: (isSuccess: boolean) => void,
 ) => {
   const {
     decoded_token: { aud: userId },
@@ -378,25 +380,11 @@ export const createSwapRequest = async (
       swapWithId,
     );
 
-    const requiredBooksWithIdAndName = await Book.getBooksInBatches(
-      [swapBook, swapWithBook],
-      'bookName',
-    );
-    const swapBookNameAndId = requiredBooksWithIdAndName.find(
-      book => book._id.toHexString() === swapBook,
-    );
-
-    const swapWithBookNameAndId = requiredBooksWithIdAndName.find(
-      book => book._id.toHexString() === swapWithBook,
-    );
-
     const fromUser = await User.findById(userId);
 
     const notificationForSwapWith = processSwapNotification(
       notification,
       swap,
-      swapBookNameAndId?.bookName,
-      swapWithBookNameAndId?.bookName,
       fromUser?.name as string,
     );
 
@@ -409,8 +397,67 @@ export const createSwapRequest = async (
     }
 
     // TODO Emit the swap notification to user if online
-    cb(true, swapBook);
+    cb(true);
   } catch {
-    cb(false, swapBook);
+    cb(false);
+  }
+};
+
+export const accpetOrRejectSwapRequest = async (
+  io: Server,
+  socket: SocketDecoded,
+  notificationId: string,
+  hasAccepted: boolean,
+  cb: (isSuccess: boolean) => void,
+) => {
+  const {
+    decoded_token: { aud: userId },
+  } = socket;
+  try {
+    const { notification, swap, bookPicturePaths } = await Swap.approvalTransaction(
+      notificationId,
+      userId,
+      hasAccepted,
+    );
+
+    if (hasAccepted && bookPicturePaths.length > 0) {
+      bookPicturePaths.forEach(picturePath => {
+        fs.unlinkSync(path.join(__dirname, '..', '..', '..', picturePath));
+      });
+    }
+    const { fromId: reqSenderIdAsObjectId, roomId } = swap;
+    const reqSenderId = reqSenderIdAsObjectId.toHexString();
+
+    const reqSendersSocketId = await getSocketIdFromRedis(reqSenderId);
+
+    let reqSenderIsInRoom = false;
+    const roomMembers = io.sockets.adapter.rooms.get(roomId.toHexString());
+    if (roomMembers) {
+      reqSenderIsInRoom = reqSendersSocketId
+        ? roomMembers.has(reqSendersSocketId)
+        : false;
+    }
+
+    const fromUser = await User.findById(userId);
+    const notificationForSwapAccpetance = processSwapNotification(
+      notification,
+      swap,
+      fromUser?.name as string,
+    );
+
+    const numOfUnseenNotificationForMatch = await Notification.getCountOfUnseenNotification(
+      reqSenderId,
+    );
+
+    if (reqSenderIsInRoom && reqSendersSocketId) {
+      const reqSenderSocket = io.sockets.sockets.get(reqSendersSocketId);
+      reqSenderSocket?.emit(RECEIVE_LATEST_NOTIFICATION, {
+        notifications: [notificationForSwapAccpetance],
+        unseen: numOfUnseenNotificationForMatch,
+      });
+    }
+    cb(true);
+  } catch {
+    // TODO Handle error
   }
 };

@@ -13,6 +13,7 @@ import { RootState } from 'redux/reducers';
 import {
   setNotificationAsSeenRequest,
   getNotificationsRequest,
+  swapConsentRequest,
 } from 'redux/actions/notifications';
 import { openMessageBox, setCurrentRoom } from 'redux/actions/message';
 import { Header } from 'ui-kits/Header';
@@ -23,7 +24,7 @@ import { useRouter } from 'next/router';
 import { NOTIFICATIONS_ROUTE } from 'frontEndRoutes';
 import { largeScreen } from 'mediaConfig';
 import { MESSAGES_ROUTE } from 'frontEndRoutes';
-
+import { SocketIoContext } from 'hoc/Sockets';
 export interface NotificationProps {
   notifications: NotificationShape[];
 }
@@ -117,6 +118,8 @@ export const Notifications = (): JSX.Element => {
     }
   };
 
+  const { socketIo } = useContext(SocketIoContext);
+
   const notificationsChildren = notifications.map(
     ({
       _id,
@@ -128,6 +131,9 @@ export const Notifications = (): JSX.Element => {
       notificationForBooks,
       lastModified,
       chatRoomId,
+      swapConsentErr,
+      swapConsentOnGoing,
+      swapStatus,
     }: NotificationShape) => {
       let ownersBookInterests;
       if (usersBookInterests) {
@@ -143,6 +149,10 @@ export const Notifications = (): JSX.Element => {
         });
       }
 
+      const handleSwapApproval = (hasAccepted: boolean) => {
+        if (socketIo) dispatch(swapConsentRequest(socketIo, _id, hasAccepted));
+      };
+
       return (
         <NotificationChild
           key={_id}
@@ -156,6 +166,12 @@ export const Notifications = (): JSX.Element => {
           notificationId={_id}
           lastModified={formatDistanceToNow(new Date(lastModified))}
           chatRoomId={chatRoomId}
+          onSwapApproval={
+            notificationType === 'swapReq' ? handleSwapApproval : undefined
+          }
+          swapConsentErr={swapConsentErr}
+          swapConsentOnGoing={swapConsentOnGoing}
+          swapStatus={swapStatus}
         />
       );
     },

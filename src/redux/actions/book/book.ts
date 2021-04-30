@@ -637,13 +637,13 @@ export const sendingSwapRequest = (
       matchId,
       swapWithBook,
       swapBook,
-      (isSuccess: boolean, swapBook: string) => {
+      (isSuccess: boolean) => {
         /**
          * TODO -
          * MAKE THE BOOK UNAVAILABLE
          */
         if (isSuccess) {
-          dispatch(sendingSwapRequestSuccess('Hoise'));
+          dispatch(sendingSwapRequestSuccess('Swap Request sent.'));
         } else {
           dispatch(
             sendingSwapRequestFail({

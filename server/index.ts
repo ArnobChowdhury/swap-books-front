@@ -37,8 +37,10 @@ import {
   SET_MSG_AS_SEEN,
   SWAP_REQUEST,
   DISCONNECT,
+  SWAP_CONSENT,
 } from './socketTypes';
 import { jwtVerify } from './middlewares/jwtVerify';
+import { accpetOrRejectSwapRequest } from './controllers/interactions/interactions.controller';
 
 const port = parseInt(process.env.PORT as string, 10) || 3000; // We might want to change it later
 const dev = process.env.NODE_ENV !== 'production';
@@ -101,13 +103,16 @@ app.prepare().then(() => {
 
     socket.on(
       SWAP_REQUEST,
-      async (
-        matchId,
-        swapWithBook,
-        swapBook,
-        cb: (isSuccess: boolean, swapBook: string) => void,
-      ) => {
+      async (matchId, swapWithBook, swapBook, cb: (isSuccess: boolean) => void) => {
         await createSwapRequest(io, socket, matchId, swapWithBook, swapBook, cb);
+        // todo add catch block
+      },
+    );
+
+    socket.on(
+      SWAP_CONSENT,
+      async (notificationId, hasAccepted, cb: (isSuccess: boolean) => void) => {
+        await accpetOrRejectSwapRequest(io, socket, notificationId, hasAccepted, cb);
         // todo add catch block
       },
     );

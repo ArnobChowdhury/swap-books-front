@@ -104,7 +104,7 @@ export const extractRoomMateIdFromRoom = (userId: string, room: RoomWithId) => {
   return roomMate.userId;
 };
 
-interface ObjWithId {
+export interface ObjWithId {
   _id: ObjectId;
   [key: string]: any;
 }
@@ -180,25 +180,23 @@ export const processRoomNotification = (
 export const processSwapNotification = (
   notification: NotificationWithId,
   swap: SwapWithId,
-  swapBookName: string,
-  swapWithBookName: string,
   fromIdName: string,
 ) => {
   const { _id, lastModified, seen, type: notificationType } = notification;
-  const { fromId: notificationFromId, swapBook, swapWithBook } = swap;
+  const { fromId: notificationFromId, swapBook, swapWithBook, status } = swap;
+
+  const shouldReverseBooks =
+    notificationType === 'swapReject' || notificationType === 'swapApprove';
 
   return {
     _id,
     notificationFromId,
     notificationFromName: fromIdName,
     notificationType,
-    notificationForBooks: [
-      { bookId: swapBook.toHexString(), bookName: swapBookName },
-    ],
-    usersBookInterests: [
-      { bookId: swapWithBook.toHexString(), bookName: swapWithBookName },
-    ],
+    notificationForBooks: shouldReverseBooks ? [swapBook] : [swapWithBook],
+    usersBookInterests: shouldReverseBooks ? [swapWithBook] : [swapBook],
     seen,
+    swapStatus: status,
     lastModified,
   };
 };
@@ -221,4 +219,20 @@ export const transformRoomWithBookNameAndId = (
   });
 
   return { ...room, participants: transformedParticipants };
+};
+
+export const isEmptyRoom = (room: RoomWithId) => {
+  return (
+    room.participants[0].interests.length === 0 &&
+    room.participants[1].interests.length === 0
+  );
+};
+
+export const oneWayInterestOfRoomMate = (room: RoomWithId, userId: string) => {
+  const userIndex = room.participants[0].userId.toHexString() === userId ? 0 : 1;
+  const roomMateIndex = userIndex === 0 ? 1 : 0;
+  return (
+    room.participants[roomMateIndex].interests.length === 0 &&
+    room.participants[userIndex].interests.length > 0
+  );
 };

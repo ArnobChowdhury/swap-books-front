@@ -117,10 +117,6 @@ export const getUserNotifications = async (
         allRequiredBookIds.push(bookId);
       });
     });
-    swapsForNotifications.forEach(swap => {
-      allRequiredBookIds.push(swap.swapBook.toHexString());
-      allRequiredBookIds.push(swap.swapWithBook.toHexString());
-    });
 
     const requiredBooksForNotifications = await Book.getBooksInBatches(
       allRequiredBookIds,
@@ -165,12 +161,6 @@ export const getUserNotifications = async (
       const notification = allnotifications.find(
         noti => noti.swapId?.toHexString() === swap._id.toHexString(),
       );
-      const swapBook = requiredBooksForNotifications.find(
-        book => book._id.toHexString() === swap.swapBook.toHexString(),
-      );
-      const swapWithBook = requiredBooksForNotifications.find(
-        book => book._id.toHexString() === swap.swapWithBook.toHexString(),
-      );
 
       const swapReqFromUserWithName = notificationsFromIdsAndNames.find(
         user => user._id.toHexString() === notification?.fromId.toHexString(),
@@ -180,8 +170,6 @@ export const getUserNotifications = async (
       return processSwapNotification(
         notification as NotificationWithId,
         swap,
-        swapBook?.bookName,
-        swapWithBook?.bookName,
         fromIdName as string,
       );
     });

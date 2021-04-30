@@ -5,10 +5,12 @@ import {
   IconWrapper,
   ActivityButton,
   LastModifiedStyled,
-  Books,
+  Emphasis,
 } from './NotificationChild.styles';
 import { InterestNotificationIcon } from 'assets/InterestNotificationIcon';
-import { SwapNotification } from 'assets/SwapNotification';
+import { SwapRequestNotification } from 'assets/SwapRequestNotification';
+import { SwapAcceptNotification } from 'assets/SwapAcceptNotification';
+import { SwapRejectNotification } from 'assets/SwapRejectNotification';
 import { MatchIcon } from 'assets/MatchIcon';
 import { HTMLAttributes } from 'react';
 import Link from 'next/link';
@@ -30,6 +32,10 @@ export interface NotificationChildProps {
   notificationId: string;
   lastModified: string;
   chatRoomId?: string;
+  onSwapApproval?: (hasAccepted: boolean) => void;
+  swapConsentOnGoing?: NotificationShape['swapConsentOnGoing'];
+  swapStatus?: NotificationShape['swapStatus'];
+  swapConsentErr?: NotificationShape['swapConsentErr'];
 }
 
 export const NotificationChild = ({
@@ -45,6 +51,10 @@ export const NotificationChild = ({
   notificationId,
   lastModified,
   chatRoomId,
+  onSwapApproval,
+  swapConsentOnGoing,
+  swapStatus,
+  swapConsentErr,
 }: NotificationChildProps): JSX.Element => {
   const bookNamesArePlural = bookNames && bookNames.length > 1;
 
@@ -64,15 +74,17 @@ export const NotificationChild = ({
       <IconWrapper>
         {type === 'interest' && <InterestNotificationIcon />}
         {type === 'match' && <MatchIcon />}
-        {type === 'swapReq' && <SwapNotification />}
+        {type === 'swapReq' && <SwapRequestNotification />}
+        {type === 'swapApprove' && <SwapAcceptNotification />}
+        {type === 'swapReject' && <SwapRejectNotification />}
       </IconWrapper>
 
       {type === 'interest' && (
         <span>
           <strong>Expressed Interest: </strong>
           {interestedUserName} is interested in your{' '}
-          {bookNamesArePlural ? 'books' : 'book'} <Books>{books}</Books>. Check books
-          you can swap with
+          {bookNamesArePlural ? 'books' : 'book'} <Emphasis>{books}</Emphasis>. Check
+          books you can swap with
           <Link href={`/user/${interestedUserId}`} passHref>
             <InterestedUserLink>{` ${interestedUserName}.`}</InterestedUserLink>
           </Link>{' '}
@@ -89,8 +101,8 @@ export const NotificationChild = ({
             </InterestedUserLink>
           </Link>{' '}
           is interested in your {bookNamesArePlural ? 'books' : 'book'}{' '}
-          <Books>{books}</Books>. You are interested in {interestedUserName}&apos;s -{' '}
-          <Books>{ownersInterests}.</Books>{' '}
+          <Emphasis>{books}</Emphasis>. You are interested in {interestedUserName}
+          &apos;s - <Emphasis>{ownersInterests}.</Emphasis>{' '}
           <ActivityButton
             onClick={e =>
               onChatButtonClick && onChatButtonClick(e, chatRoomId as string)
@@ -111,29 +123,72 @@ export const NotificationChild = ({
               {interestedUserName}
             </InterestedUserLink>
           </Link>{' '}
-          has claimed that you have swapped your book - <Books>{books}</Books> with{' '}
-          {interestedUserName}'s book - <Books>{ownersInterests}.</Books> Do you
-          accept this claim? <LastModified />
-          <div>
-            <ActivityButton
-              noLeftMargin
-              onClick={e =>
-                onChatButtonClick && onChatButtonClick(e, chatRoomId as string)
-              }
-              className="dropdown-element"
-            >
-              Yes
-            </ActivityButton>{' '}
-            <ActivityButton
-              isAlert
-              onClick={e =>
-                onChatButtonClick && onChatButtonClick(e, chatRoomId as string)
-              }
-              className="dropdown-element"
-            >
-              No
-            </ActivityButton>
-          </div>
+          has claimed that you have swapped your book - <Emphasis>{books}</Emphasis>{' '}
+          with {interestedUserName}'s book - <Emphasis>{ownersInterests}.</Emphasis>{' '}
+          Do you accept this claim? <LastModified />
+          {swapStatus === 'pending' && (
+            <div>
+              <ActivityButton
+                noLeftMargin
+                onClick={e => onSwapApproval && onSwapApproval(true)}
+                className="dropdown-element"
+                reqOnGoing={swapConsentOnGoing}
+                disabled={swapConsentOnGoing}
+              >
+                Yes
+              </ActivityButton>{' '}
+              <ActivityButton
+                isAlert
+                onClick={e => onSwapApproval && onSwapApproval(false)}
+                className="dropdown-element"
+                reqOnGoing={swapConsentOnGoing}
+                disabled={swapConsentOnGoing}
+              >
+                No
+              </ActivityButton>
+            </div>
+          )}
+          {swapStatus === 'approved' && (
+            <div>
+              <Emphasis>- Swap request accepted.</Emphasis>
+            </div>
+          )}
+          {swapStatus === 'rejected' && (
+            <div>
+              <Emphasis>- Swap request rejected.</Emphasis>
+            </div>
+          )}
+          {swapConsentErr && (
+            <div>
+              <Emphasis>{swapConsentErr.message}</Emphasis>
+            </div>
+          )}
+        </span>
+      )}
+      {type === 'swapReject' && (
+        <span>
+          <strong>Swap Request Rejected: </strong>
+          <Link href={`/user/${interestedUserId}`} passHref>
+            <InterestedUserLink href={`/user/${interestedUserId}`}>
+              {interestedUserName}
+            </InterestedUserLink>
+          </Link>{' '}
+          has not accepted your swap request for book - <Emphasis>{books}</Emphasis>{' '}
+          with {interestedUserName}'s book - <Emphasis>{ownersInterests}.</Emphasis>{' '}
+          <LastModified />
+        </span>
+      )}
+      {type === 'swapApprove' && (
+        <span>
+          <strong>Swap Request Accepted: </strong>
+          <Link href={`/user/${interestedUserId}`} passHref>
+            <InterestedUserLink href={`/user/${interestedUserId}`}>
+              {interestedUserName}
+            </InterestedUserLink>
+          </Link>{' '}
+          has accepted your swap request for book - <Emphasis>{books}</Emphasis> with{' '}
+          {interestedUserName}'s book - <Emphasis>{ownersInterests}.</Emphasis>{' '}
+          <LastModified />
         </span>
       )}
       {type === 'announcement' && <>{noticeText}</>}

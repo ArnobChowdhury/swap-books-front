@@ -15,5 +15,6 @@ export const SET_MSG_AS_SEEN = 'set msg as seen';
 export const INIT_MSGS = 'init msgs';
 
 export const SWAP_REQUEST = 'swap request';
+export const SWAP_CONSENT = 'swap consent';
 
 export const DISCONNECT = 'disconnect';

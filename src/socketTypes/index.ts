@@ -13,5 +13,6 @@ export const SOCKET_SET_MSG_AS_SEEN = 'set msg as seen';
 export const SOCKET_INIT_MSGS = 'init msgs';
 
 export const SOCKET_SWAP_REQUEST = 'swap request';
+export const SOCKET_SWAP_CONSENT = 'swap consent';
 
 export const SOCKET_DISCONNECT = 'disconnect';
