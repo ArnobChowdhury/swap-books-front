@@ -6,17 +6,19 @@ export interface ModalProps {
   onClick: (e: React.SyntheticEvent) => void;
   largeModal?: boolean;
   formSubmitting?: boolean;
+  opensInBottom?: boolean;
 }
 export const Modal: React.FC<ModalProps> = ({
   children,
   onClick,
   largeModal,
   formSubmitting,
+  opensInBottom = false,
 }: ModalProps): JSX.Element => {
   return (
     <>
       <BackgroundDiv onClick={onClick} />
-      <ModalDiv largeModal={largeModal}>
+      <ModalDiv opensInBottom={opensInBottom} largeModal={largeModal}>
         {formSubmitting && <LoadingBar />}
         {children}
       </ModalDiv>

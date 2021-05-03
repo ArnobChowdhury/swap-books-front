@@ -24,11 +24,19 @@ const UserPage: NextPage = (): JSX.Element => {
   const { id: profileId } = router.query;
 
   const rootContext = useContext(RootContext);
-  const { contentType, setContentType } = rootContext as RootContextProps;
+  const {
+    contentType,
+    setContentType,
+    setShowDropDown,
+    setShowModal,
+  } = rootContext as RootContextProps;
   const { width } = useWindowSize();
+  console.log(contentType);
 
   useEffect(() => {
     setContentType('User');
+    setShowDropDown(false);
+    setShowModal(false);
   }, []);
 
   return (

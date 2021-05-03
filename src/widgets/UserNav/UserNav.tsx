@@ -1,3 +1,4 @@
+import React, { useContext } from 'react';
 import {
   UserNavLink,
   UserNavLinkContainer,
@@ -6,22 +7,34 @@ import {
 } from './UserNav.styles';
 import { useSelector } from 'react-redux';
 import { RootState } from 'redux/reducers';
+import { useDispatch } from 'react-redux';
+import { authLogout } from 'redux/actions/auth';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { USER_ROUTE } from 'frontEndRoutes';
+import { RootContext, RootContextProps } from 'contexts/RootContext';
 
-interface UserNavProps {
-  onLogoutButtonClick: () => void;
-}
-
-export const UserNav = ({ onLogoutButtonClick }: UserNavProps) => {
+export const UserNav = () => {
   const { userId } = useSelector((s: RootState) => s.auth);
+  const dispatch = useDispatch();
+  const { pathname } = useRouter();
+  const rootContext = useContext(RootContext);
+  const { setShowModal } = rootContext as RootContextProps;
+
+  const handleAuthLogout = () => {
+    dispatch(authLogout());
+    setShowModal(false);
+  };
 
   return (
     <UserNavLinkContainer>
-      <UserNavOptionWrapper>
-        <Link href={`/user/${userId}`} passHref>
-          <UserNavLink className="dropdown-element">Your Profile</UserNavLink>
-        </Link>
-      </UserNavOptionWrapper>
+      {pathname !== USER_ROUTE && (
+        <UserNavOptionWrapper>
+          <Link href={`/user/${userId}`} passHref>
+            <UserNavLink className="dropdown-element">My Profile</UserNavLink>
+          </Link>
+        </UserNavOptionWrapper>
+      )}
       <UserNavOptionWrapper>
         <UserNavLink href="/how-to" className="dropdown-element">
           How it Works
@@ -38,7 +51,7 @@ export const UserNav = ({ onLogoutButtonClick }: UserNavProps) => {
         </UserNavLink>
       </UserNavOptionWrapper>
       <UserNavOptionWrapper marginTopAuto>
-        <UserLogout onClick={onLogoutButtonClick}>Logout</UserLogout>
+        <UserLogout onClick={handleAuthLogout}>Logout</UserLogout>
       </UserNavOptionWrapper>
     </UserNavLinkContainer>
   );

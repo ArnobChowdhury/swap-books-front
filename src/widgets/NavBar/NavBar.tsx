@@ -16,9 +16,8 @@ import { HomeIcon } from 'assets/HomeIcon';
 import { ChatIcon } from 'assets/ChatIcon';
 import { NotificationIcon } from 'assets/NotificationIcon';
 import { RootState } from 'redux/reducers';
-import { authLogout } from 'redux/actions/auth';
 import { getNotificationsRequest } from 'redux/actions/notifications';
-import { RootContext, RootContextProps, ContentType } from 'contexts/RootContext';
+import { RootContext, RootContextProps } from 'contexts/RootContext';
 import { useWindowSize } from 'hooks/useWindowSize';
 import { largeScreen } from 'mediaConfig';
 import { useRouter } from 'next/router';
@@ -64,6 +63,8 @@ export const NavBar = (): JSX.Element => {
     setContentType,
     showDropDown,
     setShowDropDown,
+    setShowModal,
+    setPopupType,
   } = rootContext as RootContextProps;
 
   // refs
@@ -116,7 +117,7 @@ export const NavBar = (): JSX.Element => {
         document.removeEventListener('keydown', handleEscKeyDownDropDown);
       };
     }
-  }, [contentType]);
+  }, [contentType, width]);
 
   useEffect(() => {
     dispatch(getNotificationsRequest());
@@ -184,8 +185,8 @@ export const NavBar = (): JSX.Element => {
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
   ) => {
     e.preventDefault();
-    if (contentType === 'User') {
-      if (width >= largeScreen) {
+    if (width >= largeScreen) {
+      if (contentType === 'User') {
         if (pathname === USER_ROUTE) {
           setShowDropDown(!showDropDown);
         } else {
@@ -199,15 +200,12 @@ export const NavBar = (): JSX.Element => {
           setShowDropDown(false);
         }
       } else {
-        routerPush(asPath);
+        setContentType('User');
+        setShowDropDown(true);
       }
     } else {
-      setContentType('User');
-      if (width >= largeScreen) {
-        setShowDropDown(true);
-      } else {
-        routerPush(`/user/${userId}`);
-      }
+      setShowModal(true);
+      setPopupType('userOptions');
     }
   };
 
@@ -228,9 +226,7 @@ export const NavBar = (): JSX.Element => {
           <DropDown isSelected={contentType !== 'Posts'} ref={dropDownRef}>
             {contentType === 'Notifications' && <Notifications />}
             {contentType === 'Messages' && <Message />}
-            {contentType === 'User' && (
-              <UserNav onLogoutButtonClick={() => dispatch(authLogout())} />
-            )}
+            {contentType === 'User' && <UserNav />}
           </DropDown>
         )}
       <NavBarWrapper>

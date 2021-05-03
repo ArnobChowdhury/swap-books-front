@@ -9,6 +9,7 @@ import { NeedAuth } from 'modules/NeedAuth';
 import { NeedBook } from 'modules/NeedBook';
 import { EditBook } from 'widgets/EditBook';
 import { Location } from 'widgets/Location';
+import { UserNav } from 'widgets/UserNav';
 import { SwapMatches } from 'widgets/SwapMatches';
 import { RootState } from 'redux/reducers';
 import { RootContextProps, RootContext } from 'contexts/RootContext';
@@ -89,6 +90,16 @@ export const ModalManager = (): JSX.Element => {
       )}
       {showModal && popupType === 'editBook' && <EditBook />}
       {showModal && popupType === 'swapBook' && <SwapMatches />}
+      {showModal && popupType === 'userOptions' && (
+        <Modal
+          opensInBottom
+          onClick={() => {
+            setShowModal(false);
+          }}
+        >
+          <UserNav />
+        </Modal>
+      )}
     </>
   );
 };

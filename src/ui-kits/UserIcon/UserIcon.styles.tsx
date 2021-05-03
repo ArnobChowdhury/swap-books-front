@@ -28,7 +28,7 @@ export const StyledUserIcon = styled.div<{
   @media (min-width: ${smallScreen}px) {
     width: ${({ largeIcon }) => (largeIcon ? '100px' : '32px')};
     height: ${({ largeIcon }) => (largeIcon ? '100px' : '32px')};
-    font-size: ${({ largeIcon }) => (largeIcon ? '80px' : '13px')};
+    font-size: ${({ largeIcon }) => (largeIcon ? '60px' : '13px')};
   }
 
   @media (min-width: ${mediumScreen}px) {
