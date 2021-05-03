@@ -10,7 +10,9 @@ import {
   BooksListLi,
   BooksListImage,
   NoMatchesFound,
-  HeaderList,
+  HeaderContainer,
+  HeaderMatches,
+  ListImageAndTitleContainer,
 } from './SwapMatches.styles';
 import { Modal } from 'components/Modal';
 import { RootState } from 'redux/reducers';
@@ -31,6 +33,7 @@ import {
 import { LoaderBook } from 'assets/LoaderBook';
 import theme from 'theme';
 import { SocketIoContext } from 'hoc/Sockets';
+import { Button } from 'ui-kits/Button';
 
 export const SwapMatches = (): JSX.Element => {
   const dispatch = useDispatch();
@@ -88,11 +91,20 @@ export const SwapMatches = (): JSX.Element => {
   if (booksOfTheMatch) {
     swappables = booksOfTheMatch.map(
       ({ bookName, bookAuthor, bookId, bookPicturePath }) => (
-        <BooksListLi key={bookId} onClick={() => handleBookSwapSelection(bookId)}>
-          <BooksListImage src={`/${bookPicturePath}`}></BooksListImage>
-          <Paragraph fontWeight="regular">
-            <strong>{bookName}</strong> by {bookAuthor}
-          </Paragraph>
+        <BooksListLi key={bookId}>
+          <ListImageAndTitleContainer>
+            <BooksListImage src={`/${bookPicturePath}`}></BooksListImage>
+            <Paragraph fontWeight="regular">
+              <strong>{bookName}</strong> by {bookAuthor}
+            </Paragraph>
+          </ListImageAndTitleContainer>
+          <Button
+            lessPaddingOnLargeScreen
+            asButtonTag
+            onClick={() => handleBookSwapSelection(bookId)}
+          >
+            Confirm
+          </Button>
         </BooksListLi>
       ),
     );
@@ -162,7 +174,13 @@ export const SwapMatches = (): JSX.Element => {
         !sendingSwapReqOnGoing &&
         (matchesForBook.length > 0 ? (
           <>
-            <HeaderList>Swapped with:</HeaderList>
+            <HeaderContainer>
+              <HeaderMatches>Matches:</HeaderMatches>
+              <Paragraph fontWeight="regular" fontSize="large">
+                If you have swapped this book with any books of these matches, please
+                confirm.
+              </Paragraph>
+            </HeaderContainer>
             {allmatches}
           </>
         ) : (

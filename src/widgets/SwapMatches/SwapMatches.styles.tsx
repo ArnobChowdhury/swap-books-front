@@ -56,17 +56,15 @@ export const BooksListUl = styled.ul`
 export const BooksListLi = styled.li`
   font-size: ${({ theme }) => theme.fontSmall};
   font-weight: 400;
-  display: inline-flex;
+  display: flex;
   align-items: center;
   margin: ${({ theme }) => `${theme.spaceFive} 0`};
+  justify-content: space-between;
+`;
 
-  &:hover {
-    cursor: pointer;
-
-    & > p {
-      text-decoration: underline;
-    }
-  }
+export const ListImageAndTitleContainer = styled.div`
+  display: flex;
+  align-items: center;
 `;
 
 export const BooksListImage = styled.img`
@@ -75,7 +73,7 @@ export const BooksListImage = styled.img`
   object-fit: contain;
   display: inline-block;
   border: ${({ theme }) => `1px solid ${theme.colorPrimary2}`};
-  margin-right: ${({ theme }) => theme.spaceTen};
+  margin-right: ${({ theme }) => theme.spaceFive};
   border-radius: ${({ theme }) => theme.borderRadius};
 `;
 
@@ -85,9 +83,13 @@ export const NoMatchesFound = styled.div`
   text-align: center;
 `;
 
-export const HeaderList = styled.h3`
+export const HeaderContainer = styled.div`
+  padding-left: ${({ theme }) => theme.spaceFive};
+  margin-bottom: ${({ theme }) => theme.spaceEight};
+`;
+
+export const HeaderMatches = styled.h3`
   font-size: 20px;
   font-weight: 400;
-  padding-left: ${({ theme }) => theme.spaceFive};
   margin-bottom: ${({ theme }) => theme.spaceFive};
 `;

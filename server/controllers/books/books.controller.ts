@@ -10,6 +10,7 @@ import {
   extractRoomMateIdFromRoom,
   _idToRequiredProp,
   extractInterestsOfUserFromRoom,
+  isAMatchedRoom,
 } from '../../utils/general';
 import path from 'path';
 import fs from 'fs';
@@ -218,7 +219,8 @@ export const getMatchesForAbook = async (
     }
 
     const rawMatches = await Room.getMatchesForAbook(userId, bookId as string);
-    const allRoomMatesIds = rawMatches.map(match =>
+    const matchedRooms = rawMatches.filter(isAMatchedRoom);
+    const allRoomMatesIds = matchedRooms.map(match =>
       extractRoomMateIdFromRoom(userId, match),
     );
     const matchesWithNames = await User.findUserNamesByIdsInBatch(allRoomMatesIds);

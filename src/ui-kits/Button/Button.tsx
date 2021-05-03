@@ -11,6 +11,7 @@ export interface ButtonProps {
   href?: string;
   disabled?: boolean;
   isFullWidth?: boolean;
+  lessPaddingOnLargeScreen?: boolean;
 }
 
 export const Button = React.forwardRef(
@@ -24,6 +25,7 @@ export const Button = React.forwardRef(
       href,
       disabled,
       isFullWidth = false,
+      lessPaddingOnLargeScreen = false,
     }: ButtonProps,
     ref,
   ): JSX.Element => {
@@ -36,6 +38,7 @@ export const Button = React.forwardRef(
             onClick={onClick}
             color={color}
             isFullWidth={isFullWidth}
+            lessPaddingOnLargeScreen={lessPaddingOnLargeScreen}
           >
             {children}
           </ButtonBTag>
@@ -45,6 +48,7 @@ export const Button = React.forwardRef(
             onClick={onClick}
             color={color}
             href={href}
+            lessPaddingOnLargeScreen={lessPaddingOnLargeScreen}
           >
             {children}
           </ButtonATag>

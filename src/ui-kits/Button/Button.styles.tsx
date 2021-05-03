@@ -4,6 +4,7 @@ import { ButtonProps } from './Button';
 interface ButtonStyledProps {
   color: ButtonProps['color'];
   isFullWidth: boolean;
+  lessPaddingOnLargeScreen: boolean;
 }
 
 const ButtonCSS = css<ButtonStyledProps>`
@@ -27,7 +28,7 @@ const ButtonCSS = css<ButtonStyledProps>`
         return `2px solid transparent`;
     }
   }};
-  padding: ${({ theme }): string | null => `${theme.spaceThree} ${theme.spaceFive}`};
+  padding: ${({ theme }) => `${theme.spaceThree} ${theme.spaceFive}`};
   font-family: inherit;
   font-size: ${(props): string | null => props.theme.fontSmall};
   font-weight: 400;
@@ -45,7 +46,8 @@ const ButtonCSS = css<ButtonStyledProps>`
   display: inline-block;
 
   @media (min-width: 360px) {
-    padding: ${({ theme }): string | null => `${theme.spaceFour} ${theme.spaceTen}`};
+    padding: ${({ theme, lessPaddingOnLargeScreen }) =>
+      !lessPaddingOnLargeScreen && `${theme.spaceFour} ${theme.spaceTen}`};
   }
 
   &:hover,

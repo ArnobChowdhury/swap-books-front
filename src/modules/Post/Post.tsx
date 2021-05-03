@@ -116,7 +116,7 @@ export const Post = ({
         )}
         {isOwners && width >= 450 && (
           <IconButton
-            buttonText={'Swapped'}
+            buttonText={'Matches'}
             icon={<SwapIcon />}
             onClick={onPostButtonClick}
             requestOngoing={reqOnGoing}
