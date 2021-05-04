@@ -55,6 +55,7 @@ export interface BookShape {
   availableTenMoreDaysReqOnGoing: boolean;
   availableTenMoreDaysSuccessMsg: string | null;
   availableTenMoreDaysErr: { message: string; status: number } | null;
+  swapRequested: boolean;
 }
 
 export interface BooksState {

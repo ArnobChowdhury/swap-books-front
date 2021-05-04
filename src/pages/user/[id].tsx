@@ -1,4 +1,4 @@
-import { useContext, useEffect } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { NextPage } from 'next';
 import { User } from 'widgets/User';
@@ -14,14 +14,15 @@ import { largeScreen, mediumScreen } from 'mediaConfig';
 import { PageLayout } from 'hoc/PageLayout';
 import { RootContext, RootContextProps } from 'contexts/RootContext';
 import Head from 'next/head';
+import { Tabs } from 'ui-kits/Tabs';
 
 const UserPage: NextPage = (): JSX.Element => {
-  const { accessToken } = useSelector((store: RootState) => store.auth);
+  const { accessToken, userId } = useSelector((store: RootState) => store.auth);
   const { profileName } = useSelector((store: RootState) => store.profile);
   const isSignedIn = Boolean(accessToken);
 
-  const router = useRouter();
-  const { id: profileId } = router.query;
+  const { query, asPath } = useRouter();
+  const { id: profileId } = query;
 
   const rootContext = useContext(RootContext);
   const {
@@ -31,13 +32,17 @@ const UserPage: NextPage = (): JSX.Element => {
     setShowModal,
   } = rootContext as RootContextProps;
   const { width } = useWindowSize();
-  console.log(contentType);
 
   useEffect(() => {
     setContentType('User');
     setShowDropDown(false);
     setShowModal(false);
-  }, []);
+  }, [asPath]);
+
+  const [selectedTab, setSelectedTab] = useState<
+    'Available to Swap' | 'Swap Request Pending'
+  >('Available to Swap');
+  const isOwners = userId === profileId;
 
   return (
     <>
@@ -58,7 +63,14 @@ const UserPage: NextPage = (): JSX.Element => {
       <PageLayout>
         <>
           <User profileId={profileId as string} />
-          <Posts profileId={profileId as string} />
+          {isOwners && (
+            <Tabs
+              options={['Available to Swap', 'Swap Request Pending']}
+              onClick={setSelectedTab}
+              selectedTab={selectedTab}
+            />
+          )}
+          <Posts profileId={profileId as string} selectedTab={selectedTab} />
         </>
       </PageLayout>
     </>

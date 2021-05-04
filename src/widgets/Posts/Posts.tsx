@@ -39,9 +39,10 @@ PostShimmerComponent.displayName = 'PostShimmerComponent';
 
 interface PostProps {
   profileId?: string;
+  selectedTab?: 'Available to Swap' | 'Swap Request Pending';
 }
 
-export const Posts = ({ profileId }: PostProps): JSX.Element => {
+export const Posts = ({ profileId, selectedTab }: PostProps): JSX.Element => {
   const dispatch = useDispatch();
   const { socketIo } = useContext(SocketIoContext);
   const { setPopupType, setShowModal } = useContext(RootContext) as RootContextProps;
@@ -104,9 +105,19 @@ export const Posts = ({ profileId }: PostProps): JSX.Element => {
     setPopupType('requireLoginOrSignup');
   };
 
+  let booksFiltered = books;
+  if (profileId && profileId === userId && selectedTab) {
+    if (selectedTab === 'Available to Swap') {
+      booksFiltered = books.filter(book => !book.swapRequested);
+    }
+    if (selectedTab === 'Swap Request Pending') {
+      booksFiltered = books.filter(book => book.swapRequested);
+    }
+  }
+
   let posts;
   if (books) {
-    posts = books.map(el => {
+    posts = booksFiltered.map(el => {
       const {
         bookId,
         bookName,

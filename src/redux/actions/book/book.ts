@@ -169,6 +169,7 @@ const processBooks = ({
   bookOwnerName,
   isInterested,
   validTill,
+  swapRequested,
 }: {
   _id: string;
   bookName: string;
@@ -178,6 +179,7 @@ const processBooks = ({
   bookOwnerName: string;
   isInterested: boolean;
   validTill: string;
+  swapRequested: boolean;
 }) => {
   return {
     bookId: _id,
@@ -193,6 +195,7 @@ const processBooks = ({
     availableTenMoreDaysReqOnGoing: false,
     availableTenMoreDaysSuccessMsg: null,
     availableTenMoreDaysErr: null,
+    swapRequested,
   };
 };
 
@@ -638,12 +641,9 @@ export const sendingSwapRequest = (
       swapWithBook,
       swapBook,
       (isSuccess: boolean) => {
-        /**
-         * TODO -
-         * MAKE THE BOOK UNAVAILABLE
-         */
         if (isSuccess) {
           dispatch(sendingSwapRequestSuccess('Swap Request sent.'));
+          dispatch(makeUnavailableSuccess(swapBook));
         } else {
           dispatch(
             sendingSwapRequestFail({

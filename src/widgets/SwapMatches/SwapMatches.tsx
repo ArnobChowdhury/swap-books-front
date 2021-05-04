@@ -177,8 +177,9 @@ export const SwapMatches = (): JSX.Element => {
             <HeaderContainer>
               <HeaderMatches>Matches:</HeaderMatches>
               <Paragraph fontWeight="regular" fontSize="large">
-                If you have swapped this book with any books of these matches, please
-                confirm.
+                If you have swapped your book with any books of these matches, please
+                confirm. We will notify your match. Once you confirm, this book will
+                not appear in anyone's feed.
               </Paragraph>
             </HeaderContainer>
             {allmatches}

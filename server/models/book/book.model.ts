@@ -147,6 +147,9 @@ export default class Book {
                 $maxDistance: 5000,
               },
             },
+            swapRequested: {
+              $ne: true,
+            },
           },
           { projection: { location: 0 }, sort: { _id: -1 }, skip, limit },
         )
@@ -161,17 +164,19 @@ export default class Book {
   static async getUserBooks(
     userId: string,
     page: number,
+    isOwners?: boolean,
   ): Promise<BookWithoutLocationProp[]> {
     const db = getDb();
     const userIdAsObjectId = new ObjectId(userId);
     // TODO: Can we move this hard coded 6 to some other place??? Maybe a config???
     const limit = 6;
     const skip = (page > 1 ? page - 1 : 0) * limit;
+    const sendSwapRequested = isOwners ? {} : { swapRequested: { $ne: true } };
 
     return db
       .collection('books')
       .find<BookWithoutLocationProp>(
-        { userId: userIdAsObjectId },
+        { userId: userIdAsObjectId, ...sendSwapRequested },
         { projection: { location: 0 }, sort: { _id: -1 }, skip, limit },
       )
       .toArray();

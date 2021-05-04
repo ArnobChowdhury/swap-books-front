@@ -190,6 +190,7 @@ export const getProfileBooks = async (
       const booksWithoutInterestedUserFields = await Book.getUserBooks(
         profileId,
         Number(page),
+        profileId === userId,
       );
 
       const books = booksWithoutInterestedUserFields.map(book => {

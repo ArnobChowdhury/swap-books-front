@@ -11,13 +11,13 @@ import { useDispatch } from 'react-redux';
 import { authLogout } from 'redux/actions/auth';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { USER_ROUTE } from 'frontEndRoutes';
 import { RootContext, RootContextProps } from 'contexts/RootContext';
 
 export const UserNav = () => {
   const { userId } = useSelector((s: RootState) => s.auth);
   const dispatch = useDispatch();
-  const { pathname } = useRouter();
+  const { asPath } = useRouter();
+  const usersProfileRoute = `/user/${userId}`;
   const rootContext = useContext(RootContext);
   const { setShowModal } = rootContext as RootContextProps;
 
@@ -28,7 +28,7 @@ export const UserNav = () => {
 
   return (
     <UserNavLinkContainer>
-      {pathname !== USER_ROUTE && (
+      {asPath !== usersProfileRoute && (
         <UserNavOptionWrapper>
           <Link href={`/user/${userId}`} passHref>
             <UserNavLink className="dropdown-element">My Profile</UserNavLink>
