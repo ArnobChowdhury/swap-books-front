@@ -18,7 +18,6 @@ import {
   MAKE_UNAVAILABLE_START,
   MAKE_UNAVAILABLE_SUCCESS,
   MAKE_UNAVAILABLE_FAIL,
-  BOOKS_RESET_TO_NIL,
   AVAILABLE_TEN_MORE_DAYS_START,
   AVAILABLE_TEN_MORE_DAYS_SUCCESS,
   AVAILABLE_TEN_MORE_DAYS_FAIL,
@@ -43,10 +42,6 @@ import {
   SENDING_SWAP_REQUEST_RESET,
 } from './../actionTypes';
 import { AxiosError } from 'axios';
-
-export const booksResetToNil = () => {
-  return { type: BOOKS_RESET_TO_NIL };
-};
 
 export const addABookStart = () => {
   return {

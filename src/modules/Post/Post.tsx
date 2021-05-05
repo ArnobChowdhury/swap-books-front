@@ -36,7 +36,6 @@ export interface PostProps {
   reqOnGoing: boolean;
   onPostButtonClick?: (e: MouseEvent<HTMLButtonElement>) => void;
   isOwners: boolean;
-  isUsersProfile: boolean;
   validTill: string;
   onEditButtonClick?: () => void;
   onAvailableButtonClick?: () => void;
@@ -56,7 +55,6 @@ export const Post = ({
   isInterested = false,
   onPostButtonClick,
   isOwners,
-  isUsersProfile,
   validTill,
   onEditButtonClick,
   onAvailableButtonClick,

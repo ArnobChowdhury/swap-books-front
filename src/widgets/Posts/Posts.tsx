@@ -4,7 +4,6 @@ import {
   fetchBooksRequest,
   expressInterestStart,
   makeUnavailableRequest,
-  booksResetToNil,
   availableTenMoreDaysReq,
   editBookSetId,
   editBookRefresh,
@@ -21,6 +20,7 @@ import { useOnScreen, useWindowSize } from 'hooks';
 import { useRouter } from 'next/router';
 import { CenterContainer } from 'ui-kits/CenterContainer';
 import { RequestResult } from 'components/RequestResult';
+import { USER_ROUTE } from 'frontEndRoutes';
 
 const PostShimmerComponent = React.forwardRef(
   (_props, ref: React.Ref<HTMLDivElement>) => {
@@ -47,7 +47,7 @@ export const Posts = ({ profileId, selectedTab }: PostProps): JSX.Element => {
   const { socketIo } = useContext(SocketIoContext);
   const { setPopupType, setShowModal } = useContext(RootContext) as RootContextProps;
   const shimmerRef = useRef<HTMLDivElement | null>(null);
-  const { asPath } = useRouter();
+  const { pathname } = useRouter();
 
   const { books, loading, page, hasMorePages } = useSelector(
     (store: RootState) => store.books,
@@ -58,7 +58,7 @@ export const Posts = ({ profileId, selectedTab }: PostProps): JSX.Element => {
   );
   const { accessToken, userId } = useSelector((s: RootState) => s.auth);
 
-  const isUsersProfile = asPath === `/user/${userId}`;
+  const isUserRoute = pathname === USER_ROUTE;
 
   const handleAdditionalBookFetchForHome = useCallback(() => {
     if (process.browser && userLon && userLat) {
@@ -85,12 +85,10 @@ export const Posts = ({ profileId, selectedTab }: PostProps): JSX.Element => {
   );
 
   useEffect(() => {
-    if (!profileId && process.browser && userLon && userLat) {
+    if (!isUserRoute && process.browser && userLon && userLat) {
       dispatch(fetchBooksRequest({ location: { userLon, userLat }, page: 1 }));
-    } else {
-      dispatch(booksResetToNil());
     }
-  }, [userLon, userLat, profileId]);
+  }, [userLon, userLat]);
 
   useEffect(() => {
     if (profileId) {
@@ -175,7 +173,6 @@ export const Posts = ({ profileId, selectedTab }: PostProps): JSX.Element => {
           reqOnGoing={reqOnGoing}
           isOwners={isOwners}
           key={bookId}
-          isUsersProfile={isUsersProfile}
           validTill={validTill}
           onAvailableButtonClick={() => {
             dispatch(availableTenMoreDaysReq(bookId));
@@ -204,9 +201,9 @@ export const Posts = ({ profileId, selectedTab }: PostProps): JSX.Element => {
   // TODO is PageLayout a HOC? I don't think it is anymore
   const showShimmer = loading && books.length === 0;
   const showBooks = books.length > 0;
-  const showPickLocation = !profileId && !userLon && !userLat;
+  const showPickLocation = !isUserRoute && !userLon && !userLat;
   const showNoBooksAtThisLocation =
-    !profileId && !loading && userLat && userLon && !showBooks;
+    !isUserRoute && !loading && userLat && userLon && !showBooks;
 
   return (
     <>
