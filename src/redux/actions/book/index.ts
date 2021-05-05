@@ -8,6 +8,7 @@ export {
   fetchBooksStart,
   fetchBooksSuccess,
   fetchBooksFail,
+  fetchBooksReset,
   expressInterestStart,
   expressInterestFail,
   expressInterestSuccess,

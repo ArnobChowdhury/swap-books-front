@@ -183,14 +183,20 @@ export const getProfileBooks = async (
   next: NextFunction,
 ): Promise<void> => {
   const { profileId } = req.params;
-  const { userId, page } = req.query;
+  const { userId, page, swapRequested } = req.query;
 
   try {
     if (typeof profileId === 'string') {
+      if (swapRequested && userId !== profileId) {
+        throw new createError.Unauthorized();
+      }
+
+      const sendSwapRequested =
+        Boolean(swapRequested) && swapRequested === 'true' && userId === profileId;
       const booksWithoutInterestedUserFields = await Book.getUserBooks(
         profileId,
         Number(page),
-        profileId === userId,
+        sendSwapRequested,
       );
 
       const books = booksWithoutInterestedUserFields.map(book => {

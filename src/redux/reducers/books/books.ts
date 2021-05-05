@@ -5,6 +5,7 @@ import {
   FETCH_BOOKS_START,
   FETCH_BOOKS_SUCCESS,
   FETCH_MORE_BOOKS_SUCCESS,
+  FETCH_BOOKS_RESET,
   FETCH_BOOKS_FAIL,
   ADD_A_BOOK_START,
   ADD_A_BOOK_SUCCESS,
@@ -165,6 +166,10 @@ const reducer = (state = initialState, action: AnyAction) => {
 
     case FETCH_BOOKS_FAIL:
       return { ...state, loading: false, error };
+
+    case FETCH_BOOKS_RESET: {
+      return { ...state, loading: false, error: null, books: [], page: 0 };
+    }
 
     case ADD_A_BOOK_START:
       return { ...state, addBookReqOnGoing: true };

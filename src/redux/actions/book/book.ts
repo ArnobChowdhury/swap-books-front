@@ -11,6 +11,7 @@ import {
   FETCH_BOOKS_FAIL,
   FETCH_BOOKS_START,
   FETCH_BOOKS_SUCCESS,
+  FETCH_BOOKS_RESET,
   FETCH_MORE_BOOKS_SUCCESS,
   EXPRESS_INTEREST_START,
   EXPRESS_INTEREST_SUCCESS,
@@ -138,6 +139,10 @@ export const fetchBooksFail = (error: any) => {
   return { type: FETCH_BOOKS_FAIL, error: error };
 };
 
+export const fetchBooksReset = () => {
+  return { type: FETCH_BOOKS_RESET };
+};
+
 const makeBookStale = (unavilableBookId: string, expiryDate: string) => {
   return async (dispath: Dispatch) => {
     const timeLeft = new Date(expiryDate).getTime() - new Date().getTime();
@@ -198,9 +203,15 @@ interface FetchBookProps {
   page: number;
   location?: { userLat: number; userLon: number };
   profileId?: string;
+  swapRequested?: boolean;
 }
 
-export const fetchBooksRequest = ({ page, location, profileId }: FetchBookProps) => {
+export const fetchBooksRequest = ({
+  page,
+  location,
+  profileId,
+  swapRequested,
+}: FetchBookProps) => {
   return async (dispatch: Dispatch) => {
     dispatch(fetchBooksStart());
 
@@ -218,7 +229,7 @@ export const fetchBooksRequest = ({ page, location, profileId }: FetchBookProps)
       };
     } else {
       path = `/books/${profileId}`;
-      params = { userId, page };
+      params = { userId, page, swapRequested };
     }
 
     return axios

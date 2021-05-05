@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useRef, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   fetchBooksRequest,
+  fetchBooksReset,
   expressInterestStart,
   makeUnavailableRequest,
   availableTenMoreDaysReq,
@@ -92,9 +93,12 @@ export const Posts = ({ profileId, selectedTab }: PostProps): JSX.Element => {
 
   useEffect(() => {
     if (profileId) {
-      dispatch(fetchBooksRequest({ profileId, page: 1 }));
+      dispatch(fetchBooksReset());
+      const swapRequested =
+        selectedTab === 'Swap Request Pending' ? true : undefined;
+      dispatch(fetchBooksRequest({ profileId, page: 1, swapRequested }));
     }
-  }, [profileId]);
+  }, [profileId, selectedTab]);
 
   const isSignedIn = Boolean(accessToken);
 
@@ -103,19 +107,9 @@ export const Posts = ({ profileId, selectedTab }: PostProps): JSX.Element => {
     setPopupType('requireLoginOrSignup');
   };
 
-  let booksFiltered = books;
-  if (profileId && profileId === userId && selectedTab) {
-    if (selectedTab === 'Available to Swap') {
-      booksFiltered = books.filter(book => !book.swapRequested);
-    }
-    if (selectedTab === 'Swap Request Pending') {
-      booksFiltered = books.filter(book => book.swapRequested);
-    }
-  }
-
   let posts;
   if (books) {
-    posts = booksFiltered.map(el => {
+    posts = books.map(el => {
       const {
         bookId,
         bookName,
