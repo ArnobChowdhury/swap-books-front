@@ -83,13 +83,38 @@ export const NoMatchesFound = styled.div`
   text-align: center;
 `;
 
-export const HeaderContainer = styled.div`
-  padding-left: ${({ theme }) => theme.spaceFive};
+export const PendingSwapWrapper = styled.div`
+  padding: ${({ theme }) => theme.spaceFive};
+  border-radius: ${({ theme }) => theme.borderRadius};
+  background: ${({ theme }) => theme.colorPrimary2Transparent};
+  border: ${({ theme }) => `1px solid ${theme.colorPrimary3}`};
+  margin-bottom: ${({ theme }) => theme.spaceFive};
+`;
+
+export const TopContainer = styled.div`
   margin-bottom: ${({ theme }) => theme.spaceEight};
+  padding: ${({ theme }) => `0 ${theme.spaceOne}`};
 `;
 
 export const HeaderMatches = styled.h3`
   font-size: 20px;
   font-weight: 400;
   margin-bottom: ${({ theme }) => theme.spaceFive};
+`;
+
+export const MatchProfileLink = styled.a`
+  text-decoration: none;
+`;
+
+export const SwapConsentButtonContainer = styled.div`
+  margin-top: ${({ theme }) => theme.spaceFive};
+  & button {
+    margin-right: ${({ theme }) => theme.spaceFive};
+  }
+`;
+
+export const SwapReqStatus = styled.span`
+  margin-top: ${({ theme }) => theme.spaceFive};
+  color: ${({ theme }) => theme.colorTextSecondary};
+  font-size: ${({ theme }) => theme.fontLarge};
 `;

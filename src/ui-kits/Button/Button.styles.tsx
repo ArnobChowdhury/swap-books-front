@@ -15,6 +15,8 @@ const ButtonCSS = css<ButtonStyledProps>`
         return props.theme.colorWhite;
       case 'blue':
         return props.theme.colorPrimary2;
+      case 'alert':
+        return props.theme.colorAlert;
       default:
         return 'transparent';
     }
@@ -36,6 +38,8 @@ const ButtonCSS = css<ButtonStyledProps>`
     switch (color) {
       case 'transparent':
         return theme.colorPrimary2;
+      case 'alert':
+        return theme.colorWhite;
       default:
         return theme.colorPrimary1;
     }

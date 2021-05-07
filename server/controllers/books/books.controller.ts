@@ -4,6 +4,8 @@ import createError from 'http-errors';
 import Book from '../../models/book';
 import User from '../../models/user';
 import Room from '../../models/room';
+import Swap from '../../models/swap';
+import Notification from '../../models/notification';
 import { ModifiedRequest } from '../../interface';
 import {
   processBookForUser,
@@ -225,6 +227,48 @@ export const getMatchesForAbook = async (
       throw new createError.BadRequest('Insufficient information');
     }
 
+    const pendingSwap = await Swap.pendingSwap(bookId as string);
+
+    let pendingSwapRequestTo;
+    let pendingSwapRequestFrom;
+
+    if (pendingSwap) {
+      const { _id: swapId, swapBook, swapWithBook, toId, fromId } = pendingSwap;
+
+      if (swapBook.bookId === bookId) {
+        const swapRequestSentTo = await User.findById(
+          pendingSwap.toId.toHexString(),
+        );
+        pendingSwapRequestTo = {
+          name: swapRequestSentTo?.name,
+          bookName: swapWithBook.bookName,
+          matchId: toId.toHexString(),
+        };
+      }
+
+      if (swapWithBook.bookId === bookId) {
+        const swapRequestSentFrom = await User.findById(
+          pendingSwap.fromId.toHexString(),
+        );
+
+        const notification = await Notification.findNotificationBySwapIdforUser(
+          userId,
+          swapId,
+        );
+
+        if (!notification) {
+          throw new createError.BadRequest('Insufficient information');
+        }
+
+        pendingSwapRequestFrom = {
+          name: swapRequestSentFrom?.name,
+          bookName: swapBook.bookName,
+          notificationId: notification._id,
+          matchId: fromId.toHexString(),
+        };
+      }
+    }
+
     const rawMatches = await Room.getMatchesForAbook(userId, bookId as string);
     const matchedRooms = rawMatches.filter(isAMatchedRoom);
     const allRoomMatesIds = matchedRooms.map(match =>
@@ -235,7 +279,12 @@ export const getMatchesForAbook = async (
       _idToRequiredProp(match, 'userId'),
     );
 
-    res.status(200).json({ message: 'Get all matches', matchesForBook });
+    res.status(200).json({
+      message: 'Get all matches',
+      matchesForBook,
+      pendingSwapRequestTo,
+      pendingSwapRequestFrom,
+    });
   } catch (err) {
     if (!err.statusCode) {
       err.statusCode = 500;

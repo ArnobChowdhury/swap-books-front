@@ -13,6 +13,7 @@ export {
   expressInterestFail,
   expressInterestSuccess,
   makeUnavailableRequest,
+  makeUnavailableSuccess,
   availableTenMoreDaysReq,
   editBookSetId,
   editBookReq,

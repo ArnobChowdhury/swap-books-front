@@ -8,4 +8,5 @@ export {
   socketDisconnect,
   setMsgAsSeen,
   createSwapRequest,
+  acceptOrRejectSwapRequest,
 } from './interactions.controller';

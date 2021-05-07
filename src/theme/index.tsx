@@ -18,6 +18,7 @@ const theme = {
   boxShadow: '0 1px 2px rgb(0, 0, 0, .2)',
   colorAlert: 'rgb(175,15,15)',
   colorAlertTransparent: 'rgba(175,15,15, .3)',
+  colorPrimary2Transparent: '#C4BBF875',
   spaceOne: '.2rem',
   spaceTwo: '.4rem',
   spaceThree: '.6rem',

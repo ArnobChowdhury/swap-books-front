@@ -150,7 +150,15 @@ export const Notifications = (): JSX.Element => {
       }
 
       const handleSwapApproval = (hasAccepted: boolean) => {
-        if (socketIo) dispatch(swapConsentRequest(socketIo, _id, hasAccepted));
+        if (socketIo)
+          dispatch(
+            swapConsentRequest(
+              socketIo,
+              _id,
+              notificationForBooks ? notificationForBooks[0].bookId : '',
+              hasAccepted,
+            ),
+          );
       };
 
       return (

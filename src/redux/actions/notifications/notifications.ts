@@ -3,6 +3,7 @@ import { Dispatch } from 'redux';
 import axios from 'axiosInstance';
 import { SOCKET_SWAP_CONSENT } from 'socketTypes';
 import { Socket } from 'socket.io-client';
+import { makeUnavailableSuccess } from 'redux/actions/book';
 
 import {
   GET_NOTIFICATIONS_FAIL,
@@ -93,10 +94,14 @@ export const addLatestNotification = (
   };
 };
 
-const swapConsentStart = (notificationIdForSwapConsent: string) => {
+const swapConsentStart = (
+  notificationIdForSwapConsent: string,
+  swapConsentForBookId: string,
+) => {
   return {
     type: SWAP_CONSENT_REQUEST_START,
     notificationIdForSwapConsent,
+    swapConsentForBookId,
   };
 };
 
@@ -125,22 +130,21 @@ const swapConsentFail = (
 export const swapConsentRequest = (
   socket: Socket,
   notificationId: string,
+  bookId: string,
   hasAccepted: boolean,
 ) => {
   return (dispatch: Dispatch) => {
-    dispatch(swapConsentStart(notificationId));
+    dispatch(swapConsentStart(notificationId, bookId));
     socket.emit(
       SOCKET_SWAP_CONSENT,
       notificationId,
+      bookId,
       hasAccepted,
       (isSuccess: boolean) => {
-        /**
-         * TODO -
-         * MAKE THE BOOK UNAVAILABLE
-         */
         const status = hasAccepted ? 'approved' : 'rejected';
         if (isSuccess) {
           dispatch(swapConsentSuccess(notificationId, status));
+          if (hasAccepted) dispatch(makeUnavailableSuccess(bookId));
         } else {
           dispatch(
             swapConsentFail(notificationId, {

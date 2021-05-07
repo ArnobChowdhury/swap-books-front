@@ -1,7 +1,5 @@
-import mongodb from 'mongodb';
+import mongodb, { ObjectId } from 'mongodb';
 import { getDb } from '../../utils/database';
-
-const { ObjectId } = mongodb;
 
 export interface NotificationWithId extends Notification {
   _id: mongodb.ObjectId;
@@ -67,6 +65,18 @@ export default class Notification {
       .skip(skip)
       .limit(5)
       .toArray();
+  }
+
+  static async findNotificationBySwapIdforUser(
+    toIdAsString: string,
+    swapId: ObjectId,
+  ) {
+    const db = getDb();
+    const toId = new ObjectId(toIdAsString);
+
+    return db
+      .collection<NotificationWithId>('notifications')
+      .findOne({ toId, swapId });
   }
 
   static async getCountOfUnseenNotification(toIdAsString: string): Promise<number> {

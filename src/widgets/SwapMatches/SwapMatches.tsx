@@ -10,9 +10,13 @@ import {
   BooksListLi,
   BooksListImage,
   NoMatchesFound,
-  HeaderContainer,
+  TopContainer,
   HeaderMatches,
   ListImageAndTitleContainer,
+  MatchProfileLink,
+  SwapConsentButtonContainer,
+  PendingSwapWrapper,
+  SwapReqStatus,
 } from './SwapMatches.styles';
 import { Modal } from 'components/Modal';
 import { RootState } from 'redux/reducers';
@@ -30,16 +34,20 @@ import {
   fetchBooksForMatchReset,
   sendingSwapRequest,
 } from 'redux/actions/book';
+import { swapConsentRequest } from 'redux/actions/notifications';
 import { LoaderBook } from 'assets/LoaderBook';
 import theme from 'theme';
 import { SocketIoContext } from 'hoc/Sockets';
 import { Button } from 'ui-kits/Button';
+import Link from 'next/link';
 
 export const SwapMatches = (): JSX.Element => {
   const dispatch = useDispatch();
   const {
     fetchMatchesForBookReqOnGoing,
     matchesForBook,
+    pendingSwapRequestTo,
+    pendingSwapRequestFrom,
     fetchMatchesForBookId,
     fetchMatchesForBookErr,
     booksOfTheMatch,
@@ -49,10 +57,14 @@ export const SwapMatches = (): JSX.Element => {
     sendingSwapReqOnGoing,
     sendingSwapReqSuccessMsg,
     sendingSwapReqErr,
+    swapConsentReqOnGoing,
+    swapConsentForBookId,
+    swapConsentApproved,
+    errorForSwapConsent,
   } = useSelector((s: RootState) => s.books);
 
   const { socketIo } = useContext(SocketIoContext);
-  const { spaceFive, fontLarge } = theme;
+  const { spaceFive } = theme;
 
   useEffect(() => {
     if (fetchMatchesForBookId) {
@@ -88,6 +100,10 @@ export const SwapMatches = (): JSX.Element => {
   };
 
   let swappables: JSX.Element[];
+  const disableConfirmButton =
+    Boolean(pendingSwapRequestTo) ||
+    (Boolean(pendingSwapRequestFrom) && swapConsentApproved !== false);
+
   if (booksOfTheMatch) {
     swappables = booksOfTheMatch.map(
       ({ bookName, bookAuthor, bookId, bookPicturePath }) => (
@@ -102,6 +118,7 @@ export const SwapMatches = (): JSX.Element => {
             lessPaddingOnLargeScreen
             asButtonTag
             onClick={() => handleBookSwapSelection(bookId)}
+            disabled={disableConfirmButton}
           >
             Confirm
           </Button>
@@ -152,8 +169,31 @@ export const SwapMatches = (): JSX.Element => {
     });
   }
 
-  const showError = sendingSwapReqErr || fetchMatchesForBookErr;
+  const handleSwapApproval = (hasAccepted: boolean, notificationId: string) => {
+    if (socketIo && fetchMatchesForBookId)
+      dispatch(
+        swapConsentRequest(
+          socketIo,
+          notificationId,
+          fetchMatchesForBookId,
+          hasAccepted,
+        ),
+      );
+  };
+
+  const showError =
+    sendingSwapReqErr || fetchMatchesForBookErr || errorForSwapConsent;
   const errorMessage = showError && showError.message;
+
+  const swapApprovalOnGoing =
+    swapConsentReqOnGoing && fetchMatchesForBookId === swapConsentForBookId;
+  const showSuccessMessage =
+    Boolean(sendingSwapReqSuccessMsg) || swapConsentApproved;
+  const successMessage = swapConsentApproved
+    ? `Swap confirmed with ${pendingSwapRequestFrom?.name}'s book - ${pendingSwapRequestFrom?.bookName}.`
+    : sendingSwapReqSuccessMsg
+    ? sendingSwapReqSuccessMsg
+    : '';
 
   return (
     <Modal onClick={() => setShowModal(false)}>
@@ -167,28 +207,110 @@ export const SwapMatches = (): JSX.Element => {
         />
       )}
       {!fetchMatchesForBookReqOnGoing &&
-        !fetchMatchesForBookErr &&
+        !showError &&
         matchesForBook &&
         !sendingSwapReqSuccessMsg &&
-        !sendingSwapReqErr &&
         !sendingSwapReqOnGoing &&
+        swapConsentApproved !== true &&
         (matchesForBook.length > 0 ? (
           <>
-            <HeaderContainer>
+            {(pendingSwapRequestTo || pendingSwapRequestFrom) && (
+              <PendingSwapWrapper>
+                {pendingSwapRequestTo && (
+                  <Paragraph fontWeight="regular" fontSize="large">
+                    You have confirmed that this book was swapped with{' '}
+                    <Link href={`/user/${pendingSwapRequestTo.matchId}`} passHref>
+                      <MatchProfileLink>
+                        {pendingSwapRequestTo.name}
+                      </MatchProfileLink>
+                    </Link>
+                    's book - <i>{pendingSwapRequestTo.bookName}</i>.{' '}
+                    <Link href={`/user/${pendingSwapRequestTo.matchId}`} passHref>
+                      <MatchProfileLink>
+                        {pendingSwapRequestTo.name}
+                      </MatchProfileLink>
+                    </Link>{' '}
+                    is yet to confirm.
+                  </Paragraph>
+                )}
+                {pendingSwapRequestFrom && (
+                  <>
+                    <Paragraph fontWeight="regular" fontSize="large">
+                      <Link
+                        href={`/user/${pendingSwapRequestFrom.matchId}`}
+                        passHref
+                      >
+                        <MatchProfileLink>
+                          {pendingSwapRequestFrom.name}
+                        </MatchProfileLink>
+                      </Link>{' '}
+                      has claimed that this book was swapped with -{' '}
+                      <Link
+                        href={`/user/${pendingSwapRequestFrom.matchId}`}
+                        passHref
+                      >
+                        <MatchProfileLink>
+                          {pendingSwapRequestFrom.name}
+                        </MatchProfileLink>
+                      </Link>
+                      's book -<i>{pendingSwapRequestFrom.bookName}</i>. Do you
+                      accept?
+                    </Paragraph>
+                    <SwapConsentButtonContainer>
+                      {swapConsentApproved === null && (
+                        <>
+                          <Button
+                            lessPaddingOnLargeScreen
+                            asButtonTag
+                            onClick={() =>
+                              handleSwapApproval(
+                                true,
+                                pendingSwapRequestFrom.notificationId,
+                              )
+                            }
+                            disabled={swapApprovalOnGoing}
+                          >
+                            Yes
+                          </Button>
+                          <Button
+                            lessPaddingOnLargeScreen
+                            asButtonTag
+                            color="alert"
+                            onClick={() =>
+                              handleSwapApproval(
+                                false,
+                                pendingSwapRequestFrom.notificationId,
+                              )
+                            }
+                            disabled={swapApprovalOnGoing}
+                          >
+                            No
+                          </Button>
+                        </>
+                      )}
+                      {swapConsentApproved === false && (
+                        <SwapReqStatus>- Swap request rejected</SwapReqStatus>
+                      )}
+                    </SwapConsentButtonContainer>
+                  </>
+                )}
+              </PendingSwapWrapper>
+            )}
+            <TopContainer>
               <HeaderMatches>Matches:</HeaderMatches>
-              <Paragraph fontWeight="regular" fontSize="large">
-                If you have swapped your book with any books of these matches, please
-                confirm. We will notify your match. Once you confirm, this book will
-                not appear in anyone's feed.
-              </Paragraph>
-            </HeaderContainer>
+              {!pendingSwapRequestTo && !pendingSwapRequestFrom && (
+                <Paragraph fontWeight="regular" fontSize="large">
+                  Swapped books with any of these matches? Please confirm.
+                </Paragraph>
+              )}
+            </TopContainer>
             {allmatches}
           </>
         ) : (
           <NoMatchesFound>No matches found for this book!</NoMatchesFound>
         ))}
-      {sendingSwapReqSuccessMsg && (
-        <RequestResult msg={sendingSwapReqSuccessMsg} reqStatus="success" />
+      {showSuccessMessage && (
+        <RequestResult msg={successMessage} reqStatus="success" />
       )}
       {!fetchMatchesForBookReqOnGoing && !sendingSwapReqOnGoing && showError && (
         <RequestResult msg={errorMessage as string} reqStatus="error" />

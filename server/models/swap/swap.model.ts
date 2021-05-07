@@ -54,6 +54,15 @@ export default class Swap {
       .toArray();
   }
 
+  static async pendingSwap(bookId: string) {
+    const db = getDb();
+
+    return db.collection<SwapWithId>('swaps').findOne({
+      $or: [{ 'swapBook.bookId': bookId }, { 'swapWithBook.bookId': bookId }],
+      status: 'pending',
+    });
+  }
+
   static async requestTransaction(
     fromId: string,
     toId: string,

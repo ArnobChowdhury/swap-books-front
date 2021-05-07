@@ -1,6 +1,5 @@
 import { HYDRATE } from 'next-redux-wrapper';
 import { AnyAction } from 'redux';
-// import { action } from '@storybook/addon-actions';
 import {
   FETCH_BOOKS_START,
   FETCH_BOOKS_SUCCESS,
@@ -39,6 +38,9 @@ import {
   SENDING_SWAP_REQUEST_SUCCESS,
   SENDING_SWAP_REQUEST_FAIL,
   SENDING_SWAP_REQUEST_RESET,
+  SWAP_CONSENT_REQUEST_START,
+  SWAP_CONSENT_REQUEST_SUCCESS,
+  SWAP_CONSENT_REQUEST_FAIL,
 } from '../../actions/actionTypes';
 
 export interface BookShape {
@@ -75,6 +77,13 @@ export interface BooksState {
   fetchMatchesForBookReqOnGoing: boolean;
   fetchMatchesForBookErr: { message: string; status: number } | null;
   matchesForBook: { name: string; userId: string }[] | null;
+  pendingSwapRequestTo: { name: string; bookName: string; matchId: string } | null;
+  pendingSwapRequestFrom: {
+    name: string;
+    bookName: string;
+    notificationId: string;
+    matchId: string;
+  } | null;
   fetchBooksOfTheMatchId: string | null;
   fetchBooksOfTheMatchReqOnGoing: boolean;
   fetchBooksOfTheMatchErr: { message: string; status: number } | null;
@@ -89,6 +98,10 @@ export interface BooksState {
   sendingSwapReqOnGoing: boolean;
   sendingSwapReqSuccessMsg: string | null;
   sendingSwapReqErr: { message: string; status: number } | null;
+  swapConsentReqOnGoing: boolean;
+  swapConsentApproved: boolean | null;
+  errorForSwapConsent: { message: string; status: number } | null;
+  swapConsentForBookId: string | null;
 }
 
 export const initialState: BooksState = {
@@ -108,6 +121,8 @@ export const initialState: BooksState = {
   fetchMatchesForBookId: null,
   fetchMatchesForBookReqOnGoing: false,
   matchesForBook: null,
+  pendingSwapRequestTo: null,
+  pendingSwapRequestFrom: null,
   fetchMatchesForBookErr: null,
   fetchBooksOfTheMatchId: null,
   fetchBooksOfTheMatchReqOnGoing: false,
@@ -116,6 +131,10 @@ export const initialState: BooksState = {
   sendingSwapReqOnGoing: false,
   sendingSwapReqSuccessMsg: null,
   sendingSwapReqErr: null,
+  swapConsentReqOnGoing: false,
+  swapConsentForBookId: null,
+  swapConsentApproved: null,
+  errorForSwapConsent: null,
 };
 
 // todo write tests for expressInterest related functions
@@ -140,12 +159,17 @@ const reducer = (state = initialState, action: AnyAction) => {
     editedBook,
     fetchMatchesForBookId,
     matchesForBook,
+    pendingSwapRequestTo,
+    pendingSwapRequestFrom,
+    statusOfSwapConsent,
+    errorForSwapConsent,
     fetchMatchesForBookErr,
     fetchBooksOfTheMatchId,
     fetchBooksOfTheMatchErr,
     booksOfTheMatch,
     sendingSwapReqSuccessMsg,
     sendingSwapReqErr,
+    swapConsentForBookId,
   } = action;
 
   switch (action.type) {
@@ -362,6 +386,8 @@ const reducer = (state = initialState, action: AnyAction) => {
         ...state,
         fetchMatchesForBookReqOnGoing: false,
         matchesForBook,
+        pendingSwapRequestTo,
+        pendingSwapRequestFrom,
       };
     }
 
@@ -379,7 +405,13 @@ const reducer = (state = initialState, action: AnyAction) => {
         fetchMatchesForBookId: null,
         fetchMatchesForBookReqOnGoing: false,
         matchesForBook: null,
+        pendingSwapRequestTo: null,
+        pendingSwapRequestFrom: null,
         fetchMatchesForBookErr: null,
+        swapConsentReqOnGoing: false,
+        swapConsentForBookId: null,
+        swapConsentApproved: null,
+        errorForSwapConsent: null,
       };
     }
 
@@ -446,6 +478,41 @@ const reducer = (state = initialState, action: AnyAction) => {
         sendingSwapReqOnGoing: false,
         sendingSwapReqSuccessMsg: null,
         sendingSwapReqErr: null,
+      };
+    }
+
+    case SWAP_CONSENT_REQUEST_START: {
+      return {
+        ...state,
+        swapConsentReqOnGoing: true,
+        swapConsentForBookId,
+      };
+    }
+
+    case SWAP_CONSENT_REQUEST_SUCCESS: {
+      let swapUpdate;
+      if (statusOfSwapConsent === 'approved') {
+        swapUpdate = {
+          matchesForBook: [],
+          swapConsentApproved: true,
+        };
+      } else {
+        swapUpdate = {
+          swapConsentApproved: false,
+        };
+      }
+      return {
+        ...state,
+        swapConsentReqOnGoing: false,
+        ...swapUpdate,
+      };
+    }
+
+    case SWAP_CONSENT_REQUEST_FAIL: {
+      return {
+        ...state,
+        swapConsentReqOnGoing: false,
+        errorForSwapConsent,
       };
     }
 

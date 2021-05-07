@@ -95,7 +95,9 @@ export const Posts = ({ profileId, selectedTab }: PostProps): JSX.Element => {
     if (profileId) {
       dispatch(fetchBooksReset());
       const swapRequested =
-        selectedTab === 'Swap Request Pending' ? true : undefined;
+        selectedTab === 'Swap Request Pending' && userId === profileId
+          ? true
+          : undefined;
       dispatch(fetchBooksRequest({ profileId, page: 1, swapRequested }));
     }
   }, [profileId, selectedTab]);

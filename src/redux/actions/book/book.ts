@@ -294,7 +294,7 @@ const makeUnavailableStart = (bookId: string) => {
   };
 };
 
-const makeUnavailableSuccess = (bookId: string) => {
+export const makeUnavailableSuccess = (bookId: string) => {
   return {
     type: MAKE_UNAVAILABLE_SUCCESS,
     unavilableBookId: bookId,
@@ -499,10 +499,14 @@ const fetchMatchesForBookSuccess = (
     name: string;
     userId: string;
   }[],
+  pendingSwapRequestTo: { name: string; bookName: string; matchId: string },
+  pendingSwapRequestFrom: { name: string; bookName: string; notificationId: string },
 ) => {
   return {
     type: FETCH_MATCHES_FOR_A_BOOK_SUCCESS,
     matchesForBook,
+    pendingSwapRequestTo,
+    pendingSwapRequestFrom,
   };
 };
 
@@ -531,10 +535,18 @@ export const fetchMatchesForBookReq = (fetchMatchesForBookId: string) => {
     return axios
       .get(path, { params })
       .then(res => {
-        setTimeout(() => {
-          const { matchesForBook } = res.data;
-          dispatch(fetchMatchesForBookSuccess(matchesForBook));
-        });
+        const {
+          matchesForBook,
+          pendingSwapRequestTo,
+          pendingSwapRequestFrom,
+        } = res.data;
+        dispatch(
+          fetchMatchesForBookSuccess(
+            matchesForBook,
+            pendingSwapRequestTo,
+            pendingSwapRequestFrom,
+          ),
+        );
       })
       .catch(err => {
         const { status } = err.response;

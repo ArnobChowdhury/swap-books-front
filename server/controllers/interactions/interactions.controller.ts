@@ -403,10 +403,11 @@ export const createSwapRequest = async (
   }
 };
 
-export const accpetOrRejectSwapRequest = async (
+export const acceptOrRejectSwapRequest = async (
   io: Server,
   socket: SocketDecoded,
   notificationId: string,
+  bookId: string,
   hasAccepted: boolean,
   cb: (isSuccess: boolean) => void,
 ) => {
@@ -414,12 +415,14 @@ export const accpetOrRejectSwapRequest = async (
     decoded_token: { aud: userId },
   } = socket;
   try {
+    const pendingSwap = await Swap.pendingSwap(bookId);
+    if (!pendingSwap) throw new createHttpError.BadRequest('Swap not found');
+
     const { notification, swap, bookPicturePaths } = await Swap.approvalTransaction(
       notificationId,
       userId,
       hasAccepted,
     );
-
     if (hasAccepted && bookPicturePaths.length > 0) {
       bookPicturePaths.forEach(picturePath => {
         fs.unlinkSync(path.join(__dirname, '..', '..', '..', picturePath));
@@ -427,9 +430,7 @@ export const accpetOrRejectSwapRequest = async (
     }
     const { fromId: reqSenderIdAsObjectId, roomId } = swap;
     const reqSenderId = reqSenderIdAsObjectId.toHexString();
-
     const reqSendersSocketId = await getSocketIdFromRedis(reqSenderId);
-
     let reqSenderIsInRoom = false;
     const roomMembers = io.sockets.adapter.rooms.get(roomId.toHexString());
     if (roomMembers) {
@@ -437,18 +438,15 @@ export const accpetOrRejectSwapRequest = async (
         ? roomMembers.has(reqSendersSocketId)
         : false;
     }
-
     const fromUser = await User.findById(userId);
     const notificationForSwapAccpetance = processSwapNotification(
       notification,
       swap,
       fromUser?.name as string,
     );
-
     const numOfUnseenNotificationForMatch = await Notification.getCountOfUnseenNotification(
       reqSenderId,
     );
-
     if (reqSenderIsInRoom && reqSendersSocketId) {
       const reqSenderSocket = io.sockets.sockets.get(reqSendersSocketId);
       reqSenderSocket?.emit(RECEIVE_LATEST_NOTIFICATION, {
@@ -458,6 +456,7 @@ export const accpetOrRejectSwapRequest = async (
     }
     cb(true);
   } catch {
+    cb(false);
     // TODO Handle error
   }
 };

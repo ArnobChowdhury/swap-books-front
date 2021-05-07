@@ -4,7 +4,7 @@ import { ReactNode } from 'react';
 
 export interface ButtonProps {
   children: ReactNode;
-  color?: 'white' | 'blue' | 'transparent';
+  color?: 'white' | 'blue' | 'alert' | 'transparent';
   onClick?: () => void;
   asButtonTag?: boolean;
   type?: 'submit' | 'reset' | 'button';

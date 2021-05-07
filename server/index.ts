@@ -25,6 +25,7 @@ import {
   socketDisconnect,
   setMsgAsSeen,
   createSwapRequest,
+  acceptOrRejectSwapRequest,
 } from './controllers/interactions';
 import { mongoConnect, closeDb } from './utils/database';
 import { client as redisClient } from './utils/redis';
@@ -40,7 +41,6 @@ import {
   SWAP_CONSENT,
 } from './socketTypes';
 import { jwtVerify } from './middlewares/jwtVerify';
-import { accpetOrRejectSwapRequest } from './controllers/interactions/interactions.controller';
 
 const port = parseInt(process.env.PORT as string, 10) || 3000; // We might want to change it later
 const dev = process.env.NODE_ENV !== 'production';
@@ -111,8 +111,20 @@ app.prepare().then(() => {
 
     socket.on(
       SWAP_CONSENT,
-      async (notificationId, hasAccepted, cb: (isSuccess: boolean) => void) => {
-        await accpetOrRejectSwapRequest(io, socket, notificationId, hasAccepted, cb);
+      async (
+        notificationId,
+        bookId,
+        hasAccepted,
+        cb: (isSuccess: boolean) => void,
+      ) => {
+        await acceptOrRejectSwapRequest(
+          io,
+          socket,
+          notificationId,
+          bookId,
+          hasAccepted,
+          cb,
+        );
         // todo add catch block
       },
     );
