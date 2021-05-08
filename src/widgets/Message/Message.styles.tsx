@@ -144,10 +144,18 @@ export const MessageContentMain = styled.div`
   height: 100%;
 `;
 
-export const MessagesWrapper = styled.div`
+export const MessagesWrapper = styled.div<{ hasMessages: boolean }>`
   padding: ${({ theme }) => `${theme.spaceFive} ${theme.spaceTen}`};
   width: 100%;
   margin-top: auto;
+  ${({ hasMessages }) =>
+    !hasMessages &&
+    `
+    display: flex;
+    margin-top: 0;
+    justify-content: center;
+    align-items: center; 
+  `};
 `;
 
 export const MessageInputWrapper = styled.div`
@@ -162,7 +170,8 @@ export const MessageInput = styled.input`
   height: 100%;
   width: 100%;
   border: 2px solid #9198a8;
-  padding: ${({ theme }) => theme.spaceFive};
+  padding: ${({ theme }) =>
+    `${theme.spaceFive} 4rem ${theme.spaceFive} ${theme.spaceFive}`};
   border-radius: 3px;
   font-family: inherit;
   flex-grow: 1;
@@ -223,4 +232,27 @@ export const SingleChatText = styled.div<{ own: boolean }>`
     max-width: 240px;
   }
   ${({ own, theme }) => own && `margin-left: ${theme.spaceFour}`}
+`;
+
+export const WMContainer = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 4rem;
+`;
+
+export const WMWrapper = styled.div`
+  max-width: 300px;
+  text-align: center;
+`;
+export const WMHeading = styled.h3`
+  font-size: ${({ theme }) => theme.fontSmall};
+  font-weight: 600;
+`;
+
+export const WMTips = styled.p`
+  font-weight: 400;
+`;
+export const WMEnd = styled.p`
+  font-weight: 400;
 `;

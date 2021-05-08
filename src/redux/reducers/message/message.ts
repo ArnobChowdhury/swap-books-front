@@ -113,6 +113,7 @@ const reducer = (state = initialState, action: AnyAction): MessageProps => {
     case FETCH_ROOM_MESSAGE_SUCCESS:
       return {
         ...state,
+        messageLoading: false,
         messages,
       };
     case FETCH_ROOM_MESSAGE_FAIL:

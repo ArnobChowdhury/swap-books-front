@@ -4,6 +4,7 @@ import { UserIcon } from 'ui-kits/UserIcon';
 import { Header } from 'ui-kits/Header';
 import { Paragraph } from 'ui-kits/Paragraph';
 import { IconRotator } from 'ui-kits/IconRotator';
+import { Spinner } from 'ui-kits/Spinner';
 import theme from 'theme';
 import {
   MessageBoxContainer,
@@ -27,6 +28,11 @@ import {
   SendIconWrapper,
   SingleChat,
   SingleChatText,
+  WMWrapper,
+  WMContainer,
+  WMHeading,
+  WMTips,
+  WMEnd,
 } from './Message.styles';
 import { SendIcon } from 'assets/SendIcon';
 import { LeftArrow } from 'assets/LeftArrow';
@@ -48,6 +54,25 @@ import { NotificationBookShape } from 'redux/reducers/notifications';
 import { useRouter } from 'next/router';
 import { MESSAGES_ROUTE } from 'frontEndRoutes';
 
+const WelcomMessage = ({ name, msg }: { name: string; msg: string }) => {
+  const msgAsArray = msg.split('. ');
+  const heading = msgAsArray[0];
+  const endIndex = msgAsArray.length - 1;
+  const end = msgAsArray[endIndex];
+  const body = msgAsArray.slice(1, endIndex).join('. ');
+  return (
+    <WMContainer>
+      <WMWrapper>
+        <WMHeading>
+          {heading} with {name}
+        </WMHeading>
+        <WMTips>{body}.</WMTips>
+        <WMEnd>{end}</WMEnd>
+      </WMWrapper>
+    </WMContainer>
+  );
+};
+
 export const Message = () => {
   const { pathname } = useRouter();
   const isMessagePage = pathname === MESSAGES_ROUTE;
@@ -62,6 +87,7 @@ export const Message = () => {
     roomMateInterests,
     userInterests,
     messages,
+    messageLoading,
   } = useSelector((store: RootState) => store.message);
 
   const { userId } = useSelector((store: RootState) => store.auth);
@@ -125,6 +151,10 @@ export const Message = () => {
   if (messages && messages.length > 0) {
     messagesList = messages.map((message: MessageResponseProps) => {
       const { msg, fromId, _id, registered, seen } = message;
+      if (fromId === 'admin@pustokio') {
+        return <WelcomMessage name={activeRoomMateName as string} msg={msg} />;
+      }
+
       const own = fromId === userId;
       return (
         <SingleChat
@@ -228,6 +258,8 @@ export const Message = () => {
     }
   }, [messages]);
 
+  const hasMessages = messagesList.length > 0;
+
   return (
     <MessageBoxContainer
       messageBoxIsOpen={messageBoxIsOpen}
@@ -279,11 +311,10 @@ export const Message = () => {
             </MsgPartnerInfo>
           </MessageContentTop>
           <MessageContentMain ref={msgsBoxRef}>
-            <MessagesWrapper>
-              {messagesList && messagesList.length > 0 && messagesList}
+            <MessagesWrapper hasMessages={hasMessages}>
+              {hasMessages && messagesList}
+              {messageLoading && <Spinner />}
             </MessagesWrapper>
-            {(!messagesList || messagesList.length === 0) &&
-              'Beginning of your conversation'}
           </MessageContentMain>
         </MessageContent>
         <MessageInputWrapper>

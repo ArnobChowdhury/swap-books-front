@@ -113,6 +113,7 @@ export const fetchCurrentRoomMsgsSuccess = (messages: MessageResponseProps[]) =>
 
 export const fetchCurrentRoomMsgsReq = (socket: Socket, roomId: string) => {
   return (dispatch: Dispatch) => {
+    dispatch(fetchCurrentRoomMsgsStart());
     socket.emit(SOCKET_INIT_MSGS, roomId, (messages: MessageResponseProps[]) => {
       dispatch(fetchCurrentRoomMsgsSuccess(messages));
     });
