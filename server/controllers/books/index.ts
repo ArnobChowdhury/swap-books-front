@@ -7,4 +7,5 @@ export {
   extendBookValidity,
   getMatchesForAbook,
   getBooksOfAMatch,
+  getBooksOfARoom,
 } from './books.controller';

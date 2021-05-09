@@ -52,8 +52,6 @@ export const processRoomForUser = (
     roomId: room._id,
     roomMateName: roomMateName,
     roomMateId: room.participants[roomMateIndex].userId.toHexString(),
-    roomMateInterests: room.participants[userIndex].interests,
-    userInterests: room.participants[roomMateIndex].interests,
     unreadMsgs: room.participants[userIndex].unreadMsgs,
   };
 };

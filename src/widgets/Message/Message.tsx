@@ -46,6 +46,7 @@ import {
   sendMsgToRoom,
   setCurrentRoom,
   setAsSeenRequest,
+  fetchRoomInterestReq,
 } from 'redux/actions/message';
 import { RootState } from 'redux/reducers';
 import { SocketIoContext } from 'hoc/Sockets';
@@ -88,16 +89,19 @@ export const Message = () => {
     userInterests,
     messages,
     messageLoading,
+    fetchRoomMateInterestReqOnGoing,
+    fetchRoomMateInterestErr,
   } = useSelector((store: RootState) => store.message);
 
   const { userId } = useSelector((store: RootState) => store.auth);
+  const [showInterestForThisRoom, setShowInterestForThisRoom] = useState<boolean>(
+    false,
+  );
 
   const handleMsgItemClick = (room: {
     roomId: string;
     roomMateId: string;
     roomMateName: string;
-    roomMateInterests: NotificationBookShape[];
-    userInterests: NotificationBookShape[];
   }) => {
     dispatch(openMessageBox());
     dispatch(setCurrentRoom(room));
@@ -114,14 +118,7 @@ export const Message = () => {
   let matchesList;
   if (activeRooms && activeRooms.length > 0) {
     matchesList = activeRooms.map(room => {
-      const {
-        roomId,
-        roomMateId,
-        roomMateName,
-        roomMateInterests,
-        userInterests,
-        unreadMsgs,
-      } = room;
+      const { roomId, roomMateId, roomMateName, unreadMsgs } = room;
       return (
         <MessageListItem
           onClick={() =>
@@ -129,8 +126,6 @@ export const Message = () => {
               roomId,
               roomMateId,
               roomMateName,
-              roomMateInterests,
-              userInterests,
             })
           }
           key={roomMateId}
@@ -196,20 +191,13 @@ export const Message = () => {
   useEffect(() => {
     const msgBoxHeight = msgsBoxRef.current?.scrollHeight;
     msgsBoxRef.current?.scrollTo(0, msgBoxHeight as number);
-    // }, [messages, messageBoxIsOpen]);
   }, [messages]);
 
-  const [showInterestForThisRoom, setShowInterestForThisRoom] = useState<boolean>(
-    false,
-  );
-
   const { spaceThree } = theme;
-  const userInterestsAsString = userInterests
-    .map(interest => interest.bookName)
-    .join(', ');
-  const roomMateInterestsAsString = roomMateInterests
-    .map(interest => interest.bookName)
-    .join(', ');
+  const userInterestsAsString =
+    userInterests.length > 0 ? userInterests.join(', ') : '';
+  const roomMateInterestsAsString =
+    roomMateInterests.length > 0 ? roomMateInterests.join(', ') : '';
 
   const inputRef = useRef<HTMLInputElement | null>(null);
 
@@ -258,6 +246,18 @@ export const Message = () => {
     }
   }, [messages]);
 
+  const handleMutualInterests = () => {
+    if (!showInterestForThisRoom) {
+      dispatch(fetchRoomInterestReq(roomId as string));
+    }
+    setShowInterestForThisRoom(!showInterestForThisRoom);
+  };
+
+  const handleMessageBoxClose = () => {
+    setShowInterestForThisRoom(false);
+    dispatch(closeMessageBox());
+  };
+
   const hasMessages = messagesList.length > 0;
 
   return (
@@ -276,7 +276,7 @@ export const Message = () => {
       <MessageBox show={messageBoxIsOpen} tabIndex="0" ref={msgBoxRef}>
         <MessageContent>
           <MessageContentTop>
-            <IconOnlyButton size={32} onClick={() => dispatch(closeMessageBox())}>
+            <IconOnlyButton size={32} onClick={handleMessageBoxClose}>
               <LeftArrow />
             </IconOnlyButton>
             <MsgPartnerInfo>
@@ -288,9 +288,7 @@ export const Message = () => {
                 Mutual Interests
                 <IconRotator
                   rotateOneEighty={showInterestForThisRoom}
-                  onClick={() =>
-                    setShowInterestForThisRoom(!showInterestForThisRoom)
-                  }
+                  onClick={handleMutualInterests}
                 >
                   <DownArrow width="10" height="10" />
                 </IconRotator>
@@ -301,11 +299,20 @@ export const Message = () => {
                   fontWeight="regular"
                   marginBelow={spaceThree}
                 >
-                  <strong>Your interests:</strong> {userInterestsAsString}{' '}
+                  <strong>Your interests:</strong>{' '}
+                  {fetchRoomMateInterestReqOnGoing && 'Loading...'}
+                  {!fetchRoomMateInterestReqOnGoing &&
+                    !fetchRoomMateInterestErr &&
+                    userInterestsAsString}
+                  {fetchRoomMateInterestErr && fetchRoomMateInterestErr.message}{' '}
                 </Paragraph>
                 <Paragraph fontSize="superSmall" fontWeight="regular">
                   <strong>{activeRoomMateName}&apos;s interests:</strong>{' '}
-                  {roomMateInterestsAsString}
+                  {fetchRoomMateInterestReqOnGoing && 'Loading...'}
+                  {!fetchRoomMateInterestReqOnGoing &&
+                    !fetchRoomMateInterestErr &&
+                    roomMateInterestsAsString}
+                  {fetchRoomMateInterestErr && fetchRoomMateInterestErr.message}{' '}
                 </Paragraph>
               </InterestContainer>
             </MsgPartnerInfo>

@@ -1,6 +1,5 @@
 import { HYDRATE } from 'next-redux-wrapper';
 import { AnyAction } from 'redux';
-import { NotificationBookShape } from 'redux/reducers/notifications';
 
 import {
   FETCH_ACTIVE_ROOMS_START,
@@ -18,6 +17,9 @@ import {
   REGISTER_SENT_MESSAGE_SUCCESS,
   SET_MESSAGE_AS_SEEN_SUCCESS,
   ADD_NONACTIVE_ROOM_UNREAD_MSG_NOTIFICATION,
+  FETCH_ROOM_INTERESTS_START,
+  FETCH_ROOM_INTERESTS_SUCCESS,
+  FETCH_ROOM_INTERESTS_FAIL,
 } from '../../actions/actionTypes';
 
 export interface MessageResponseProps {
@@ -35,8 +37,6 @@ export interface ActiveRoomsResponse {
   roomId: string;
   roomMateName: string;
   roomMateId: string;
-  roomMateInterests: NotificationBookShape[];
-  userInterests: NotificationBookShape[];
   unreadMsgs: boolean;
 }
 
@@ -44,8 +44,8 @@ export interface MessageProps {
   roomId?: string | null; // a single active conversation (roomId in the backend)
   roomMateName: string | null;
   roomMateId: string | null;
-  roomMateInterests: NotificationBookShape[];
-  userInterests: NotificationBookShape[];
+  roomMateInterests: string[];
+  userInterests: string[];
   messages: MessageResponseProps[];
   messageLoading: boolean;
   messageError: Error | null;
@@ -53,6 +53,8 @@ export interface MessageProps {
   activeRoomsLoading: boolean;
   activeRoomsError: Error | null;
   messageBoxIsOpen: boolean;
+  fetchRoomMateInterestReqOnGoing: boolean;
+  fetchRoomMateInterestErr: { message: string; status: number } | null;
 }
 
 export const initialState: MessageProps = {
@@ -68,6 +70,8 @@ export const initialState: MessageProps = {
   activeRoomsLoading: false,
   activeRoomsError: null,
   messageBoxIsOpen: false,
+  fetchRoomMateInterestReqOnGoing: false,
+  fetchRoomMateInterestErr: null,
 };
 
 const reducer = (state = initialState, action: AnyAction): MessageProps => {
@@ -90,6 +94,7 @@ const reducer = (state = initialState, action: AnyAction): MessageProps => {
     seenMsgRoomId,
     seenMsgId,
     unreadMsgInRoom,
+    fetchRoomMateInterestErr,
   } = action;
 
   switch (action.type) {
@@ -128,8 +133,6 @@ const reducer = (state = initialState, action: AnyAction): MessageProps => {
         roomId,
         roomMateName,
         roomMateId,
-        roomMateInterests,
-        userInterests,
       };
     case OPEN_MESSAGE_BOX:
       return {
@@ -245,6 +248,32 @@ const reducer = (state = initialState, action: AnyAction): MessageProps => {
       return {
         ...state,
         activeRooms: newActiveRooms,
+      };
+    }
+
+    case FETCH_ROOM_INTERESTS_START: {
+      return {
+        ...state,
+        roomMateInterests: [],
+        userInterests: [],
+        fetchRoomMateInterestReqOnGoing: true,
+      };
+    }
+
+    case FETCH_ROOM_INTERESTS_SUCCESS: {
+      return {
+        ...state,
+        roomMateInterests,
+        userInterests,
+        fetchRoomMateInterestReqOnGoing: false,
+      };
+    }
+
+    case FETCH_ROOM_INTERESTS_FAIL: {
+      return {
+        ...state,
+        fetchRoomMateInterestReqOnGoing: false,
+        fetchRoomMateInterestErr,
       };
     }
 

@@ -333,3 +333,60 @@ export const getBooksOfAMatch = async (
     next(err);
   }
 };
+
+export const getBooksOfARoom = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  const { roomId } = req.query;
+  const { userId } = req as ModifiedRequest;
+
+  try {
+    if (!roomId) {
+      throw new createError.BadRequest('Insufficient information');
+    }
+
+    const room = await Room.findById(roomId as string);
+
+    if (!room) {
+      throw new createError.NotFound('Sorry! Interests could not be found!');
+    }
+
+    const userInterestBookIds = extractInterestsOfUserFromRoom(userId, room);
+    const roomMate = room.participants.find(
+      participant => participant.userId.toHexString() !== userId,
+    );
+    const roomMateInterestBookIds = extractInterestsOfUserFromRoom(
+      roomMate?.userId.toHexString() as string,
+      room,
+    );
+
+    const books = await Book.getBooksInBatches(
+      [...userInterestBookIds, ...roomMateInterestBookIds],
+      'bookName',
+    );
+    const userInterests: string[] = [];
+    const roomMateInterests: string[] = [];
+
+    books.forEach(book => {
+      const bookId = book._id.toHexString();
+      if (userInterestBookIds.includes(bookId)) {
+        userInterests.push(book.bookName);
+      } else {
+        roomMateInterests.push(book.bookName);
+      }
+    });
+
+    res.status(200).json({
+      message: 'Get all interests for this room',
+      userInterests,
+      roomMateInterests,
+    });
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
+};

@@ -8,6 +8,7 @@ import {
   editBook,
   getMatchesForAbook,
   getBooksOfAMatch,
+  getBooksOfARoom,
 } from '../../controllers/books';
 import { protectedRoute } from '../../middlewares/protectedRoute';
 import { validation } from '../../middlewares/validation';
@@ -38,6 +39,7 @@ router.put(
 router.delete('/del', protectedRoute, validation(deleteBookSchema), deleteABook);
 router.get('/matches', protectedRoute, getMatchesForAbook);
 router.get('/books-of-match', protectedRoute, getBooksOfAMatch);
+router.get('/books-of-room', protectedRoute, getBooksOfARoom);
 router.get('/', getHomeFeedBooks);
 router.get('/:profileId', getProfileBooks);
 router.put(

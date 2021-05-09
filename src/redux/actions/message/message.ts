@@ -1,3 +1,4 @@
+import axios from '../../../axiosInstance';
 import { ActiveRoomsResponse, MessageProps } from 'redux/reducers/message';
 import ObjectId from 'bson-objectid';
 import {
@@ -27,6 +28,9 @@ import {
   REGISTER_SENT_MESSAGE_SUCCESS,
   ADD_NONACTIVE_ROOM_UNREAD_MSG_NOTIFICATION,
   SET_MESSAGE_AS_SEEN_SUCCESS,
+  FETCH_ROOM_INTERESTS_START,
+  FETCH_ROOM_INTERESTS_SUCCESS,
+  FETCH_ROOM_INTERESTS_FAIL,
 } from './../actionTypes';
 
 export const fetchActiveRoomsStart = () => {
@@ -52,23 +56,17 @@ export const fetchActiveRoomsFail = (activeRoomsError: Error) => {
 export const setCurrentRoom = ({
   roomId,
   roomMateId,
-  roomMateInterests,
   roomMateName,
-  userInterests,
 }: {
   roomId: string;
   roomMateName: string;
   roomMateId: string;
-  roomMateInterests: NotificationBookShape[];
-  userInterests: NotificationBookShape[];
 }) => {
   return {
     type: SET_MESSAGE_BOX,
     roomId,
     roomMateName,
     roomMateId,
-    roomMateInterests,
-    userInterests,
   };
 };
 
@@ -210,4 +208,55 @@ export const setAsSeenRequest = (socket: Socket, roomId: string, msgId: string) 
   socket.emit(SOCKET_SET_MSG_AS_SEEN, roomId, msgId, () => {
     dispatch(setAsSeenSuccess(roomId, msgId));
   });
+};
+
+const fetchRoomInterestStart = () => {
+  return {
+    type: FETCH_ROOM_INTERESTS_START,
+  };
+};
+
+const fetchRoomInterestSuccess = (
+  roomMateInterests: string[],
+  userInterests: string[],
+) => {
+  return {
+    type: FETCH_ROOM_INTERESTS_SUCCESS,
+    roomMateInterests,
+    userInterests,
+  };
+};
+
+const fetchRoomInterestFail = (fetchRoomMateInterestErr: {
+  message: string;
+  status: number;
+}) => {
+  return {
+    type: FETCH_ROOM_INTERESTS_FAIL,
+    fetchRoomMateInterestErr,
+  };
+};
+
+export const fetchRoomInterestReq = (roomId: string) => {
+  return (dispatch: Dispatch) => {
+    dispatch(fetchRoomInterestStart());
+
+    const path = '/books/books-of-room';
+    const params = { roomId };
+    return axios
+      .get(path, { params })
+      .then(res => {
+        const { roomMateInterests, userInterests } = res.data;
+        dispatch(fetchRoomInterestSuccess(roomMateInterests, userInterests));
+      })
+      .catch(err => {
+        const { status } = err.response;
+        dispatch(
+          fetchRoomInterestFail({
+            message: 'Something went wrong! Try again.',
+            status,
+          }),
+        );
+      });
+  };
 };

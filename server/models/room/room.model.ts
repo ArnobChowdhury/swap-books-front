@@ -43,6 +43,12 @@ export default class Room {
     return db.collection('rooms').insertOne({ ...this, lastModified: new Date() });
   }
 
+  static async findById(roomId: string) {
+    const db = getDb();
+    const _id = new ObjectId(roomId);
+    return db.collection<RoomWithId>('rooms').findOne({ _id });
+  }
+
   static async findRoomWithParticipants(
     ...participants: string[]
   ): Promise<RoomWithId | null> {

@@ -29,7 +29,7 @@ import {
   delSocketIdFromRedis,
 } from '../../utils/sockets';
 import { RoomWithId } from '../../models/room';
-import { ObjectID, ObjectId } from 'mongodb';
+import { ObjectId } from 'mongodb';
 import createHttpError from 'http-errors';
 import User from '../../models/user';
 import fs from 'fs';
@@ -224,11 +224,10 @@ export const expressInterest = async (
   }
 };
 interface RoomResponse {
-  roomId: ObjectID;
+  roomId: ObjectId;
   roomMateName: string;
   roomMateId: string;
-  roomMateInterests: RoomWithId['participants'][0]['interests'];
-  userInterests: RoomWithId['participants'][0]['interests'];
+  unreadMsgs: boolean;
 }
 
 export const joinAllRooms = async (

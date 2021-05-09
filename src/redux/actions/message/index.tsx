@@ -17,4 +17,5 @@ export {
   setAsSeenRequest,
   setAsSeenSuccess,
   addUnreadMsgsNotification,
+  fetchRoomInterestReq,
 } from './message';
