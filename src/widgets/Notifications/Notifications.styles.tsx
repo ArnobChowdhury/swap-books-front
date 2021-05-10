@@ -34,6 +34,7 @@ const placeHolderShimmer = keyframes`
   }
 `;
 
+//TODO MAKE SEPARATE CSS FILE FOR GRADIENT IN PUBLIC FOLDER
 export const NotificationLoaderWrapper = styled.div`
   height: 6rem;
   width: 100%;

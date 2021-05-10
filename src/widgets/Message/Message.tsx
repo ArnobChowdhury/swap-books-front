@@ -1,4 +1,5 @@
 import { useState, KeyboardEvent, useContext, useRef, useEffect } from 'react';
+import { useOnScreen } from 'hooks';
 import { IconOnlyButton } from 'ui-kits/IconOnlyButton';
 import { UserIcon } from 'ui-kits/UserIcon';
 import { Header } from 'ui-kits/Header';
@@ -33,6 +34,8 @@ import {
   WMHeading,
   WMTips,
   WMEnd,
+  ChatShimmer,
+  MsgShimmerWrapper,
 } from './Message.styles';
 import { SendIcon } from 'assets/SendIcon';
 import { LeftArrow } from 'assets/LeftArrow';
@@ -51,9 +54,24 @@ import {
 import { RootState } from 'redux/reducers';
 import { SocketIoContext } from 'hoc/Sockets';
 import { MessageResponseProps } from 'redux/reducers/message';
-import { NotificationBookShape } from 'redux/reducers/notifications';
 import { useRouter } from 'next/router';
 import { MESSAGES_ROUTE } from 'frontEndRoutes';
+
+const MessageShimmer = () => {
+  return (
+    <>
+      <SingleChat own={false}>
+        <ChatShimmer width={80} />
+      </SingleChat>
+      <SingleChat own={true}>
+        <ChatShimmer width={200} />
+      </SingleChat>
+      <SingleChat own={true}>
+        <ChatShimmer width={120} />
+      </SingleChat>
+    </>
+  );
+};
 
 const WelcomMessage = ({ name, msg }: { name: string; msg: string }) => {
   const msgAsArray = msg.split('. ');
@@ -91,6 +109,7 @@ export const Message = () => {
     messageLoading,
     fetchRoomMateInterestReqOnGoing,
     fetchRoomMateInterestErr,
+    hasMoreMsgs,
   } = useSelector((store: RootState) => store.message);
 
   const { userId } = useSelector((store: RootState) => store.auth);
@@ -103,13 +122,14 @@ export const Message = () => {
     roomMateId: string;
     roomMateName: string;
   }) => {
+    setAutoScrolledOnce(false);
     dispatch(openMessageBox());
     dispatch(setCurrentRoom(room));
   };
 
   useEffect(() => {
-    if (roomId && socketIo) {
-      dispatch(fetchCurrentRoomMsgsReq(socketIo, roomId));
+    if (roomId) {
+      dispatch(fetchCurrentRoomMsgsReq(roomId, 0));
     }
   }, [roomId]);
 
@@ -147,7 +167,9 @@ export const Message = () => {
     messagesList = messages.map((message: MessageResponseProps) => {
       const { msg, fromId, _id, registered, seen } = message;
       if (fromId === 'admin@pustokio') {
-        return <WelcomMessage name={activeRoomMateName as string} msg={msg} />;
+        return (
+          <WelcomMessage key={_id} name={activeRoomMateName as string} msg={msg} />
+        );
       }
 
       const own = fromId === userId;
@@ -170,6 +192,8 @@ export const Message = () => {
     });
   }
 
+  const [shouldScrollOnMsgChange, setShouldScrollOnMsgChange] = useState(false);
+
   const handleMsgEnter = (
     e:
       | KeyboardEvent<HTMLInputElement>
@@ -180,18 +204,36 @@ export const Message = () => {
       e.type === 'click'
     ) {
       if (socketIo && roomId && userId && roomMateId && msg !== '') {
+        setShouldScrollOnMsgChange(true);
         dispatch(sendMsgToRoom(socketIo, roomId, msg, userId, roomMateId));
       }
       setMsg('');
     }
   };
 
+  useEffect(() => {
+    if (shouldScrollOnMsgChange) {
+      scrollDown();
+      setShouldScrollOnMsgChange(false);
+    }
+  }, [messages]);
+
+  // TODO GET RID OF msgBoxRef, and keep msgsBoxRef
   // scrolling
   const msgsBoxRef = useRef<HTMLDivElement | null>(null);
-  useEffect(() => {
+  const [autoScrolledOnce, setAutoScrolledOnce] = useState(false);
+
+  const scrollDown = () => {
     const msgBoxHeight = msgsBoxRef.current?.scrollHeight;
     msgsBoxRef.current?.scrollTo(0, msgBoxHeight as number);
-  }, [messages]);
+  };
+
+  useEffect(() => {
+    if (!autoScrolledOnce) {
+      scrollDown();
+      if (messages.length > 0) setAutoScrolledOnce(true);
+    }
+  }, [messages, autoScrolledOnce]);
 
   const { spaceThree } = theme;
   const userInterestsAsString =
@@ -207,6 +249,7 @@ export const Message = () => {
     }
   }, [messageBoxIsOpen]);
 
+  // TODO Probably do not need this msgboxref
   const msgBoxRef = useRef<HTMLDivElement | null>(null);
   useEffect(() => {
     if (msgBoxRef.current) {
@@ -258,6 +301,12 @@ export const Message = () => {
     dispatch(closeMessageBox());
   };
 
+  const msgShimmerRef = useRef<HTMLDivElement | null>(null);
+
+  const handlePreviousMessageFetch = () => {
+    if (roomId) dispatch(fetchCurrentRoomMsgsReq(roomId, messages.length));
+  };
+  useOnScreen(msgShimmerRef, msgsBoxRef, messages, handlePreviousMessageFetch, true);
   const hasMessages = messagesList.length > 0;
 
   return (
@@ -319,6 +368,11 @@ export const Message = () => {
           </MessageContentTop>
           <MessageContentMain ref={msgsBoxRef}>
             <MessagesWrapper hasMessages={hasMessages}>
+              {hasMoreMsgs && (
+                <MsgShimmerWrapper ref={msgShimmerRef}>
+                  <MessageShimmer />
+                </MsgShimmerWrapper>
+              )}
               {hasMessages && messagesList}
               {messageLoading && <Spinner />}
             </MessagesWrapper>

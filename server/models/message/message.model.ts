@@ -72,12 +72,13 @@ export default class Message {
     return msgCreationOpResult;
   }
 
-  static async returnLatestMsgs(roomId: string): Promise<MessageWithId[]> {
+  static async returnMsgs(roomId: string, skip: number): Promise<MessageWithId[]> {
     const db = getDb();
     const recentMessagesFromDb = await db
       .collection('messages')
       .find({ roomId: new ObjectId(roomId) })
       .sort({ _id: -1 })
+      .skip(skip)
       .limit(20)
       .toArray();
 

@@ -4,17 +4,16 @@ import ObjectId from 'bson-objectid';
 import {
   SOCKET_JOIN_ALL_ROOMS,
   SOCKET_SEND_MSG,
-  SOCKET_INIT_MSGS,
   SOCKET_SET_MSG_AS_SEEN,
 } from '../../../socketTypes';
 import { Dispatch } from 'redux';
 import { MessageResponseProps } from '../../reducers/message';
-import { NotificationBookShape } from 'redux/reducers/notifications';
 import { Socket } from 'socket.io-client';
 
 import {
   FETCH_ROOM_MESSAGE_START,
   FETCH_ROOM_MESSAGE_SUCCESS,
+  FETCH_ROOM_PREVIOUS_MESSAGE_SUCCESS,
   FETCH_ROOM_MESSAGE_FAIL,
   FETCH_ACTIVE_ROOMS_START,
   FETCH_ACTIVE_ROOMS_SUCCESS,
@@ -95,26 +94,58 @@ export const fetchCurrentRoomMsgsStart = () => {
   };
 };
 
-export const fetchCurrentRoomMsgsFail = (messageError: Error) => {
+export const fetchCurrentRoomMsgsFail = (messageError: {
+  message: string;
+  status: number;
+}) => {
   return {
     type: FETCH_ROOM_MESSAGE_FAIL,
     messageError,
   };
 };
 
-export const fetchCurrentRoomMsgsSuccess = (messages: MessageResponseProps[]) => {
+export const fetchCurrentRoomMsgsSuccess = (
+  type: string,
+  messages: MessageResponseProps[],
+  fetchedMsgsForRoomId: string,
+) => {
+  const hasMoreMsgs = messages.length < 20 ? false : true;
+
   return {
-    type: FETCH_ROOM_MESSAGE_SUCCESS,
+    type,
     messages,
+    hasMoreMsgs,
+    fetchedMsgsForRoomId,
   };
 };
 
-export const fetchCurrentRoomMsgsReq = (socket: Socket, roomId: string) => {
-  return (dispatch: Dispatch) => {
-    dispatch(fetchCurrentRoomMsgsStart());
-    socket.emit(SOCKET_INIT_MSGS, roomId, (messages: MessageResponseProps[]) => {
-      dispatch(fetchCurrentRoomMsgsSuccess(messages));
-    });
+export const fetchCurrentRoomMsgsReq = (roomId: string, skip: number) => {
+  return async (dispatch: Dispatch) => {
+    if (skip === 0) dispatch(fetchCurrentRoomMsgsStart());
+
+    const path = '/interactions/msgs';
+    const params = { roomId, skip };
+    try {
+      const res = await axios.get(path, { params });
+      const { latestMsgsWithTimeStamp: messages } = res.data;
+
+      const type =
+        skip === 0
+          ? FETCH_ROOM_MESSAGE_SUCCESS
+          : FETCH_ROOM_PREVIOUS_MESSAGE_SUCCESS;
+      dispatch(fetchCurrentRoomMsgsSuccess(type, messages, roomId));
+    } catch (err) {
+      // TODO WE ARE NOT SHOWING ANY ERRORS YET!
+      if (err.response) {
+        const { status } = err.response;
+        dispatch(
+          fetchCurrentRoomMsgsFail({
+            message: "Something went wrong! Couldn't fetch messages this time!",
+            status,
+          }),
+        );
+      }
+    }
   };
 };
 

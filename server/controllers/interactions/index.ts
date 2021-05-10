@@ -1,6 +1,6 @@
 export {
   saveSocketToRedis,
-  initMsgs,
+  getMsgs,
   expressInterest,
   removeInterest,
   joinAllRooms,

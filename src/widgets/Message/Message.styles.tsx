@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import { largeScreen, mediumScreen } from 'mediaConfig';
 
 export const MessageBoxContainer = styled.div<{
@@ -256,3 +256,35 @@ export const WMTips = styled.p`
 export const WMEnd = styled.p`
   font-weight: 400;
 `;
+
+const placeHolderShimmer = keyframes`
+  0%{
+    background-position: -468px 0
+  }
+  40%{
+    background-position: 936px 0
+  }
+  100%{
+    background-position: 468px 0
+  }
+`;
+
+export const ChatShimmer = styled.div<{ width: number }>`
+  width: ${({ width }) => `${width}px`};
+  height: 33px;
+  border-radius: ${({ theme }) => theme.borderRadius};
+  margin-bottom: ${({ theme }) => theme.spaceTwo};
+
+  animation-duration: 1.8s;
+  animation-fill-mode: forwards;
+  animation-iteration-count: infinite;
+  animation-name: ${placeHolderShimmer};
+  animation-timing-function: linear;
+  background: #f6f7f8;
+  background: linear-gradient(to right, #ddd 8%, #f4f4f4 38%, #ddd 54%);
+  background-size: 1000px 640px;
+
+  position: relative;
+`;
+
+export const MsgShimmerWrapper = styled.div``;

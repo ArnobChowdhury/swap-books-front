@@ -7,6 +7,7 @@ import {
   FETCH_ACTIVE_ROOMS_FAIL,
   FETCH_ROOM_MESSAGE_START,
   FETCH_ROOM_MESSAGE_SUCCESS,
+  FETCH_ROOM_PREVIOUS_MESSAGE_SUCCESS,
   FETCH_ROOM_MESSAGE_FAIL,
   OPEN_MESSAGE_BOX,
   CLOSE_MESSAGE_BOX,
@@ -55,6 +56,8 @@ export interface MessageProps {
   messageBoxIsOpen: boolean;
   fetchRoomMateInterestReqOnGoing: boolean;
   fetchRoomMateInterestErr: { message: string; status: number } | null;
+  hasMoreMsgs: boolean;
+  initialMsgsSet: boolean;
 }
 
 export const initialState: MessageProps = {
@@ -72,6 +75,8 @@ export const initialState: MessageProps = {
   messageBoxIsOpen: false,
   fetchRoomMateInterestReqOnGoing: false,
   fetchRoomMateInterestErr: null,
+  hasMoreMsgs: false,
+  initialMsgsSet: false,
 };
 
 const reducer = (state = initialState, action: AnyAction): MessageProps => {
@@ -95,50 +100,82 @@ const reducer = (state = initialState, action: AnyAction): MessageProps => {
     seenMsgId,
     unreadMsgInRoom,
     fetchRoomMateInterestErr,
+    hasMoreMsgs,
+    fetchedMsgsForRoomId,
   } = action;
 
   switch (action.type) {
     case HYDRATE:
       return { ...state };
+
     case FETCH_ACTIVE_ROOMS_START:
       return { ...state, activeRoomsLoading: true };
+
     case FETCH_ACTIVE_ROOMS_SUCCESS:
       return { ...state, activeRoomsLoading: false, activeRooms };
+
     case FETCH_ACTIVE_ROOMS_FAIL:
       return {
         ...state,
         activeRoomsLoading: false,
         activeRoomsError,
       };
+
     case FETCH_ROOM_MESSAGE_START:
       return {
         ...state,
         messageLoading: true,
       };
-    case FETCH_ROOM_MESSAGE_SUCCESS:
-      return {
-        ...state,
-        messageLoading: false,
-        messages,
-      };
-    case FETCH_ROOM_MESSAGE_FAIL:
+
+    case FETCH_ROOM_MESSAGE_SUCCESS: {
+      const { roomId } = state;
+      if (roomId === fetchedMsgsForRoomId) {
+        return {
+          ...state,
+          messageLoading: false,
+          messages,
+          hasMoreMsgs,
+          initialMsgsSet: true,
+        };
+      }
+      return { ...state };
+    }
+
+    case FETCH_ROOM_MESSAGE_FAIL: {
       return {
         ...state,
         messageLoading: false,
         messageError,
       };
-    case SET_MESSAGE_BOX:
+    }
+
+    case FETCH_ROOM_PREVIOUS_MESSAGE_SUCCESS: {
+      const { roomId, initialMsgsSet } = state;
+      if (roomId === fetchedMsgsForRoomId && initialMsgsSet) {
+        const newMessages = [...messages, ...state.messages];
+        return { ...state, messages: newMessages, hasMoreMsgs };
+      }
+      return { ...state };
+    }
+
+    case SET_MESSAGE_BOX: {
       return {
         ...state,
         roomId,
         roomMateName,
         roomMateId,
+        hasMoreMsgs: false,
+        messages: [],
+        initialMsgsSet: false,
       };
+    }
+
     case OPEN_MESSAGE_BOX:
       return {
         ...state,
         messageBoxIsOpen: true,
       };
+
     case CLOSE_MESSAGE_BOX:
       return {
         ...state,
@@ -151,7 +188,7 @@ const reducer = (state = initialState, action: AnyAction): MessageProps => {
         messages: [],
       };
 
-    case JOIN_SINGLE_ROOM:
+    case JOIN_SINGLE_ROOM: {
       let newActiveRooms: ActiveRoomsResponse[] = [singleRoom];
       if (state.activeRooms) {
         newActiveRooms = newActiveRooms.concat(state.activeRooms);
@@ -161,8 +198,9 @@ const reducer = (state = initialState, action: AnyAction): MessageProps => {
         ...state,
         activeRooms: newActiveRooms,
       };
+    }
 
-    case LEAVE_SINGLE_ROOM:
+    case LEAVE_SINGLE_ROOM: {
       const { activeRooms: actRooms } = state;
       let newRooms: ActiveRoomsResponse[] = [];
       if (actRooms) {
@@ -174,16 +212,18 @@ const reducer = (state = initialState, action: AnyAction): MessageProps => {
         ...state,
         activeRooms: newRooms,
       };
+    }
 
-    case ADD_ROOM_MESSAGE_SUCCESS:
+    case ADD_ROOM_MESSAGE_SUCCESS: {
       const { roomId: activeRoomId, messages: existingMessages } = state;
       if (activeRoomId === newMsg.roomId) {
         const newMessages = existingMessages === null ? [] : [...existingMessages];
         newMessages.push(newMsg);
         return { ...state, messages: newMessages };
       }
+    }
 
-    case REGISTER_SENT_MESSAGE_SUCCESS:
+    case REGISTER_SENT_MESSAGE_SUCCESS: {
       const {
         roomId: currentActiveRoomId,
         messages: currentExistingMessages,
@@ -201,8 +241,9 @@ const reducer = (state = initialState, action: AnyAction): MessageProps => {
         }
         return { ...state, messages: newMessages };
       }
+    }
 
-    case SET_MESSAGE_AS_SEEN_SUCCESS:
+    case SET_MESSAGE_AS_SEEN_SUCCESS: {
       const {
         roomId: msgOfTheRoomToBeSeen,
         messages: allMessages,
@@ -234,6 +275,7 @@ const reducer = (state = initialState, action: AnyAction): MessageProps => {
         messages: transFormedMessages,
         activeRooms: activeRoomsAfterMarkingRead,
       };
+    }
 
     case ADD_NONACTIVE_ROOM_UNREAD_MSG_NOTIFICATION: {
       const { activeRooms } = state;

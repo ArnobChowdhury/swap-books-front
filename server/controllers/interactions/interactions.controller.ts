@@ -1,8 +1,9 @@
 import { Server } from 'socket.io';
+import { Request, Response, NextFunction } from 'express';
 import { SocketDecoded } from '../../interface';
 import Book from '../../models/book';
 import Room from '../../models/room';
-import Notification, { NotificationWithId } from '../../models/notification';
+import Notification from '../../models/notification';
 import Swap from '../../models/swap';
 import {
   RECEIVE_LATEST_NOTIFICATION,
@@ -17,7 +18,6 @@ import {
   addTimestampToMongoCollection,
   isAMatchedRoom,
   processRoomForUser,
-  Timestamp,
   processRoomNotification,
   _idToRequiredProp,
   transformRoomWithBookNameAndId,
@@ -28,7 +28,6 @@ import {
   getSocketIdFromRedis,
   delSocketIdFromRedis,
 } from '../../utils/sockets';
-import { RoomWithId } from '../../models/room';
 import { ObjectId } from 'mongodb';
 import createHttpError from 'http-errors';
 import User from '../../models/user';
@@ -305,18 +304,28 @@ export const sendMsg = async (
 };
 
 // Todo we might think of moving it to a GET method using Axios
-export const initMsgs = async (
-  room: string,
-  cb: (msgs: (MessageWithId & Timestamp)[] | undefined) => void,
-) => {
-  const latestMsgsFromDb = await Message.returnLatestMsgs(room);
+export const getMsgs = async (req: Request, res: Response, next: NextFunction) => {
+  const { roomId, skip } = req.query;
+  try {
+    const latestMsgsFromDb = await Message.returnMsgs(
+      roomId as string,
+      Number(skip),
+    );
 
-  let latestMsgsWithTimeStamp;
-  if (latestMsgsFromDb !== undefined) {
-    latestMsgsWithTimeStamp = latestMsgsFromDb.map(addTimestampToMongoCollection);
+    let latestMsgsWithTimeStamp;
+    if (latestMsgsFromDb !== undefined) {
+      latestMsgsWithTimeStamp = latestMsgsFromDb.map(addTimestampToMongoCollection);
+    }
+    res.status(200).json({
+      message: 'Get initMsgs for this room',
+      latestMsgsWithTimeStamp,
+    });
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
   }
-
-  cb(latestMsgsWithTimeStamp);
 };
 
 export const socketDisconnect = async (socket: SocketDecoded) => {

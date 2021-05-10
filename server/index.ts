@@ -14,6 +14,7 @@ import socketioJwt from 'socketio-jwt';
 import authRoutes from './routes/auth';
 import booksRoutes from './routes/books';
 import userRoutes from './routes/user';
+import interactionRoutes from './routes/interactions';
 import Book from './models/book';
 import {
   saveSocketToRedis,
@@ -21,7 +22,6 @@ import {
   removeInterest,
   joinAllRooms,
   sendMsg,
-  initMsgs,
   socketDisconnect,
   setMsgAsSeen,
   createSwapRequest,
@@ -34,7 +34,6 @@ import {
   EXPRESS_INTEREST,
   JOIN_ALL_ROOMS,
   SEND_MSG,
-  INIT_MSGS,
   SET_MSG_AS_SEEN,
   SWAP_REQUEST,
   DISCONNECT,
@@ -88,11 +87,6 @@ app.prepare().then(() => {
 
     socket.on(SEND_MSG, async (msgInfo, cb) => {
       await sendMsg(socket, msgInfo, cb);
-      // todo add catch block
-    });
-
-    socket.on(INIT_MSGS, async (room, cb) => {
-      await initMsgs(room, cb);
       // todo add catch block
     });
 
@@ -156,6 +150,7 @@ app.prepare().then(() => {
   server.use('/auth', authRoutes);
   server.use('/books', booksRoutes);
   server.use('/user', userRoutes);
+  server.use('/interactions', interactionRoutes);
 
   // SCHEDULER TO DELETE ALL EXPIRED BOOKS
 

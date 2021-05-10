@@ -12,7 +12,6 @@ export const LEAVE_SINGLE_ROOM = 'leave single room';
 export const SEND_MSG = 'send msg';
 export const RECEIVE_NEW_MSG = 'receive new msg';
 export const SET_MSG_AS_SEEN = 'set msg as seen';
-export const INIT_MSGS = 'init msgs';
 
 export const SWAP_REQUEST = 'swap request';
 export const SWAP_CONSENT = 'swap consent';
