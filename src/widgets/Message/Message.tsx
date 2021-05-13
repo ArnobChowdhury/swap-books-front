@@ -1,4 +1,12 @@
-import { useState, KeyboardEvent, useContext, useRef, useEffect } from 'react';
+import {
+  useState,
+  KeyboardEvent,
+  useContext,
+  useRef,
+  useEffect,
+  useLayoutEffect,
+  UIEvent,
+} from 'react';
 import { useOnScreen } from 'hooks';
 import { IconOnlyButton } from 'ui-kits/IconOnlyButton';
 import { UserIcon } from 'ui-kits/UserIcon';
@@ -218,14 +226,13 @@ export const Message = () => {
     }
   }, [messages]);
 
-  // TODO GET RID OF msgBoxRef, and keep msgsBoxRef
   // scrolling
-  const msgsBoxRef = useRef<HTMLDivElement | null>(null);
+  const msgsContainerRef = useRef<HTMLDivElement | null>(null);
   const [autoScrolledOnce, setAutoScrolledOnce] = useState(false);
 
   const scrollDown = () => {
-    const msgBoxHeight = msgsBoxRef.current?.scrollHeight;
-    msgsBoxRef.current?.scrollTo(0, msgBoxHeight as number);
+    const msgBoxHeight = msgsContainerRef.current?.scrollHeight;
+    msgsContainerRef.current?.scrollTo(0, msgBoxHeight as number);
   };
 
   useEffect(() => {
@@ -234,6 +241,30 @@ export const Message = () => {
       if (messages.length > 0) setAutoScrolledOnce(true);
     }
   }, [messages, autoScrolledOnce]);
+
+  const [msgBoxScrollTopMax, setMsgBoxScrollTopMax] = useState<number>();
+  const [currentScrollTop, setCurrentScrollTop] = useState<number>();
+  const updateScroll = (e: UIEvent<HTMLDivElement>) => {
+    setCurrentScrollTop(e.currentTarget.scrollTop);
+  };
+
+  useLayoutEffect(() => {
+    if (msgsContainerRef.current) {
+      const scrollTopMax =
+        msgsContainerRef.current?.scrollHeight -
+        msgsContainerRef.current?.clientHeight;
+      if (
+        msgBoxScrollTopMax !== undefined &&
+        scrollTopMax > msgBoxScrollTopMax &&
+        currentScrollTop !== undefined
+      ) {
+        const goToScrollPostion =
+          scrollTopMax - msgBoxScrollTopMax + currentScrollTop;
+        msgsContainerRef.current?.scrollTo(0, goToScrollPostion);
+      }
+      setMsgBoxScrollTopMax(scrollTopMax);
+    }
+  }, [messages]);
 
   const { spaceThree } = theme;
   const userInterestsAsString =
@@ -249,7 +280,6 @@ export const Message = () => {
     }
   }, [messageBoxIsOpen]);
 
-  // TODO Probably do not need this msgboxref
   const msgBoxRef = useRef<HTMLDivElement | null>(null);
   useEffect(() => {
     if (msgBoxRef.current) {
@@ -306,7 +336,14 @@ export const Message = () => {
   const handlePreviousMessageFetch = () => {
     if (roomId) dispatch(fetchCurrentRoomMsgsReq(roomId, messages.length));
   };
-  useOnScreen(msgShimmerRef, msgsBoxRef, messages, handlePreviousMessageFetch, true);
+
+  useOnScreen(
+    msgShimmerRef,
+    msgsContainerRef,
+    messages,
+    handlePreviousMessageFetch,
+    true,
+  );
   const hasMessages = messagesList.length > 0;
 
   return (
@@ -366,11 +403,11 @@ export const Message = () => {
               </InterestContainer>
             </MsgPartnerInfo>
           </MessageContentTop>
-          <MessageContentMain ref={msgsBoxRef}>
+          <MessageContentMain ref={msgsContainerRef} onScroll={updateScroll}>
             <MessagesWrapper hasMessages={hasMessages}>
               {hasMoreMsgs && (
                 <MsgShimmerWrapper ref={msgShimmerRef}>
-                  <MessageShimmer />
+                  <Spinner />
                 </MsgShimmerWrapper>
               )}
               {hasMessages && messagesList}

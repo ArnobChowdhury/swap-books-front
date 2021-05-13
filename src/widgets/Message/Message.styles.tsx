@@ -287,4 +287,7 @@ export const ChatShimmer = styled.div<{ width: number }>`
   position: relative;
 `;
 
-export const MsgShimmerWrapper = styled.div``;
+export const MsgShimmerWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+`;
