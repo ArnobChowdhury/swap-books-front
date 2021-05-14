@@ -142,6 +142,7 @@ export const MessageContentMain = styled.div`
   display: flex;
   overflow-y: auto;
   height: 100%;
+  position: relative;
 `;
 
 export const MessagesWrapper = styled.div<{ hasMessages: boolean }>`
@@ -290,4 +291,19 @@ export const ChatShimmer = styled.div<{ width: number }>`
 export const MsgShimmerWrapper = styled.div`
   display: flex;
   justify-content: center;
+`;
+
+export const UnreadMsgNotification = styled.div`
+  position: absolute;
+  padding: ${({ theme }) => theme.spaceFour};
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: ${({ theme }) => theme.colorPrimary2};
+  color: ${({ theme }) => theme.colorTextSecondary};
+  font-size: ${({ theme }) => theme.fontSmall};
+  font-weight: 400;
+  border-radius: 10px;
+  cursor: pointer;
+  z-index: 1;
 `;

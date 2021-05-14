@@ -44,6 +44,7 @@ import {
   WMEnd,
   ChatShimmer,
   MsgShimmerWrapper,
+  UnreadMsgNotification,
 } from './Message.styles';
 import { SendIcon } from 'assets/SendIcon';
 import { LeftArrow } from 'assets/LeftArrow';
@@ -266,6 +267,47 @@ export const Message = () => {
     }
   }, [messages]);
 
+  const [firstUnseenPostion, setFirstUnseenPostion] = useState<number>();
+  const [numOfUnreadMsgs, setNumOfUnreadMsgs] = useState<number>();
+
+  useEffect(() => {
+    let firstUnseenPos: number | undefined;
+    let numUnread = 0;
+
+    messages.forEach(msg => {
+      const { _id, toId, seen } = msg;
+      const isNotOwnersMsg = toId === userId;
+      if (isNotOwnersMsg && seen === false) {
+        const msgUnseenNode = document.querySelector(`div[data-msgid='${_id}']`);
+        if (msgUnseenNode && msgsContainerRef.current) {
+          const {
+            top: containerTop,
+            bottom: containerBottom,
+          } = msgsContainerRef.current.getBoundingClientRect();
+          const {
+            top: unseenMsgTop,
+            bottom: unseenMsgBottom,
+          } = msgUnseenNode.getBoundingClientRect();
+          const showing =
+            unseenMsgTop >= containerTop && unseenMsgBottom <= containerBottom;
+          if (!showing) {
+            numUnread += 1;
+            if (!firstUnseenPos)
+              firstUnseenPos = (msgUnseenNode as HTMLElement).offsetTop - 46;
+          }
+        }
+      }
+    });
+
+    if (firstUnseenPos) setFirstUnseenPostion(firstUnseenPos);
+    setNumOfUnreadMsgs(numUnread);
+  }, [messages]);
+
+  const handleUnreadMsgScroll = () => {
+    if (firstUnseenPostion)
+      msgsContainerRef.current?.scrollTo(0, firstUnseenPostion);
+  };
+
   const { spaceThree } = theme;
   const userInterestsAsString =
     userInterests.length > 0 ? userInterests.join(', ') : '';
@@ -361,6 +403,11 @@ export const Message = () => {
         @ts-ignore*/}
       <MessageBox show={messageBoxIsOpen} tabIndex="0" ref={msgBoxRef}>
         <MessageContent>
+          {Boolean(numOfUnreadMsgs) && (
+            <UnreadMsgNotification onClick={handleUnreadMsgScroll}>
+              {numOfUnreadMsgs} unread messages
+            </UnreadMsgNotification>
+          )}
           <MessageContentTop>
             <IconOnlyButton size={32} onClick={handleMessageBoxClose}>
               <LeftArrow />
