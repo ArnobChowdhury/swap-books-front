@@ -43,6 +43,7 @@ export const processRoomForUser = (
   room: RoomWithId,
   userId: string,
   roomMateName: string,
+  isOnline: boolean,
 ) => {
   const roomMateIndex = room.participants.findIndex(
     participant => participant.userId.toHexString() !== userId,
@@ -53,6 +54,7 @@ export const processRoomForUser = (
     roomMateName: roomMateName,
     roomMateId: room.participants[roomMateIndex].userId.toHexString(),
     unreadMsgs: room.participants[userIndex].unreadMsgs,
+    isOnline,
   };
 };
 

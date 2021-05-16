@@ -1,4 +1,4 @@
-import { StyledUserIcon } from './UserIcon.styles';
+import { StyledUserIcon, IsOnline } from './UserIcon.styles';
 import { getUserInitials } from 'utils/index';
 
 interface UserIconProps {
@@ -6,6 +6,7 @@ interface UserIconProps {
   hasRightMargin?: boolean;
   largeIcon?: boolean;
   hasBodyColor?: boolean;
+  isOnline?: boolean;
 }
 
 export const UserIcon = ({
@@ -13,6 +14,7 @@ export const UserIcon = ({
   hasRightMargin = false,
   largeIcon = false,
   hasBodyColor = false,
+  isOnline = false,
 }: UserIconProps) => {
   const userInitials = getUserInitials(userName);
   return (
@@ -21,6 +23,7 @@ export const UserIcon = ({
       largeIcon={largeIcon}
       hasRightMargin={hasRightMargin}
     >
+      {isOnline && <IsOnline />}
       {userInitials}
     </StyledUserIcon>
   );

@@ -30,6 +30,8 @@ import {
   FETCH_ROOM_INTERESTS_START,
   FETCH_ROOM_INTERESTS_SUCCESS,
   FETCH_ROOM_INTERESTS_FAIL,
+  SET_USER_OFFLINE,
+  SET_USER_ONLINE,
 } from './../actionTypes';
 
 export const fetchActiveRoomsStart = () => {
@@ -289,5 +291,19 @@ export const fetchRoomInterestReq = (roomId: string) => {
           }),
         );
       });
+  };
+};
+
+export const userIsOffline = (roomMateId: string) => {
+  return {
+    type: SET_USER_OFFLINE,
+    roomMateId,
+  };
+};
+
+export const userIsOnline = (roomMateId: string) => {
+  return {
+    type: SET_USER_ONLINE,
+    roomMateId,
   };
 };

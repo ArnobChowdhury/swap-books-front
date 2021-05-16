@@ -24,6 +24,7 @@ export const StyledUserIcon = styled.div<{
   margin-right: ${({ hasRightMargin, theme }) => hasRightMargin && theme.spaceFour};
   background: ${({ hasBodyColor, theme }) =>
     hasBodyColor ? theme.colorTextPrimary : theme.colorWhite};
+  position: relative;
 
   @media (min-width: ${smallScreen}px) {
     width: ${({ largeIcon }) => (largeIcon ? '100px' : '32px')};
@@ -36,4 +37,15 @@ export const StyledUserIcon = styled.div<{
     height: ${({ largeIcon }) => (largeIcon ? '150px' : '32px')};
     font-size: ${({ largeIcon }) => (largeIcon ? '80px' : '13px')};
   }
+`;
+
+export const IsOnline = styled.div`
+  width: 12px;
+  height: 12px;
+  position: absolute;
+  top: 50%;
+  right: -15%;
+  background: green;
+  border-radius: 100%;
+  border: 2px solid white;
 `;

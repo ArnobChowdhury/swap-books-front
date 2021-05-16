@@ -12,6 +12,8 @@ import {
   JOIN_SINGLE_ROOM,
   LEAVE_SINGLE_ROOM,
   SET_MSG_AS_SEEN,
+  USER_ONLINE,
+  USER_OFFLINE,
 } from '../../socketTypes';
 import Message, { MessageWithId } from '../../models/message';
 import {
@@ -184,22 +186,23 @@ export const expressInterest = async (
       const numOfUnseenNotificationForUser = await Notification.getCountOfUnseenNotification(
         userId,
       );
+
+      if (!bookOwnerIsInRoom && bookOwnerSocketId) {
+        const bookOwnerSocket = io.sockets.sockets.get(bookOwnerSocketId);
+        bookOwnerSocket?.join(roomId);
+        bookOwnerIsInRoom = true;
+        bookOwnerSocket?.emit(
+          JOIN_SINGLE_ROOM,
+          processRoomForUser(room, bookOwnerId, userName, true),
+        );
+      }
+
       // Send rooms to these people if they are online
       if (!userIsInRoom) {
         socket.join(roomId);
         socket.emit(
           JOIN_SINGLE_ROOM,
-          processRoomForUser(room, userId, bookOwnerName),
-        );
-      }
-
-      if (!bookOwnerIsInRoom && bookOwnerSocketId) {
-        const bookOwnerSocket = io.sockets.sockets.get(bookOwnerSocketId);
-        bookOwnerSocket?.join(roomId);
-        //TODO emit a the newly joined room name to bookOwner
-        bookOwnerSocket?.emit(
-          JOIN_SINGLE_ROOM,
-          processRoomForUser(room, bookOwnerId, userName),
+          processRoomForUser(room, userId, bookOwnerName, bookOwnerIsInRoom),
         );
       }
 
@@ -230,6 +233,7 @@ interface RoomResponse {
 }
 
 export const joinAllRooms = async (
+  io: Server,
   socket: SocketDecoded,
   cb: (rooms: RoomResponse[]) => void,
 ) => {
@@ -258,16 +262,39 @@ export const joinAllRooms = async (
     allRoomMateIds,
   );
 
-  const allRooms = allMatchedRooms.map(room => {
-    const roomMateIndex = room.participants.findIndex(
-      participant => participant.userId.toHexString() !== userId,
-    );
-    const roomMate = allRoomMatesWithNameAndId.find(
-      ({ _id }) =>
-        _id.toHexString() === room.participants[roomMateIndex].userId.toHexString(),
-    );
-    return processRoomForUser(room, userId, roomMate?.name as string);
-  });
+  const allRooms = await Promise.all(
+    allMatchedRooms.map(async room => {
+      const roomMateIndex = room.participants.findIndex(
+        participant => participant.userId.toHexString() !== userId,
+      );
+      const roomMate = allRoomMatesWithNameAndId.find(
+        ({ _id }) =>
+          _id.toHexString() ===
+          room.participants[roomMateIndex].userId.toHexString(),
+      );
+
+      const roomMateSocketId = await getSocketIdFromRedis(
+        roomMate?._id.toHexString() as string,
+      );
+      const roomId = room._id.toHexString();
+      const roomMembers = io.sockets.adapter.rooms.get(roomId);
+
+      let roomMateIsActive: boolean = false;
+
+      if (roomMembers && roomMateSocketId) {
+        roomMateIsActive = roomMembers.has(roomMateSocketId);
+      }
+
+      socket.to(roomId).emit(USER_ONLINE, userId);
+
+      return processRoomForUser(
+        room,
+        userId,
+        roomMate?.name as string,
+        roomMateIsActive,
+      );
+    }),
+  );
   // TODO we need to sort the rooms according to lastMessage before sending it to front-end
 
   // TODO check if user has unseen message in db
@@ -326,6 +353,18 @@ export const getMsgs = async (req: Request, res: Response, next: NextFunction) =
     }
     next(err);
   }
+};
+
+export const socketDisconnecting = (socket: SocketDecoded) => {
+  // TODO - THERE IS A ROOM INSIDE SOCKET.ROOMS THAT I DID NOT RECOGNIZE
+  const {
+    decoded_token: { aud: userId },
+  } = socket;
+  const allRooms = socket.rooms;
+
+  allRooms.forEach(room => {
+    socket.to(room).emit(USER_OFFLINE, userId);
+  });
 };
 
 export const socketDisconnect = async (socket: SocketDecoded) => {

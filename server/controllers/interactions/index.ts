@@ -5,6 +5,7 @@ export {
   removeInterest,
   joinAllRooms,
   sendMsg,
+  socketDisconnecting,
   socketDisconnect,
   setMsgAsSeen,
   createSwapRequest,

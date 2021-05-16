@@ -18,4 +18,6 @@ export {
   setAsSeenSuccess,
   addUnreadMsgsNotification,
   fetchRoomInterestReq,
+  userIsOffline,
+  userIsOnline,
 } from './message';

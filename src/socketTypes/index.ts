@@ -14,4 +14,7 @@ export const SOCKET_SET_MSG_AS_SEEN = 'set msg as seen';
 export const SOCKET_SWAP_REQUEST = 'swap request';
 export const SOCKET_SWAP_CONSENT = 'swap consent';
 
+export const SOCKET_USER_ONLINE = 'user online';
+export const SOCKET_USER_OFFLINE = 'user offline';
+
 export const SOCKET_DISCONNECT = 'disconnect';

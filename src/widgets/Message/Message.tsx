@@ -147,7 +147,7 @@ export const Message = () => {
   let matchesList;
   if (activeRooms && activeRooms.length > 0) {
     matchesList = activeRooms.map(room => {
-      const { roomId, roomMateId, roomMateName, unreadMsgs } = room;
+      const { roomId, roomMateId, roomMateName, unreadMsgs, isOnline } = room;
       return (
         <MessageListItem
           onClick={() =>
@@ -160,7 +160,11 @@ export const Message = () => {
           key={roomMateId}
         >
           <SideMargin hasTopBorder hasTopAndBottomPadding>
-            <UserIcon userName={roomMateName} hasRightMargin></UserIcon>
+            <UserIcon
+              userName={roomMateName}
+              hasRightMargin
+              isOnline={isOnline}
+            ></UserIcon>
             <MessageSenderName hasUnreadMsgs={Boolean(unreadMsgs)}>
               {roomMateName}
             </MessageSenderName>
@@ -388,6 +392,20 @@ export const Message = () => {
   );
   const hasMessages = messagesList.length > 0;
 
+  const [activeUserIsOnline, setActiveUserIsOnline] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (roomId) {
+      for (let i = 0; i < activeRooms.length; i++) {
+        const { roomId, isOnline } = activeRooms[i];
+        if (roomId === roomId) {
+          setActiveUserIsOnline(isOnline);
+          break;
+        }
+      }
+    }
+  }, [roomId, activeRooms]);
+
   return (
     <MessageBoxContainer
       messageBoxIsOpen={messageBoxIsOpen}
@@ -414,7 +432,11 @@ export const Message = () => {
             </IconOnlyButton>
             <MsgPartnerInfo>
               <MsgPartnerName>
-                <UserIcon hasRightMargin userName={activeRoomMateName || ''} />
+                <UserIcon
+                  hasRightMargin
+                  userName={activeRoomMateName || ''}
+                  isOnline={activeUserIsOnline}
+                />
                 {activeRoomMateName}
               </MsgPartnerName>
               <MutualInterests showBottomMargin={showInterestForThisRoom}>

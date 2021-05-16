@@ -21,6 +21,8 @@ import {
   FETCH_ROOM_INTERESTS_START,
   FETCH_ROOM_INTERESTS_SUCCESS,
   FETCH_ROOM_INTERESTS_FAIL,
+  SET_USER_OFFLINE,
+  SET_USER_ONLINE,
 } from '../../actions/actionTypes';
 
 export interface MessageResponseProps {
@@ -39,6 +41,7 @@ export interface ActiveRoomsResponse {
   roomMateName: string;
   roomMateId: string;
   unreadMsgs: boolean;
+  isOnline: boolean;
 }
 
 export interface MessageProps {
@@ -316,6 +319,42 @@ const reducer = (state = initialState, action: AnyAction): MessageProps => {
         ...state,
         fetchRoomMateInterestReqOnGoing: false,
         fetchRoomMateInterestErr,
+      };
+    }
+
+    case SET_USER_OFFLINE: {
+      const { activeRooms } = state;
+
+      const newActiveRooms = activeRooms.map(room => {
+        if (room.roomMateId === roomMateId) {
+          const newRoom = { ...room };
+          newRoom.isOnline = false;
+          return newRoom;
+        }
+        return room;
+      });
+
+      return {
+        ...state,
+        activeRooms: newActiveRooms,
+      };
+    }
+
+    case SET_USER_ONLINE: {
+      const { activeRooms } = state;
+
+      const newActiveRooms = activeRooms.map(room => {
+        if (room.roomMateId === roomMateId) {
+          const newRoom = { ...room };
+          newRoom.isOnline = true;
+          return newRoom;
+        }
+        return room;
+      });
+
+      return {
+        ...state,
+        activeRooms: newActiveRooms,
       };
     }
 

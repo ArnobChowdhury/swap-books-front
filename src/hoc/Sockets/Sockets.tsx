@@ -13,6 +13,8 @@ import {
   leaveSingleRoom,
   setAsSeenSuccess,
   addUnreadMsgsNotification,
+  userIsOffline,
+  userIsOnline,
 } from 'redux/actions/message';
 import { fetchActiveRoomsReq } from 'redux/actions/message';
 import { useDispatch } from 'react-redux';
@@ -24,6 +26,8 @@ import {
   SOCKET_JOIN_SINGLE_ROOM,
   SOCKET_LEAVE_SINGLE_ROOM,
   SOCKET_SET_MSG_AS_SEEN,
+  SOCKET_USER_OFFLINE,
+  SOCKET_USER_ONLINE,
 } from 'socketTypes';
 
 interface SocketIoInterestContextProps {
@@ -117,6 +121,14 @@ export const SocketIO = ({ children }: SocketIOInterestInterface) => {
 
       socketIo.on(SOCKET_SET_MSG_AS_SEEN, (roomId: string, msgId: string) => {
         dispatch(setAsSeenSuccess(roomId, msgId));
+      });
+
+      socketIo.on(SOCKET_USER_OFFLINE, (userId: string) => {
+        dispatch(userIsOffline(userId));
+      });
+
+      socketIo.on(SOCKET_USER_ONLINE, (userId: string) => {
+        dispatch(userIsOnline(userId));
       });
 
       return () => {

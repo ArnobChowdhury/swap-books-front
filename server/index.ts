@@ -26,6 +26,7 @@ import {
   setMsgAsSeen,
   createSwapRequest,
   acceptOrRejectSwapRequest,
+  socketDisconnecting,
 } from './controllers/interactions';
 import { mongoConnect, closeDb } from './utils/database';
 import { client as redisClient } from './utils/redis';
@@ -38,6 +39,7 @@ import {
   SWAP_REQUEST,
   DISCONNECT,
   SWAP_CONSENT,
+  DISCONNECTING,
 } from './socketTypes';
 import { jwtVerify } from './middlewares/jwtVerify';
 
@@ -81,7 +83,7 @@ app.prepare().then(() => {
     });
 
     socket.on(JOIN_ALL_ROOMS, async cb => {
-      await joinAllRooms(socket, cb);
+      await joinAllRooms(io, socket, cb);
       // todo add catch block
     });
 
@@ -122,6 +124,10 @@ app.prepare().then(() => {
         // todo add catch block
       },
     );
+
+    socket.on(DISCONNECTING, async () => {
+      socketDisconnecting(socket);
+    });
 
     socket.on(DISCONNECT, async () => {
       await socketDisconnect(socket);

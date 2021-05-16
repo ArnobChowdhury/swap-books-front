@@ -79,6 +79,7 @@ export default class Room {
    * 3. Paginate
    */
   static async findAllRoomsByUserId(userId: string): Promise<RoomWithId[]> {
+    // TODO RETURN ROOMS AFTER SORTING ACCORDING TO LAST MESSAGE
     const db = getDb();
     try {
       const room = await db
