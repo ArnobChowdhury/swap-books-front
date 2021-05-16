@@ -15,6 +15,7 @@ import {
   addUnreadMsgsNotification,
   userIsOffline,
   userIsOnline,
+  isUserTyping,
 } from 'redux/actions/message';
 import { fetchActiveRoomsReq } from 'redux/actions/message';
 import { useDispatch } from 'react-redux';
@@ -28,6 +29,7 @@ import {
   SOCKET_SET_MSG_AS_SEEN,
   SOCKET_USER_OFFLINE,
   SOCKET_USER_ONLINE,
+  SOCKET_USER_TYPING,
 } from 'socketTypes';
 
 interface SocketIoInterestContextProps {
@@ -129,6 +131,10 @@ export const SocketIO = ({ children }: SocketIOInterestInterface) => {
 
       socketIo.on(SOCKET_USER_ONLINE, (userId: string) => {
         dispatch(userIsOnline(userId));
+      });
+
+      socketIo.on(SOCKET_USER_TYPING, (roomId: string, isTyping: boolean) => {
+        dispatch(isUserTyping(roomId, isTyping));
       });
 
       return () => {

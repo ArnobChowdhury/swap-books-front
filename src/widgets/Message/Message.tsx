@@ -6,6 +6,7 @@ import {
   useEffect,
   useLayoutEffect,
   UIEvent,
+  ChangeEvent,
 } from 'react';
 import { useOnScreen } from 'hooks';
 import { IconOnlyButton } from 'ui-kits/IconOnlyButton';
@@ -42,9 +43,11 @@ import {
   WMHeading,
   WMTips,
   WMEnd,
-  ChatShimmer,
   MsgShimmerWrapper,
   UnreadMsgNotification,
+  ChatBubble,
+  Typing,
+  Dot,
 } from './Message.styles';
 import { SendIcon } from 'assets/SendIcon';
 import { LeftArrow } from 'assets/LeftArrow';
@@ -65,22 +68,7 @@ import { SocketIoContext } from 'hoc/Sockets';
 import { MessageResponseProps } from 'redux/reducers/message';
 import { useRouter } from 'next/router';
 import { MESSAGES_ROUTE } from 'frontEndRoutes';
-
-const MessageShimmer = () => {
-  return (
-    <>
-      <SingleChat own={false}>
-        <ChatShimmer width={80} />
-      </SingleChat>
-      <SingleChat own={true}>
-        <ChatShimmer width={200} />
-      </SingleChat>
-      <SingleChat own={true}>
-        <ChatShimmer width={120} />
-      </SingleChat>
-    </>
-  );
-};
+import { SOCKET_USER_TYPING } from 'socketTypes';
 
 const WelcomMessage = ({ name, msg }: { name: string; msg: string }) => {
   const msgAsArray = msg.split('. ');
@@ -100,6 +88,16 @@ const WelcomMessage = ({ name, msg }: { name: string; msg: string }) => {
     </WMContainer>
   );
 };
+
+const RoomMateTyping = () => (
+  <ChatBubble>
+    <Typing>
+      <Dot />
+      <Dot />
+      <Dot />
+    </Typing>
+  </ChatBubble>
+);
 
 export const Message = () => {
   const { pathname } = useRouter();
@@ -182,6 +180,14 @@ export const Message = () => {
       if (fromId === 'admin@pustokio') {
         return (
           <WelcomMessage key={_id} name={activeRoomMateName as string} msg={msg} />
+        );
+      }
+
+      if (_id === 'typing') {
+        return (
+          <SingleChat own={false}>
+            <RoomMateTyping />
+          </SingleChat>
         );
       }
 
@@ -395,16 +401,28 @@ export const Message = () => {
   const [activeUserIsOnline, setActiveUserIsOnline] = useState<boolean>(false);
 
   useEffect(() => {
-    if (roomId) {
+    let activeRoomId = roomId;
+    if (activeRoomId) {
       for (let i = 0; i < activeRooms.length; i++) {
         const { roomId, isOnline } = activeRooms[i];
-        if (roomId === roomId) {
+        if (activeRoomId === roomId) {
           setActiveUserIsOnline(isOnline);
           break;
         }
       }
     }
   }, [roomId, activeRooms]);
+
+  const handleMessageType = (e: ChangeEvent<HTMLInputElement>) => {
+    const newMsg = e.currentTarget.value;
+    if (!msg && newMsg) {
+      socketIo?.emit(SOCKET_USER_TYPING, roomId, true);
+    }
+    if (msg && !newMsg) {
+      socketIo?.emit(SOCKET_USER_TYPING, roomId, false);
+    }
+    setMsg(newMsg);
+  };
 
   return (
     <MessageBoxContainer
@@ -488,8 +506,8 @@ export const Message = () => {
           <MessageInput
             type="text"
             value={msg}
-            onChange={e => setMsg(e.currentTarget.value)}
-            onKeyUp={e => handleMsgEnter(e)}
+            onChange={handleMessageType}
+            onKeyUp={handleMsgEnter}
             ref={inputRef}
           />
           <SendIconWrapper disabled={msg === ''} onClick={handleMsgEnter}>

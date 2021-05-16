@@ -19,5 +19,7 @@ export const SWAP_CONSENT = 'swap consent';
 export const USER_ONLINE = 'user online';
 export const USER_OFFLINE = 'user offline';
 
+export const USER_TYPING = 'user typing';
+
 export const DISCONNECT = 'disconnect';
 export const DISCONNECTING = 'disconnecting';

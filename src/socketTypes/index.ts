@@ -17,4 +17,6 @@ export const SOCKET_SWAP_CONSENT = 'swap consent';
 export const SOCKET_USER_ONLINE = 'user online';
 export const SOCKET_USER_OFFLINE = 'user offline';
 
+export const SOCKET_USER_TYPING = 'user typing';
+
 export const SOCKET_DISCONNECT = 'disconnect';

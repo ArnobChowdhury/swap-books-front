@@ -39,6 +39,7 @@ import {
   SWAP_REQUEST,
   DISCONNECT,
   SWAP_CONSENT,
+  USER_TYPING,
   DISCONNECTING,
 } from './socketTypes';
 import { jwtVerify } from './middlewares/jwtVerify';
@@ -124,6 +125,10 @@ app.prepare().then(() => {
         // todo add catch block
       },
     );
+
+    socket.on(USER_TYPING, (roomId: string, isTyping: boolean) => {
+      socket.to(roomId).emit(USER_TYPING, roomId, isTyping);
+    });
 
     socket.on(DISCONNECTING, async () => {
       socketDisconnecting(socket);

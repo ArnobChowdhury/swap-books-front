@@ -23,6 +23,7 @@ import {
   FETCH_ROOM_INTERESTS_FAIL,
   SET_USER_OFFLINE,
   SET_USER_ONLINE,
+  SET_USER_TYPING,
 } from '../../actions/actionTypes';
 
 export interface MessageResponseProps {
@@ -105,6 +106,7 @@ const reducer = (state = initialState, action: AnyAction): MessageProps => {
     fetchRoomMateInterestErr,
     hasMoreMsgs,
     fetchedMsgsForRoomId,
+    isTyping,
   } = action;
 
   switch (action.type) {
@@ -218,9 +220,16 @@ const reducer = (state = initialState, action: AnyAction): MessageProps => {
     }
 
     case ADD_ROOM_MESSAGE_SUCCESS: {
-      const { roomId: activeRoomId, messages: existingMessages } = state;
+      const {
+        roomId: activeRoomId,
+        messages: existingMessages,
+        roomMateId: activeRoomMateId,
+      } = state;
       if (activeRoomId === newMsg.roomId) {
-        const newMessages = existingMessages === null ? [] : [...existingMessages];
+        const roomMatesMsg = newMsg.fromId === activeRoomMateId;
+        let newMessages = existingMessages === null ? [] : [...existingMessages];
+        if (roomMatesMsg)
+          newMessages = newMessages.filter(msg => msg._id !== 'typing');
         newMessages.push(newMsg);
         return { ...state, messages: newMessages };
       }
@@ -356,6 +365,36 @@ const reducer = (state = initialState, action: AnyAction): MessageProps => {
         ...state,
         activeRooms: newActiveRooms,
       };
+    }
+
+    case SET_USER_TYPING: {
+      const { messages, roomId: activeRoomId, roomMateId: activeRoomMateId } = state;
+
+      if (activeRoomId === roomId && activeRoomMateId && activeRoomId) {
+        let newMsgs = [...messages];
+        if (isTyping) {
+          newMsgs.push({
+            _id: 'typing',
+            fromId: activeRoomMateId,
+            toId: 'me',
+            roomId: activeRoomId,
+            msg: '',
+            timestamp: new Date().getTime(),
+            seen: false,
+            registered: false,
+          });
+        }
+
+        if (!isTyping) {
+          newMsgs = newMsgs.filter(msg => msg._id !== 'typing');
+        }
+
+        return {
+          ...state,
+          messages: newMsgs,
+        };
+      }
+      return { ...state };
     }
 
     default:

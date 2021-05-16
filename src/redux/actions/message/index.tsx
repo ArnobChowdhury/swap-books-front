@@ -20,4 +20,5 @@ export {
   fetchRoomInterestReq,
   userIsOffline,
   userIsOnline,
+  isUserTyping,
 } from './message';

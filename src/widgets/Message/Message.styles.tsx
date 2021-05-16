@@ -258,36 +258,6 @@ export const WMEnd = styled.p`
   font-weight: 400;
 `;
 
-const placeHolderShimmer = keyframes`
-  0%{
-    background-position: -468px 0
-  }
-  40%{
-    background-position: 936px 0
-  }
-  100%{
-    background-position: 468px 0
-  }
-`;
-
-export const ChatShimmer = styled.div<{ width: number }>`
-  width: ${({ width }) => `${width}px`};
-  height: 33px;
-  border-radius: ${({ theme }) => theme.borderRadius};
-  margin-bottom: ${({ theme }) => theme.spaceTwo};
-
-  animation-duration: 1.8s;
-  animation-fill-mode: forwards;
-  animation-iteration-count: infinite;
-  animation-name: ${placeHolderShimmer};
-  animation-timing-function: linear;
-  background: #f6f7f8;
-  background: linear-gradient(to right, #ddd 8%, #f4f4f4 38%, #ddd 54%);
-  background-size: 1000px 640px;
-
-  position: relative;
-`;
-
 export const MsgShimmerWrapper = styled.div`
   display: flex;
   justify-content: center;
@@ -306,4 +276,60 @@ export const UnreadMsgNotification = styled.div`
   border-radius: 10px;
   cursor: pointer;
   z-index: 1;
+`;
+
+const mercuryTypingAnimation = keyframes`
+  0% {
+    transform: translateY(0px);
+    background-color: #A090FF;
+  }
+  28% {
+    transform: translateY(-7px);
+    background-color:#C4BBF8;
+  }
+  44% {
+    transform: translateY(0px);
+    background-color: #A090FF; 
+  }
+`;
+
+export const ChatBubble = styled.div`
+  background-color: ${({ theme }) => theme.colorSeparator};
+  padding: ${({ theme }) => `${theme.spaceFour} ${theme.spaceEight}`};
+  border-radius: ${({ theme }) => theme.borderRadius};
+  border-bottom-left-radius: 2px;
+  display: inline-block;
+`;
+
+export const Typing = styled.div`
+  align-items: center;
+  display: flex;
+  height: 17px;
+`;
+
+export const Dot = styled.div`
+  animation: ${mercuryTypingAnimation} 1.8s infinite ease-in-out;
+  background-color: ${({ theme }) => theme.colorPrimary2};
+  border-radius: 50%;
+  height: 6px;
+  width: 6px;
+  vertical-align: middle;
+  display: inline-block;
+  margin-right: 4px;
+
+  &:nth-child(1) {
+    animation-delay: 200ms;
+  }
+
+  &:nth-child(2) {
+    animation-delay: 300ms;
+  }
+
+  &:nth-child(3) {
+    animation-delay: 400ms;
+  }
+
+  &:last-child {
+    margin-right: 0;
+  }
 `;

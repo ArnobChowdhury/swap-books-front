@@ -32,6 +32,7 @@ import {
   FETCH_ROOM_INTERESTS_FAIL,
   SET_USER_OFFLINE,
   SET_USER_ONLINE,
+  SET_USER_TYPING,
 } from './../actionTypes';
 
 export const fetchActiveRoomsStart = () => {
@@ -305,5 +306,13 @@ export const userIsOnline = (roomMateId: string) => {
   return {
     type: SET_USER_ONLINE,
     roomMateId,
+  };
+};
+
+export const isUserTyping = (roomId: string, isTyping: boolean) => {
+  return {
+    type: SET_USER_TYPING,
+    roomId,
+    isTyping,
   };
 };
