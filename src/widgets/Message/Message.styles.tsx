@@ -213,6 +213,21 @@ export const SingleChat = styled.div<{ own: boolean }>`
   &:not(:last-child) {
     margin-bottom: ${({ theme }) => theme.spaceTwo};
   }
+  flex-wrap: wrap;
+`;
+
+export const SingleChatTimestamp = styled.div<{
+  isSeletected: boolean;
+}>`
+  flex-basis: 100%;
+  text-align: center;
+  margin-bottom: 2px;
+  max-height: ${({ isSeletected }) => (isSeletected ? '30px' : '0')};
+  visibility: ${({ isSeletected }) => (isSeletected ? 'visible' : 'hidden')};
+  opacity: ${({ isSeletected }) => (isSeletected ? '1' : '0')};
+  font-weight: 400;
+  font-size: ${({ theme }) => theme.fontSuperSmall};
+  transition: max-height 0.3s, visibility 0.2s, opacity 0.1s;
 `;
 
 export const SingleChatText = styled.div<{ own: boolean }>`
@@ -224,6 +239,7 @@ export const SingleChatText = styled.div<{ own: boolean }>`
   padding: ${({ theme }) => `${theme.spaceFour} ${theme.spaceEight}`};
   border-radius: ${({ theme }) => theme.borderRadius};
   max-width: 260px;
+  cursor: pointer;
 
   @media (min-width: ${mediumScreen}px) {
     max-width: 400px;

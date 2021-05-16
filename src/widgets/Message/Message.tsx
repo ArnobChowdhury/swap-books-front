@@ -38,6 +38,7 @@ import {
   SendIconWrapper,
   SingleChat,
   SingleChatText,
+  SingleChatTimestamp,
   WMWrapper,
   WMContainer,
   WMHeading,
@@ -69,6 +70,8 @@ import { MessageResponseProps } from 'redux/reducers/message';
 import { useRouter } from 'next/router';
 import { MESSAGES_ROUTE } from 'frontEndRoutes';
 import { SOCKET_USER_TYPING } from 'socketTypes';
+import { formatMsgTimeStamp } from 'utils';
+import debounce from 'lodash/debounce';
 
 const WelcomMessage = ({ name, msg }: { name: string; msg: string }) => {
   const msgAsArray = msg.split('. ');
@@ -173,10 +176,19 @@ export const Message = () => {
     });
   }
 
+  const [showTimeFor, setShowTimeFor] = useState<string | null>(null);
+  const handleShowMsgTime = (_id: string) => {
+    if (!showTimeFor || showTimeFor !== _id) {
+      setShowTimeFor(_id);
+    } else {
+      setShowTimeFor(null);
+    }
+  };
+
   let messagesList: JSX.Element[] = [];
   if (messages && messages.length > 0) {
-    messagesList = messages.map((message: MessageResponseProps) => {
-      const { msg, fromId, _id, registered, seen } = message;
+    messagesList = messages.map((message: MessageResponseProps, index) => {
+      const { msg, fromId, _id, registered, seen, timestamp } = message;
       if (fromId === 'admin@pustokio') {
         return (
           <WelcomMessage key={_id} name={activeRoomMateName as string} msg={msg} />
@@ -185,19 +197,35 @@ export const Message = () => {
 
       if (_id === 'typing') {
         return (
-          <SingleChat own={false}>
+          <SingleChat own={false} key={_id}>
             <RoomMateTyping />
           </SingleChat>
         );
       }
 
       const own = fromId === userId;
+      const previousTimestamp = index === 0 ? null : messages[index - 1].timestamp;
+
+      let shouldDisplayTime = false;
+      if (
+        index === 0 ||
+        messages[index - 1].fromId === 'admin@pustokio' ||
+        (previousTimestamp && timestamp - previousTimestamp > 900000)
+      ) {
+        shouldDisplayTime = true;
+      }
+
       return (
         <SingleChat
           own={own}
           key={_id}
           {...(!own && !seen && { 'data-msgid': _id })}
         >
+          <SingleChatTimestamp
+            isSeletected={shouldDisplayTime || _id === showTimeFor}
+          >
+            {formatMsgTimeStamp(timestamp)}
+          </SingleChatTimestamp>
           {own && (
             <SingleChatStatusIcon
               width="18"
@@ -205,7 +233,12 @@ export const Message = () => {
               status={seen ? 'seen' : registered ? 'registered' : 'sending'}
             />
           )}
-          <SingleChatText own={fromId === userId}>{msg}</SingleChatText>
+          <SingleChatText
+            onClick={() => handleShowMsgTime(_id)}
+            own={fromId === userId}
+          >
+            {msg}
+          </SingleChatText>
         </SingleChat>
       );
     });
@@ -255,8 +288,12 @@ export const Message = () => {
 
   const [msgBoxScrollTopMax, setMsgBoxScrollTopMax] = useState<number>();
   const [currentScrollTop, setCurrentScrollTop] = useState<number>();
+
   const updateScroll = (e: UIEvent<HTMLDivElement>) => {
-    setCurrentScrollTop(e.currentTarget.scrollTop);
+    if (e.target) {
+      // @ts-ignore
+      setCurrentScrollTop(e.target.scrollTop);
+    }
   };
 
   useLayoutEffect(() => {
@@ -490,7 +527,10 @@ export const Message = () => {
               </InterestContainer>
             </MsgPartnerInfo>
           </MessageContentTop>
-          <MessageContentMain ref={msgsContainerRef} onScroll={updateScroll}>
+          <MessageContentMain
+            ref={msgsContainerRef}
+            onScroll={debounce(updateScroll, 100)}
+          >
             <MessagesWrapper hasMessages={hasMessages}>
               {hasMoreMsgs && (
                 <MsgShimmerWrapper ref={msgShimmerRef}>
