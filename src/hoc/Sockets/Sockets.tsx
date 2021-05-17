@@ -31,6 +31,7 @@ import {
   SOCKET_USER_ONLINE,
   SOCKET_USER_TYPING,
 } from 'socketTypes';
+import { playNotification } from 'utils';
 
 interface SocketIoInterestContextProps {
   socketIo: Socket | undefined;
@@ -89,6 +90,7 @@ export const SocketIO = ({ children }: SocketIOInterestInterface) => {
       socketIo.on(
         SOCKET_RECEIVE_LATEST_NOTIFICATION,
         (notification: NotificationResponseShape) => {
+          playNotification('play/notification.mp3');
           dispatch(addLatestNotification(notification));
         },
       );
@@ -109,6 +111,7 @@ export const SocketIO = ({ children }: SocketIOInterestInterface) => {
         if (roomId && roomId === message.roomId && messageBoxIsOpen) {
           dispatch(addNewMsgToRoom(message));
         } else {
+          playNotification('play/newmsg.mp3');
           dispatch(addUnreadMsgsNotification(message.roomId));
         }
       });

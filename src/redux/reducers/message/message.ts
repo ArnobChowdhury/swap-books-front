@@ -43,6 +43,7 @@ export interface ActiveRoomsResponse {
   roomMateId: string;
   unreadMsgs: boolean;
   isOnline: boolean;
+  lastModified: string | number;
 }
 
 export interface MessageProps {
@@ -239,7 +240,17 @@ const reducer = (state = initialState, action: AnyAction): MessageProps => {
       const {
         roomId: currentActiveRoomId,
         messages: currentExistingMessages,
+        activeRooms,
       } = state;
+      const newActiveRooms = activeRooms.map(room => {
+        if (room.roomId === registeredMsgRoomId) {
+          const newRoom = { ...room };
+          newRoom.lastModified = registeredMsgTimestamp;
+          return newRoom;
+        }
+        return room;
+      });
+
       if (currentActiveRoomId === registeredMsgRoomId) {
         const newMessages =
           currentExistingMessages === null ? [] : [...currentExistingMessages];
@@ -251,7 +262,7 @@ const reducer = (state = initialState, action: AnyAction): MessageProps => {
             break;
           }
         }
-        return { ...state, messages: newMessages };
+        return { ...state, messages: newMessages, activeRooms: newActiveRooms };
       }
     }
 

@@ -71,7 +71,6 @@ import { useRouter } from 'next/router';
 import { MESSAGES_ROUTE } from 'frontEndRoutes';
 import { SOCKET_USER_TYPING } from 'socketTypes';
 import { formatMsgTimeStamp } from 'utils';
-import debounce from 'lodash/debounce';
 
 const WelcomMessage = ({ name, msg }: { name: string; msg: string }) => {
   const msgAsArray = msg.split('. ');
@@ -101,6 +100,8 @@ const RoomMateTyping = () => (
     </Typing>
   </ChatBubble>
 );
+
+let currentScrollTop: number;
 
 export const Message = () => {
   const { pathname } = useRouter();
@@ -145,9 +146,13 @@ export const Message = () => {
 
   const [msg, setMsg] = useState('');
 
+  const activeRoomsSorted = [...activeRooms].sort(
+    (a, b) =>
+      new Date(b.lastModified).getTime() - new Date(a.lastModified).getTime(),
+  );
   let matchesList;
-  if (activeRooms && activeRooms.length > 0) {
-    matchesList = activeRooms.map(room => {
+  if (activeRoomsSorted && activeRoomsSorted.length > 0) {
+    matchesList = activeRoomsSorted.map(room => {
       const { roomId, roomMateId, roomMateName, unreadMsgs, isOnline } = room;
       return (
         <MessageListItem
@@ -185,9 +190,12 @@ export const Message = () => {
     }
   };
 
+  const messagesSorted = [...messages].sort(
+    (a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime(),
+  );
   let messagesList: JSX.Element[] = [];
-  if (messages && messages.length > 0) {
-    messagesList = messages.map((message: MessageResponseProps, index) => {
+  if (messagesSorted && messagesSorted.length > 0) {
+    messagesList = messagesSorted.map((message: MessageResponseProps, index) => {
       const { msg, fromId, _id, registered, seen, timestamp } = message;
       if (fromId === 'admin@pustokio') {
         return (
@@ -208,8 +216,7 @@ export const Message = () => {
 
       let shouldDisplayTime = false;
       if (
-        index === 0 ||
-        messages[index - 1].fromId === 'admin@pustokio' ||
+        (index > 0 && messages[index - 1].fromId === 'admin@pustokio') ||
         (previousTimestamp && timestamp - previousTimestamp > 900000)
       ) {
         shouldDisplayTime = true;
@@ -287,12 +294,11 @@ export const Message = () => {
   }, [messages, autoScrolledOnce]);
 
   const [msgBoxScrollTopMax, setMsgBoxScrollTopMax] = useState<number>();
-  const [currentScrollTop, setCurrentScrollTop] = useState<number>();
 
   const updateScroll = (e: UIEvent<HTMLDivElement>) => {
     if (e.target) {
       // @ts-ignore
-      setCurrentScrollTop(e.target.scrollTop);
+      currentScrollTop = e.target.scrollTop;
     }
   };
 
@@ -527,10 +533,7 @@ export const Message = () => {
               </InterestContainer>
             </MsgPartnerInfo>
           </MessageContentTop>
-          <MessageContentMain
-            ref={msgsContainerRef}
-            onScroll={debounce(updateScroll, 100)}
-          >
+          <MessageContentMain ref={msgsContainerRef} onScroll={updateScroll}>
             <MessagesWrapper hasMessages={hasMessages}>
               {hasMoreMsgs && (
                 <MsgShimmerWrapper ref={msgShimmerRef}>

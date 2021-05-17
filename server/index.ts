@@ -154,6 +154,16 @@ app.prepare().then(() => {
       .sendFile('pustokio_logo.png', { root: path.join(__dirname, '../') });
   });
 
+  server.use('/play/newmsg.mp3', (_req, res) => {
+    res.status(200).sendFile('newmsg.mp3', { root: path.join(__dirname, '../') });
+  });
+
+  server.use('/play/notification.mp3', (_req, res) => {
+    res
+      .status(200)
+      .sendFile('notification.mp3', { root: path.join(__dirname, '../') });
+  });
+
   server.use('/images', express.static(path.join(__dirname, '../', './images')));
 
   server.use(jwtVerify);

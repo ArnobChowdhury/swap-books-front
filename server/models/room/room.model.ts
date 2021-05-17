@@ -7,8 +7,6 @@ interface ParticipatntsProps {
   userId: mongodb.ObjectId;
   interests: string[];
   unreadMsgs: boolean;
-  // TODO Let's use it for sorting rooms for messaging
-  lastMessage: Date | null;
 }
 
 export interface RoomWithId extends Room {
@@ -17,6 +15,8 @@ export interface RoomWithId extends Room {
 
 export default class Room {
   participants: ParticipatntsProps[];
+
+  lastModified: Date;
 
   constructor(
     participants: {
@@ -31,11 +31,11 @@ export default class Room {
         userId: userIdAsObjectId,
         interests,
         unreadMsgs: false,
-        lastMessage: null,
       };
       return newParticipantObject;
     });
     this.participants = participantsWithObjectId;
+    this.lastModified = new Date();
   }
 
   save(): Promise<mongodb.InsertOneWriteOpResult<RoomWithId>> {
@@ -81,10 +81,13 @@ export default class Room {
   static async findAllRoomsByUserId(userId: string): Promise<RoomWithId[]> {
     // TODO RETURN ROOMS AFTER SORTING ACCORDING TO LAST MESSAGE
     const db = getDb();
+    // .skip(skip)
+    // .limit(5)
     try {
       const room = await db
         .collection('rooms')
         .find({ participants: { $elemMatch: { userId: new ObjectId(userId) } } })
+        .sort({ lastModified: -1 })
         .toArray();
       return room;
     } catch {

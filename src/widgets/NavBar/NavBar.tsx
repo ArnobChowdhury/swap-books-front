@@ -17,6 +17,7 @@ import { ChatIcon } from 'assets/ChatIcon';
 import { NotificationIcon } from 'assets/NotificationIcon';
 import { RootState } from 'redux/reducers';
 import { getNotificationsRequest } from 'redux/actions/notifications';
+import { closeMessageBox } from 'redux/actions/message';
 import { RootContext, RootContextProps } from 'contexts/RootContext';
 import { useWindowSize } from 'hooks/useWindowSize';
 import { largeScreen } from 'mediaConfig';
@@ -86,6 +87,9 @@ export const NavBar = (): JSX.Element => {
           !(e.target as HTMLElement).classList.contains('dropdown-element') &&
           contentType !== 'Posts'
         ) {
+          if (contentType === 'Messages' && showDropDown)
+            dispatch(closeMessageBox());
+
           switch (pathname) {
             case HOME_ROUTE:
               setContentType('Posts');
@@ -129,6 +133,7 @@ export const NavBar = (): JSX.Element => {
     e.preventDefault();
     if (contentType === 'Messages') {
       if (width >= largeScreen) {
+        dispatch(closeMessageBox());
         if (pathname === HOME_ROUTE) {
           setContentType('Posts');
         } else if (pathname === NOTIFICATIONS_ROUTE) {
