@@ -32,7 +32,7 @@ export interface MessageResponseProps {
   msg: string;
   fromId: string;
   toId: string;
-  timestamp: number;
+  timestamp: number | string;
   registered: boolean;
   seen: boolean;
 }

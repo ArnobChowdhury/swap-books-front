@@ -312,10 +312,9 @@ interface SendMsgShape {
 export const sendMsg = async (
   socket: SocketDecoded,
   { room, msg, userId, roomMateId, msgId }: SendMsgShape,
-  cb: (registeredMsg: { _id: string; timestamp: number }) => void,
+  cb: (registeredMsg: { _id: string; timestamp: Date }) => void,
 ) => {
   const message = new Message(room, msg, userId, roomMateId, false, msgId);
-  // TODO before storing a message in a room we need to store the latest message time to our Room db
   const { ops } = await message.saveMsgAndReturn();
   const [insertedDocument] = ops;
 

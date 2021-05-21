@@ -170,7 +170,7 @@ export const addNewMsgToRoom = (newMsg: MessageResponseProps) => {
 export const registerNewMsgToRoomSuccess = (
   registeredMsgRoomId: string,
   registeredMsgId: string,
-  registeredMsgTimestamp: number,
+  registeredMsgTimestamp: string,
 ) => {
   return {
     type: REGISTER_SENT_MESSAGE_SUCCESS,
@@ -206,7 +206,7 @@ export const sendMsgToRoom = (
     socket.emit(
       SOCKET_SEND_MSG,
       { room, msg, userId, roomMateId, msgId },
-      (registeredMsg: { _id: string; timestamp: number }) => {
+      (registeredMsg: { _id: string; timestamp: string }) => {
         const { _id, timestamp } = registeredMsg;
         dispatch(registerNewMsgToRoomSuccess(room, _id, timestamp));
       },

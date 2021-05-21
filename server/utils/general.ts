@@ -10,13 +10,13 @@ interface MongoCollection {
 }
 
 export interface Timestamp {
-  timestamp: number;
+  timestamp: Date;
 }
 
 export const addTimestampToMongoCollection = <T extends MongoCollection>(
   collection: T,
 ): T & Timestamp => {
-  const timestamp = collection._id.getTimestamp().getTime();
+  const timestamp = collection._id.getTimestamp();
   return { ...collection, timestamp };
 };
 
