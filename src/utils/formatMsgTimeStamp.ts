@@ -1,6 +1,6 @@
 import { format } from 'date-fns';
 
-export const formatMsgTimeStamp = (timestamp: number | Date) => {
+export const formatMsgTimeStamp = (timestamp: number | string) => {
   const currentYear = new Date().getFullYear();
   const msgYear = new Date(timestamp).getFullYear();
   let pattern;

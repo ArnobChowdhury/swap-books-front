@@ -215,9 +215,17 @@ export const Message = () => {
       const previousTimestamp = index === 0 ? null : messages[index - 1].timestamp;
 
       let shouldDisplayTime = false;
+      let fifTeensminsGap;
+
+      if (previousTimestamp) {
+        fifTeensminsGap =
+          new Date(timestamp).getTime() - new Date(previousTimestamp).getTime() >
+          900000;
+      }
+
       if (
         (index > 0 && messages[index - 1].fromId === 'admin@pustokio') ||
-        (previousTimestamp && timestamp - previousTimestamp > 900000)
+        fifTeensminsGap
       ) {
         shouldDisplayTime = true;
       }
