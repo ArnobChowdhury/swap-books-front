@@ -316,16 +316,15 @@ export const sendMsg = async (
 ) => {
   const message = new Message(room, msg, userId, roomMateId, false, msgId);
   const { ops } = await message.saveMsgAndReturn();
-  const [insertedDocument] = ops;
+  const [insertedMsg] = ops;
+  const { timestamp } = insertedMsg;
 
-  const msgsWithTimeStamp = addTimestampToMongoCollection(insertedDocument);
-
-  socket.to(room).emit(RECEIVE_NEW_MSG, msgsWithTimeStamp);
+  socket.to(room).emit(RECEIVE_NEW_MSG, insertedMsg);
   // TODO error handling
 
   cb({
-    _id: insertedDocument._id.toHexString(),
-    timestamp: msgsWithTimeStamp.timestamp,
+    _id: insertedMsg._id.toHexString(),
+    timestamp,
   });
 };
 

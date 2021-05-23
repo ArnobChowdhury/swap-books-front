@@ -304,15 +304,14 @@ export default class Book {
           [room] = insertedRoom.ops;
           // TODO Hardcoded message should be placed somewhere else
           await messagesCollection.insertOne({
-            _id: new ObjectId(),
             fromId: 'admin@pustokio',
             toId: 'both',
             roomId: room._id,
             registered: true,
             seen: true,
             msg: `Beginning of your conversation. Few tips - always swap books in a place and hour you feel safe in. Abide by your local Covid-19 safety instructions. Happy Reading!`,
+            timestamp: new Date(),
           });
-          room._id;
         }
 
         const isMatch = isAMatchedRoom(room);

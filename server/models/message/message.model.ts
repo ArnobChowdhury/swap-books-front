@@ -22,6 +22,8 @@ export default class Message {
 
   _id: ObjectId;
 
+  timestamp: Date;
+
   constructor(
     roomId: string,
     msg: string,
@@ -37,6 +39,7 @@ export default class Message {
     this.registered = true;
     this.seen = seen;
     this._id = new ObjectId(id);
+    this.timestamp = new Date();
   }
 
   // TODO this method is unused and should be removed later
