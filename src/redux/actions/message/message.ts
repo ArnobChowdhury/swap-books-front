@@ -130,7 +130,7 @@ export const fetchCurrentRoomMsgsReq = (roomId: string, skip: number) => {
     const params = { roomId, skip };
     try {
       const res = await axios.get(path, { params });
-      const { latestMsgsWithTimeStamp: messages } = res.data;
+      const { latestMsgsFromDb: messages } = res.data;
 
       const type =
         skip === 0
