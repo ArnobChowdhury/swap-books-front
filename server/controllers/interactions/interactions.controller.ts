@@ -337,13 +337,9 @@ export const getMsgs = async (req: Request, res: Response, next: NextFunction) =
       Number(skip),
     );
 
-    let latestMsgsWithTimeStamp;
-    if (latestMsgsFromDb !== undefined) {
-      latestMsgsWithTimeStamp = latestMsgsFromDb.map(addTimestampToMongoCollection);
-    }
     res.status(200).json({
       message: 'Get initMsgs for this room',
-      latestMsgsWithTimeStamp,
+      latestMsgsFromDb,
     });
   } catch (err) {
     if (!err.statusCode) {
