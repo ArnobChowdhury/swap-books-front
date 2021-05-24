@@ -311,10 +311,25 @@ export const Message = () => {
   };
 
   useLayoutEffect(() => {
+    console.log('msgsContainerRef.current', msgsContainerRef.current);
     if (msgsContainerRef.current) {
       const scrollTopMax =
         msgsContainerRef.current?.scrollHeight -
         msgsContainerRef.current?.clientHeight;
+      console.log(
+        'contaqiner ref client height',
+        msgsContainerRef.current?.clientHeight,
+      );
+      console.log(
+        'contaqiner ref scroll height',
+        msgsContainerRef.current?.scrollHeight,
+      );
+      console.log(
+        'scrollTopMax = container scroll height + container client height',
+        scrollTopMax,
+      );
+      console.log('msgBoxScrollTopMax', msgBoxScrollTopMax);
+      console.log('currentScrollTop', currentScrollTop);
       if (
         msgBoxScrollTopMax !== undefined &&
         scrollTopMax > msgBoxScrollTopMax &&
@@ -322,6 +337,7 @@ export const Message = () => {
       ) {
         const goToScrollPostion =
           scrollTopMax - msgBoxScrollTopMax + currentScrollTop;
+        console.log('Go To Scroll Postion', goToScrollPostion);
         msgsContainerRef.current?.scrollTo(0, goToScrollPostion);
       }
       setMsgBoxScrollTopMax(scrollTopMax);
