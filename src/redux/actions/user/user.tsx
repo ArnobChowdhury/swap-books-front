@@ -163,22 +163,20 @@ export const updateUserLocationReq = (
   userLat: number,
   showModalFunc?: React.Dispatch<React.SetStateAction<boolean>>,
 ) => {
-  return (dispatch: Dispatch) => {
+  return async (dispatch: Dispatch) => {
     dispatch(updateUserLocationStart());
     const path = '/user/loc';
     const locData = { userLon, userLat };
-    return axios
-      .put(path, locData)
-      .then(res => {
-        const { userLon, userLat } = res.data;
-        dispatch(updateUserLocationSuccess(userLon, userLat));
-        if (showModalFunc) {
-          showModalFunc(false);
-        }
-      })
-      .catch(err => {
-        // TODO need to parse message and status separately
-        dispatch(updateUserLocationFail(err));
-      });
+    try {
+      const res = await axios.put(path, locData);
+      const { userLon, userLat } = res.data;
+      dispatch(updateUserLocationSuccess(userLon, userLat));
+      if (showModalFunc) {
+        showModalFunc(false);
+      }
+    } catch (err) {
+      // TODO need to parse message and status separately
+      dispatch(updateUserLocationFail(err));
+    }
   };
 };

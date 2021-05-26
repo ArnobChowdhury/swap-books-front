@@ -57,22 +57,34 @@ export default class User {
     }
   }
 
-  static async updateLocation(
-    userId: string,
-    lon: number,
-    lat: number,
-  ): Promise<mongodb.UpdateWriteOpResult> {
-    const db = getDb();
+  static async updateLocation(userId: string, lon: number, lat: number) {
+    const client = getDbClient();
+    const userCollection = client.db().collection('users');
+    const booksCollection = client.db().collection('books');
+    const session = client.startSession();
+    const userIdAsMongoId = new ObjectId(userId);
+
     try {
-      return db.collection('users').updateOne(
-        { _id: new ObjectId(userId) },
-        {
-          $set: {
-            'locationObj.coordinates': [lon, lat],
-            'locationObj.type': 'Point',
+      await session.withTransaction(async () => {
+        await userCollection.updateOne(
+          { _id: userIdAsMongoId },
+          {
+            $set: {
+              'locationObj.coordinates': [lon, lat],
+              'locationObj.type': 'Point',
+            },
           },
-        },
-      );
+        );
+
+        await booksCollection.updateMany(
+          { userId: userIdAsMongoId },
+          {
+            $set: {
+              'location.coordinates': [lon, lat],
+            },
+          },
+        );
+      });
     } catch {
       throw new Error('Something went wrong! Could not update.');
     }

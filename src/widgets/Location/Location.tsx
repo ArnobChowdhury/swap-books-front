@@ -9,7 +9,7 @@ import {
 } from 'redux/actions/user';
 import { Map, LeafletMouseEvent, DragEndEvent, LatLng, Marker } from 'leaflet';
 import { Button } from 'ui-kits/Button';
-import { MapContainer } from './Location.styles';
+import { MapContainer, Caution } from './Location.styles';
 import { Header } from 'ui-kits/Header';
 import { Paragraph } from 'ui-kits/Paragraph';
 import theme from 'theme';
@@ -271,6 +271,8 @@ export const Location = () => {
     }
   };
 
+  const hasLocation = Boolean(userLon) && Boolean(userLat);
+
   return (
     <>
       <Head>
@@ -294,9 +296,20 @@ export const Location = () => {
         ></link>
       </Head>
       <Header marginBelow={spaceFive}>Location</Header>
-      <Paragraph marginBelow={spaceSeven} fontSize="large">
+      <Paragraph
+        marginBelow={hasLocation ? '0' : spaceSeven}
+        fontWeight="regular"
+        fontSize="large"
+      >
         Select your location to discover books available to swap around you.
       </Paragraph>
+      {hasLocation && (
+        <Paragraph fontWeight="regular" marginBelow={spaceSeven} fontSize="small">
+          <Caution>Important:</Caution> When you change location, all your added
+          books are made available in the new location and made unavailable in the
+          previous location.
+        </Paragraph>
+      )}
       <MapContainer id="map" />
       <Button
         asButtonTag

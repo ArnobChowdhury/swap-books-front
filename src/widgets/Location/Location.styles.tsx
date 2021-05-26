@@ -25,3 +25,7 @@ export const MapContainer = styled.div`
     font-family: Lato;
   }
 `;
+
+export const Caution = styled.span`
+  color: ${({ theme }) => theme.colorAlert};
+`;
