@@ -49,6 +49,8 @@ import {
   ChatBubble,
   Typing,
   Dot,
+  ActiveMessagesLoaderWrapper,
+  NoRoomsFoundOrError,
 } from './Message.styles';
 import { SendIcon } from 'assets/SendIcon';
 import { LeftArrow } from 'assets/LeftArrow';
@@ -111,6 +113,7 @@ export const Message = () => {
   const {
     messageBoxIsOpen,
     activeRooms,
+    activeRoomsLoading,
     roomMateName: activeRoomMateName,
     roomId,
     roomMateId,
@@ -481,7 +484,15 @@ export const Message = () => {
         <SideMargin>
           <Header marginBelow={spaceThree}>Chats</Header>
         </SideMargin>
-        <MessageListUL>{matchesList}</MessageListUL>
+        {activeRoomsLoading && (
+          <ActiveMessagesLoaderWrapper>
+            <Spinner />
+          </ActiveMessagesLoaderWrapper>
+        )}
+        {!activeRoomsLoading && activeRooms.length === 0 && (
+          <NoRoomsFoundOrError>No active chats at this moment.</NoRoomsFoundOrError>
+        )}
+        {!activeRoomsLoading && <MessageListUL>{matchesList}</MessageListUL>}
       </MessageListContainer>
       {/**
         @ts-ignore*/}

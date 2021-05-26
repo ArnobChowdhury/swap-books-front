@@ -349,3 +349,19 @@ export const Dot = styled.div`
     margin-right: 0;
   }
 `;
+
+export const ActiveMessagesLoaderWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: ${({ theme }) => `${theme.spaceSix} 0`};
+  border-top: ${({ theme }) => `1px solid ${theme.colorSeparator}`};
+`;
+
+export const NoRoomsFoundOrError = styled.div`
+  font-size: ${({ theme }) => theme.fontLarge};
+  font-weight: 400;
+  padding: ${({ theme }) =>
+    `${theme.spaceSix} ${theme.spaceSix} ${theme.spaceSix} ${theme.spaceEight}`};
+  border-top: ${({ theme }) => `1px solid ${theme.colorSeparator}`};
+`;
