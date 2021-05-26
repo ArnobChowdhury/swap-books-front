@@ -30,6 +30,8 @@ const UserPage: NextPage = (): JSX.Element => {
     setContentType,
     setShowDropDown,
     setShowModal,
+    selectedTabUserProfile,
+    setSelectedTabUserProfile,
   } = rootContext as RootContextProps;
   const { width } = useWindowSize();
 
@@ -39,9 +41,6 @@ const UserPage: NextPage = (): JSX.Element => {
     setShowModal(false);
   }, [asPath]);
 
-  const [selectedTab, setSelectedTab] = useState<
-    'Available to Swap' | 'Swap Request Pending'
-  >('Available to Swap');
   const isOwners = userId === profileId;
 
   return (
@@ -66,11 +65,14 @@ const UserPage: NextPage = (): JSX.Element => {
           {isOwners && (
             <Tabs
               options={['Available to Swap', 'Swap Request Pending']}
-              onClick={setSelectedTab}
-              selectedTab={selectedTab}
+              onClick={setSelectedTabUserProfile}
+              selectedTab={selectedTabUserProfile}
             />
           )}
-          <Posts profileId={profileId as string} selectedTab={selectedTab} />
+          <Posts
+            profileId={profileId as string}
+            selectedTab={selectedTabUserProfile}
+          />
         </>
       </PageLayout>
     </>

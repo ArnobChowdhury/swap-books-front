@@ -149,6 +149,7 @@ const reducer = (state = initialState, action: AnyAction) => {
     unavilableErr,
     addBookReqSuccessMsg,
     addBookReqErr,
+    addedBook,
     availableTenDaysBookId,
     availableTenDaysExpiry,
     availableTenMoreDaysSuccessMsg,
@@ -198,8 +199,19 @@ const reducer = (state = initialState, action: AnyAction) => {
     case ADD_A_BOOK_START:
       return { ...state, addBookReqOnGoing: true };
 
-    case ADD_A_BOOK_SUCCESS:
-      return { ...state, addBookReqOnGoing: false, addBookReqSuccessMsg };
+    case ADD_A_BOOK_SUCCESS: {
+      const { books } = state;
+      const newBooks = [...books];
+      if (addedBook) {
+        newBooks.unshift(addedBook);
+      }
+      return {
+        ...state,
+        books: newBooks,
+        addBookReqOnGoing: false,
+        addBookReqSuccessMsg,
+      };
+    }
 
     case ADD_A_BOOK_FAIL:
       return { ...state, addBookReqOnGoing: false, addBookReqErr };

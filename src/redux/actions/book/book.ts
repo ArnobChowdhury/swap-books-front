@@ -50,9 +50,13 @@ export const addABookStart = () => {
   };
 };
 
-export const addABookSuccess = (addBookReqSuccessMsg: string) => {
+export const addABookSuccess = (
+  addBookReqSuccessMsg: string,
+  addedBook: BookShape | undefined,
+) => {
   return {
     type: ADD_A_BOOK_SUCCESS,
+    addedBook,
     addBookReqSuccessMsg,
   };
 };
@@ -70,6 +74,7 @@ export const addABookRequest = (
   bookname: string,
   bookauthor: string,
   bookimage: any,
+  isHomePage: boolean,
   formikSetSubmitting: (submissionResolved: boolean) => void,
 ) => {
   return async (dispatch: Dispatch) => {
@@ -93,8 +98,13 @@ export const addABookRequest = (
       })
       .then(response => {
         // todo how should we handle the message???
-        const { message, bookId } = response.data;
-        dispatch(addABookSuccess(message));
+        const { message, book } = response.data;
+        const { bookId, validTill } = book;
+        const bookProcessed = processBooks(book);
+        dispatch(addABookSuccess(message, isHomePage ? bookProcessed : undefined));
+        // @ts-ignore
+        dispatch(makeBookStale(bookId, validTill));
+        // TODO MAKE A NEW EVENT ADD_NEW_BOOK_TO_FEED
         formikSetSubmitting(false);
       })
       .catch((err: AxiosError<AxiosError<{ message: string }>>) => {

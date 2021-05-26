@@ -1,7 +1,7 @@
 import mongodb from 'mongodb';
 import { Request, Response, NextFunction } from 'express';
 import createError from 'http-errors';
-import Book from '../../models/book';
+import Book, { BookWithoutLocationProp } from '../../models/book';
 import User from '../../models/user';
 import Room from '../../models/room';
 import Swap from '../../models/swap';
@@ -35,7 +35,7 @@ export const addABook = async (
       const { locationObj, name: bookOwnerName } = user;
       if (locationObj) {
         const { coordinates } = locationObj;
-        const book = new Book(
+        const newBook = new Book(
           bookName,
           bookAuthor,
           bookPicturePath,
@@ -44,10 +44,15 @@ export const addABook = async (
           coordinates,
           Number(createdAt),
         );
-        const result = await book.save();
-        const { insertedId: bookId } = result;
+        const { ops } = await newBook.save();
+        const [insertedBook] = ops;
+        delete insertedBook.location;
+        const book = processBookForUser(
+          insertedBook as BookWithoutLocationProp,
+          userId,
+        );
 
-        res.status(201).json({ message: 'Book has been added!', bookId });
+        res.status(201).json({ message: 'Book has been added!', book });
       } else {
         throw new createError.Forbidden(
           'You need to update your location before you can add a book.',

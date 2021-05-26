@@ -12,7 +12,12 @@ import {
 import { SocketIO } from 'hoc/Sockets';
 import GlobalStyles from '../components/GlobalStyles';
 import theme from '../theme';
-import { RootContext, PopupType, ContentType } from 'contexts/RootContext';
+import {
+  RootContext,
+  PopupType,
+  ContentType,
+  UserProfileTabType,
+} from 'contexts/RootContext';
 import { useRouter } from 'next/router';
 import { useWindowSize } from 'hooks/useWindowSize';
 import { largeScreen } from 'mediaConfig';
@@ -34,6 +39,9 @@ const WrappedApp: FC<AppProps> = ({ Component, pageProps }) => {
   const [popupType, setPopupType] = useState<PopupType | null>(null);
   const [contentType, setContentType] = useState<ContentType>('Posts');
   const [showDropDown, setShowDropDown] = useState<boolean>(false);
+  const [selectedTabUserProfile, setSelectedTabUserProfile] = useState<
+    UserProfileTabType
+  >('Available to Swap');
 
   const { pathname, push: routerPush } = useRouter();
   const { width } = useWindowSize();
@@ -100,6 +108,8 @@ const WrappedApp: FC<AppProps> = ({ Component, pageProps }) => {
         setContentType,
         showDropDown,
         setShowDropDown,
+        selectedTabUserProfile,
+        setSelectedTabUserProfile,
       }}
     >
       <ThemeProvider theme={theme}>

@@ -15,15 +15,21 @@ import { RootState } from 'redux/reducers';
 import { RootContextProps, RootContext } from 'contexts/RootContext';
 import { authRequest } from 'redux/actions/auth';
 import { addABookRequest, addABookRefresh } from 'redux/actions/book';
+import { HOME_ROUTE, USER_ROUTE } from 'frontEndRoutes';
 
 export const ModalManager = (): JSX.Element => {
-  const { showModal, setPopupType, setShowModal, popupType } = useContext(
-    RootContext,
-  ) as RootContextProps;
+  const {
+    showModal,
+    setPopupType,
+    setShowModal,
+    popupType,
+    selectedTabUserProfile,
+  } = useContext(RootContext) as RootContextProps;
 
   const dispatch = useDispatch();
   const router = useRouter();
-  const { pathname } = router;
+  const { pathname, query } = router;
+  const { id: profileId } = query;
 
   const handleLoginSubmit = (
     { email, password }: LoginCredentials,
@@ -36,7 +42,20 @@ export const ModalManager = (): JSX.Element => {
     { bookname, bookauthor, bookimage }: BookType,
     { setSubmitting }: FormikHelpers<BookType>,
   ) => {
-    dispatch(addABookRequest(bookname, bookauthor, bookimage, setSubmitting));
+    const shouldAddToPosts =
+      pathname === HOME_ROUTE ||
+      (pathname === USER_ROUTE &&
+        profileId === userId &&
+        selectedTabUserProfile === 'Available to Swap');
+    dispatch(
+      addABookRequest(
+        bookname,
+        bookauthor,
+        bookimage,
+        shouldAddToPosts,
+        setSubmitting,
+      ),
+    );
   };
 
   const handleAddAnotherBook = () => {
@@ -48,7 +67,7 @@ export const ModalManager = (): JSX.Element => {
     setPopupType('addABook');
   };
 
-  const { loading: loginSubmitting, error, accessToken } = useSelector(
+  const { loading: loginSubmitting, error, accessToken, userId } = useSelector(
     (s: RootState) => s.auth,
   );
   const { addBookReqOnGoing, addBookReqErr, addBookReqSuccessMsg } = useSelector(

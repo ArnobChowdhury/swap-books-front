@@ -12,6 +12,7 @@ export type PopupType =
 
 export type ContentType = 'Messages' | 'Notifications' | 'User' | 'Posts';
 
+export type UserProfileTabType = 'Available to Swap' | 'Swap Request Pending';
 export interface RootContextProps {
   showModal: boolean;
   popupType: PopupType;
@@ -21,6 +22,8 @@ export interface RootContextProps {
   setContentType: Dispatch<SetStateAction<ContentType>>;
   showDropDown: boolean;
   setShowDropDown: Dispatch<SetStateAction<boolean>>;
+  selectedTabUserProfile: UserProfileTabType;
+  setSelectedTabUserProfile: Dispatch<SetStateAction<UserProfileTabType>>;
 }
 
 export const RootContext = createContext<RootContextProps | null>(null);
