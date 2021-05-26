@@ -81,8 +81,7 @@ export default class Room {
   static async findAllRoomsByUserId(userId: string): Promise<RoomWithId[]> {
     // TODO RETURN ROOMS AFTER SORTING ACCORDING TO LAST MESSAGE
     const db = getDb();
-    // .skip(skip)
-    // .limit(5)
+
     try {
       const room = await db
         .collection('rooms')

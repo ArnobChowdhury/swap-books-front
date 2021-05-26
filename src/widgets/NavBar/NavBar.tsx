@@ -87,8 +87,13 @@ export const NavBar = (): JSX.Element => {
           !(e.target as HTMLElement).classList.contains('dropdown-element') &&
           contentType !== 'Posts'
         ) {
-          if (contentType === 'Messages' && showDropDown)
+          if (
+            contentType === 'Messages' &&
+            showDropDown &&
+            pathname !== MESSAGES_ROUTE
+          ) {
             dispatch(closeMessageBox());
+          }
 
           switch (pathname) {
             case HOME_ROUTE:
