@@ -43,6 +43,7 @@ import {
   DISCONNECTING,
 } from './socketTypes';
 import { jwtVerify } from './middlewares/jwtVerify';
+import { fileResizeMW } from './middlewares/fileResize';
 
 const port = parseInt(process.env.PORT as string, 10) || 3000; // We might want to change it later
 const dev = process.env.NODE_ENV !== 'production';
@@ -164,7 +165,8 @@ app.prepare().then(() => {
       .sendFile('notification.mp3', { root: path.join(__dirname, '../') });
   });
 
-  server.use('/images', express.static(path.join(__dirname, '../', './images')));
+  // server.use('/images', express.static(path.join(__dirname, '../', './images')));
+  server.use('/images/:filename', fileResizeMW);
 
   server.use(jwtVerify);
 

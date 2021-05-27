@@ -30,21 +30,31 @@ export const ImageWrapper = styled.div`
   position: relative;
   height: 420px;
   width: 100%;
+  overflow: hidden;
 
   @media (min-width: 450px) {
     height: 335px;
   }
 `;
 
+export const ImagePlaceholder = styled.img<{ mainImgLoaded: boolean }>`
+  height: 100%;
+  width: 100%;
+  object-fit: contain;
+  background: ${({ theme }) => theme.colorSeparator};
+  opacity: ${({ mainImgLoaded }) => (mainImgLoaded ? 0 : 1)};
+  position: absolute;
+  left: 0;
+  top: 0;
+  filter: blur(5px);
+  transition: opacity 0.3s linear;
+`;
+
 export const Image = styled.img`
   height: 100%;
   width: 100%;
-  object-fit: cover;
+  object-fit: contain;
   background: ${({ theme }) => theme.colorSeparator};
-
-  @media (min-width: 450px) {
-    object-fit: contain;
-  }
 `;
 
 export const ValidTillTime = styled.div`

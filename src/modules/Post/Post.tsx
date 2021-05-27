@@ -1,8 +1,9 @@
-import { MouseEvent } from 'react';
+import { MouseEvent, useState } from 'react';
 import {
   PostWrapper,
   ImageWrapper,
   Image,
+  ImagePlaceholder,
   ContentWrapper,
   ContentContainer,
   BookInfo,
@@ -79,6 +80,11 @@ export const Post = ({
     },
   ];
 
+  const [mainImgLoaded, setMainImgLoaded] = useState(false);
+  const handleMainImgLoad = () => {
+    setMainImgLoaded(true);
+  };
+
   return (
     <PostWrapper requestOnGoing={reqOnGoing} topMargin={topMargin}>
       <PostOwner>
@@ -87,7 +93,16 @@ export const Post = ({
       </PostOwner>
       <ImageWrapper>
         <ValidTillTime>{formatDistanceToNow(new Date(validTill))}</ValidTillTime>
-        <Image src={imgUrl} alt={`image of book named: ${bookName}`} />
+        <Image
+          src={imgUrl}
+          alt={`image of book named: ${bookName}`}
+          onLoad={handleMainImgLoad}
+        />
+        <ImagePlaceholder
+          src={`${imgUrl}?w=100&h=100&f=jpg`}
+          alt={`image of book named: ${bookName}`}
+          mainImgLoaded={mainImgLoaded}
+        />
       </ImageWrapper>
       <PostBottom>
         <ContentWrapper>
