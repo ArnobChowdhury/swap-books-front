@@ -97,6 +97,7 @@ export const Post = ({
           src={imgUrl}
           alt={`image of book named: ${bookName}`}
           onLoad={handleMainImgLoad}
+          onError={handleMainImgLoad}
         />
         <ImagePlaceholder
           src={`${imgUrl}?w=100&h=100&f=jpg`}

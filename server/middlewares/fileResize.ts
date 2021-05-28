@@ -26,16 +26,20 @@ export const resize = (
 };
 
 export const fileResizeMW = (req: Request, res: Response, next: NextFunction) => {
-  const { w: widthString, h: heightString, f: formatString } = req.query;
-  const { filename } = req.params;
+  try {
+    const { w: widthString, h: heightString, f: formatString } = req.query;
+    const { filename } = req.params;
 
-  const width = Number(widthString);
-  const height = Number(heightString);
-  const format = (formatString as string) || 'jpg';
+    const width = Number(widthString);
+    const height = Number(heightString);
+    const format = (formatString as string) || 'jpg';
 
-  res.type(`image/${format}`);
-  const pathToImage = path.join(__dirname, '../', '../', './images', filename);
+    res.type(`image/${format}`);
+    const pathToImage = path.join(__dirname, '../', '../', './images', filename);
 
-  // @ts-ignore
-  resize(pathToImage, format, width, height).pipe(res);
+    // @ts-ignore
+    resize(pathToImage, format, width, height).pipe(res);
+  } catch (err) {
+    next(err);
+  }
 };
