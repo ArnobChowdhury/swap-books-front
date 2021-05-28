@@ -208,14 +208,13 @@ export const authCheckState = () => {
     const accessToken = localStorage.getItem('accessToken');
     const expirationDate = localStorage.getItem('expirationDate');
     const userId = localStorage.getItem('userId') || '';
-    const today = new Date().getTime();
-    if (accessToken && expirationDate && today < Number(expirationDate) && userId) {
-      dispatch(authSuccess(accessToken, userId, Number(expirationDate)));
+    if (accessToken && expirationDate && userId) {
       const path = '/user';
       return axios
         .get(path)
         .then(res => {
           const { name, userLon, userLat, booksAvailableToSwap } = res.data;
+          dispatch(authSuccess(accessToken, userId, Number(expirationDate)));
           dispatch(
             updateUserInfo(
               name,
@@ -231,7 +230,6 @@ export const authCheckState = () => {
           dispatch(authLogout());
         });
     }
-    // TODO Else ask for ask for a new token with refresh token or get rid of time guard in previous if block
   };
 };
 

@@ -59,7 +59,7 @@ if (process.env.NODE_ENV !== 'test') {
             .catch((err: AxiosError) => {
               // @ts-ignore
               store.dispatch(authLogout());
-              throw err;
+              //throw err;
             });
         }
 
