@@ -25,4 +25,5 @@ export {
   fetchBooksForMatchReq,
   sendingSwapRequestReset,
   sendingSwapRequest,
+  swapRequestGotAccepted,
 } from './book';

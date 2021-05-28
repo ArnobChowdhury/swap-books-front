@@ -24,10 +24,14 @@ export const getUserInfo = async (
   try {
     const user = await User.getUserNameAndLoc(userId as string);
     const userIdAsMongoId = new mongodb.ObjectID(userId);
-    const booksAvailableToSwap = await Book.getNumberOfBooksByUser(userIdAsMongoId);
+    const booksAvailableToSwap = await Book.getNumberOfAvailableBooksByUser(
+      userIdAsMongoId,
+    );
+    const booksSwapped = await Swap.numberOfApprovedSwap(userIdAsMongoId);
+
     if (user) {
       const userProcessed = processUserInfo(user);
-      res.status(201).json({ ...userProcessed, booksAvailableToSwap });
+      res.status(201).json({ ...userProcessed, booksAvailableToSwap, booksSwapped });
     } else {
       throw new createError.NotFound('User NOT Found!');
     }

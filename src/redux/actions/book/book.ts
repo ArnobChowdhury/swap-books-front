@@ -41,6 +41,7 @@ import {
   SENDING_SWAP_REQUEST_SUCCESS,
   SENDING_SWAP_REQUEST_FAIL,
   SENDING_SWAP_REQUEST_RESET,
+  SWAP_REQUEST_GOT_ACCEPTED,
 } from './../actionTypes';
 import { AxiosError } from 'axios';
 
@@ -682,5 +683,12 @@ export const sendingSwapRequest = (
         }
       },
     );
+  };
+};
+
+export const swapRequestGotAccepted = (swapAcceptedForBook: string) => {
+  return {
+    type: SWAP_REQUEST_GOT_ACCEPTED,
+    swapAcceptedForBook,
   };
 };

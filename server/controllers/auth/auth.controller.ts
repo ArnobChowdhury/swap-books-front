@@ -4,6 +4,7 @@ import createHttpError from 'http-errors';
 import { HttpException } from '../../interface';
 import User from '../../models/user';
 import Book from '../../models/book';
+import Swap from '../../models/swap';
 import {
   generateJWT,
   verifyRefreshToken,
@@ -167,7 +168,11 @@ export const login: (
     }
 
     const { _id: userIdAsMongoId, password: dbPassword, name, locationObj } = user;
-    const booksAvailableToSwap = await Book.getNumberOfBooksByUser(userIdAsMongoId);
+    const booksAvailableToSwap = await Book.getNumberOfAvailableBooksByUser(
+      userIdAsMongoId,
+    );
+
+    const booksSwapped = await Swap.numberOfApprovedSwap(userIdAsMongoId);
 
     let userLon: number | null = null;
     let userLat: number | null = null;
@@ -192,6 +197,7 @@ export const login: (
       userLon,
       userLat,
       booksAvailableToSwap,
+      booksSwapped,
     });
   } catch (err) {
     if (!err.statusCode) {

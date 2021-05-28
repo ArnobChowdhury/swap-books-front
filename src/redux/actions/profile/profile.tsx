@@ -15,11 +15,13 @@ export const fetchProfileStart = () => {
 export const fetchProfileSuccess = (
   profileName: string,
   numberOfbooksAvailable: number,
+  booksSwapped: number,
 ) => {
   return {
     type: FETCH_PROFILE_SUCCESS,
     profileName,
     numberOfbooksAvailable,
+    booksSwapped,
   };
 };
 
@@ -37,8 +39,10 @@ export const fetchProfileReq = (userId: string) => {
     return axios
       .get(`/user/profile`, { params: { userId } })
       .then(response => {
-        const { userName, numberOfbooksAvailable } = response.data;
-        dispatch(fetchProfileSuccess(userName, numberOfbooksAvailable));
+        const { userName, numberOfbooksAvailable, booksSwapped } = response.data;
+        dispatch(
+          fetchProfileSuccess(userName, numberOfbooksAvailable, booksSwapped),
+        );
       })
       .catch(error => {
         // TODO: ERROR HANDLING

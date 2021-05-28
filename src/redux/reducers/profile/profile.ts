@@ -14,6 +14,7 @@ export interface ProfileReqResponse {
 export interface ProfileState {
   profileName: string | null;
   numberOfbooksAvailable: number;
+  booksSwapped: number;
   profileLoading: boolean;
   profileError: Error | null;
 }
@@ -21,12 +22,13 @@ export interface ProfileState {
 export const initialState: ProfileState = {
   profileName: null,
   numberOfbooksAvailable: 0,
+  booksSwapped: 0,
   profileLoading: false,
   profileError: null,
 };
 
 const reducer = (state = initialState, action: AnyAction) => {
-  const { profileName, numberOfbooksAvailable, error } = action;
+  const { profileName, numberOfbooksAvailable, booksSwapped, error } = action;
   switch (action.type) {
     case HYDRATE:
       return { ...state };
@@ -40,6 +42,7 @@ const reducer = (state = initialState, action: AnyAction) => {
         ...state,
         profileName,
         numberOfbooksAvailable,
+        booksSwapped,
         profileLoading: false,
       };
     case FETCH_PROFILE_FAIL:

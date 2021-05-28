@@ -184,9 +184,9 @@ export default class Book {
       .toArray();
   }
 
-  static async getNumberOfBooksByUser(userId: mongodb.ObjectId) {
+  static async getNumberOfAvailableBooksByUser(userId: mongodb.ObjectId) {
     const db = getDb();
-    return db.collection('books').countDocuments({ userId });
+    return db.collection('books').countDocuments({ userId, swapRequested: false });
   }
 
   static async getStaleBookIds() {

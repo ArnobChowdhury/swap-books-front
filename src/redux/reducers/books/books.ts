@@ -41,6 +41,7 @@ import {
   SWAP_CONSENT_REQUEST_START,
   SWAP_CONSENT_REQUEST_SUCCESS,
   SWAP_CONSENT_REQUEST_FAIL,
+  SWAP_REQUEST_GOT_ACCEPTED,
 } from '../../actions/actionTypes';
 
 export interface BookShape {
@@ -171,6 +172,7 @@ const reducer = (state = initialState, action: AnyAction) => {
     sendingSwapReqSuccessMsg,
     sendingSwapReqErr,
     swapConsentForBookId,
+    swapAcceptedForBook,
   } = action;
 
   switch (action.type) {
@@ -526,6 +528,12 @@ const reducer = (state = initialState, action: AnyAction) => {
         swapConsentReqOnGoing: false,
         errorForSwapConsent,
       };
+    }
+
+    case SWAP_REQUEST_GOT_ACCEPTED: {
+      const { books: oldBooks } = { ...state };
+      const books = oldBooks.filter(({ bookId }) => bookId !== swapAcceptedForBook);
+      return { ...state, books };
     }
 
     default:

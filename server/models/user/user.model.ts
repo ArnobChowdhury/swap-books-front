@@ -1,5 +1,6 @@
 import mongodb, { ObjectId } from 'mongodb';
 import { getDb, getDbClient } from '../../utils/database';
+import Swap from '../swap';
 
 interface UserWithId extends User {
   _id: mongodb.ObjectID;
@@ -147,8 +148,10 @@ export default class User {
     const userIdAsMongoId = new ObjectId(userId);
     let userName: string = '';
     let numberOfbooksAvailable: number = 0;
+    let booksSwapped;
 
-    // TODO: Right way to achieve this is aggregation since we are just querying DB not writing anything, so transaction is pointless.
+    //*IMPORTANT TODO
+    // TODO: Right way to achieve this is aggregation since we are just querying DB not writing anything, so transaction is pointless. Or, we can just query this like we do for normal user
     try {
       await session.withTransaction(async () => {
         const userDoc = await userCollection.findOne<UserWithId>(
@@ -164,17 +167,14 @@ export default class User {
         numberOfbooksAvailable = await booksCollection.countDocuments({
           userId: userIdAsMongoId,
         });
-        /**
-         * TODO: Later
-         * When the user is able to mark a book as swapped we need to return the number of
-         * books user has swapped till now.
-         */
+
+        booksSwapped = await Swap.numberOfApprovedSwap(userIdAsMongoId);
       });
     } catch {
       // todo is it the right way to catch an error
       throw new Error('Could not retrieve user');
     }
-    return { userName, numberOfbooksAvailable };
+    return { userName, numberOfbooksAvailable, booksSwapped };
   }
 
   static async toggleInterest(bookId: string, userId: string): Promise<void> {

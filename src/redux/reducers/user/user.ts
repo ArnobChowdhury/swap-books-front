@@ -15,6 +15,7 @@ import {
   VERIFY_EMAIL_FAIL,
   ADD_A_BOOK_SUCCESS,
   MAKE_UNAVAILABLE_SUCCESS,
+  SWAP_REQUEST_GOT_ACCEPTED,
 } from '../../actions/actionTypes';
 
 export interface UserState {
@@ -31,6 +32,7 @@ export interface UserState {
   verifyEmailSuccessMsg: string | null;
   verifyEmailErr: { message: string; status: number } | null;
   booksAvailableToSwap: number;
+  booksSwapped: number;
 }
 
 export const initialState: UserState = {
@@ -47,6 +49,7 @@ export const initialState: UserState = {
   verifyEmailSuccessMsg: null,
   verifyEmailErr: null,
   booksAvailableToSwap: 0,
+  booksSwapped: 0,
 };
 
 const reducer = (state = initialState, action: AnyAction) => {
@@ -63,6 +66,7 @@ const reducer = (state = initialState, action: AnyAction) => {
     verifyEmailSuccessMsg,
     verifyEmailErr,
     booksAvailableToSwap,
+    booksSwapped,
   } = action;
   switch (action.type) {
     case HYDRATE:
@@ -97,6 +101,7 @@ const reducer = (state = initialState, action: AnyAction) => {
         userLon,
         userLat,
         booksAvailableToSwap,
+        booksSwapped,
       };
     case UPDATE_USER_LOC_START:
       return {
@@ -123,6 +128,13 @@ const reducer = (state = initialState, action: AnyAction) => {
       const { booksAvailableToSwap: currentCount } = state;
       return { ...state, booksAvailableToSwap: currentCount - 1 };
     }
+
+    case SWAP_REQUEST_GOT_ACCEPTED: {
+      const { booksSwapped: oldNumOfBooksSwapped } = { ...state };
+      const booksSwapped = oldNumOfBooksSwapped + 1;
+      return { ...state, booksSwapped };
+    }
+
     default:
       return state;
   }

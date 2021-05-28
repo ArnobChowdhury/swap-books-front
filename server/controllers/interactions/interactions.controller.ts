@@ -14,6 +14,7 @@ import {
   SET_MSG_AS_SEEN,
   USER_ONLINE,
   USER_OFFLINE,
+  SWAP_CONSENT,
 } from '../../socketTypes';
 import Message, { MessageWithId } from '../../models/message';
 import {
@@ -464,12 +465,16 @@ export const acceptOrRejectSwapRequest = async (
       userId,
       hasAccepted,
     );
+
     if (hasAccepted && bookPicturePaths.length > 0) {
       bookPicturePaths.forEach(picturePath => {
         fs.unlinkSync(path.join(__dirname, '..', '..', '..', picturePath));
       });
     }
-    const { fromId: reqSenderIdAsObjectId, roomId } = swap;
+
+    const { fromId: reqSenderIdAsObjectId, roomId, swapBook } = swap;
+    const { bookId: swapBookId } = swapBook;
+
     const reqSenderId = reqSenderIdAsObjectId.toHexString();
     const reqSendersSocketId = await getSocketIdFromRedis(reqSenderId);
     let reqSenderIsInRoom = false;
@@ -488,12 +493,16 @@ export const acceptOrRejectSwapRequest = async (
     const numOfUnseenNotificationForMatch = await Notification.getCountOfUnseenNotification(
       reqSenderId,
     );
+
     if (reqSenderIsInRoom && reqSendersSocketId) {
       const reqSenderSocket = io.sockets.sockets.get(reqSendersSocketId);
       reqSenderSocket?.emit(RECEIVE_LATEST_NOTIFICATION, {
         notifications: [notificationForSwapAccpetance],
         unseen: numOfUnseenNotificationForMatch,
       });
+      if (hasAccepted) {
+        reqSenderSocket?.emit(SWAP_CONSENT, swapBookId);
+      }
     }
     cb(true);
   } catch {

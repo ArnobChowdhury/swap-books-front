@@ -5,7 +5,7 @@ import { RootState } from 'redux/reducers';
 import { NotificationResponseShape } from 'redux/reducers/notifications';
 import { MessageResponseProps, ActiveRoomsResponse } from 'redux/reducers/message';
 import { useSelector } from 'react-redux';
-import { expressInterestSuccess } from 'redux/actions/book';
+import { expressInterestSuccess, swapRequestGotAccepted } from 'redux/actions/book';
 import { addLatestNotification } from 'redux/actions/notifications';
 import {
   addNewMsgToRoom,
@@ -30,6 +30,7 @@ import {
   SOCKET_USER_OFFLINE,
   SOCKET_USER_ONLINE,
   SOCKET_USER_TYPING,
+  SOCKET_SWAP_CONSENT,
 } from 'socketTypes';
 import { playNotification } from 'utils';
 
@@ -138,6 +139,10 @@ export const SocketIO = ({ children }: SocketIOInterestInterface) => {
 
       socketIo.on(SOCKET_USER_TYPING, (roomId: string, isTyping: boolean) => {
         dispatch(isUserTyping(roomId, isTyping));
+      });
+
+      socketIo.on(SOCKET_SWAP_CONSENT, (swapAcceptedForBook: string) => {
+        dispatch(swapRequestGotAccepted(swapAcceptedForBook));
       });
 
       return () => {

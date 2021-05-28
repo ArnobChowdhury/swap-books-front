@@ -63,6 +63,15 @@ export default class Swap {
     });
   }
 
+  static async numberOfApprovedSwap(userId: ObjectId) {
+    const db = getDb();
+
+    return db.collection<SwapWithId>('swaps').countDocuments({
+      $or: [{ fromId: userId }, { toId: userId }],
+      status: 'approved',
+    });
+  }
+
   static async requestTransaction(
     fromId: string,
     toId: string,
