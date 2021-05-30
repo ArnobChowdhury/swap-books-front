@@ -91,7 +91,13 @@ export const editBook = async (
       deleteFilePath = oldPicturePath;
     }
 
-    const book = await Book.editBook(bookId, bookName, bookAuthor, bookPicturePath);
+    const book = await Book.editBook(
+      userId,
+      bookId,
+      bookName,
+      bookAuthor,
+      bookPicturePath,
+    );
     const processedBook = processBookForUser(book, userId);
 
     if (deleteFilePath) {
@@ -388,6 +394,32 @@ export const getBooksOfARoom = async (
       userInterests,
       roomMateInterests,
     });
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
+};
+
+export const bookIsEditable = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  const { bookId } = req.query;
+  try {
+    const hasSwap = await Swap.pendingSwap(bookId as string);
+    const isEditable = hasSwap === null;
+
+    let message;
+    if (isEditable) {
+      message = 'This book is editable.';
+    } else {
+      message = 'This book is not editable.';
+    }
+
+    res.status(200).json({ message, isEditable });
   } catch (err) {
     if (!err.statusCode) {
       err.statusCode = 500;

@@ -1,4 +1,6 @@
-import { useContext } from 'react';
+import axios from 'axiosInstance';
+import { AxiosError } from 'axios';
+import { useContext, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Modal } from 'components/Modal';
 import { RootState } from 'redux/reducers';
@@ -10,6 +12,7 @@ import { Button } from 'ui-kits/Button';
 import { FileInput } from 'components/FileInput';
 import { RequestResult } from 'components/RequestResult';
 import { editBookReq } from 'redux/actions/book';
+import { LoaderBook } from 'assets/LoaderBook';
 
 export interface BookType {
   bookname: string;
@@ -24,6 +27,34 @@ export interface BookType {
 }
 
 export const EditBook = (): JSX.Element => {
+  const [bookIsEditable, setBookIsEditable] = useState(false);
+  const [checkingBookIsEditable, setCheckingBookIsEditable] = useState(true);
+  const [bookIsEditableError, setBookIsEditableError] = useState<string>();
+
+  useEffect(() => {
+    const path = '/books/isEditable';
+    const params = { bookId: editBookId };
+    axios
+      .get(path, { params })
+      .then(res => {
+        const { isEditable } = res.data;
+        setBookIsEditable(isEditable);
+        setCheckingBookIsEditable(false);
+      })
+      .catch(({ response }: AxiosError<{ message: string }>) => {
+        setCheckingBookIsEditable(false);
+        if (response) {
+          const { status, data } = response;
+          const { message } = data;
+          if (status === 500) {
+            setBookIsEditableError('Something went wrong!');
+          } else {
+            setBookIsEditableError(message);
+          }
+        }
+      });
+  }, []);
+
   const dispatch = useDispatch();
   const {
     editBookId,
@@ -55,6 +86,19 @@ export const EditBook = (): JSX.Element => {
 
   const rootContext = useContext(RootContext);
   const { setShowModal } = rootContext as RootContextProps;
+  const bookIsNotEditable = !checkingBookIsEditable && !bookIsEditable;
+
+  const showErrorMessage =
+    Boolean(editBookErr) || (bookIsNotEditable && Boolean(bookIsEditableError));
+  let errorMessage = '';
+  if (showErrorMessage) {
+    if (editBookErr) {
+      errorMessage = editBookErr.message;
+    }
+    if (bookIsEditableError) {
+      errorMessage = bookIsEditableError;
+    }
+  }
 
   return (
     <Modal
@@ -64,62 +108,76 @@ export const EditBook = (): JSX.Element => {
       {editBookSuccessMsg && (
         <RequestResult msg={editBookSuccessMsg} reqStatus="success" />
       )}
-      {editBookErr && <RequestResult msg={editBookErr.message} reqStatus="error" />}
-      {!editBookSuccessMsg && !editBookErr && (
-        <Formik
-          initialValues={{
-            bookname: bookName,
-            bookauthor: bookAuthor,
-            bookimage: null as BookType['bookimage'],
-          }}
-          validationSchema={Yup.object({
-            bookname: Yup.string()
-              .max(200, 'Book name cannot be longer than 200 characters.')
-              .required('Required field.'),
-            bookauthor: Yup.string()
-              .max(200, 'Name of book authors cannot be more than 200 characters.')
-              .required('Required field.'),
-            bookimage: Yup.mixed()
-              .test('fileSize', 'File must be below 5mb', value => {
-                if (value) {
-                  return value.size <= 5 * 1024 * 1024;
-                }
-                return true;
-              })
-              .test('fileType', 'File must be either JPG or PNG', value => {
-                if (value) {
-                  return ['image/png', 'image/jpeg'].includes(value.type);
-                }
-                return true;
-              }),
-          })}
-          onSubmit={handleEditBookSubmit}
-        >
-          <Form>
-            <Input
-              type="text"
-              labelText="Book name:"
-              name="bookname"
-              labelAtTop
-              inputFieldFullWidth
-              autoFocus
-              trimWhiteSpaceOnBlur
-            />
-            <Input
-              type="text"
-              labelText="Author:"
-              name="bookauthor"
-              labelAtTop
-              inputFieldFullWidth
-              trimWhiteSpaceOnBlur
-            />
-            <FileInput name="bookimage" labelText="Pick a picture:" />
-            <Button color="blue" type="submit" asButtonTag>
-              Save
-            </Button>
-          </Form>
-        </Formik>
+      {showErrorMessage && <RequestResult msg={errorMessage} reqStatus="error" />}
+      {checkingBookIsEditable && (
+        <LoaderBook text="Checking if this post is editable" />
       )}
+      {bookIsNotEditable && (
+        <RequestResult
+          msg="This post is not editable. This can be caused by one of two reasons. You
+          have sent a swap request or someone sent a swap request for this book. If
+          you have received a swap request for this book, please responsd."
+          reqStatus="error"
+        />
+      )}
+      {!editBookSuccessMsg &&
+        !editBookErr &&
+        bookIsEditable &&
+        !checkingBookIsEditable && (
+          <Formik
+            initialValues={{
+              bookname: bookName,
+              bookauthor: bookAuthor,
+              bookimage: null as BookType['bookimage'],
+            }}
+            validationSchema={Yup.object({
+              bookname: Yup.string()
+                .max(200, 'Book name cannot be longer than 200 characters.')
+                .required('Required field.'),
+              bookauthor: Yup.string()
+                .max(200, 'Name of book authors cannot be more than 200 characters.')
+                .required('Required field.'),
+              bookimage: Yup.mixed()
+                .test('fileSize', 'File must be below 5mb', value => {
+                  if (value) {
+                    return value.size <= 5 * 1024 * 1024;
+                  }
+                  return true;
+                })
+                .test('fileType', 'File must be either JPG or PNG', value => {
+                  if (value) {
+                    return ['image/png', 'image/jpeg'].includes(value.type);
+                  }
+                  return true;
+                }),
+            })}
+            onSubmit={handleEditBookSubmit}
+          >
+            <Form>
+              <Input
+                type="text"
+                labelText="Book name:"
+                name="bookname"
+                labelAtTop
+                inputFieldFullWidth
+                autoFocus
+                trimWhiteSpaceOnBlur
+              />
+              <Input
+                type="text"
+                labelText="Author:"
+                name="bookauthor"
+                labelAtTop
+                inputFieldFullWidth
+                trimWhiteSpaceOnBlur
+              />
+              <FileInput name="bookimage" labelText="Pick a picture:" />
+              <Button color="blue" type="submit" asButtonTag>
+                Save
+              </Button>
+            </Form>
+          </Formik>
+        )}
     </Modal>
   );
 };

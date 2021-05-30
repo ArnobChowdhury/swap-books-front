@@ -469,7 +469,7 @@ export const editBookReq = (
     fd.append('bookAuthor', bookauthor);
     fd.append('bookImage', bookimage);
 
-    const path = 'books/edit';
+    const path = '/books/edit';
 
     return axios
       .put(path, fd, {

@@ -8,4 +8,5 @@ export {
   getMatchesForAbook,
   getBooksOfAMatch,
   getBooksOfARoom,
+  bookIsEditable,
 } from './books.controller';

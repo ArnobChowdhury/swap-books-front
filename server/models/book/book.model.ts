@@ -75,13 +75,12 @@ export default class Book {
     throw err;
   }
 
-  static async findById(userId: string): Promise<Book> {
+  static async findById(bookId: string) {
     const db = getDb();
     try {
-      const book = await db
-        .collection('books')
-        .findOne({ _id: new ObjectId(userId) });
-      return book;
+      return await db
+        .collection<BookWithId>('books')
+        .findOne({ _id: new ObjectId(bookId) });
     } catch {
       // todo is it the right way to catch an error
       throw new Error('Could not retrieve any books for the user');
@@ -89,6 +88,7 @@ export default class Book {
   }
 
   static async editBook(
+    userIdAsString: string,
     bookId: string,
     bookName: string,
     bookAuthor: string,
@@ -96,12 +96,14 @@ export default class Book {
   ): Promise<BookWithoutLocationProp> {
     const db = getDb();
     let res;
+    const userId = new ObjectId(userIdAsString);
+
     try {
       if (bookPicturePath) {
         res = await db
           .collection('books')
           .findOneAndUpdate(
-            { _id: new ObjectId(bookId) },
+            { _id: new ObjectId(bookId), userId },
             { $set: { bookName, bookAuthor, bookPicturePath } },
             { returnOriginal: false, projection: {} },
           );
