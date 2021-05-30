@@ -210,9 +210,8 @@ export const authRequest = (
 export const authCheckState = () => {
   return (dispatch: Dispatch) => {
     const accessToken = localStorage.getItem('accessToken');
-    const expirationDate = localStorage.getItem('expirationDate');
     const userId = localStorage.getItem('userId') || '';
-    if (accessToken && expirationDate && userId) {
+    if (accessToken && userId) {
       const path = '/user';
       return axios
         .get(path)
@@ -224,6 +223,7 @@ export const authCheckState = () => {
             booksAvailableToSwap,
             booksSwapped,
           } = res.data;
+          const expirationDate = localStorage.getItem('expirationDate');
           dispatch(authSuccess(accessToken, userId, Number(expirationDate)));
           dispatch(
             updateUserInfo(
