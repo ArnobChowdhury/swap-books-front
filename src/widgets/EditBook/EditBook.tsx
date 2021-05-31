@@ -138,15 +138,15 @@ export const EditBook = (): JSX.Element => {
                 .max(200, 'Name of book authors cannot be more than 200 characters.')
                 .required('Required field.'),
               bookimage: Yup.mixed()
-                .test('fileSize', 'File must be below 5mb', value => {
-                  if (value) {
-                    return value.size <= 5 * 1024 * 1024;
-                  }
-                  return true;
-                })
                 .test('fileType', 'File must be either JPG or PNG', value => {
                   if (value) {
                     return ['image/png', 'image/jpeg'].includes(value.type);
+                  }
+                  return true;
+                })
+                .test('fileSize', 'File must be below 5mb', value => {
+                  if (value) {
+                    return value.size <= 5 * 1024 * 1024;
                   }
                   return true;
                 }),
@@ -154,6 +154,11 @@ export const EditBook = (): JSX.Element => {
             onSubmit={handleEditBookSubmit}
           >
             <Form>
+              <FileInput
+                autoFocus
+                name="bookimage"
+                labelText="Click/Tap to pick an image"
+              />
               <Input
                 type="text"
                 labelText="Book name:"
@@ -171,7 +176,6 @@ export const EditBook = (): JSX.Element => {
                 inputFieldFullWidth
                 trimWhiteSpaceOnBlur
               />
-              <FileInput name="bookimage" labelText="Pick a picture:" />
               <Button color="blue" type="submit" asButtonTag>
                 Save
               </Button>

@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
-export const ErrorWrapper = styled.div`
-  flex-basis: 100%;
+export const ErrorWrapper = styled.div<{ noFlexBasis: boolean }>`
+  flex-basis: ${({ noFlexBasis }) => (!noFlexBasis ? '100%' : 'auto')};
   display: flex;
   min-height: 2.5rem;
 `;

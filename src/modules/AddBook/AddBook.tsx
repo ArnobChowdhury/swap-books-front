@@ -58,23 +58,27 @@ export const AddBook = ({
               .required('Required field.'),
             bookimage: Yup.mixed()
               .required('An image of the book is required')
-              .test('fileSize', 'File must be below 5mb', value => {
-                return value && value.size <= 5 * 1024 * 1024;
-              })
               .test('fileType', 'File must be either JPG or PNG', value => {
                 return value && ['image/png', 'image/jpeg'].includes(value.type);
+              })
+              .test('fileSize', 'File must be below 5mb', value => {
+                return value && value.size <= 5 * 1024 * 1024;
               }),
           })}
           onSubmit={onSubmit}
         >
           <Form>
+            <FileInput
+              autoFocus
+              name="bookimage"
+              labelText="Click/Tap to pick an image"
+            />
             <Input
               type="text"
               labelText="Book name:"
               name="bookname"
               labelAtTop
               inputFieldFullWidth
-              autoFocus
               trimWhiteSpaceOnBlur
             />
             <Input
@@ -85,7 +89,6 @@ export const AddBook = ({
               inputFieldFullWidth
               trimWhiteSpaceOnBlur
             />
-            <FileInput name="bookimage" labelText="Pick a picture:" />
             <Button color="blue" type="submit" asButtonTag>
               Add
             </Button>

@@ -8,6 +8,7 @@ interface InputStyleProps {
   labelAtTop?: boolean;
   labelMinWidth?: string;
   marginBottom?: string;
+  labelMaxWidth?: string;
 }
 
 export const Label = styled.label<InputStyleProps>`
@@ -18,6 +19,7 @@ export const Label = styled.label<InputStyleProps>`
   margin-bottom: ${({ marginBottom }): string | null =>
     marginBottom ? marginBottom : null};
   flex-wrap: wrap;
+  ${({ labelMaxWidth }) => labelMaxWidth && `max-width: ${labelMaxWidth}px`};
 `;
 
 export const DIV = styled.div<InputStyleProps>`

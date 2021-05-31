@@ -15,7 +15,7 @@ export const ModalDiv = styled.div<{
   bottom: ${({ opensInBottom }) => opensInBottom && '0'};
   padding: 2rem;
   transform: ${({ largeModal, opensInBottom }) =>
-    !opensInBottom && `translate(-50%, ${largeModal ? '-50%' : '-60%'} )`};
+    !opensInBottom && `translate(-50%, -50% )`};
   background: ${({ theme: { colorWhite } }): string | null => colorWhite};
   border-radius: ${(props): string | null => props.theme.spaceOne};
   z-index: 1200;
