@@ -93,14 +93,16 @@ export const authFail = (error: { message: string; status: number }) => {
 export const authLogout = () => {
   return async (dispatch: Dispatch) => {
     const userId = localStorage.getItem('userId');
+    const bId = localStorage.getItem('bId');
     return axios
-      .post('/auth/logout', { userId })
+      .post('/auth/logout', { userId, bId })
       .then(() => {
         dispatch(updateUserInfo(null, false, null, null, 0, 0));
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
         localStorage.removeItem('userId');
         localStorage.removeItem('expirationDate');
+        localStorage.removeItem('bId');
         return dispatch({ type: AUTH_LOGOUT });
       })
       .catch(err => {
@@ -152,6 +154,7 @@ export const authRequest = (
           userId,
           accessToken,
           refreshToken,
+          bId,
           expiresIn,
           userLon,
           userLat,
@@ -163,6 +166,7 @@ export const authRequest = (
 
         localStorage.setItem('accessToken', accessToken);
         localStorage.setItem('refreshToken', refreshToken);
+        localStorage.setItem('bId', bId);
         localStorage.setItem('userId', userId);
         localStorage.setItem('expirationDate', `${expirationDate}`);
         dispatch(authSuccess(accessToken, userId, expirationDate));

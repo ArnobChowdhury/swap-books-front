@@ -42,10 +42,12 @@ export const loginSchema = Yup.object({
 
 export const refreshTokenSchema = Yup.object({
   refreshToken: Yup.string().required('Refresh token is needed.'),
+  bId: Yup.string().required('bId is needed.'),
 });
 
 export const logoutSchema = Yup.object({
   userId: Yup.string().required('User Id is needed.'),
+  bId: Yup.string().required('bId is needed.'),
 });
 
 export const forgotPasswordSchema = Yup.object({

@@ -43,9 +43,10 @@ if (process.env.NODE_ENV !== 'test') {
       ) {
         if (!isRefreshing) {
           const refreshToken = localStorage.getItem('refreshToken');
+          const bId = localStorage.getItem('bId');
           isRefreshing = true;
           instance
-            .post('/auth/refresh-token', { refreshToken })
+            .post('/auth/refresh-token', { refreshToken, bId })
             .then(res => {
               const { accessToken, refreshToken, expiresIn } = res.data;
               const expirationDate = new Date().getTime() + expiresIn * 1000;

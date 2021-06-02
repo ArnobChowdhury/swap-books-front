@@ -9,6 +9,7 @@ export const generateJWT = (
   email: string,
   tokenType: 'access' | 'refresh' | 'passReset',
   additionalSecret: string = '',
+  bId?: string,
 ): string => {
   try {
     let secretVar: string;
@@ -36,10 +37,11 @@ export const generateJWT = (
     };
     const token = JWT.sign(payload, secret, options);
 
-    if (tokenType === 'refresh') {
+    if (tokenType === 'refresh' && bId) {
       // we set the token to redis
+      redisClient.SADD(`bId:${userId}`, bId);
       redisClient.SET(
-        `refreshToken:${userId}`,
+        `refreshToken:${userId}-${bId}`,
         token,
         'EX',
         365 * 24 * 60 * 60,
@@ -57,6 +59,7 @@ export const generateJWT = (
 
 export const verifyRefreshToken = (
   refreshToken: string,
+  bId: string,
 ): Promise<{ email: string; userId: string }> => {
   return new Promise((resolve, reject) => {
     JWT.verify(
@@ -68,7 +71,7 @@ export const verifyRefreshToken = (
           return;
         }
         const { email, aud: userId } = decoded as JWTDecoded;
-        redisClient.GET(`refreshToken:${userId}`, (redisErr, result) => {
+        redisClient.GET(`refreshToken:${userId}-${bId}`, (redisErr, result) => {
           if (redisErr) {
             reject(new createError.InternalServerError());
             return;

@@ -13,6 +13,7 @@ import {
 } from '../../utils/jwt';
 import { client as redisClient } from '../../utils/redis';
 import { emailTransporter } from '../../utils/email';
+import crypto from 'crypto';
 
 // todo check if it is possible to use a single function for sign up and sign in
 export const signup = async (
@@ -187,11 +188,13 @@ export const login: (
       throw err;
     }
     const userId = userIdAsMongoId.toString();
+    const bId = crypto.randomBytes(12).toString('base64');
 
     res.status(200).json({
       name,
       accessToken: generateJWT(userId, email, 'access'),
-      refreshToken: generateJWT(userId, email, 'refresh'),
+      refreshToken: generateJWT(userId, email, 'refresh', '', bId),
+      bId,
       userId,
       expiresIn: 3600,
       userLon,
@@ -212,13 +215,13 @@ export const refreshToken = async (
   res: Response,
   next: NextFunction,
 ): Promise<void> => {
-  const { refreshToken: rfToken } = req.body;
-  if (!rfToken) throw new createHttpError.BadRequest();
+  const { refreshToken: rfToken, bId } = req.body;
+  if (!rfToken || !bId) throw new createHttpError.BadRequest();
   try {
-    const { userId, email } = await verifyRefreshToken(rfToken);
+    const { userId, email } = await verifyRefreshToken(rfToken, bId);
     res.send({
       accessToken: generateJWT(userId, email, 'access'),
-      refreshToken: generateJWT(userId, email, 'refresh'),
+      refreshToken: generateJWT(userId, email, 'refresh', '', bId),
       expiresIn: 3600,
     });
   } catch (err) {
@@ -228,10 +231,11 @@ export const refreshToken = async (
 
 // TODO This function should changed. change this to make redis use promise
 export const logout = (req: Request, res: Response, next: NextFunction): void => {
-  const { userId } = req.body;
-  if (!userId) throw new createHttpError.BadRequest();
+  const { userId, bId } = req.body;
+  if (!userId || !bId) throw new createHttpError.BadRequest();
   try {
-    redisClient.DEL(`refreshToken:${userId}`, (err, redisRes) => {
+    redisClient.SREM(`bId:${userId}`, bId);
+    redisClient.DEL(`refreshToken:${userId}-${bId}`, (err, redisRes) => {
       if (redisRes === 1) {
         res.status(201).json({ message: 'User logged out' });
       } else if (redisRes === 0) {
