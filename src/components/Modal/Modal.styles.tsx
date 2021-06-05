@@ -69,22 +69,12 @@ export const SliderBG = styled.div<{ closeSlider: boolean }>`
   overflow: auto;
 `;
 
-export const SliderContainer = styled.div<{ closeSlider: boolean }>`
+export const SliderContainer = styled.div`
   background: ${({ theme }) => theme.colorWhite};
-  position: fixed;
-  top: 30px;
-  right: 0;
   width: 100%;
-  padding: 20px 30px 30px 30px;
-  animation: ${slideLeft} 0.2s;
-  ${({ closeSlider }) => closeSlider && `right: -100%;`};
-  transition: right 0.1s linear;
-  z-index: 1200;
+  padding: 0 30px 30px 30px;
 `;
 
 export const LeftArrowContainer = styled.div`
-  position: absolute;
-  top: -10px;
-  left: 30px;
-  z-index: 1300;
+  padding-left: 26px;
 `;
