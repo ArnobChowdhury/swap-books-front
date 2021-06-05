@@ -66,6 +66,7 @@ export const SliderBG = styled.div<{ closeSlider: boolean }>`
   animation: ${slideLeft} 0.2s;
   ${({ closeSlider }) => closeSlider && `right: -100%;`};
   transition: right 0.1s linear;
+  overflow: auto;
 `;
 
 export const SliderContainer = styled.div`
