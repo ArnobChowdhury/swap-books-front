@@ -9,7 +9,6 @@ export const Container = styled.div`
 
 const background = 'linear-gradient(135deg, #AC9FF7,#4531b0)';
 const shadow = 'rgba(39, 94, 254, 0.28)';
-const text = '#6C7486';
 const page = 'rgba(255, 255, 255, 0.36)';
 const pageFold = 'rgba(255, 255, 255, 0.52)';
 const duration = '3s';

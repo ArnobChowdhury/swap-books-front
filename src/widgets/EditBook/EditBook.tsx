@@ -13,7 +13,7 @@ import { FileInput } from 'components/FileInput';
 import { RequestResult } from 'components/RequestResult';
 import { editBookReq } from 'redux/actions/book';
 import { LoaderBook } from 'assets/LoaderBook';
-
+import { useWindowSize } from 'hooks';
 export interface BookType {
   bookname: string;
   bookauthor: string;
@@ -27,6 +27,8 @@ export interface BookType {
 }
 
 export const EditBook = (): JSX.Element => {
+  const { width } = useWindowSize();
+
   const [bookIsEditable, setBookIsEditable] = useState(false);
   const [checkingBookIsEditable, setCheckingBookIsEditable] = useState(true);
   const [bookIsEditableError, setBookIsEditableError] = useState<string>();
@@ -102,6 +104,7 @@ export const EditBook = (): JSX.Element => {
 
   return (
     <Modal
+      currentWidth={width}
       onClick={() => setShowModal(false)}
       formSubmitting={editBookReqOnGoing} // editBookReqOnGoing
     >

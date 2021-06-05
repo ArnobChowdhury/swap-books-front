@@ -1,4 +1,4 @@
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 import { largeScreen } from 'mediaConfig';
 
 export const NavBarContainer = styled.div`

@@ -40,6 +40,7 @@ import theme from 'theme';
 import { SocketIoContext } from 'hoc/Sockets';
 import { Button } from 'ui-kits/Button';
 import Link from 'next/link';
+import { useWindowSize } from 'hooks';
 
 export const SwapMatches = (): JSX.Element => {
   const dispatch = useDispatch();
@@ -63,6 +64,7 @@ export const SwapMatches = (): JSX.Element => {
     errorForSwapConsent,
   } = useSelector((s: RootState) => s.books);
 
+  const { width } = useWindowSize();
   const { socketIo } = useContext(SocketIoContext);
   const { spaceFive } = theme;
 
@@ -196,7 +198,7 @@ export const SwapMatches = (): JSX.Element => {
     : '';
 
   return (
-    <Modal onClick={() => setShowModal(false)}>
+    <Modal currentWidth={width} onClick={() => setShowModal(false)}>
       {(fetchMatchesForBookReqOnGoing || sendingSwapReqOnGoing) && (
         <LoaderBook
           text={

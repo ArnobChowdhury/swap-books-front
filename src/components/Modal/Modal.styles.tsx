@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { css, keyframes } from 'styled-components';
 import { mediumScreen, smallScreen } from '../../mediaConfig';
 
 export const ModalDiv = styled.div<{
@@ -14,8 +14,7 @@ export const ModalDiv = styled.div<{
     opensInBottom ? 'auto' : largeModal ? '50%' : '40%'};
   bottom: ${({ opensInBottom }) => opensInBottom && '0'};
   padding: 2rem;
-  transform: ${({ largeModal, opensInBottom }) =>
-    !opensInBottom && `translate(-50%, -50% )`};
+  transform: ${({ opensInBottom }) => !opensInBottom && `translate(-50%, -50% )`};
   background: ${({ theme: { colorWhite } }): string | null => colorWhite};
   border-radius: ${(props): string | null => props.theme.spaceOne};
   z-index: 1200;
@@ -33,14 +32,49 @@ export const ModalDiv = styled.div<{
   }
 `;
 
-export const BackgroundDiv = styled.div`
+const ModalAndSliderCommonCss = css`
   width: 100vw;
   height: 100vh;
   position: fixed;
-  left: 0;
   top: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.8);
   z-index: 1100;
+`;
+
+export const BackgroundDiv = styled.div`
+  background: rgba(0, 0, 0, 0.8);
+  left: 0;
+  ${ModalAndSliderCommonCss}
+`;
+
+const slideLeft = keyframes`
+  0% {
+    right: -50%;
+  }
+  100% {
+    right: 0%;
+  }
+`;
+
+// TODO GET RID OF TS-IGNORE  AFTER STYLED COMPONENTS ARE UPDATED TO LATEST VERSION
+//@ts-ignore
+export const SliderBG = styled.div<{ closeSlider: boolean }>`
+  ${ModalAndSliderCommonCss}
+  background: #fff;
+  padding-top: ${({ theme }) => theme.spaceTen};
+  animation: ${slideLeft} 0.2s;
+  ${({ closeSlider }) => closeSlider && `right: -100%;`};
+  transition: right 0.1s linear;
+`;
+
+export const SliderContainer = styled.div`
+  background: #fff;
+  position: relative;
+  width: 100%;
+  padding: 0 30px 30px 30px;
+`;
+
+export const LeftArrowContainer = styled.div`
+  padding-left: 26px;
 `;

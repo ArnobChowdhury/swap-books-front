@@ -16,6 +16,7 @@ import { RootContextProps, RootContext } from 'contexts/RootContext';
 import { authRequest } from 'redux/actions/auth';
 import { addABookRequest, addABookRefresh } from 'redux/actions/book';
 import { HOME_ROUTE, USER_ROUTE } from 'frontEndRoutes';
+import { useWindowSize } from 'hooks';
 
 export const ModalManager = (): JSX.Element => {
   const {
@@ -31,6 +32,7 @@ export const ModalManager = (): JSX.Element => {
   const { pathname, query } = router;
   const { id: profileId } = query;
 
+  const { width } = useWindowSize();
   const handleLoginSubmit = (
     { email, password }: LoginCredentials,
     { setSubmitting }: FormikHelpers<LoginCredentials>,
@@ -79,7 +81,11 @@ export const ModalManager = (): JSX.Element => {
   return (
     <>
       {showModal && popupType === 'login' && (
-        <Modal onClick={() => setShowModal(false)} formSubmitting={loginSubmitting}>
+        <Modal
+          onClick={() => setShowModal(false)}
+          formSubmitting={loginSubmitting}
+          currentWidth={width}
+        >
           <Login onSubmit={handleLoginSubmit} requestErrorMsg={error?.message} />
         </Modal>
       )}
@@ -87,6 +93,7 @@ export const ModalManager = (): JSX.Element => {
         <Modal
           onClick={() => setShowModal(false)}
           formSubmitting={addBookReqOnGoing}
+          currentWidth={width}
         >
           <AddBook
             onSubmit={handleAddBookSubmit}
@@ -97,13 +104,13 @@ export const ModalManager = (): JSX.Element => {
         </Modal>
       )}
       {showModal && popupType === 'requireLoginOrSignup' && (
-        <Modal onClick={() => setShowModal(false)}>
+        <Modal onClick={() => setShowModal(false)} currentWidth={width}>
           {!isSignedIn && <NeedAuth />}
           {isSignedIn && <NeedBook onAddButtonClick={handleAddBookButtonClick} />}
         </Modal>
       )}
       {showModal && popupType === 'location' && (
-        <Modal largeModal onClick={() => setShowModal(false)}>
+        <Modal largeModal onClick={() => setShowModal(false)} currentWidth={width}>
           <Location />
         </Modal>
       )}
@@ -115,6 +122,7 @@ export const ModalManager = (): JSX.Element => {
           onClick={() => {
             setShowModal(false);
           }}
+          currentWidth={width}
         >
           <UserNav />
         </Modal>
