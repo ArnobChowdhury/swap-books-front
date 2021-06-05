@@ -69,8 +69,8 @@ export const SliderBG = styled.div<{ closeSlider: boolean }>`
 `;
 
 export const SliderContainer = styled.div`
-  background: #fff;
-  position: relative;
+  background: ${({ theme }) => theme.colorWhite};
+  position: absolute;
   width: 100%;
   padding: 0 30px 30px 30px;
 `;

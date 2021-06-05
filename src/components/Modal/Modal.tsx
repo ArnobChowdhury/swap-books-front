@@ -50,15 +50,13 @@ export const Modal: React.FC<ModalProps> = ({
       )}
       {showSlider && !opensInBottom && (
         <SliderBG closeSlider={closeSlider}>
+          {formSubmitting && <LoadingBar />}
           <LeftArrowContainer>
             <IconOnlyButton size={32} onClick={handleSliderClose}>
               <LeftArrow />
             </IconOnlyButton>
           </LeftArrowContainer>
-          <SliderContainer>
-            {formSubmitting && <LoadingBar />}
-            {children}
-          </SliderContainer>
+          <SliderContainer>{children}</SliderContainer>
         </SliderBG>
       )}
     </>
