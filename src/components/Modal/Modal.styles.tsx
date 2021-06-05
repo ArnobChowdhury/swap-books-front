@@ -68,13 +68,22 @@ export const SliderBG = styled.div<{ closeSlider: boolean }>`
   transition: right 0.1s linear;
 `;
 
-export const SliderContainer = styled.div`
+export const SliderContainer = styled.div<{ closeSlider: boolean }>`
   background: ${({ theme }) => theme.colorWhite};
-  position: absolute;
+  position: fixed;
+  top: 30px;
+  right: 0;
   width: 100%;
-  padding: 0 30px 30px 30px;
+  padding: 20px 30px 30px 30px;
+  animation: ${slideLeft} 0.2s;
+  ${({ closeSlider }) => closeSlider && `right: -100%;`};
+  transition: right 0.1s linear;
+  z-index: 1200;
 `;
 
 export const LeftArrowContainer = styled.div`
-  padding-left: 26px;
+  position: absolute;
+  top: -10px;
+  left: 30px;
+  z-index: 1300;
 `;
