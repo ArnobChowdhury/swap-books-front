@@ -50,11 +50,12 @@ export const ImagePlaceholder = styled.img<{ mainImgLoaded: boolean }>`
   transition: opacity 0.3s linear;
 `;
 
-export const Image = styled.img`
+export const Image = styled.img<{ mainImgLoaded: boolean }>`
   height: 100%;
   width: 100%;
   object-fit: contain;
   background: ${({ theme }) => theme.colorSeparator};
+  visibility: ${({ mainImgLoaded }) => (mainImgLoaded ? 'visible' : 'hidden')};
 `;
 
 export const ValidTillTime = styled.div`
