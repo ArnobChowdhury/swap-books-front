@@ -11,9 +11,6 @@ RUN yarn install
 
 COPY ./.next ./.next
 COPY ./build ./build
-COPY ./favicon.ico ./favicon.ico
-COPY ./newmsg.mp3 ./newmsg.mp3
-COPY ./notification.mp3 ./notification.mp3
-COPY ./pustokio_logo.png ./pustokio_logo.png
+COPY ./public ./public
 
 CMD ["yarn", "start"]

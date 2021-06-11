@@ -1,4 +1,5 @@
 import next from 'next';
+import { parse as parseUrl } from 'url';
 import path from 'path';
 import cors from 'cors';
 import fs from 'fs';
@@ -51,9 +52,39 @@ const app = next({ dev });
 const handle = app.getRequestHandler();
 
 const server = express();
+const childrenInPublicFolder = fs.readdirSync(path.join(__dirname, '..', 'public'));
 
 app.prepare().then(() => {
   server.use(morgan('dev'));
+
+  server.use((req, res, next) => {
+    const parsedUrl = parseUrl(req.url);
+    const { pathname } = parsedUrl;
+    const filename = pathname?.replace('/', '');
+    const firstNodeNameArray = pathname?.match(
+      /(?<=^\/)[a-zA-Z0-9._-]+(?=(\/.)+)?/g,
+    );
+
+    if (
+      pathname &&
+      filename &&
+      (pathname === '/sw.js' ||
+        /^\/(workbox|worker|fallback)-\w+\.js$/.test(pathname))
+    ) {
+      const root = path.join(__dirname, '..', '.next');
+      res.status(200).sendFile(filename, { root });
+    } else if (
+      pathname &&
+      filename &&
+      firstNodeNameArray &&
+      childrenInPublicFolder.includes(firstNodeNameArray[0])
+    ) {
+      const root = path.join(__dirname, '..', 'public');
+      res.status(200).sendFile(filename, { root });
+    } else {
+      next();
+    }
+  });
 
   const HTTPServer = createServer(server);
   // more sane options can be added to io server
@@ -145,25 +176,6 @@ app.prepare().then(() => {
   server.use(cors());
 
   server.use(bodyParser.json());
-
-  server.use('/favicon.ico', (_req, res) => {
-    res.status(200).sendFile('favicon.ico', { root: path.join(__dirname, '../') });
-  });
-  server.use('/pustokio_logo.png', (_req, res) => {
-    res
-      .status(200)
-      .sendFile('pustokio_logo.png', { root: path.join(__dirname, '../') });
-  });
-
-  server.use('/play/newmsg.mp3', (_req, res) => {
-    res.status(200).sendFile('newmsg.mp3', { root: path.join(__dirname, '../') });
-  });
-
-  server.use('/play/notification.mp3', (_req, res) => {
-    res
-      .status(200)
-      .sendFile('notification.mp3', { root: path.join(__dirname, '../') });
-  });
 
   // server.use('/images', express.static(path.join(__dirname, '../', './images')));
   server.use('/images/:filename', fileResizeMW);

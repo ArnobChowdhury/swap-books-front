@@ -1,4 +1,5 @@
 import React, { useState, FC, useEffect } from 'react';
+import Head from 'next/head';
 import { AppProps } from 'next/app';
 import { wrapper } from 'redux/store';
 import { ThemeProvider } from 'styled-components';
@@ -50,7 +51,6 @@ const WrappedApp: FC<AppProps> = ({ Component, pageProps }) => {
   useEffect(() => {
     const logoutListenerFunc = (event: StorageEvent) => {
       if (event.key === 'accessToken') {
-        console.log('Check check', event);
         if (event.newValue === null) {
           dispatch(authLogoutForOtherTabs());
         } else if (event.oldValue === null && event.newValue) {
@@ -98,28 +98,36 @@ const WrappedApp: FC<AppProps> = ({ Component, pageProps }) => {
   }, [width]);
 
   return (
-    <RootContext.Provider
-      value={{
-        showModal,
-        setShowModal,
-        popupType,
-        setPopupType,
-        contentType,
-        setContentType,
-        showDropDown,
-        setShowDropDown,
-        selectedTabUserProfile,
-        setSelectedTabUserProfile,
-      }}
-    >
-      <ThemeProvider theme={theme}>
-        <GlobalStyles />
-        <SocketIO>
-          <script>0</script>
-          <Component {...pageProps} />
-        </SocketIO>
-      </ThemeProvider>
-    </RootContext.Provider>
+    <>
+      <Head>
+        <meta
+          name="viewport"
+          content="minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no, user-scalable=no, viewport-fit=cover"
+        />
+      </Head>
+      <RootContext.Provider
+        value={{
+          showModal,
+          setShowModal,
+          popupType,
+          setPopupType,
+          contentType,
+          setContentType,
+          showDropDown,
+          setShowDropDown,
+          selectedTabUserProfile,
+          setSelectedTabUserProfile,
+        }}
+      >
+        <ThemeProvider theme={theme}>
+          <GlobalStyles />
+          <SocketIO>
+            <script>0</script>
+            <Component {...pageProps} />
+          </SocketIO>
+        </ThemeProvider>
+      </RootContext.Provider>
+    </>
   );
 };
 

@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from 'react';
 import Head from 'next/head';
-import { initiateMap, initiateMarker } from '../../public/loc';
+import { initiateMap, initiateMarker } from '../../userJs/loc';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'redux/reducers';
 import {
