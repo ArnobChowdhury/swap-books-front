@@ -9,6 +9,7 @@ import {
   AUTH_REDIRECT_SUCCESS,
   AUTH_REDIRECT_START,
   AUTH_ERROR_REFRESH,
+  AUTH_CHECKING_STATE_END,
   FORGOT_PASS_START,
   FORGOT_PASS_SUCCESS,
   FORGOT_PASS_FAIL,
@@ -24,6 +25,7 @@ export interface AuthState {
   error: { message: string; status: number } | null;
   loading: boolean;
   authRedirectPath: string | null;
+  authCheckingState: boolean;
   forgotPassMsg: string | null;
   forgotPassLoading: boolean;
   forgotPassErr: { message: string; status: number } | null;
@@ -38,6 +40,7 @@ export const initialState: AuthState = {
   expirationDate: 0,
   error: null,
   loading: false,
+  authCheckingState: true,
   authRedirectPath: null,
   forgotPassLoading: false,
   forgotPassMsg: null,
@@ -98,6 +101,9 @@ const reducer = (state = initialState, action: AnyAction) => {
       return { ...state, resetPassLoading: false, resetPassMsg };
     case RESET_PASS_FAIL:
       return { ...state, resetPassLoading: false, resetPassErr };
+    case AUTH_CHECKING_STATE_END: {
+      return { ...state, authCheckingState: false };
+    }
 
     default:
       return state;

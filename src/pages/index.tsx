@@ -25,6 +25,7 @@ const Root: NextPage = (): JSX.Element => {
   useEffect(() => {
     setContentType('Posts');
   }, []);
+
   return (
     <>
       <Head>

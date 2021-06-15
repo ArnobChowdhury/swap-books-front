@@ -28,12 +28,15 @@ import {
   NOTIFICATIONS_ROUTE,
   USER_ROUTE,
 } from 'frontEndRoutes';
+import { AuthStateLoader } from 'components/AuthStateLoader';
 
 // todo
 // eslint-disable-next-line react/prop-types
 const WrappedApp: FC<AppProps> = ({ Component, pageProps }) => {
   const store = useStore();
-  const { authRedirectPath } = useSelector((s: RootState) => s.auth);
+  const { authRedirectPath, authCheckingState } = useSelector(
+    (s: RootState) => s.auth,
+  );
   const dispatch = useDispatch();
 
   const [showModal, setShowModal] = useState<boolean>(false);
@@ -123,7 +126,8 @@ const WrappedApp: FC<AppProps> = ({ Component, pageProps }) => {
           <GlobalStyles />
           <SocketIO>
             <script>0</script>
-            <Component {...pageProps} />
+            {authCheckingState && <AuthStateLoader />}
+            {!authCheckingState && <Component {...pageProps} />}
           </SocketIO>
         </ThemeProvider>
       </RootContext.Provider>

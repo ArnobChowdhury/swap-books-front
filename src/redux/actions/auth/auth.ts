@@ -20,6 +20,7 @@ import {
   AUTH_REDIRECT_SUCCESS,
   AUTH_REDIRECT_START,
   AUTH_ERROR_REFRESH,
+  AUTH_CHECKING_STATE_END,
   UPDATE_USER_INFO,
   FORGOT_PASS_START,
   FORGOT_PASS_FAIL,
@@ -211,9 +212,18 @@ export const authRequest = (
   };
 };
 
+export const authCheckStateEnd = () => {
+  return {
+    type: AUTH_CHECKING_STATE_END,
+  };
+};
+
 export const authCheckState = () => {
   return (dispatch: Dispatch) => {
     const userId = localStorage.getItem('userId') || '';
+    if (!userId) {
+      dispatch(authCheckStateEnd());
+    }
     if (userId) {
       const path = '/user';
       return axios
@@ -240,8 +250,10 @@ export const authCheckState = () => {
               booksSwapped,
             ),
           );
+          dispatch(authCheckStateEnd());
         })
         .catch((err: AxiosError) => {
+          dispatch(authCheckStateEnd());
           if (err.response) {
             const { status } = err.response;
             // @ts-ignore

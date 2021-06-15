@@ -2,10 +2,8 @@ import { Container, Wrapper, LogoWrapper, SignalWrapper } from './Offline.styles
 import { Signaal } from 'assets/Signal';
 import { Logo } from 'assets/Logo';
 import { Header } from 'ui-kits/Header';
-import theme from 'theme';
 
 export const Offline = () => {
-  const { fontLarge } = theme;
   return (
     <Container>
       <Wrapper>

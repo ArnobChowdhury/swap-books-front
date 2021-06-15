@@ -7,5 +7,6 @@ module.exports = withPWA({
   },
   pwa: {
     runtimeCaching,
+    disable: process.env.NODE_ENV === 'development',
   },
 });
