@@ -86,7 +86,11 @@ const reducer = (state = initialState, action: AnyAction) => {
     case AUTH_REDIRECT_SUCCESS:
       return { ...state, authRedirectPath: null };
     case AUTH_LOGOUT:
-      return { ...state, userId: null, accessToken: null, authRedirectPath: '/' };
+      return {
+        ...state,
+        authRedirectPath: '/',
+        authCheckingState: false,
+      };
     case AUTH_ERROR_REFRESH:
       return { ...state, error: null };
     case FORGOT_PASS_START:
