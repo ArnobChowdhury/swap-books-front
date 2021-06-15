@@ -475,10 +475,13 @@ export const Message = () => {
     setMsg(newMsg);
   };
 
+  const windowHeight = window.innerHeight;
+
   return (
     <MessageBoxContainer
       messageBoxIsOpen={messageBoxIsOpen}
       isMessagePage={isMessagePage}
+      windowHeight={windowHeight}
     >
       <MessageListContainer>
         <SideMargin>

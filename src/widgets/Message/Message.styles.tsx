@@ -4,18 +4,19 @@ import { largeScreen, mediumScreen } from 'mediaConfig';
 export const MessageBoxContainer = styled.div<{
   messageBoxIsOpen: boolean;
   isMessagePage: boolean;
+  windowHeight: number;
 }>`
   width: 100%;
   box-shadow: ${({ theme }) => theme.boxShadow};
   position: relative;
   overflow: hidden;
-  height: ${({ messageBoxIsOpen }) =>
-    messageBoxIsOpen ? 'calc(100vh - 130px)' : 'auto'};
+  height: ${({ messageBoxIsOpen, windowHeight }) =>
+    messageBoxIsOpen ? `calc(${windowHeight}px - 130px)` : 'auto'};
 
   @media (min-width: ${mediumScreen}px) {
     margin-top: ${({ theme }) => theme.spaceFive};
-    height: ${({ messageBoxIsOpen }) =>
-      messageBoxIsOpen ? 'calc(100vh - 140px)' : 'auto'};
+    height: ${({ messageBoxIsOpen, windowHeight }) =>
+      messageBoxIsOpen ? `calc(${windowHeight}px - 140px)` : 'auto'};
   }
 
   @media (min-width: ${largeScreen}px) {
