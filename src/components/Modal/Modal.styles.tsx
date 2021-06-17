@@ -32,9 +32,9 @@ export const ModalDiv = styled.div<{
   }
 `;
 
-const ModalAndSliderCommonCss = css`
+const ModalAndSliderCommonCss = css<{ windowHeight: number }>`
   width: 100vw;
-  height: 100vh;
+  height: ${({ windowHeight }) => `${windowHeight}px`};
   position: fixed;
   top: 0;
   right: 0;
@@ -42,7 +42,7 @@ const ModalAndSliderCommonCss = css`
   z-index: 1100;
 `;
 
-export const BackgroundDiv = styled.div`
+export const BackgroundDiv = styled.div<{ windowHeight: number }>`
   background: rgba(0, 0, 0, 0.8);
   left: 0;
   ${ModalAndSliderCommonCss}
@@ -59,7 +59,7 @@ const slideLeft = keyframes`
 
 // TODO GET RID OF TS-IGNORE  AFTER STYLED COMPONENTS ARE UPDATED TO LATEST VERSION
 //@ts-ignore
-export const SliderBG = styled.div<{ closeSlider: boolean }>`
+export const SliderBG = styled.div<{ closeSlider: boolean; windowHeight: number }>`
   ${ModalAndSliderCommonCss}
   background: #fff;
   padding-top: ${({ theme }) => theme.spaceTen};

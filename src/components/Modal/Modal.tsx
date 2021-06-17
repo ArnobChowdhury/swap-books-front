@@ -37,11 +37,13 @@ export const Modal: React.FC<ModalProps> = ({
       onClick(e);
     }, 200);
   };
+
+  const windowHeight = window.innerHeight;
   return (
     <>
       {(!showSlider || opensInBottom) && (
         <>
-          <BackgroundDiv onClick={onClick} />
+          <BackgroundDiv onClick={onClick} windowHeight={windowHeight} />
           <ModalDiv opensInBottom={opensInBottom} largeModal={largeModal}>
             {formSubmitting && <LoadingBar />}
             {children}
@@ -49,7 +51,7 @@ export const Modal: React.FC<ModalProps> = ({
         </>
       )}
       {showSlider && !opensInBottom && (
-        <SliderBG closeSlider={closeSlider}>
+        <SliderBG closeSlider={closeSlider} windowHeight={windowHeight}>
           {formSubmitting && <LoadingBar />}
           <LeftArrowContainer>
             <IconOnlyButton size={32} onClick={handleSliderClose}>
