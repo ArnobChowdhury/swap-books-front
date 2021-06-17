@@ -12,5 +12,6 @@ RUN yarn install
 COPY ./.next ./.next
 COPY ./build ./build
 COPY ./public ./public
+COPY ./nsfwModels ./nsfwModels
 
 CMD ["yarn", "start"]
