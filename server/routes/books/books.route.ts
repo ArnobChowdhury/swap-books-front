@@ -20,14 +20,15 @@ import {
   editBookSchema,
 } from './books.validator';
 import { fileUploadMW } from '../../middlewares/fileUploadMW';
+import { nsfwMW } from '../../middlewares/nsfwMW';
 
 const router = express.Router();
 
 router.post(
   '/add',
   protectedRoute,
-  // @ts-ignore
   fileUploadMW,
+  nsfwMW,
   validation(addBookSchema),
   addABook,
 );

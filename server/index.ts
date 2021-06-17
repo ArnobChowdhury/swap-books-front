@@ -45,6 +45,7 @@ import {
 } from './socketTypes';
 import { jwtVerify } from './middlewares/jwtVerify';
 import { fileResizeMW } from './middlewares/fileResize';
+import { loadNsfwModel } from './utils/nsfwJSLoad';
 
 const port = parseInt(process.env.PORT as string, 10) || 3000; // We might want to change it later
 const dev = process.env.NODE_ENV !== 'production';
@@ -206,7 +207,13 @@ app.prepare().then(() => {
           const bookIdAsMongoId = _id.toHexString();
           const userIdAsMongoId = userId.toHexString();
           await Book.removeBook(bookIdAsMongoId, userIdAsMongoId);
-          fs.unlinkSync(path.join(__dirname, '..', bookPicturePath));
+          fs.unlink(path.join(__dirname, '..', bookPicturePath), err => {
+            if (err) {
+              console.log(err);
+            } else {
+              console.log(`Book Id - ${_id} unlinked.`);
+            }
+          });
         },
       );
     }
@@ -239,9 +246,11 @@ app.prepare().then(() => {
   });
 
   mongoConnect(() => {
-    HTTPServer.listen(port, () => {
-      // eslint-disable-next-line no-console
-      console.log('\x1b[33m%s\x1b[0m', `listening to requests in port ${port}`);
+    loadNsfwModel().then(() => {
+      HTTPServer.listen(port, () => {
+        // eslint-disable-next-line no-console
+        console.log('\x1b[33m%s\x1b[0m', `listening to requests in port ${port}`);
+      });
     });
   });
 });

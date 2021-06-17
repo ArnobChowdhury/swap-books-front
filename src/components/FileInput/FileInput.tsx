@@ -34,6 +34,7 @@ interface FileInputProps {
   name: string;
   labelText: string;
   autoFocus?: boolean;
+  executeOnChange?: () => void;
 }
 
 export const FileInput = (props: FileInputProps) => {
@@ -42,7 +43,7 @@ export const FileInput = (props: FileInputProps) => {
   const hiddenInputRef = useRef<HTMLInputElement>(null);
   const [showImg, setShowImg] = useState(false);
 
-  const { labelText, autoFocus } = props;
+  const { labelText, autoFocus, executeOnChange } = props;
   const [field, meta, helpers] = useField(props);
   const { name, onBlur } = field;
 
@@ -50,6 +51,9 @@ export const FileInput = (props: FileInputProps) => {
     if (previewImageRef.current) {
       showPreview(event, previewImageRef.current);
       setShowImg(true);
+    }
+    if (executeOnChange) {
+      executeOnChange();
     }
     helpers.setValue(event.target.files?.[0]);
   };
@@ -92,7 +96,12 @@ export const FileInput = (props: FileInputProps) => {
           onBlur={handleOnBlur}
           id={name}
         >
-          <Preview show={showImg} src="" ref={previewImageRef} />
+          <Preview
+            show={showImg}
+            src=""
+            ref={previewImageRef}
+            id="addBook-preview"
+          />
           <PreviewPlaceholder show={!showImg}>
             <UploadIcon />
           </PreviewPlaceholder>

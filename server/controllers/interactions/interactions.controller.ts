@@ -36,6 +36,9 @@ import createHttpError from 'http-errors';
 import User from '../../models/user';
 import fs from 'fs';
 import path from 'path';
+import { promisify } from 'util';
+
+const deleteFile = promisify(fs.unlink);
 
 export const saveSocketToRedis = async (socket: SocketDecoded) => {
   const {
@@ -467,9 +470,11 @@ export const acceptOrRejectSwapRequest = async (
     );
 
     if (hasAccepted && bookPicturePaths.length > 0) {
-      bookPicturePaths.forEach(picturePath => {
-        fs.unlinkSync(path.join(__dirname, '..', '..', '..', picturePath));
-      });
+      await Promise.all(
+        bookPicturePaths.map(async picturePath => {
+          await deleteFile(path.join(__dirname, '..', '..', '..', picturePath));
+        }),
+      );
     }
 
     const { fromId: reqSenderIdAsObjectId, roomId, swapBook } = swap;

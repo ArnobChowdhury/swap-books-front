@@ -14,7 +14,11 @@ import { SwapMatches } from 'widgets/SwapMatches';
 import { RootState } from 'redux/reducers';
 import { RootContextProps, RootContext } from 'contexts/RootContext';
 import { authRequest } from 'redux/actions/auth';
-import { addABookRequest, addABookRefresh } from 'redux/actions/book';
+import {
+  addABookRequest,
+  addABookRefresh,
+  addABookErrRefresh,
+} from 'redux/actions/book';
 import { HOME_ROUTE, USER_ROUTE } from 'frontEndRoutes';
 import { useWindowSize } from 'hooks';
 
@@ -76,6 +80,12 @@ export const ModalManager = (): JSX.Element => {
     (s: RootState) => s.books,
   );
 
+  const showAddBookErr = addBookReqErr && addBookReqErr?.message !== 'NSFW Flagged';
+  const nsfwImgFlag = !!addBookReqErr && addBookReqErr?.message === 'NSFW Flagged';
+  const clearAddBookErr = () => {
+    dispatch(addABookErrRefresh());
+  };
+
   const isSignedIn = Boolean(accessToken);
 
   return (
@@ -98,8 +108,10 @@ export const ModalManager = (): JSX.Element => {
           <AddBook
             onSubmit={handleAddBookSubmit}
             successMsg={addBookReqSuccessMsg}
-            errMsg={addBookReqErr?.message}
+            errMsg={showAddBookErr ? addBookReqErr?.message : undefined}
+            nsfwImg={nsfwImgFlag}
             onAddAnother={handleAddAnotherBook}
+            refreshNsfwFlag={clearAddBookErr}
           />
         </Modal>
       )}

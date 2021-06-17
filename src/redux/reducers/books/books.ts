@@ -10,6 +10,7 @@ import {
   ADD_A_BOOK_SUCCESS,
   ADD_A_BOOK_FAIL,
   ADD_A_BOOK_REFRESH,
+  ADD_A_BOOK_ERR_REFRESH,
   EXPRESS_INTEREST_START,
   EXPRESS_INTEREST_SUCCESS,
   EXPRESS_INTEREST_FAIL,
@@ -225,6 +226,13 @@ const reducer = (state = initialState, action: AnyAction) => {
         addBookReqErr: null,
         addBookReqSuccessMsg: null,
       };
+
+    case ADD_A_BOOK_ERR_REFRESH: {
+      return {
+        ...state,
+        addBookReqErr: null,
+      };
+    }
 
     case EXPRESS_INTEREST_START:
       const allBooks = [...state.books];

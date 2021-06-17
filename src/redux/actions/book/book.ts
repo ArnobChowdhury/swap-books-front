@@ -8,6 +8,7 @@ import {
   ADD_A_BOOK_SUCCESS,
   ADD_A_BOOK_FAIL,
   ADD_A_BOOK_REFRESH,
+  ADD_A_BOOK_ERR_REFRESH,
   FETCH_BOOKS_FAIL,
   FETCH_BOOKS_START,
   FETCH_BOOKS_SUCCESS,
@@ -114,7 +115,7 @@ export const addABookRequest = (
         if (err.response) {
           const { status, data } = err.response;
           const { message } = data;
-          if (status === 403) {
+          if (status < 500) {
             dispatch(addABookFail({ message, status }));
           } else {
             dispatch(
@@ -131,6 +132,10 @@ export const addABookRequest = (
 
 export const addABookRefresh = () => {
   return { type: ADD_A_BOOK_REFRESH };
+};
+
+export const addABookErrRefresh = () => {
+  return { type: ADD_A_BOOK_ERR_REFRESH };
 };
 
 export const fetchBooksStart = () => {

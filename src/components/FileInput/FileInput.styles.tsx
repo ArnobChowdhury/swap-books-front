@@ -18,6 +18,8 @@ export const PreviewContainer = styled.div`
   cursor: pointer;
   margin-top: ${({ theme }) => theme.spaceFive};
   outline: none;
+  display: flex;
+  justify-content: center;
 
   &:focus {
     & > div {

@@ -2,12 +2,8 @@ import { Formik, Form, FormikHelpers } from 'formik';
 import { Input } from 'components/Input';
 import * as Yup from 'yup';
 import { Button } from 'ui-kits/Button';
-import {
-  LoginError,
-  ForgotPassWrapper,
-  ForgotPassLink,
-  LogoBox,
-} from './Login.styles';
+import { BadInput } from 'ui-kits/BadInput';
+import { ForgotPassWrapper, ForgotPassLink, LogoBox } from './Login.styles';
 import { LogoIcon } from 'assets/LogoIcon';
 
 export interface LoginCredentials {
@@ -29,7 +25,7 @@ export const Login = ({ onSubmit, requestErrorMsg }: LoginProps): JSX.Element =>
       <LogoBox>
         <LogoIcon width={30} />
       </LogoBox>
-      {requestErrorMsg && <LoginError>{requestErrorMsg}</LoginError>}
+      {requestErrorMsg && <BadInput>{requestErrorMsg}</BadInput>}
       <Formik
         initialValues={{
           email: '',

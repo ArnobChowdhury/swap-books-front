@@ -16,6 +16,9 @@ import {
 } from '../../utils/general';
 import path from 'path';
 import fs from 'fs';
+import { promisify } from 'util';
+
+const deleteFile = promisify(fs.unlink);
 
 const { ObjectId } = mongodb;
 
@@ -101,7 +104,7 @@ export const editBook = async (
     const processedBook = processBookForUser(book, userId);
 
     if (deleteFilePath) {
-      fs.unlinkSync(path.join(__dirname, '..', '..', '..', deleteFilePath));
+      await deleteFile(path.join(__dirname, '..', '..', '..', deleteFilePath));
     }
 
     res
@@ -151,7 +154,7 @@ export const deleteABook = async (
     const { bookPicturePath } = await Book.getBookPicturePath(bookId);
     await Book.removeBook(bookId, userId);
     if (bookPicturePath) {
-      fs.unlinkSync(path.join(__dirname, '..', '..', '..', bookPicturePath));
+      await deleteFile(path.join(__dirname, '..', '..', '..', bookPicturePath));
     }
     res.status(201).json({ message: 'Book deleted!', bookId });
   } catch (err) {
