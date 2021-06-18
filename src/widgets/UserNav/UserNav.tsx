@@ -36,7 +36,7 @@ export const UserNav = () => {
         </UserNavOptionWrapper>
       )}
       <UserNavOptionWrapper>
-        <UserNavLink href="/how-to" className="dropdown-element">
+        <UserNavLink href="/how-it-works" className="dropdown-element">
           How it Works
         </UserNavLink>
       </UserNavOptionWrapper>

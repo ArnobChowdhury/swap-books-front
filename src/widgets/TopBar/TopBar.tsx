@@ -1,11 +1,4 @@
-import {
-  // useRef,
-  // useEffect,
-  useContext,
-  ReactNode,
-  // Dispatch,
-  // SetStateAction,
-} from 'react';
+import { useContext, ReactNode } from 'react';
 import {
   TopBarContainer,
   TopBarWrapper,
