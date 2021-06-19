@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { smallScreen, mediumScreen } from 'mediaConfig';
 
 export const Container = styled.div``;
 
@@ -16,21 +17,28 @@ export const Block = styled.div<{ backgroundSecondary?: boolean }>`
 
   & > h1 {
     font-weight: 700;
+    font-size: 25px;
     color: ${({ theme }) => theme.colorPrimary1};
     text-align: center;
+
+    @media (min-width: ${mediumScreen}px) {
+      font-size: 30px;
+    }
   }
 `;
 
 export const FlexBox = styled.div`
   display: flex;
   justify-content: space-around;
+  flex-wrap: wrap;
 `;
 
 export const Sides = styled.div<{ bluBackground?: boolean }>`
   padding: ${({ theme }) => theme.spaceTen};
+  text-align: center;
 
   & > p {
-    font-size: 25px;
+    font-size: 20px;
     font-weight: 400;
     color: ${({ theme, bluBackground }) =>
       bluBackground ? theme.colorPrimary2 : theme.colorPrimary1};
@@ -39,13 +47,29 @@ export const Sides = styled.div<{ bluBackground?: boolean }>`
     &:last-of-type {
       margin-bottom: ${({ theme }) => theme.spaceTen};
     }
+
+    @media (min-width: ${mediumScreen}px) {
+      font-size: 25px;
+    }
   }
 `;
 
 export const ImageContainer = styled.div`
-  height: 320px;
+  height: 150px;
   width: 100%;
   text-align: center;
+
+  @media (min-width: ${smallScreen}px) {
+    height: 180px;
+  }
+
+  @media (min-width: 500px) {
+    height: 250px;
+  }
+
+  @media (min-width: ${mediumScreen}px) {
+    height: 300px;
+  }
 `;
 
 export const Image = styled.img`

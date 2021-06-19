@@ -41,8 +41,8 @@ export const UserNav = () => {
         </UserNavLink>
       </UserNavOptionWrapper>
       <UserNavOptionWrapper>
-        <UserNavLink href="/about-us" className="dropdown-element">
-          About Us
+        <UserNavLink href="/about" className="dropdown-element">
+          About
         </UserNavLink>
       </UserNavOptionWrapper>
       <UserNavOptionWrapper>

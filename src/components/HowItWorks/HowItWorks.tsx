@@ -24,9 +24,6 @@ export const HowItWorks = () => {
         <FlexBox>
           <Sides>
             <Paragraph>First sign up. Click on 'Select location' button.</Paragraph>
-            {/* <Paragraph>
-              Then, click on the 'Select location' button on the top.
-            </Paragraph> */}
             <ImageContainer>
               <Image src={`/how-it/location.png`} alt="Location button image" />
             </ImageContainer>
