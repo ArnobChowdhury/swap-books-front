@@ -37,16 +37,17 @@ export const About = () => {
               <DevImage src="/how-it/dev.jpg" />
             </DevImageContainer>
             <Paragraph fontSize="large" fontWeight="regular">
-              Hi, My name is Arnob. I am a web developer from Bangladesh. Let me tell
+              Hi, my name is Arnob. I am a web developer from Bangladesh. Let me tell
               you the story behind Pustokio. I went to a bookshop one day and bought
-              a few books. While walking back home, I realized I am broke and with no
-              hope of getting a job any time soon I will not be able to buy any new
-              books. So, I was thinking to myself - it would have been nice if I
-              could exchange these books with other books when I am done reading
+              a few books. While walking back home, I realized I am broke, and with
+              no hope of getting a job anytime soon I will not be able to buy new
+              books. So, I was thinking to myself &#8212; it would have been nice if
+              I could exchange these books with other books when I am done reading
               these. But, I never heard of a service that lets you exchange books.
-              So, I decided to make Pustokio - a location based book swapping app. I
-              know what you are thinking right now - wouldn't going to a library be
-              easier? Maybe yes. But I am a web developer, I build web apps.
+              So, I decided to make Pustokio &#8212; a location based book swapping
+              app. I know what you are thinking right now - wouldn't going to a
+              library be easier? Maybe yes. But I am a web developer, I build web
+              apps.
             </Paragraph>
           </MidContainer>
         </FlexBox>

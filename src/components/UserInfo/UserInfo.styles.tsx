@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import { mediumScreen } from '../../mediaConfig';
 
 export const Container = styled.div`
-  margin-top: ${({ theme }) => theme.spaceTen};
+  margin-top: ${({ theme }) => theme.spaceFive};
   background: ${({ theme }) => theme.colorWhite};
   border-radius: ${({ theme }) => theme.borderRadius};
   padding: ${({ theme }) => theme.spaceFive};
